@@ -22,17 +22,13 @@ rejP.catch(_ => {}); // Suppress Node UnhandledPromiseRejectionWarning
 const payloads = harden([1, -0, undefined, NaN, obj, unresP, rejP, null]);
 
 /**
- * The value to be used and tested for as the completion value for a successful
- * finish.
+ * The value to be used and tested for as the completion value for a successful finish.
  *
  * @type {Passable}
  */
 const refResult = harden({});
 
-/**
- * The value to be used and tested for as the reason for an unsuccessful
- * failure.
- */
+/** The value to be used and tested for as the reason for an unsuccessful failure. */
 const refReason = new Error('bar');
 
 /**
@@ -42,8 +38,7 @@ const refReason = new Error('bar');
  * `refResult` is the completion. If it fails, `refReason` is reported as the
  * reason for failure.
  *
- * @param {boolean} fails Does the returned async iterable finish successfully
- * or fail?
+ * @param {boolean} fails Does the returned async iterable finish successfully or fail?
  * @returns {AsyncIterable<Passable>}
  */
 const makeTestIterable = fails => {
@@ -72,9 +67,9 @@ export const explodingStream = makeTestIterable(true);
 
 /**
  * For testing a promise for the terminal value of the kind of test iteration
- * made by `makeTestIterable`. The `fails` parameter says whether we expect
- * this promise to succeed with the canonical `refResult` successful
- * completion, or to fail with the canonical `refReason` reason for failure.
+ * made by `makeTestIterable`. The `fails` parameter says whether we expect this
+ * promise to succeed with the canonical `refResult` successful completion, or
+ * to fail with the canonical `refReason` reason for failure.
  *
  * @param {Assertions} t
  * @param {ERef<Passable>} p
@@ -119,8 +114,8 @@ const skip = (i, value, lossy) => {
  * This tests whether `iterable` contains the non-final iteration values from
  * the canonical test iteration. It returns a promise for the termination to be
  * tested with `testEnding`. If `lossy` is true, then it only checks that these
- * non-final values are from a sampliing subset of the canonical test
- * iteration. Otherwise it checks for exact conformance.
+ * non-final values are from a sampliing subset of the canonical test iteration.
+ * Otherwise it checks for exact conformance.
  *
  * @param {Assertions} t
  * @param {AsyncIterable<Passable>} iterable
@@ -154,10 +149,10 @@ export const testManualConsumer = (t, iterable, lossy = false) => {
 /**
  * `testAutoConsumer` does essentially the same job as `testManualConsumer`,
  * except `testAutoConsumer` consumes using the JavaScript `for-await-of`
- * syntax. However, the `for-await-of` loop cannot observe the final value of
- * an iteration, so this test consumer cannot report what it actually was.
- * However, it can tell whether the iteration finished successfully. In that
- * case, `testAutoConsumer` fulfills the returned promise with the canonical
+ * syntax. However, the `for-await-of` loop cannot observe the final value of an
+ * iteration, so this test consumer cannot report what it actually was. However,
+ * it can tell whether the iteration finished successfully. In that case,
+ * `testAutoConsumer` fulfills the returned promise with the canonical
  * `refResult` completion value, which is what `testEnding` expects.
  *
  * @param {Assertions} t
@@ -186,10 +181,9 @@ export const testAutoConsumer = async (t, iterable, lossy = false) => {
  * the canonical test iteration.
  *
  * @param {Assertions} t
- * @param {boolean} lossy Are we checking every non-final value or only a
- * sampling subset?
+ * @param {boolean} lossy Are we checking every non-final value or only a sampling subset?
  * @param {boolean} fails Do we expect termination with the canonical successful
- * completion or the canonical failure reason?
+ *   completion or the canonical failure reason?
  * @returns {IterationObserver<Passable>}
  */
 export const makeTestIterationObserver = (t, lossy, fails) => {
@@ -227,7 +221,7 @@ export const paula = iterationObserver => {
 };
 
 /**
- * See the Alice example  in the README
+ * See the Alice example in the README
  *
  * @param {AsyncIterable<Passable>} asyncIterable
  * @returns {Promise<Passable[]>}
@@ -264,10 +258,9 @@ export const bob = async asyncIterableP => {
 };
 
 /**
- * See the Carol example in the README. The Alice and Bob code above have
- * been abstracted from the code in the README to apply to any IterationObserver
- * and AsyncIterable. By contrast, the Carol code is inherently specific to
- * subscriptions.
+ * See the Carol example in the README. The Alice and Bob code above have been
+ * abstracted from the code in the README to apply to any IterationObserver and
+ * AsyncIterable. By contrast, the Carol code is inherently specific to subscriptions.
  *
  * @param {ERef<Subscription<Passable>>} subscriptionP
  * @returns {Promise<Passable[]>}

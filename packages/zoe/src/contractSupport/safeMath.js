@@ -3,11 +3,11 @@
 import { Nat } from '@agoric/nat';
 
 /**
- * These operations should be used for calculations with the values of
- * basic fungible tokens.
+ * These operations should be used for calculations with the values of basic
+ * fungible tokens.
  *
- * natSafeMath is designed to be used directly, and so it needs to
- * validate the inputs, as well as the outputs when necessary.
+ * NatSafeMath is designed to be used directly, and so it needs to validate the
+ * inputs, as well as the outputs when necessary.
  */
 export const natSafeMath = harden({
   // BigInts don't observably overflow

@@ -24,7 +24,6 @@ function makeVattpFrom(vats) {
 // be in the DApp environment (or only in end-user), but we're not yet
 // making a distinction, so the user also gets them.
 /**
- *
  * @param {SoloVats & SwingsetVats} vats
  * @param {SoloDevices} devices
  * @param {ERef<VatAdminSvc>} vatAdminSvc
@@ -82,16 +81,17 @@ async function createLocalBundle(vats, devices, vatAdminSvc, vatPowers) {
     http: httpRegCallback,
     vattp: makeVattpFrom(vats),
   });
-  /** @type { typeof bundleP } */
+  /** @type {typeof bundleP} */
   const bundle = deeplyFulfilled(bundleP);
   return bundle;
 }
 
 /**
- * @param { BootDevices<SoloDevices> & BootstrapSpace & {
- *   vatParameters: BootstrapVatParams,
- *   vats: SwingsetVats & SoloVats,
- * }} powers
+ * @param {BootDevices<SoloDevices> &
+ *   BootstrapSpace & {
+ *     vatParameters: BootstrapVatParams;
+ *     vats: SwingsetVats & SoloVats;
+ *   }} powers
  */
 export const startClient = async ({
   vatParameters: {

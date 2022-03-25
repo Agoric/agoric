@@ -391,8 +391,11 @@ const issuers = {
  * @param {AmountValue} moolaValue
  * @param {AmountValue} simoleanValue
  * @param {AmountValue} bucksValue
- * @returns {{ moolaPayment: Payment, simoleanPayment: Payment,
- * bucksPayment: Payment }}
+ * @returns {{
+ *   moolaPayment: Payment;
+ *   simoleanPayment: Payment;
+ *   bucksPayment: Payment;
+ * }}
  */
 const makeInitialPayments = (moolaValue, simoleanValue, bucksValue) => ({
   moolaPayment: moolaKit.mint.mintPayment(moola(moolaValue)),

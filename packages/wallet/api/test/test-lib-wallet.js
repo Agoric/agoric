@@ -743,7 +743,7 @@ test('lib-wallet offer methods', async t => {
   );
   const rawId2 = '1588645230204';
   const id2 = `unknown#${rawId2}`;
-  /** @type {{ makeInvitation: () => Invitation}} */
+  /** @type {{ makeInvitation: () => Invitation }} */
   const publicAPI = await E(zoe).getPublicFacet(instance);
   const invite2 = await E(publicAPI).makeInvitation();
   const invitationAmount2 = await E(inviteIssuer).getAmountOf(invite2);
@@ -965,7 +965,12 @@ test('lib-wallet addOffer for autoswap swap', async t => {
     ),
   );
 
-  /** @type {{ getLiquidityIssuer: () => Issuer, makeSwapInvitation: () => Invitation }} */
+  /**
+   * @type {{
+   *   getLiquidityIssuer: () => Issuer;
+   *   makeSwapInvitation: () => Invitation;
+   * }}
+   */
   const publicAPI = await E(zoe).getPublicFacet(autoswapInstanceHandle);
   const liquidityIssuer = E(publicAPI).getLiquidityIssuer();
   const liquidityBrand = await E(liquidityIssuer).getBrand();
@@ -1091,7 +1096,12 @@ test('addOffer invitationQuery', async t => {
     ),
   );
 
-  /** @type {{ getLiquidityIssuer: () => Issuer, makeSwapInvitation: () => Invitation }} */
+  /**
+   * @type {{
+   *   getLiquidityIssuer: () => Issuer;
+   *   makeSwapInvitation: () => Invitation;
+   * }}
+   */
   const publicAPI = await E(zoe).getPublicFacet(autoswapInstanceHandle);
   const liquidityIssuer = E(publicAPI).getLiquidityIssuer();
   const liquidityBrand = await E(liquidityIssuer).getBrand();
@@ -1214,7 +1224,12 @@ test('addOffer offer.invitation', async t => {
     ),
   );
 
-  /** @type {{ getLiquidityIssuer: () => Issuer, makeSwapInvitation: () => Invitation }} */
+  /**
+   * @type {{
+   *   getLiquidityIssuer: () => Issuer;
+   *   makeSwapInvitation: () => Invitation;
+   * }}
+   */
   const publicAPI = await E(zoe).getPublicFacet(autoswapInstanceHandle);
   const liquidityIssuer = E(publicAPI).getLiquidityIssuer();
   const liquidityBrand = await E(liquidityIssuer).getBrand();

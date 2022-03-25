@@ -18,18 +18,18 @@ import '../../tools/types';
 const { add, subtract, multiply, floorDivide, ceilDivide, isGTE } = natSafeMath;
 
 /**
- * This contract aggregates price values from a set of oracleStatuses and provides a
- * PriceAuthority for their median.
+ * This contract aggregates price values from a set of oracleStatuses and
+ * provides a PriceAuthority for their median.
  *
  * @param {ZCF<{
- * timer: TimerService,
- * maxSubmissionCount: number,
- * minSubmissionCount: number,
- * restartDelay: bigint,
- * timeout: number,
- * minSubmissionValue: number,
- * maxSubmissionValue: number,
- * unitAmountIn: Amount,
+ *   timer: TimerService;
+ *   maxSubmissionCount: number;
+ *   minSubmissionCount: number;
+ *   restartDelay: bigint;
+ *   timeout: number;
+ *   minSubmissionValue: number;
+ *   maxSubmissionValue: number;
+ *   unitAmountIn: Amount;
  * }>} zcf
  */
 const start = async zcf => {
@@ -141,10 +141,7 @@ const start = async zcf => {
     };
   };
 
-  /**
-   *
-   * @param {PriceQuoteValue} quote
-   */
+  /** @param {PriceQuoteValue} quote */
   const authenticateQuote = async quote => {
     const quoteAmount = AmountMath.make(quoteKit.brand, harden(quote));
     const quotePayment = await E(quoteKit.mint).mintPayment(quoteAmount);
@@ -156,7 +153,7 @@ const start = async zcf => {
 
   /**
    * @typedef {Object} OracleRecord
-   * @property {(timestamp: Timestamp) => Promise<void>=} querier
+   * @property {(timestamp: Timestamp) => Promise<void>} [querier]
    * @property {number} lastSample
    */
 
@@ -169,9 +166,7 @@ const start = async zcf => {
    * @param {Timestamp} [param0.timestamp]
    */
   const makeCreateQuote = ({ overrideValueOut, timestamp } = {}) =>
-    /**
-     * @param {PriceQuery} priceQuery
-     */
+    /** @param {PriceQuery} priceQuery */
     function createQuote(priceQuery) {
       // Sniff the current baseValueOut.
       const valueOutForUnitIn =
@@ -183,9 +178,7 @@ const start = async zcf => {
         return undefined;
       }
 
-      /**
-       * @param {Amount} amountIn the given amountIn
-       */
+      /** @param {Amount} amountIn The given amountIn */
       const calcAmountOut = amountIn => {
         const valueIn = AmountMath.getValue(brandIn, amountIn);
         return AmountMath.make(
@@ -194,9 +187,7 @@ const start = async zcf => {
         );
       };
 
-      /**
-       * @param {Amount} amountOut the wanted amountOut
-       */
+      /** @param {Amount} amountOut The wanted amountOut */
       const calcAmountIn = amountOut => {
         const valueOut = AmountMath.getValue(brandOut, amountOut);
         return AmountMath.make(
@@ -280,9 +271,7 @@ const start = async zcf => {
     details.delete(_roundId);
   };
 
-  /**
-   * @param {bigint} _roundId
-   */
+  /** @param {bigint} _roundId */
   const newRound = _roundId => {
     return _roundId === add(reportingRoundId, 1);
   };
@@ -329,9 +318,7 @@ const start = async zcf => {
     oracleStatuses.get(_oracle).lastStartedRound = _roundId;
   };
 
-  /**
-   * @param {bigint} _roundId
-   */
+  /** @param {bigint} _roundId */
   const acceptingSubmissions = _roundId => {
     return details.has(_roundId) && details.get(_roundId).maxSubmissions !== 0;
   };
@@ -379,9 +366,7 @@ const start = async zcf => {
     return [true, newAnswer];
   };
 
-  /**
-   * @param {bigint} _roundId
-   */
+  /** @param {bigint} _roundId */
   const deleteRoundDetails = _roundId => {
     if (
       details.get(_roundId).submissions.length <
@@ -391,15 +376,11 @@ const start = async zcf => {
     details.delete(_roundId);
   };
 
-  /**
-   * @param {bigint} _roundId
-   */
+  /** @param {bigint} _roundId */
   const validRoundId = _roundId => {
     return _roundId <= ROUND_MAX;
   };
 
-  /**
-   */
   const oracleCount = () => {
     return oracleStatuses.getSize();
   };
@@ -465,7 +446,7 @@ const start = async zcf => {
   };
 
   /**
-   * a method to provide all current info oracleStatuses need. Intended only
+   * A method to provide all current info oracleStatuses need. Intended only
    * only to be callable by oracleStatuses. Not for use by contracts to read state.
    *
    * @param {Instance} _oracle
@@ -537,9 +518,7 @@ const start = async zcf => {
     }
   };
 
-  /**
-   * @param {Instance} _oracle
-   */
+  /** @param {Instance} _oracle */
   const getStartingRound = _oracle => {
     const currentRound = reportingRoundId;
     if (
@@ -692,20 +671,17 @@ const start = async zcf => {
     },
 
     /**
-     * consumers are encouraged to check
-     * that they're receiving fresh data by inspecting the updatedAt and
-     * answeredInRound return values.
-     * return is: [roundId, answer, startedAt, updatedAt, answeredInRound], where
-     * roundId is the round ID for which data was retrieved
-     * answer is the answer for the given round
-     * startedAt is the timestamp when the round was started. This is 0
-     * if the round hasn't been started yet.
-     * updatedAt is the timestamp when the round last was updated (i.e.
-     * answer was last computed)
-     * answeredInRound is the round ID of the round in which the answer
-     * was computed. answeredInRound may be smaller than roundId when the round
-     * timed out. answeredInRound is equal to roundId when the round didn't time out
-     * and was completed regularly.
+     * Consumers are encouraged to check that they're receiving fresh data by
+     * inspecting the updatedAt and answeredInRound return values. return is:
+     * [roundId, answer, startedAt, updatedAt, answeredInRound], where roundId
+     * is the round ID for which data was retrieved answer is the answer for the
+     * given round startedAt is the timestamp when the round was started. This
+     * is 0 if the round hasn't been started yet. updatedAt is the timestamp
+     * when the round last was updated (i.e. answer was last computed)
+     * answeredInRound is the round ID of the round in which the answer was
+     * computed. answeredInRound may be smaller than roundId when the round
+     * timed out. answeredInRound is equal to roundId when the round didn't time
+     * out and was completed regularly.
      *
      * @param {bigint} _roundIdRaw
      */
@@ -728,7 +704,7 @@ const start = async zcf => {
     },
 
     /**
-     * a method to provide all current info oracleStatuses need. Intended only
+     * A method to provide all current info oracleStatuses need. Intended only
      * only to be callable by oracleStatuses. Not for use by contracts to read state.
      *
      * @param {Instance} _oracle

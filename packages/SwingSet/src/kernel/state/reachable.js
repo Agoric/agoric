@@ -5,7 +5,7 @@ export function parseReachableAndVatSlot(value) {
   const flag = value.slice(0, 1);
   assert.equal(value.slice(1, 2), ' ');
   const vatSlot = value.slice(2);
-  /** @type { boolean } */
+  /** @type {boolean} */
   let isReachable;
   if (flag === 'R') {
     isReachable = true;

@@ -26,7 +26,7 @@ const { ownKeys } = Reflect;
 
 /**
  * @param {Passable} val
- * @param {Checker=} check
+ * @param {Checker} [check]
  * @returns {boolean}
  */
 const checkPrimitiveKey = (val, check = x => x) => {
@@ -57,7 +57,7 @@ harden(assertPrimitiveKey);
 
 /**
  * @param {Passable} val
- * @param {Checker=} check
+ * @param {Checker} [check]
  * @returns {boolean}
  */
 export const checkScalarKey = (val, check = x => x) => {
@@ -94,7 +94,7 @@ const keyMemo = new WeakSet();
 
 /**
  * @param {Passable} val
- * @param {Checker=} check
+ * @param {Checker} [check]
  * @returns {boolean}
  */
 export const checkKey = (val, check = x => x) => {
@@ -130,9 +130,7 @@ harden(checkKey);
 export const isKey = val => checkKey(val);
 harden(isKey);
 
-/**
- * @param {Key} val
- */
+/** @param {Key} val */
 export const assertKey = val => {
   checkKey(val, assertChecker);
 };
@@ -148,7 +146,7 @@ const copySetMemo = new WeakSet();
 
 /**
  * @param {Passable} s
- * @param {Checker=} check
+ * @param {Checker} [check]
  * @returns {boolean}
  */
 export const checkCopySet = (s, check = x => x) => {
@@ -234,7 +232,7 @@ const copyBagMemo = new WeakSet();
 
 /**
  * @param {Passable} b
- * @param {Checker=} check
+ * @param {Checker} [check]
  * @returns {boolean}
  */
 export const checkCopyBag = (b, check = x => x) => {
@@ -300,7 +298,7 @@ harden(everyCopyBagEntry);
 
 /**
  * @template K
- * @param {Iterable<[K,bigint]>} bagEntryIter
+ * @param {Iterable<[K, bigint]>} bagEntryIter
  * @returns {CopyBag<K>}
  */
 export const makeCopyBag = bagEntryIter => {
@@ -320,7 +318,7 @@ export const makeCopyBagFromElements = elementIter => {
   // to this one call and does not survive it.
   const fullCompare = makeFullOrderComparatorKit().antiComparator;
   const sorted = sortByRank(elementIter, fullCompare);
-  /** @type {[K,bigint][]} */
+  /** @type {[K, bigint][]} */
   const entries = [];
   for (let i = 0; i < sorted.length; ) {
     const k = sorted[i];
@@ -345,7 +343,7 @@ const copyMapMemo = new WeakSet();
 
 /**
  * @param {Passable} m
- * @param {Checker=} check
+ * @param {Checker} [check]
  * @returns {boolean}
  */
 export const checkCopyMap = (m, check = x => x) => {
@@ -405,7 +403,7 @@ harden(assertCopyMap);
 
 /**
  * @template K,V
- * @param {CopyMap<K,V>} m
+ * @param {CopyMap<K, V>} m
  * @returns {K[]}
  */
 export const getCopyMapKeys = m => {
@@ -416,7 +414,7 @@ harden(getCopyMapKeys);
 
 /**
  * @template K,V
- * @param {CopyMap<K,V>} m
+ * @param {CopyMap<K, V>} m
  * @returns {V[]}
  */
 export const getCopyMapValues = m => {
@@ -427,8 +425,8 @@ harden(getCopyMapValues);
 
 /**
  * @template K,V
- * @param {CopyMap<K,V>} m
- * @returns {Iterable<[K,V]>}
+ * @param {CopyMap<K, V>} m
+ * @returns {Iterable<[K, V]>}
  */
 export const getCopyMapEntries = m => {
   assertCopyMap(m);
@@ -441,7 +439,7 @@ export const getCopyMapEntries = m => {
       let i = 0;
       return Far('CopyMap entries iterator', {
         next: () => {
-          /** @type {IteratorResult<[K,V],void>} */
+          /** @type {IteratorResult<[K, V], void>} */
           let result;
           if (i < length) {
             result = harden({ done: false, value: [keys[i], values[i]] });
@@ -460,7 +458,7 @@ harden(getCopyMapEntries);
 
 /**
  * @template K,V
- * @param {CopyMap<K,V>} m
+ * @param {CopyMap<K, V>} m
  * @param {(key: K, index: number) => boolean} fn
  * @returns {boolean}
  */
@@ -470,7 +468,7 @@ harden(everyCopyMapKey);
 
 /**
  * @template K,V
- * @param {CopyMap<K,V>} m
+ * @param {CopyMap<K, V>} m
  * @param {(value: V, index: number) => boolean} fn
  * @returns {boolean}
  */
@@ -480,7 +478,7 @@ harden(everyCopyMapValue);
 
 /**
  * @template K,V
- * @param {CopyMap<K,V>} m
+ * @param {CopyMap<K, V>} m
  * @returns {CopySet<K>}
  */
 export const copyMapKeySet = m =>
@@ -491,7 +489,7 @@ harden(copyMapKeySet);
 /**
  * @template K,V
  * @param {Iterable<[K, V]>} entries
- * @returns {CopyMap<K,V>}
+ * @returns {CopyMap<K, V>}
  */
 export const makeCopyMap = entries => {
   // This is weird, but reverse rank sorting the entries is a good first step
@@ -515,7 +513,7 @@ harden(makeCopyMap);
 
 /**
  * @param {Passable} val
- * @param {Checker=} check
+ * @param {Checker} [check]
  * @returns {boolean}
  */
 const checkKeyInternal = (val, check = x => x) => {

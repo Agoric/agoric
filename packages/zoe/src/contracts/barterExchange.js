@@ -13,11 +13,10 @@ import { satisfies } from '../contractSupport/index.js';
  * each other, it exchanges the specified amounts in each side's want clause.
  * https://agoric.com/documentation/zoe/guide/contracts/barter-exchange.html
  *
- * The Barter Exchange only accepts offers that look like
- * { give: { In: amount }, want: { Out: amount} }
- * The want amount will be matched, while the give amount is a maximum. Each
- * successful trader gets their `want` and may trade with counter-parties who
- * specify any amount up to their specified `give`.
+ * The Barter Exchange only accepts offers that look like { give: { In: amount
+ * }, want: { Out: amount} } The want amount will be matched, while the give
+ * amount is a maximum. Each successful trader gets their `want` and may trade
+ * with counter-parties who specify any amount up to their specified `give`.
  *
  * @param {ZCF} zcf
  */

@@ -2,9 +2,9 @@ import { E } from '@endo/eventual-send';
 import { Far } from '@endo/marshal';
 
 /**
- * @param {*} log
+ * @param {any} log
  * @param {ZoeService} zoe
- * @param {*} installations
+ * @param {any} installations
  * @param {FeeMintAccess} feeMintAccess
  */
 const build = async (log, zoe, installations, feeMintAccess) => {

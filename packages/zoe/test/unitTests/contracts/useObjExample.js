@@ -30,7 +30,7 @@ const start = zcf => {
        * (Pretend to) color some pixels.
        *
        * @param {string} color
-       * @param {Amount=} amountToColor
+       * @param {Amount} [amountToColor]
        */
       colorPixels: (color, amountToColor = undefined) => {
         // Throw if the offer is no longer active, i.e. the user has

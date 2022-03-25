@@ -17,12 +17,15 @@ import committeeBundle from '../../../bundles/bundle-committee.js';
 import contractGovernorBundle from '../../../bundles/bundle-contractGovernor.js';
 import binaryVoteCounterBundle from '../../../bundles/bundle-binaryVoteCounter.js';
 
-/** @type {import('ava').TestInterface<{ data: { kernelBundles: any, config: any } }>} */
+/**
+ * @type {import('ava').TestInterface<{
+ *   data: { kernelBundles: any; config: any };
+ * }>}
+ */
 /** @type {any} */
 const test = rawTest;
 
 /**
- *
  * @param {Record<string, unknown>} contractBundles
  * @param {string[]} vatNames
  * @returns {Promise<SwingSetConfig>}

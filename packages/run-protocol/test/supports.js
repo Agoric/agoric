@@ -2,11 +2,10 @@ import { AmountMath } from '@agoric/ertp';
 import { Far } from '@endo/marshal';
 
 /**
- *
  * @param {VaultId} vaultId
  * @param {Amount} initDebt
  * @param {Amount} initCollateral
- * @returns {InnerVault & {setDebt: (Amount) => void}}
+ * @returns {InnerVault & { setDebt: (Amount) => void }}
  */
 export function makeFakeInnerVault(
   vaultId,

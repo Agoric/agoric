@@ -14,10 +14,8 @@ const printAll = (...args) => {
 const noop = _ => {};
 
 /**
- * Since SES expects (requires?) a console,
- * provide one based on xsnap's print.
- * Note that this runs in the start compartment,
- * before lockdown.
+ * Since SES expects (requires?) a console, provide one based on xsnap's print.
+ * Note that this runs in the start compartment, before lockdown.
  *
  * See https://github.com/Agoric/agoric-sdk/issues/2146
  */

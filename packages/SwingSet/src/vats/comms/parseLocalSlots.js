@@ -7,17 +7,13 @@ import { assert, details as X } from '@agoric/assert';
 // object.
 
 /**
- * Parse a local slot reference string into a kernel slot object:
- *   {
- *      type: STRING, // 'object' or 'promise'
- *      id: Nat
- *   }
+ * Parse a local slot reference string into a kernel slot object: { type:
+ * STRING, // 'object' or 'promise' id: Nat }
  *
- * @param {unknown} s  The string to be parsed, as described above.
- *
- * @returns {{type: 'object' | 'promise', id: number}} a local slot object corresponding to the parameter.
- *
- * @throws {Error} if the given string is syntactically incorrect.
+ * @param {unknown} s The string to be parsed, as described above.
+ * @returns {{ type: 'object' | 'promise'; id: number }} A local slot object
+ *   corresponding to the parameter.
+ * @throws {Error} If the given string is syntactically incorrect.
  */
 export function parseLocalSlot(s) {
   assert.typeof(s, 'string');
@@ -39,12 +35,10 @@ export function parseLocalSlot(s) {
 /**
  * Generate a local slot reference string given a type and id.
  *
- * @param {'object' | 'promise'} type  The type
- * @param {number} id    The id, a Nat.
- *
- * @returns {string} the corresponding local slot reference string.
- *
- * @throws {Error} if type is not one of the above known types.
+ * @param {'object' | 'promise'} type The type
+ * @param {number} id The id, a Nat.
+ * @returns {string} The corresponding local slot reference string.
+ * @throws {Error} If type is not one of the above known types.
  */
 export function makeLocalSlot(type, id) {
   if (type === 'object') {
@@ -57,15 +51,13 @@ export function makeLocalSlot(type, id) {
 }
 
 /**
- * Assert function to ensure that a local slot reference string refers to a
- * slot of a given type.
+ * Assert function to ensure that a local slot reference string refers to a slot
+ * of a given type.
  *
- * @param {'object' | 'promise'} type  The local slot type desired, a string.
- * @param {string} localSlot  The local slot reference string being tested
- *
- * @throws if localSlot is not of the given type or is malformed.
- *
+ * @param {'object' | 'promise'} type The local slot type desired, a string.
+ * @param {string} localSlot The local slot reference string being tested
  * @returns {void}
+ * @throws If localSlot is not of the given type or is malformed.
  */
 export function insistLocalType(type, localSlot) {
   assert(

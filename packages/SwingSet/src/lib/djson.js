@@ -1,13 +1,13 @@
 /**
- * djson is a drop-in replacement for the standard JSON class.  It presents the
+ * Djson is a drop-in replacement for the standard JSON class. It presents the
  * same API as JSON but serializes to a canonical representation so that the
  * JSON strings representing equivalent objects will compare as equal.
  */
 
 /**
- * Replacer function for JSON.stringify.  Replaces objects with new objects
- * with the same properties but added in sorted order so they'll be stringified
- * in sorted order.
+ * Replacer function for JSON.stringify. Replaces objects with new objects with
+ * the same properties but added in sorted order so they'll be stringified in
+ * sorted order.
  *
  * @param {any} _
  * @param {any} val

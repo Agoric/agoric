@@ -16,7 +16,7 @@ const DEFAULT_PROTOCOL_FEE_BP = 6n;
  * @param {ERef<ZoeService>} zoe
  * @param {bigint} poolFeeBP
  * @param {bigint} protocolFeeBP
- * @param {Invitation} poserInvitation - invitation for the question poser
+ * @param {Invitation} poserInvitation - Invitation for the question poser
  */
 const makeAmmParamManager = async (
   zoe,

@@ -11,19 +11,22 @@ const { details: X, quote: q } = assert;
 /**
  * Helper for the 90% of contracts that will have only a single set of
  * parameters. In order to support managed parameters, a contract only has to
- *   - define the parameter template, which includes name, type and value
- *   - call handleParamGovernance() to get wrapPublicFacet and wrapCreatorFacet
- *   - add any methods needed in the public and creator facets.
  *
- *  It's also crucial that the governed contract not interact with the product
- *  of wrapCreatorFacet(). The wrapped creatorFacet has the power to change
- *  parameter values, and the governance guarantees only hold if they're not
- *  used directly by the governed contract.
+ * - Define the parameter template, which includes name, type and value
+ * - Call handleParamGovernance() to get wrapPublicFacet and wrapCreatorFacet
+ * - Add any methods needed in the public and creator facets.
+ *
+ * It's also crucial that the governed contract not interact with the product of
+ * wrapCreatorFacet(). The wrapped creatorFacet has the power to change
+ * parameter values, and the governance guarantees only hold if they're not used
+ * directly by the governed contract.
  *
  * @template T
  * @param {ZCF<{
- * electionManager: VoteOnParamChange,
- * main: Record<string, ParamRecord> & {[CONTRACT_ELECTORATE]: ParamRecord<'invitation'>}
+ *   electionManager: VoteOnParamChange;
+ *   main: Record<string, ParamRecord> & {
+ *     [CONTRACT_ELECTORATE]: ParamRecord<'invitation'>;
+ *   };
  * }>} zcf
  * @param {import('./paramGovernance/typedParamManager').TypedParamManager<T>} paramManager
  */
@@ -82,7 +85,7 @@ const handleParamGovernance = (zcf, paramManager) => {
   /**
    * @template CF
    * @param {CF} originalCreatorFacet
-   * @returns { GovernedCreatorFacet<CF> }
+   * @returns {GovernedCreatorFacet<CF>}
    */
   const wrapCreatorFacet = originalCreatorFacet => {
     const limitedCreatorFacet = makeLimitedCreatorFacet(originalCreatorFacet);

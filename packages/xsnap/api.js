@@ -1,7 +1,8 @@
 /* eslint-disable max-classes-per-file */
 
-/** The version identifier for our meter type.
- * TODO Bump this whenever there's a change to metering semantics.
+/**
+ * The version identifier for our meter type. TODO Bump this whenever there's a
+ * change to metering semantics.
  */
 export const METER_TYPE = 'xs-meter-13';
 
@@ -30,8 +31,8 @@ export const ErrorMessage = {
 
 export class ErrorSignal extends Error {
   /**
-   * @param { string } signal
-   * @param {...string | undefined} params
+   * @param {string} signal
+   * @param {...(string | undefined)} params
    */
   constructor(signal, ...params) {
     super(...params);
@@ -42,8 +43,8 @@ export class ErrorSignal extends Error {
 
 export class ErrorCode extends Error {
   /**
-   * @param { number } code
-   * @param {...string | undefined} params
+   * @param {number} code
+   * @param {...(string | undefined)} params
    */
   constructor(code, ...params) {
     super(...params);

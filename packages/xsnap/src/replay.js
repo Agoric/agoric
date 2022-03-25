@@ -1,12 +1,11 @@
 /**
- * Replay usage:
- *   node replay.js <folder>...
+ * Replay usage: node replay.js <folder>...
  *
  * In case of more than one folder:
- *  1. Spawn based on 00000-options.json in the first folder
- *  2. For all folders but the last,
- *     replay steps 00001 to the first snapshot step.
- *  3. For the last folder, play steps 00001 to last.
+ *
+ * 1. Spawn based on 00000-options.json in the first folder
+ * 2. For all folders but the last, replay steps 00001 to the first snapshot step.
+ * 3. For the last folder, play steps 00001 to last.
  */
 // @ts-check
 
@@ -20,7 +19,7 @@ const { freeze } = Object;
 
 const encoder = new TextEncoder();
 
-/** @param { number } n */
+/** @param {number} n */
 const pad5 = n => `00000${n}`.slice(-5);
 
 /**
@@ -32,12 +31,12 @@ function makeSyncStorage(path, { writeFileSync }) {
   return freeze({
     /** @param {string} fn */
     file: fn => {
-      /** @param { Uint8Array } data */
+      /** @param {Uint8Array} data */
       const put = data => writeFileSync(new URL(fn, base).pathname, data);
 
       return freeze({
         put,
-        /** @param { string } txt */
+        /** @param {string} txt */
         putText: txt => put(encoder.encode(txt)),
       });
     },
@@ -47,8 +46,8 @@ function makeSyncStorage(path, { writeFileSync }) {
 /**
  * @param {string} path
  * @param {{
- *   readdirSync: typeof import('fs').readdirSync,
- *   readFileSync: typeof import('fs').readFileSync,
+ *   readdirSync: typeof import('fs').readdirSync;
+ *   readFileSync: typeof import('fs').readFileSync;
  * }} io
  */
 function makeSyncAccess(path, { readdirSync, readFileSync }) {
@@ -66,25 +65,21 @@ function makeSyncAccess(path, { readdirSync, readFileSync }) {
 }
 
 /**
- * Start an xsnap subprocess controller that records data
- * flowing to it for replay.
+ * Start an xsnap subprocess controller that records data flowing to it for replay.
  *
- * @param { XSnapOptions } options used
- *        to create the underlying xsnap subprocess. Note that
- *        options.handleCommand is wrapped in order to capture
- *        data sent to the process.
- * @param { string } folderPath where to store files of the form
- *        00000-options.json
- *        00001-evaluate.dat
- *        00002-issueCommand.dat
- *        00003-reply.dat
+ * @param {XSnapOptions} options Used to create the underlying xsnap subprocess.
+ *   Note that options.handleCommand is wrapped in order to capture data sent to
+ *   the process.
+ * @param {string} folderPath Where to store files of the form
+ *   00000-options.json 00001-evaluate.dat 00002-issueCommand.dat 00003-reply.dat
  * @param {{
- *   writeFileSync: typeof import('fs').writeFileSync,
+ *   writeFileSync: typeof import('fs').writeFileSync;
  * }} io
  * @returns {XSnap}
  *
- * @typedef {ReturnType <typeof import('./xsnap.js').xsnap>} XSnap
- * @typedef { import('./xsnap.js').XSnapOptions } XSnapOptions
+ * @typedef {ReturnType<typeof import('./xsnap.js').xsnap>} XSnap
+ *
+ * @typedef {import('./xsnap.js').XSnapOptions} XSnapOptions
  */
 export function recordXSnap(options, folderPath, { writeFileSync }) {
   const folder = makeSyncStorage(folderPath, { writeFileSync });
@@ -92,8 +87,8 @@ export function recordXSnap(options, folderPath, { writeFileSync }) {
   let ix = 0;
 
   /**
-   * @param { string } kind
-   * @param { string= } ext
+   * @param {string} kind
+   * @param {string} [ext]
    */
   const nextFile = (kind, ext = 'dat') => {
     const fn = `${pad5(ix)}-${kind}.${ext}`;
@@ -104,7 +99,7 @@ export function recordXSnap(options, folderPath, { writeFileSync }) {
 
   const { handleCommand: handle = msg => msg } = options;
 
-  /** @param { Uint8Array} msg */
+  /** @param {Uint8Array} msg */
   async function handleCommand(msg) {
     nextFile('command').put(msg);
     const result = await handle(msg);
@@ -139,7 +134,7 @@ export function recordXSnap(options, folderPath, { writeFileSync }) {
       nextFile('isReady');
       return it.isReady();
     },
-    /** @param { Uint8Array } msg */
+    /** @param {Uint8Array} msg */
     issueCommand: async msg => {
       nextFile('issueCommand').put(msg);
       return it.issueCommand(msg);
@@ -171,10 +166,10 @@ export function recordXSnap(options, folderPath, { writeFileSync }) {
  * Replay an xsnap subprocess from one or more folders of steps.
  *
  * @param {XSnapOptions} opts
- * @param { string[] } folders
+ * @param {string[]} folders
  * @param {{
- *   readdirSync: typeof import('fs').readdirSync,
- *   readFileSync: typeof import('fs').readFileSync,
+ *   readdirSync: typeof import('fs').readdirSync;
+ *   readFileSync: typeof import('fs').readFileSync;
  * }} io
  */
 export async function replayXSnap(
@@ -189,7 +184,7 @@ export async function replayXSnap(
     return r;
   }
 
-  /** @param { string } folder */
+  /** @param {string} folder */
   function start(folder) {
     const rd = makeSyncAccess(folder, { readdirSync, readFileSync });
     const [optionsFn] = rd.readdir();
@@ -204,8 +199,8 @@ export async function replayXSnap(
   const it = start(folders[0]);
 
   /**
-   * @param { ReturnType<typeof makeSyncAccess> } rd
-   * @param { string[] } steps
+   * @param {ReturnType<typeof makeSyncAccess>} rd
+   * @param {string[]} steps
    */
   async function runSteps(rd, steps) {
     const folder = rd.path;
@@ -277,13 +272,12 @@ export async function replayXSnap(
 }
 
 /**
- *
  * @param {string[]} argv
  * @param {{
- *   spawn: typeof import('child_process').spawn,
- *   osType: typeof import('os').type,
- *   readdirSync: typeof import('fs').readdirSync,
- *   readFileSync: typeof import('fs').readFileSync,
+ *   spawn: typeof import('child_process').spawn;
+ *   osType: typeof import('os').type;
+ *   readdirSync: typeof import('fs').readdirSync;
+ *   readFileSync: typeof import('fs').readFileSync;
  * }} io
  */
 export async function main(argv, { spawn, osType, readdirSync, readFileSync }) {
@@ -291,7 +285,7 @@ export async function main(argv, { spawn, osType, readdirSync, readFileSync }) {
   if (!folders) {
     throw Error(`usage: replay folder...`);
   }
-  /** @type { import('./xsnap.js').XSnapOptions } */
+  /** @type {import('./xsnap.js').XSnapOptions} */
   const options = { spawn, os: osType(), stdout: 'inherit', stderr: 'inherit' };
   await replayXSnap(options, folders, { readdirSync, readFileSync });
 }

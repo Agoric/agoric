@@ -3,7 +3,7 @@
 import { assert } from '@agoric/assert';
 
 export function foreverPolicy() {
-  /** @type { RunPolicy } */
+  /** @type {RunPolicy} */
   return harden({
     vatCreated(_details) {
       return true;
@@ -27,7 +27,7 @@ export function crankCounter(
 ) {
   let cranks = 0;
   let vats = 0;
-  /** @type { RunPolicy } */
+  /** @type {RunPolicy} */
   const policy = harden({
     vatCreated() {
       vats += 1;
@@ -52,7 +52,7 @@ export function crankCounter(
 export function computronCounter(limit) {
   assert.typeof(limit, 'bigint');
   let total = 0n;
-  /** @type { RunPolicy } */
+  /** @type {RunPolicy} */
   const policy = harden({
     vatCreated() {
       total += 100000n; // pretend vat creation takes 100k computrons
@@ -79,7 +79,7 @@ export function computronCounter(limit) {
 
 export function wallClockWaiter(seconds) {
   const timeout = Date.now() + 1000 * seconds;
-  /** @type { RunPolicy } */
+  /** @type {RunPolicy} */
   const policy = harden({
     vatCreated: () => Date.now() < timeout,
     crankComplete: () => Date.now() < timeout,

@@ -5,25 +5,28 @@ import { Far } from '@endo/marshal';
 import { E } from '@endo/eventual-send';
 import { makeWeakStore } from '@agoric/store';
 
-/** @typedef { import('@agoric/swingset-vat').BundleID} BundleID */
+/** @typedef {import('@agoric/swingset-vat').BundleID} BundleID */
 
-/**
- * @param {GetBundleCapForID} getBundleCapForID
- */
+/** @param {GetBundleCapForID} getBundleCapForID */
 export const makeInstallationStorage = getBundleCapForID => {
-  /** @type {WeakStore<Installation, { bundleCap: BundleCap, bundleID: BundleID }>} */
+  /**
+   * @type {WeakStore<
+   *   Installation,
+   *   { bundleCap: BundleCap; bundleID: BundleID }
+   * >}
+   */
   const installationsBundleCap = makeWeakStore('installationsBundleCap');
   /** @type {WeakStore<Installation, SourceBundle>} */
   const installationsBundle = makeWeakStore('installationsBundle');
 
   /**
-   * Create an installation from a bundle ID or a full bundle. If we are
-   * given a bundle ID, wait for the corresponding code bundle to be received
-   * by the swingset kernel, then store its bundlecap. The code is currently
-   * evaluated each time it is used to make a new instance of a contract.
-   * When SwingSet supports zygotes, the code will be evaluated once when
-   * creating a zcfZygote, then the start() function will be called each time
-   * an instance is started.
+   * Create an installation from a bundle ID or a full bundle. If we are given a
+   * bundle ID, wait for the corresponding code bundle to be received by the
+   * swingset kernel, then store its bundlecap. The code is currently evaluated
+   * each time it is used to make a new instance of a contract. When SwingSet
+   * supports zygotes, the code will be evaluated once when creating a
+   * zcfZygote, then the start() function will be called each time an instance
+   * is started.
    */
 
   /** @type {InstallBundle} */

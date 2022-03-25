@@ -17,10 +17,9 @@ import { insistStorageAPI } from '../../lib/storageAPI.js';
  * Given two iterators over ordered sequences, produce a new iterator that will
  * iterate in order over the merged output of the two iterators.
  *
- * @param { Iterator } it1
- * @param { Iterator } it2
- *
- * @yields any
+ * @param {Iterator} it1
+ * @param {Iterator} it2
+ * @yields Any
  */
 function* mergeSortedIterators(it1, it2) {
   let v1 = it1.next();
@@ -54,14 +53,12 @@ function* mergeSortedIterators(it1, it2) {
  * Create and return a crank buffer, which wraps a storage object with logic
  * that buffers any mutations until told to commit them.
  *
- * @param {*} kvStore  The storage object that this crank buffer will be based on.
- * @param {CreateSHA256}  createSHA256
- * @param { (key: string) => boolean } isConsensusKey
- * @returns {*} an object {
- * crankBuffer,  // crank buffer as described, wrapping `kvStore`
- * commitCrank,  // function to save buffered mutations to `kvStore`
- * abortCrank,   // function to discard buffered mutations
- * }
+ * @param {any} kvStore The storage object that this crank buffer will be based on.
+ * @param {CreateSHA256} createSHA256
+ * @param {(key: string) => boolean} isConsensusKey
+ * @returns {any} An object { crankBuffer, // crank buffer as described,
+ *   wrapping `kvStore` commitCrank, // function to save buffered mutations to
+ *   `kvStore` abortCrank, // function to discard buffered mutations }
  */
 export function buildCrankBuffer(
   kvStore,
@@ -172,10 +169,9 @@ export function buildCrankBuffer(
   };
 
   /**
-   * Flush any buffered mutations to the underlying storage, and update the
-   * activityhash.
+   * Flush any buffered mutations to the underlying storage, and update the activityhash.
    *
-   * @returns { { crankhash: string, activityhash: string } }
+   * @returns {{ crankhash: string; activityhash: string }}
    */
   function commitCrank() {
     for (const [key, value] of additions) {
@@ -204,9 +200,7 @@ export function buildCrankBuffer(
     return { crankhash, activityhash };
   }
 
-  /**
-   * Discard any buffered mutations.
-   */
+  /** Discard any buffered mutations. */
   function abortCrank() {
     additions.clear();
     deletions.clear();
@@ -216,9 +210,7 @@ export function buildCrankBuffer(
   return harden({ crankBuffer, commitCrank, abortCrank });
 }
 
-/**
- * @param {KVStore} kvStore
- */
+/** @param {KVStore} kvStore */
 export function addHelpers(kvStore) {
   // these functions are built on top of the DB interface
   insistStorageAPI(kvStore);

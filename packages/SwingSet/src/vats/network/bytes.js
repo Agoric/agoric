@@ -38,10 +38,10 @@ export function bytesToString(bytes) {
  * Base64, as specified in https://tools.ietf.org/html/rfc4648#section-4
  *
  * @param {Data} data
- * @returns {string} base64 encoding
+ * @returns {string} Base64 encoding
  */
 export function dataToBase64(data) {
-  /** @type {Uint8Array?} */
+  /** @type {Uint8Array | null} */
   let bytes;
   if (typeof data === 'string') {
     bytes = new Uint8Array(data.length);
@@ -58,7 +58,7 @@ export function dataToBase64(data) {
  * Decodes a string into base64.
  *
  * @param {string} string Base64-encoded string
- * @returns {Bytes} decoded bytes
+ * @returns {Bytes} Decoded bytes
  */
 export function base64ToBytes(string) {
   return toBytes(decodeBase64(string));

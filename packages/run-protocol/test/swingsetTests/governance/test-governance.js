@@ -17,7 +17,11 @@ import {
 const filename = new URL(import.meta.url).pathname;
 const dirname = path.dirname(filename);
 
-/** @type {import('ava').TestInterface<{ data: { kernelBundles: any, config: any } }>} */
+/**
+ * @type {import('ava').TestInterface<{
+ *   data: { kernelBundles: any; config: any };
+ * }>}
+ */
 /** @type {any} */
 const test = rawTest;
 

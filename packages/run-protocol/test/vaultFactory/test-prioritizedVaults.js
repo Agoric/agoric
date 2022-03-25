@@ -29,10 +29,7 @@ function makeCollector() {
   /** @type {Ratio[]} */
   const ratios = [];
 
-  /**
-   *
-   * @param {[string, InnerVault]} record
-   */
+  /** @param {[string, InnerVault]} record */
   function lookForRatio([_, vault]) {
     ratios.push(currentDebtToCollateral(vault));
   }

@@ -23,7 +23,7 @@ const BIGGER_INT = BigInt(Number.MAX_VALUE) + 1n;
 /**
  * Records to be inserted in this order. Jumbled to verify insertion order invariance.
  *
- * @type {Array<[string, bigint, bigint]>}
+ * @type {[string, bigint, bigint][]}
  */
 const fixture = [
   ['vault-E', 40n, 100n],

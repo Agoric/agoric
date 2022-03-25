@@ -14,11 +14,11 @@ directly.
 /**
  * Helper function to initialize the appropriate storage objects for the kernel
  *
- * @param {boolean} initialize  If true, initialize a new store; if false, open an existing one
- * @param {string|undefined} kernelStateDBDir Pathname to the LMDB database
- *    directory or undefined to create a volatile in-memory store
- *
- * @returns {HostStore} a host store as described by the parameters
+ * @param {boolean} initialize If true, initialize a new store; if false, open
+ *   an existing one
+ * @param {string | undefined} kernelStateDBDir Pathname to the LMDB database
+ *   directory or undefined to create a volatile in-memory store
+ * @returns {HostStore} A host store as described by the parameters
  */
 export function provideHostStorage(
   initialize = true,

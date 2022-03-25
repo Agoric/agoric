@@ -3,35 +3,36 @@
 import { assert, details as X, q } from '@agoric/assert';
 
 /**
- * This module and its fraternal sibling legacyWeakMap exist only to
- * ease a transition to the modern `store` system, are deprecated,
- * and will eventually disappear. They are needed for now to support
- * some of the uses of the old behavior that are not compatible with
- * the new. The constraint imposed by the new is that only passables can
- * be used as values, and only keys (roughly, structures, aka comparables)
- * can be used as values.
+ * This module and its fraternal sibling legacyWeakMap exist only to ease a
+ * transition to the modern `store` system, are deprecated, and will eventually
+ * disappear. They are needed for now to support some of the uses of the old
+ * behavior that are not compatible with the new. The constraint imposed by the
+ * new is that only passables can be used as values, and only keys (roughly,
+ * structures, aka comparables) can be used as values.
  *
- * See https://github.com/Agoric/agoric-sdk/pull/3567
- * TODO Once that PR is merged, link to the documents rather than the PRs.
+ * See https://github.com/Agoric/agoric-sdk/pull/3567 TODO Once that PR is
+ * merged, link to the documents rather than the PRs.
  *
  * Each of these non-conforming uses should be marked with a
+ *
  * ```js
  * // Legacy because...
  * ```
- * comment explaining the problem inhibiting conversion to the new
- * system. Some of these problems as of this writing:
- *    * A promiseKit used as a value, even though a promiseKit is not
- *      a passable. Solutions are to make it a passable, or to convert
- *      the container back to a conventional JavaScript Map.
- *    * A mutable array used as a value, that is subsequently mutated.
- *      Freezing the array wouldn't work of course because it would break
- *      the subsequent mutation. Using a far object wrapping an array would
- *      likely work fine.
  *
- * @deprecated switch to ScalarMap if possible, Map otherwise
+ * Comment explaining the problem inhibiting conversion to the new system. Some
+ * of these problems as of this writing:
+ *
+ * - A promiseKit used as a value, even though a promiseKit is not a passable.
+ *   Solutions are to make it a passable, or to convert the container back to a
+ *   conventional JavaScript Map.
+ * - A mutable array used as a value, that is subsequently mutated. Freezing the
+ *   array wouldn't work of course because it would break the subsequent
+ *   mutation. Using a far object wrapping an array would likely work fine.
+ *
+ * @deprecated Switch to ScalarMap if possible, Map otherwise
  * @template K,V
- * @param {string} [keyName='key'] - the column name for the key
- * @returns {LegacyMap<K,V>}
+ * @param {string} [keyName='key'] - The column name for the key
+ * @returns {LegacyMap<K, V>}
  */
 export const makeLegacyMap = (keyName = 'key') => {
   const m = new Map();

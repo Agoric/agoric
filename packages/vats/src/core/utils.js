@@ -7,7 +7,12 @@ import { makeNameHubKit } from '../nameHub.js';
 const { entries, fromEntries, keys } = Object;
 const { details: X, quote: q } = assert;
 
-/** @type { <K extends string, T, U>(obj: Record<K, T>, f: (k: K, v: T) => [K, U]) => Record<K, U>} */
+/**
+ * @type {<K extends string, T, U>(
+ *   obj: Record<K, T>,
+ *   f: (k: K, v: T) => [K, U],
+ * ) => Record<K, U>}
+ */
 const mapEntries = (obj, f) =>
   // @ts-ignore entries() loses key type
   fromEntries(entries(obj).map(([p, v]) => f(p, v)));
@@ -56,7 +61,7 @@ export const agoricNamesReserved = harden({
   },
 });
 
-/** @type { FeeIssuerConfig } */
+/** @type {FeeIssuerConfig} */
 export const feeIssuerConfig = {
   name: CENTRAL_ISSUER_NAME,
   assetKind: AssetKind.NAT,
@@ -67,7 +72,7 @@ export const feeIssuerConfig = {
  * Wire up a remote between the comms vat and vattp.
  *
  * @param {string} addr
- * @param {{ vats: { vattp: VattpVat, comms: CommsVatRoot }}} powers
+ * @param {{ vats: { vattp: VattpVat; comms: CommsVatRoot } }} powers
  */
 export const addRemote = async (addr, { vats: { comms, vattp } }) => {
   const { transmitter, setReceiver } = await E(vattp).addRemote(addr);
@@ -76,8 +81,8 @@ export const addRemote = async (addr, { vats: { comms, vattp } }) => {
 harden(addRemote);
 
 /**
- * @param {Array<(...args) => Record<string, unknown>>} builders
- * @param  {...unknown} args
+ * @param {((...args) => Record<string, unknown>)[]} builders
+ * @param {...unknown} args
  * @returns {Record<string, unknown>}
  */
 export const callProperties = (builders, ...args) =>
@@ -139,7 +144,7 @@ export const makePromiseSpace = (log = (..._args) => {}) => {
 harden(makePromiseSpace);
 
 /**
- * @param {unknown} template true or vat name string or recursive object
+ * @param {unknown} template True or vat name string or recursive object
  * @param {unknown} specimen
  */
 export const extract = (template, specimen) => {
@@ -179,8 +184,8 @@ export const extract = (template, specimen) => {
 harden(extract);
 
 /**
- * @param {unknown} permit the permit supplied by the manifest
- * @param {unknown} allPowers the powers to attenuate
+ * @param {unknown} permit The permit supplied by the manifest
+ * @param {unknown} allPowers The powers to attenuate
  */
 export const extractPowers = (permit, allPowers) => {
   if (typeof permit === 'object' && permit !== null) {
@@ -197,22 +202,19 @@ harden(extractPowers);
 
 /**
  * Make the well-known agoricNames namespace so that we can
- * E(home.agoricNames).lookup('issuer', 'RUN') and likewise
- * for brand, installation, instance, etc.
+ * E(home.agoricNames).lookup('issuer', 'RUN') and likewise for brand,
+ * installation, instance, etc.
  *
  * @param {typeof console.log} [log]
- * @param {Record<string, Record<string, unknown>>} reserved a property
- *   for each of issuer, brand, etc. with a value whose keys are names
- *   to reserve.
+ * @param {Record<string, Record<string, unknown>>} reserved A property for each
+ *   of issuer, brand, etc. with a value whose keys are names to reserve.
  *
- * For static typing and integrating with the bootstrap permit system,
- * return { produce, consume } spaces rather than NameAdmins.
- *
+ *   For static typing and integrating with the bootstrap permit system, return {
+ *   produce, consume } spaces rather than NameAdmins.
  * @returns {{
- *   agoricNames: NameHub,
- *   spaces: WellKnownSpaces,
+ *   agoricNames: NameHub;
+ *   spaces: WellKnownSpaces;
  * }}
- *
  */
 export const makeAgoricNamesAccess = (
   log = () => {}, // console.debug
@@ -235,7 +237,7 @@ export const makeAgoricNamesAccess = (
     });
     return [key, { produce, consume }];
   });
-  const typedSpaces = /** @type { WellKnownSpaces } */ (
+  const typedSpaces = /** @type {WellKnownSpaces} */ (
     /** @type {any} */ (spaces)
   );
   return {

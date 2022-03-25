@@ -8,14 +8,14 @@ function makeCallbackRegistry(callbacks) {
   const todo = new Set(Object.keys(callbacks));
   return harden({
     /**
-     * Robustly wrap a method with a callbacks[method] function, if defined.  We
+     * Robustly wrap a method with a callbacks[method] function, if defined. We
      * incur no runtime overhead if the given callback method isn't defined.
      *
-     * @param {string} method wrap with callbacks[method]
-     * @param {(...args: Array<unknown>) => unknown} impl the original
-     * implementation of the method
-     * @returns {(...args: Array<unknown>) => unknown} the wrapped method if the
-     * callback is defined, or original method if not
+     * @param {string} method Wrap with callbacks[method]
+     * @param {(...args: unknown[]) => unknown} impl The original implementation
+     *   of the method
+     * @returns {(...args: unknown[]) => unknown} The wrapped method if the
+     *   callback is defined, or original method if not
      */
     registerCallback(method, impl) {
       todo.delete(method);
@@ -58,8 +58,8 @@ function makeCallbackRegistry(callbacks) {
     /**
      * Declare that all the methods have been registered.
      *
-     * @param {string} errorUnusedMsg message to display if there are callback
-     * names that don't correspond to a registration
+     * @param {string} errorUnusedMsg Message to display if there are callback
+     *   names that don't correspond to a registration
      */
     doneRegistering(errorUnusedMsg = `Unrecognized callback names:`) {
       const cbNames = [...todo.keys()];
@@ -72,10 +72,9 @@ function makeCallbackRegistry(callbacks) {
 }
 
 /**
- *
- * @param {*} slogCallbacks
- * @param {*} makeConsole
- * @returns { KernelSlog }
+ * @param {any} slogCallbacks
+ * @param {any} makeConsole
+ * @returns {KernelSlog}
  */
 export function makeDummySlogger(slogCallbacks, makeConsole) {
   const { registerCallback: reg, doneRegistering } =
@@ -102,10 +101,9 @@ export function makeDummySlogger(slogCallbacks, makeConsole) {
 }
 
 /**
- *
- * @param {*} slogCallbacks
- * @param {*} writeObj
- * @returns { KernelSlog }
+ * @param {any} slogCallbacks
+ * @param {any} writeObj
+ * @returns {KernelSlog}
  */
 export function makeSlogger(slogCallbacks, writeObj) {
   const write = writeObj ? e => writeObj(e) : () => 0;

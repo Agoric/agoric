@@ -1,19 +1,23 @@
 /**
  * @typedef {[string, string][]} Multiaddr
- * @typedef {string} Textaddr An address string formatted as in https://github.com/multiformats/multiaddr
  *
- * Here is the difference between Textaddr and Multiaddr:
+ * @typedef {string} Textaddr An address string formatted as in
+ *   https://github.com/multiformats/multiaddr
  *
- * unspecified port on local ibc interface: /if/ibc0 [['if', 'ibc0']]
- * specific local port: /if/ibc0/ordered/transfer [['if', 'ibc0'], ['ordered', 'transfer']]
+ *   Here is the difference between Textaddr and Multiaddr:
  *
- * remote pointer to chain: /dnsaddr/ibc.testnet.agoric.com/ordered/transfer
- *   [['dnsaddr', 'ibc.testnet.agoric.com'], ['ordered', 'transfer']]
- * resolve step to another pointer: /dnsaddr/rpc.testnet.agoric.com/ibc/testnet-1.19.0/gci/4bc8d.../ordered/transfer
- *   [['dnsaddr', 'rpc.testnet.agoric.com'], ['ibc', 'testnet-1.19.0'], ['gci', '4bc8d...'], ['ordered', 'transfer']]
- * resolve to the individual interfaces: /ip4/172.17.0.4/tcp/26657/tendermint/0.33/ibc/testnet-1.19.0/gci/4bc8d.../ordered/transfer
- *   [['ip4', '172.17.0.4'], ['tcp', '26657'], ['tendermint', '0.33'],
- *    ['ibc', 'testnet-1.19.0'], ['gci', '4bc8d...'], ['ordered', 'transfer']]
+ *   Unspecified port on local ibc interface: /if/ibc0 [['if', 'ibc0']] specific
+ *   local port: /if/ibc0/ordered/transfer [['if', 'ibc0'], ['ordered', 'transfer']]
+ *
+ *   Remote pointer to chain: /dnsaddr/ibc.testnet.agoric.com/ordered/transfer
+ *   [['dnsaddr', 'ibc.testnet.agoric.com'], ['ordered', 'transfer']] resolve
+ *   step to another pointer:
+ *   /dnsaddr/rpc.testnet.agoric.com/ibc/testnet-1.19.0/gci/4bc8d.../ordered/transfer
+ *   [['dnsaddr', 'rpc.testnet.agoric.com'], ['ibc', 'testnet-1.19.0'], ['gci',
+ *   '4bc8d...'], ['ordered', 'transfer']] resolve to the individual interfaces:
+ *   /ip4/172.17.0.4/tcp/26657/tendermint/0.33/ibc/testnet-1.19.0/gci/4bc8d.../ordered/transfer
+ *   [['ip4', '172.17.0.4'], ['tcp', '26657'], ['tendermint', '0.33'], ['ibc',
+ *   'testnet-1.19.0'], ['gci', '4bc8d...'], ['ordered', 'transfer']]
  */
 
 /**
@@ -28,9 +32,7 @@ export function parse(ma) {
   }
   let s = ma;
   let m;
-  /**
-   * @type {[string, string][]}
-   */
+  /** @type {[string, string][]} */
   const acc = [];
   // eslint-disable-next-line no-cond-assign
   while ((m = s.match(/^\/([^/]*)(\/([^/]*))?/))) {
@@ -52,7 +54,7 @@ export function parse(ma) {
 /**
  * Transform a parsed multiaddr to a string.
  *
- * @param {Multiaddr|Textaddr} ma
+ * @param {Multiaddr | Textaddr} ma
  * @returns {Textaddr}
  */
 export function unparse(ma) {

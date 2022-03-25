@@ -18,9 +18,9 @@ const { details: X, quote: q } = assert;
  * @param {(k: K) => boolean} checkHas
  * @param {RankCompare} compare
  * @param {(k: K, v?: V) => void} assertOkToAdd
- * @param {((k: K) => void)=} assertOkToDelete
- * @param {string=} keyName
- * @returns {CurrentKeysKit<K,V>}
+ * @param {(k: K) => void} [assertOkToDelete]
+ * @param {string} [keyName]
+ * @returns {CurrentKeysKit<K, V>}
  */
 export const makeCurrentKeysKit = (
   getRawKeys,

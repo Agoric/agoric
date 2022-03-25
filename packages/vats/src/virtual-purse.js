@@ -13,35 +13,38 @@ import '@agoric/notifier/exported.js';
 
 /**
  * @typedef {Object} VirtualPurseController The object that determines the
- * remote behaviour of a virtual purse.
+ *   remote behaviour of a virtual purse.
  * @property {(amount: Amount) => Promise<void>} pushAmount Tell the controller
- * to send an amount from "us" to the "other side".  This should resolve on
- * success and reject on failure.  IT IS IMPORTANT NEVER TO FAIL in normal
- * operation.  That will irrecoverably lose assets.
+ *   to send an amount from "us" to the "other side". This should resolve on
+ *   success and reject on failure. IT IS IMPORTANT NEVER TO FAIL in normal
+ *   operation. That will irrecoverably lose assets.
  * @property {(amount: Amount) => Promise<void>} pullAmount Tell the controller
- * to send an amount from the "other side" to "us".  This should resolve on
- * success and reject on failure.  We can still recover assets from failure to
- * pull.
+ *   to send an amount from the "other side" to "us". This should resolve on
+ *   success and reject on failure. We can still recover assets from failure to pull.
  * @property {(brand: Brand) => AsyncIterable<Amount>} getBalances Return the
- * current balance iterable for a given brand.
+ *   current balance iterable for a given brand.
  */
 
 /**
- * @param {ERef<VirtualPurseController>} vpc the controller that represents the
- * "other side" of this purse.
- * @param {{ issuer: ERef<Issuer>, brand: Brand, mint?: ERef<Mint>,
- * escrowPurse?: ERef<Purse> }} kit
- * the contents of the issuer kit for "us".
+ * @param {ERef<VirtualPurseController>} vpc The controller that represents the
+ *   "other side" of this purse.
+ * @param {{
+ *   issuer: ERef<Issuer>;
+ *   brand: Brand;
+ *   mint?: ERef<Mint>;
+ *   escrowPurse?: ERef<Purse>;
+ * }} kit
+ *   The contents of the issuer kit for "us".
  *
- * If the mint is not specified, then the virtual purse will escrow local assets
- * instead of minting/burning them.  That is a better option in general, but
- * escrow doesn't support the case where the "other side" is also minting
- * assets... our escrow purse may not have enough assets in it to redeem the
- * ones that are sent from the "other side".
+ *   If the mint is not specified, then the virtual purse will escrow local assets
+ *   instead of minting/burning them. That is a better option in general, but
+ *   escrow doesn't support the case where the "other side" is also minting
+ *   assets... our escrow purse may not have enough assets in it to redeem the
+ *   ones that are sent from the "other side".
  * @returns {EOnly<Purse>} This is not just a Purse because it plays
- * fast-and-loose with the synchronous Purse interface.  So, the consumer of
- * this result must only interact with the virtual purse via eventual-send (to
- * conceal the methods that are returning promises instead of synchronously).
+ *   fast-and-loose with the synchronous Purse interface. So, the consumer of
+ *   this result must only interact with the virtual purse via eventual-send (to
+ *   conceal the methods that are returning promises instead of synchronously).
  */
 function makeVirtualPurse(vpc, kit) {
   const { brand, issuer, mint, escrowPurse } = kit;

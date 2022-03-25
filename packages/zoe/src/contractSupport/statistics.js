@@ -10,9 +10,9 @@
  * Calculate the median of a set of samples
  *
  * @template T
- * @param {Array<T>} samples the input measurements
+ * @param {T[]} samples The input measurements
  * @param {TypedMath<T>} math
- * @returns {T=} the median (undefined if no samples)
+ * @returns {T} The median (undefined if no samples)
  */
 export const calculateMedian = (samples, math) => {
   const sorted = samples.sort((a, b) => {

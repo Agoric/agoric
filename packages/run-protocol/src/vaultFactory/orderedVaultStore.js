@@ -8,9 +8,9 @@ import { fromVaultKey, toVaultKey } from './storeUtils.js';
  *
  * Designed to be replaceable by naked Collections API when composite keys are available.
  *
- * In this module debts are encoded as the inverse quotient (collateral over debt) so that
- * greater collaterization sorts after lower. (Higher debt-to-collateral come
- * first.)
+ * In this module debts are encoded as the inverse quotient (collateral over
+ * debt) so that greater collaterization sorts after lower. (Higher
+ * debt-to-collateral come first.)
  */
 
 /** @typedef {import('./vault').InnerVault} InnerVault */
@@ -22,7 +22,6 @@ export const makeOrderedVaultStore = () => {
   const store = makeScalarBigMapStore('orderedVaultStore', { durable: false });
 
   /**
-   *
    * @param {string} vaultId
    * @param {InnerVault} vault
    */
@@ -35,7 +34,6 @@ export const makeOrderedVaultStore = () => {
   };
 
   /**
-   *
    * @param {string} key
    * @returns {InnerVault}
    */

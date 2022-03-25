@@ -20,9 +20,8 @@ import { CONTRACT_ELECTORATE } from './governParam.js';
 const { details: X } = assert;
 
 /**
- *
  * @param {AnyParamManager} paramManager
- * @param {{[CONTRACT_ELECTORATE]: ParamRecord<'invitation'>}} governedParams
+ * @param {{ [CONTRACT_ELECTORATE]: ParamRecord<'invitation'> }} governedParams
  */
 const assertElectorateMatches = (paramManager, governedParams) => {
   const managerElectorate =
@@ -42,7 +41,10 @@ const assertElectorateMatches = (paramManager, governedParams) => {
  * @property {(name: string, value: Brand) => ParamManagerBuilder} addBrand
  * @property {(name: string, value: Installation) => ParamManagerBuilder} addInstallation
  * @property {(name: string, value: Instance) => ParamManagerBuilder} addInstance
- * @property {(name: string, value: Invitation) => Promise<ParamManagerBuilder>} addInvitation
+ * @property {(
+ *   name: string,
+ *   value: Invitation,
+ * ) => Promise<ParamManagerBuilder>} addInvitation
  * @property {(name: string, value: bigint) => ParamManagerBuilder} addNat
  * @property {(name: string, value: Ratio) => ParamManagerBuilder} addRatio
  * @property {(name: string, value: string) => ParamManagerBuilder} addString
@@ -50,9 +52,7 @@ const assertElectorateMatches = (paramManager, governedParams) => {
  * @property {() => AnyParamManager} build
  */
 
-/**
- * @param {ERef<ZoeService>} [zoe]
- */
+/** @param {ERef<ZoeService>} [zoe] */
 const makeParamManagerBuilder = zoe => {
   const namesToParams = makeStore('Parameter Name');
   const { publication, subscription } = makeSubscriptionKit();
@@ -62,12 +62,11 @@ const makeParamManagerBuilder = zoe => {
   /**
    * Support for parameters that are copy objects
    *
-   * @see buildInvitationParam
-   *
    * @param {Keyword} name
    * @param {unknown} value
    * @param {(val) => void} assertion
    * @param {ParamType} type
+   * @see buildInvitationParam
    */
   const buildCopyParam = (name, value, assertion, type) => {
     let current;
@@ -106,7 +105,13 @@ const makeParamManagerBuilder = zoe => {
 
   // HANDLERS FOR EACH PARAMETER TYPE /////////////////////////////////////////
 
-  /** @type {(name: string, value: Amount, builder: ParamManagerBuilder) => ParamManagerBuilder} */
+  /**
+   * @type {(
+   *   name: string,
+   *   value: Amount,
+   *   builder: ParamManagerBuilder,
+   * ) => ParamManagerBuilder}
+   */
   const addAmount = (name, value, builder) => {
     const assertAmount = a => {
       assert(a.brand, `Expected an Amount for ${name}, got "${a}"`);
@@ -116,28 +121,52 @@ const makeParamManagerBuilder = zoe => {
     return builder;
   };
 
-  /** @type {(name: string, value: Brand, builder: ParamManagerBuilder) => ParamManagerBuilder} */
+  /**
+   * @type {(
+   *   name: string,
+   *   value: Brand,
+   *   builder: ParamManagerBuilder,
+   * ) => ParamManagerBuilder}
+   */
   const addBrand = (name, value, builder) => {
     const assertBrand = makeLooksLikeBrand(name);
     buildCopyParam(name, value, assertBrand, ParamTypes.BRAND);
     return builder;
   };
 
-  /** @type {(name: string, value: Installation<unknown>, builder: ParamManagerBuilder) => ParamManagerBuilder} */
+  /**
+   * @type {(
+   *   name: string,
+   *   value: Installation<unknown>,
+   *   builder: ParamManagerBuilder,
+   * ) => ParamManagerBuilder}
+   */
   const addInstallation = (name, value, builder) => {
     const assertInstallation = makeAssertInstallation(name);
     buildCopyParam(name, value, assertInstallation, ParamTypes.INSTALLATION);
     return builder;
   };
 
-  /** @type {(name: string, value: Instance, builder: ParamManagerBuilder) => ParamManagerBuilder} */
+  /**
+   * @type {(
+   *   name: string,
+   *   value: Instance,
+   *   builder: ParamManagerBuilder,
+   * ) => ParamManagerBuilder}
+   */
   const addInstance = (name, value, builder) => {
     const assertInstance = makeAssertInstance(name);
     buildCopyParam(name, value, assertInstance, ParamTypes.INSTANCE);
     return builder;
   };
 
-  /** @type {(name: string, value: bigint, builder: ParamManagerBuilder) => ParamManagerBuilder} */
+  /**
+   * @type {(
+   *   name: string,
+   *   value: bigint,
+   *   builder: ParamManagerBuilder,
+   * ) => ParamManagerBuilder}
+   */
   const addNat = (name, value, builder) => {
     const assertNat = v => {
       assert.typeof(v, 'bigint');
@@ -148,21 +177,39 @@ const makeParamManagerBuilder = zoe => {
     return builder;
   };
 
-  /** @type {(name: string, value: Ratio, builder: ParamManagerBuilder) => ParamManagerBuilder} */
+  /**
+   * @type {(
+   *   name: string,
+   *   value: Ratio,
+   *   builder: ParamManagerBuilder,
+   * ) => ParamManagerBuilder}
+   */
   const addRatio = (name, value, builder) => {
     const assertBrandedRatio = makeAssertBrandedRatio(name, value);
     buildCopyParam(name, value, assertBrandedRatio, ParamTypes.RATIO);
     return builder;
   };
 
-  /** @type {(name: string, value: string, builder: ParamManagerBuilder) => ParamManagerBuilder} */
+  /**
+   * @type {(
+   *   name: string,
+   *   value: string,
+   *   builder: ParamManagerBuilder,
+   * ) => ParamManagerBuilder}
+   */
   const addString = (name, value, builder) => {
     const assertString = v => assert.typeof(v, 'string');
     buildCopyParam(name, value, assertString, ParamTypes.STRING);
     return builder;
   };
 
-  /** @type {(name: string, value: any, builder: ParamManagerBuilder) => ParamManagerBuilder} */
+  /**
+   * @type {(
+   *   name: string,
+   *   value: any,
+   *   builder: ParamManagerBuilder,
+   * ) => ParamManagerBuilder}
+   */
   const addUnknown = (name, value, builder) => {
     const assertUnknown = _v => true;
     buildCopyParam(name, value, assertUnknown, ParamTypes.UNKNOWN);
@@ -234,7 +281,13 @@ const makeParamManagerBuilder = zoe => {
     return name;
   };
 
-  /** @type {(name: string, value: Invitation, builder: ParamManagerBuilder) => Promise<ParamManagerBuilder>} */
+  /**
+   * @type {(
+   *   name: string,
+   *   value: Invitation,
+   *   builder: ParamManagerBuilder,
+   * ) => Promise<ParamManagerBuilder>}
+   */
   const addInvitation = async (name, value, builder) => {
     assertKeywordName(name);
     await Promise.all([
@@ -264,7 +317,7 @@ const makeParamManagerBuilder = zoe => {
   };
 
   const getParams = () => {
-    /** @type {Record<Keyword,ParamRecord>} */
+    /** @type {Record<Keyword, ParamRecord>} */
     const descriptions = {};
     for (const [name, param] of namesToParams.entries()) {
       descriptions[name] = param.makeDescription();

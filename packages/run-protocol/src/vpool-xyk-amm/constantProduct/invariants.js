@@ -6,12 +6,12 @@ import { AmountMath } from '@agoric/ertp';
 import { natSafeMath } from '@agoric/zoe/src/contractSupport/index.js';
 
 /**
- * xy <= (x + deltaX)(y - deltaY)
+ * Xy <= (x + deltaX)(y - deltaY)
  *
- * @param {Amount} x - the amount of Brand X in pool, xPoolAllocation
- * @param {Amount} y - the amount of Brand Y in pool, yPoolAllocation
- * @param {Amount} deltaX - the amount of Brand X to be added
- * @param {Amount} deltaY - the amount of Brand Y to be taken out
+ * @param {Amount} x - The amount of Brand X in pool, xPoolAllocation
+ * @param {Amount} y - The amount of Brand Y in pool, yPoolAllocation
+ * @param {Amount} deltaX - The amount of Brand X to be added
+ * @param {Amount} deltaY - The amount of Brand Y to be taken out
  */
 export const checkKInvariantSellingX = (x, y, deltaX, deltaY) => {
   const oldK = natSafeMath.multiply(x.value, y.value);
@@ -22,12 +22,12 @@ export const checkKInvariantSellingX = (x, y, deltaX, deltaY) => {
 };
 
 /**
- * xy <= (x + deltaX)(y - deltaY)
+ * Xy <= (x + deltaX)(y - deltaY)
  *
- * @param {Amount} x - the amount of Brand X in pool, xPoolAllocation
- * @param {Amount} y - the amount of Brand Y in pool, yPoolAllocation
- * @param {Amount} deltaX - the amount of Brand X to be added
- * @param {Amount} deltaY - the amount of Brand Y to be taken out
+ * @param {Amount} x - The amount of Brand X in pool, xPoolAllocation
+ * @param {Amount} y - The amount of Brand Y in pool, yPoolAllocation
+ * @param {Amount} deltaX - The amount of Brand X to be added
+ * @param {Amount} deltaY - The amount of Brand Y to be taken out
  */
 export const assertKInvariantSellingX = (x, y, deltaX, deltaY) => {
   assert(

@@ -18,9 +18,7 @@ const trace = makeTracer('LIQ');
  *
  * @param {ZCF} zcf
  * @param {InnerVault} innerVault
- * @param {(losses: AmountKeywordRecord,
- *             zcfSeat: ZCFSeat
- *            ) => void} burnLosses
+ * @param {(losses: AmountKeywordRecord, zcfSeat: ZCFSeat) => void} burnLosses
  * @param {LiquidationStrategy} strategy
  * @param {Brand} collateralBrand
  * @returns {Promise<InnerVault>}

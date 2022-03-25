@@ -19,12 +19,12 @@ async function makeController(managerType, runtimeOptions) {
   return c;
 }
 
-/** @type { (body: string, slots?: string[]) => SwingSetCapData } */
+/** @type {(body: string, slots?: string[]) => SwingSetCapData} */
 function capdata(body, slots = []) {
   return harden({ body, slots });
 }
 
-/** @type { (args: unknown[], slots?: string[]) => SwingSetCapData } */
+/** @type {(args: unknown[], slots?: string[]) => SwingSetCapData} */
 function capargs(args, slots = []) {
   return capdata(JSON.stringify(args), slots);
 }

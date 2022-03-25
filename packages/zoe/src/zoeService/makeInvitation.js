@@ -2,9 +2,7 @@
 import { assert, details as X } from '@agoric/assert';
 import { AmountMath, makeIssuerKit, AssetKind } from '@agoric/ertp';
 
-/**
- * @param {ShutdownWithFailure | undefined} shutdownZoeVat
- */
+/** @param {ShutdownWithFailure | undefined} shutdownZoeVat */
 export const createInvitationKit = (shutdownZoeVat = undefined) => {
   const invitationKit = makeIssuerKit(
     'Zoe Invitation',

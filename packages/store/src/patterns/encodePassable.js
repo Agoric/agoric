@@ -261,12 +261,10 @@ const decodeTagged = (encoded, decodePassable) => {
  * @property {(error: Object) => string} encodeError
  */
 
-/**
- * @typedef {Partial<EncodeOptionsRecord>} EncodeOptions
- */
+/** @typedef {Partial<EncodeOptionsRecord>} EncodeOptions */
 
 /**
- * @param {EncodeOptions=} encodeOptions
+ * @param {EncodeOptions} [encodeOptions]
  * @returns {(passable: Passable) => string}
  */
 export const makeEncodePassable = ({
@@ -349,12 +347,10 @@ harden(makeEncodePassable);
  * @property {(encodedError: string) => Error} decodeError
  */
 
-/**
- * @typedef {Partial<DecodeOptionsRecord>} DecodeOptions
- */
+/** @typedef {Partial<DecodeOptionsRecord>} DecodeOptions */
 
 /**
- * @param {DecodeOptions=} decodeOptions
+ * @param {DecodeOptions} [decodeOptions]
  * @returns {(encoded: string) => Passable}
  */
 export const makeDecodePassable = ({

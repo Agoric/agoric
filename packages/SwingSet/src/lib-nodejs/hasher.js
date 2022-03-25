@@ -3,14 +3,13 @@ import { assert } from '@agoric/assert';
 import { createHash } from 'crypto';
 
 /**
- * @typedef { (initial: string?) => {
- *             add: (more: string) => void,
- *             finish: () => string,
- *            }
- *          } CreateSHA256
+ * @typedef {(initial: ?string) => {
+ *   add: (more: string) => void;
+ *   finish: () => string;
+ * }} CreateSHA256
  */
 
-/** @type { CreateSHA256 } */
+/** @type {CreateSHA256} */
 function createSHA256(initial = undefined) {
   const hash = createHash('sha256');
   let done = false;

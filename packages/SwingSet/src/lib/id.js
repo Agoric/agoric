@@ -14,12 +14,10 @@ import { assert, details as X } from '@agoric/assert';
  * Assert function to ensure that something expected to be a vat ID string
  * actually is one.
  *
- * @param {string} s  The (alleged) string to be tested.
- *
- * @throws {Error} if, upon inspection, the parameter is not a string or is not a
- *    well-formed vat ID as described above.
- *
+ * @param {string} s The (alleged) string to be tested.
  * @returns {void}
+ * @throws {Error} If, upon inspection, the parameter is not a string or is not
+ *   a well-formed vat ID as described above.
  */
 export function insistVatID(s) {
   try {
@@ -34,9 +32,8 @@ export function insistVatID(s) {
 /**
  * Generate a vat ID string given an index.
  *
- * @param {bigint | number} index  The index.
- *
- * @returns {string} a vat ID string of the form "vNN" where NN is the index.
+ * @param {bigint | number} index The index.
+ * @returns {string} A vat ID string of the form "vNN" where NN is the index.
  */
 export function makeVatID(index) {
   return `v${Nat(index)}`;
@@ -46,12 +43,10 @@ export function makeVatID(index) {
  * Assert function to ensure that something expected to be a device ID string
  * actually is one.
  *
- * @param {unknown} s  The (alleged) string to be tested.
- *
- * @throws {Error} if, upon inspection, the parameter is not a string or is not a
- *    well-formed device ID as described above.
- *
+ * @param {unknown} s The (alleged) string to be tested.
  * @returns {void}
+ * @throws {Error} If, upon inspection, the parameter is not a string or is not
+ *   a well-formed device ID as described above.
  */
 export function insistDeviceID(s) {
   try {
@@ -66,9 +61,8 @@ export function insistDeviceID(s) {
 /**
  * Generate a device ID string given an index.
  *
- * @param {bigint | number} index  The index.
- *
- * @returns {string} a device ID string of the form "dNN" where NN is the index.
+ * @param {bigint | number} index The index.
+ * @returns {string} A device ID string of the form "dNN" where NN is the index.
  */
 export function makeDeviceID(index) {
   return `d${Nat(index)}`;
@@ -77,14 +71,10 @@ export function makeDeviceID(index) {
 /**
  * Parse a vat or device ID string into its constituent parts.
  *
- * @param {string} s  The string to be parsed.
- *
- * @returns {{ type: 'vat' | 'device', id: number}} an object: {
- *    type: STRING, // 'vat' or 'device', accordingly
- *    id: Nat       // the index
- *  }
- *
- * @throws {Error} if the parameter is not a string or is malformed.
+ * @param {string} s The string to be parsed.
+ * @returns {{ type: 'vat' | 'device'; id: number }} An object: { type: STRING,
+ *   // 'vat' or 'device', accordingly id: Nat // the index }
+ * @throws {Error} If the parameter is not a string or is malformed.
  */
 export function parseVatOrDeviceID(s) {
   assert.typeof(

@@ -13,12 +13,16 @@ import { Far } from '@endo/far';
 /**
  * @typedef {Object} BridgeDevice
  * @property {(dstID: string, obj: any) => any} callOutbound
- * @property {(handler: { inbound: (srcID: string, obj: any) => void}) => void} registerInboundHandler
+ * @property {(handler: {
+ *   inbound: (srcID: string, obj: any) => void;
+ * }) => void} registerInboundHandler
  */
 
 /**
- * @typedef {Object} BridgeHandler An object that can receive messages from the bridge device
- * @property {(srcId: string, obj: any) => Promise<any>} fromBridge Handle an inbound message
+ * @typedef {Object} BridgeHandler An object that can receive messages from the
+ *   bridge device
+ * @property {(srcId: string, obj: any) => Promise<any>} fromBridge Handle an
+ *   inbound message
  *
  * @typedef {Object} BridgeManager The object to manage this bridge
  * @property {(dstID: string, obj: any) => any} toBridge
@@ -32,12 +36,10 @@ import { Far } from '@endo/far';
  * @param {typeof import('@endo/far').E} E The eventual sender
  * @param {DProxy} D The device sender
  * @param {Device<BridgeDevice>} bridgeDevice The bridge to manage
- * @returns {BridgeManager} admin facet for this handler
+ * @returns {BridgeManager} Admin facet for this handler
  */
 export function makeBridgeManager(E, D, bridgeDevice) {
-  /**
-   * @type {Store<string, BridgeHandler>}
-   */
+  /** @type {Store<string, BridgeHandler>} */
   const srcHandlers = makeStore('srcID');
 
   function bridgeInbound(srcID, obj) {

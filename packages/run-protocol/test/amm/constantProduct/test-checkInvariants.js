@@ -16,7 +16,7 @@ import { getXY } from '../../../src/vpool-xyk-amm/constantProduct/getXY.js';
  * @typedef {Object} SwapPriceArgs
  * @property {Amount} amountGiven
  * @property {PoolAllocation} poolAllocation
- * @property {Amount=} amountWanted
+ * @property {Amount} [amountWanted]
  * @property {Ratio} protocolFeeRatio
  * @property {Ratio} poolFeeRatio
  */

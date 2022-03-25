@@ -33,15 +33,11 @@ const makeAsyncIteratorFromSubscription = sub =>
     Symbol.asyncIterator
   ]();
 
-/**
- * @param {import('ava').Assertions} t
- */
+/** @param {import('ava').Assertions} t */
 async function testRemotePeg(t) {
   t.plan(20);
 
-  /**
-   * @type {PromiseRecord<import('@agoric/ertp').DepositFacet>}
-   */
+  /** @type {PromiseRecord<import('@agoric/ertp').DepositFacet>} */
   const { promise: localDepositFacet, resolve: resolveLocalDepositFacet } =
     makePromiseKit();
   const fakeBoard = Far('fakeBoard', {
@@ -74,9 +70,7 @@ async function testRemotePeg(t) {
     { board: fakeBoard, namesByAddress: fakeNamesByAddress },
   );
 
-  /**
-   * @type {import('../src/pegasus').Pegasus}
-   */
+  /** @type {import('../src/pegasus').Pegasus} */
   const pegasus = publicAPI;
   const network = makeNetworkProtocol(makeLoopbackProtocolHandler());
 
@@ -86,7 +80,7 @@ async function testRemotePeg(t) {
   /**
    * Pretend we're Gaia.
    *
-   * @type {import('@agoric/swingset-vat/src/vats/network').Connection?}
+   * @type {?import('@agoric/swingset-vat/src/vats/network').Connection}
    */
   let gaiaConnection;
   E(portP).addListener(

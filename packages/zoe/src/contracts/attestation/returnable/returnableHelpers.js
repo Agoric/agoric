@@ -5,7 +5,7 @@ import { AmountMath } from '@agoric/ertp';
 /**
  * Add a lien to an amount for an address.
  *
- * @param {Store<Address,Amount>} store
+ * @param {Store<Address, Amount>} store
  * @param {Address} address
  * @param {Amount} amountToLien
  */

@@ -8,7 +8,7 @@ import { makeStore } from '@agoric/store';
 // simoleanMint.
 
 export function buildRootObject(_vatPowers) {
-  /** @type {Store<string, { mint: Mint, brand: Brand}>} */
+  /** @type {Store<string, { mint: Mint; brand: Brand }>} */
   const mintsAndBrands = makeStore('issuerName');
 
   const api = Far('api', {
@@ -17,22 +17,22 @@ export function buildRootObject(_vatPowers) {
       const { mint } = mintsAndBrands.get(issuerName);
       return mint.getIssuer();
     },
-    /** @param { string[] } issuerNames */
+    /** @param {string[]} issuerNames */
     getIssuers: issuerNames => issuerNames.map(api.getIssuer),
 
     /**
-     * NOTE: a mint is ability to mint new digital assets,
-     * a very powerful authority that is usually closely held.
-     * But this mint is for demo / faucet purposes.
+     * NOTE: a mint is ability to mint new digital assets, a very powerful
+     * authority that is usually closely held. But this mint is for demo /
+     * faucet purposes.
      *
-     * @param { string } name
+     * @param {string} name
      */
     getMint: name => mintsAndBrands.get(name).mint,
-    /** @param { string[] } issuerNames */
+    /** @param {string[]} issuerNames */
     getMints: issuerNames => issuerNames.map(api.getMint),
     /**
-     * @param {*} issuerNameSingular For example, 'moola', or 'simolean'
-     * @param  {[AssetKind?, DisplayInfo?]} issuerArgs
+     * @param {any} issuerNameSingular For example, 'moola', or 'simolean'
+     * @param {[AssetKind?, DisplayInfo?]} issuerArgs
      */
     makeMintAndIssuer: (issuerNameSingular, ...issuerArgs) => {
       const { mint, issuer, brand } = makeIssuerKit(

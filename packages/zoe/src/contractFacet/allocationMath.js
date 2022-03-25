@@ -3,10 +3,7 @@ import { assert, details as X } from '@agoric/assert';
 import { AmountMath } from '@agoric/ertp';
 
 /**
- * @callback Operation
- *
- * An operation such as add or subtract.
- *
+ * @callback Operation An operation such as add or subtract.
  * @param {Amount | undefined} amount
  * @param {Amount | undefined} diff
  * @param {Keyword} keyword
@@ -14,9 +11,8 @@ import { AmountMath } from '@agoric/ertp';
  */
 
 /**
- * Add amounts to an allocation, or subtract amounts from an
- * allocation, by keyword. The operationFn performs the actual adding
- * or subtracting.
+ * Add amounts to an allocation, or subtract amounts from an allocation, by
+ * keyword. The operationFn performs the actual adding or subtracting.
  *
  * @param {Allocation} allocation
  * @param {AmountKeywordRecord} amountKeywordRecord

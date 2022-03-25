@@ -31,7 +31,7 @@ const transcript1 = [
 test('record: evaluate and issueCommand', async t => {
   const opts = options(io);
 
-  /** @type { Map<string, Uint8Array> } */
+  /** @type {Map<string, Uint8Array>} */
   const files = new Map();
   const writeFileSync = (fn, bs) => files.set(fn, bs);
 
@@ -52,7 +52,7 @@ test('record: evaluate and issueCommand', async t => {
 test('replay', async t => {
   const opts = options(io);
 
-  /** @type { Map<string, Uint8Array> } */
+  /** @type {Map<string, Uint8Array>} */
   const files = new Map(transcript1.map(([k, v]) => [k, encode(v)]));
   const mockFS = {
     readdirSync: (_folder, _opts) => [...files.keys()],
@@ -69,11 +69,11 @@ test('replay', async t => {
     },
   };
 
-  /** @typedef { any } FileMethods too much trouble to get exactly right. */
+  /** @typedef {any} FileMethods Too much trouble to get exactly right. */
   const done = await replayXSnap(
     opts,
     ['/xs-test/'],
-    /** @type { FileMethods } */ (mockFS),
+    /** @type {FileMethods} */ (mockFS),
   );
 
   t.deepEqual(done, [

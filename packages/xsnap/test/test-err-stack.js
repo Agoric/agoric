@@ -43,7 +43,7 @@ async function makeWorker() {
   `);
 
   return {
-    /** @param { string } src */
+    /** @param {string} src */
     async run(src) {
       const { reply } = await vat.issueStringCommand(src);
       return JSON.parse(reply);

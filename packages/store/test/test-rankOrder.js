@@ -15,17 +15,12 @@ import { assertionPassed } from './test-store.js';
 
 const { quote: q } = assert;
 
-/**
- * The only elements with identity. Everything else should be equal
- * by contents.
- */
+/** The only elements with identity. Everything else should be equal by contents. */
 const alice = Far('alice', {});
 const bob = Far('bob', {});
 const carol = Far('carol', {});
 
-/**
- * A factory for arbitrary passables
- */
+/** A factory for arbitrary passables */
 const { passable } = fc.letrec(tie => {
   return {
     passable: tie('dag').map(x => harden(x)),
@@ -177,9 +172,7 @@ test('compareRank is transitive', async t => {
   );
 });
 
-/**
- * An unordered copyArray of some passables
- */
+/** An unordered copyArray of some passables */
 export const sample = harden([
   makeTagged('copySet', [
     ['b', 3],
@@ -239,9 +232,7 @@ export const sample = harden([
 const rejectedP = Promise.reject(new Error('broken'));
 rejectedP.catch(() => {}); // Suppress unhandled rejection warning/error
 
-/**
- * The correctly stable rank sorting of `sample`
- */
+/** The correctly stable rank sorting of `sample` */
 const sortedSample = harden([
   // All errors are tied.
   new Error('different'),

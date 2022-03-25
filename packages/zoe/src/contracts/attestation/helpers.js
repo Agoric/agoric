@@ -8,8 +8,8 @@ import { assertProposalShape } from '../../contractSupport/index.js';
 const { details: X } = assert;
 
 /**
- * Validate that the address is a string and that the amount is a
- * valid Amount of the right brand. Coerce the amount and return it.
+ * Validate that the address is a string and that the amount is a valid Amount
+ * of the right brand. Coerce the amount and return it.
  *
  * @param {Brand} externalBrand
  * @param {Address} address

@@ -31,16 +31,16 @@ const noop = () => {};
 
 const mock = {
   devices: {
-    command: /** @type { any } */ ({ registerInboundHandler: noop }),
-    mailbox: /** @type { any } */ ({
+    command: /** @type {any} */ ({ registerInboundHandler: noop }),
+    mailbox: /** @type {any} */ ({
       registerInboundHandler: noop,
     }),
-    vatAdmin: /** @type { any } */ ({}),
-    timer: /** @type { any } */ ({}),
-    plugin: /** @type { any } */ ({ registerReceiver: noop }),
+    vatAdmin: /** @type {any} */ ({}),
+    timer: /** @type {any} */ ({}),
+    plugin: /** @type {any} */ ({ registerReceiver: noop }),
   },
   vats: {
-    vattp: /** @type { any } */ (
+    vattp: /** @type {any} */ (
       Far('vattp', {
         registerMailboxDevice: noop,
         addRemote: () => ({}),
@@ -125,7 +125,7 @@ const testRole = (ROLE, governanceActions) => {
 
     const vats = {
       ...mock.vats,
-      vatAdmin: /** @type { any } */ ({
+      vatAdmin: /** @type {any} */ ({
         createVatAdminService: () =>
           Far('vatAdminSvc', { getNamedBundleCap, createVat, createVatByName }),
       }),

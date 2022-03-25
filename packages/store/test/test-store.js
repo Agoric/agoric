@@ -13,7 +13,8 @@ import { makeScalarWeakMapStore } from '../src/stores/scalarWeakMapStore.js';
 import '../src/types.js';
 
 /**
- * Simulate ava v4 "assertions now return a boolean indicating whether they passed" behavior
+ * Simulate ava v4 "assertions now return a boolean indicating whether they
+ * passed" behavior
  * https://github.com/avajs/ava/releases/tag/v4.0.0#:~:text=Assertions%20as%20type%20guards
  *
  * @param {boolean | undefined} assertionResult

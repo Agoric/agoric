@@ -18,8 +18,8 @@ import '../exported.js';
  * @typedef {Object} FakePriceAuthorityOptions
  * @property {Brand} actualBrandIn
  * @property {Brand} actualBrandOut
- * @property {Array<number>} [priceList]
- * @property {Array<[number, number]>} [tradeList]
+ * @property {number[]} [priceList]
+ * @property {[number, number][]} [tradeList]
  * @property {ERef<TimerService>} timer
  * @property {RelativeTime} [quoteInterval]
  * @property {ERef<Mint>} [quoteMint]
@@ -85,23 +85,22 @@ export async function makeFakePriceAuthority(options) {
   const quoteBrand = await E(quoteIssuer).getBrand();
 
   /**
-   * @type {NotifierRecord<Timestamp>} We need to have a notifier driven by the
-   * TimerService because if the timer pushes updates to individual
-   * QuoteNotifiers, we have a dependency inversion and the timer can never know
-   * when the QuoteNotifier goes away.  (Don't even mention WeakRefs... they're
-   * not exposed to userspace under Swingset because they're nondeterministic.)
+   * @type {NotifierRecord<Timestamp>} We Need to have a notifier driven by the
+   *   TimerService because if the timer pushes updates to individual
+   *   QuoteNotifiers, we have a dependency inversion and the timer can never
+   *   know when the QuoteNotifier goes away. (Don't even mention WeakRefs...
+   *   they're not exposed to userspace under Swingset because they're nondeterministic.)
    *
-   * TODO It would be desirable to add a timestamp notifier interface to the
-   * TimerService https://github.com/Agoric/agoric-sdk/issues/2002
+   *   TODO It would be desirable to add a timestamp notifier interface to the
+   *   TimerService https://github.com/Agoric/agoric-sdk/issues/2002
    *
-   * Caveat: even if we had a timestamp notifier, we can't use it for triggers
-   * yet unless we rewrite our manualTimer tests not to depend on when exactly a
-   * trigger has been fired for a given tick.
+   *   Caveat: even if we had a timestamp notifier, we can't use it for triggers
+   *   yet unless we rewrite our manualTimer tests not to depend on when exactly
+   *   a trigger has been fired for a given tick.
    */
   const { notifier: ticker, updater: tickUpdater } = makeNotifierKit();
 
   /**
-   *
    * @param {Amount} amountIn
    * @param {Brand} brandOut
    * @param {Timestamp} quoteTime

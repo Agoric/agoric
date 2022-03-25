@@ -46,22 +46,18 @@ const validateQuestionFromCounter = async (zoe, electorate, voteCounter) => {
  */
 
 /**
- * ContractGovernor is an ElectionManager that starts up a contract and hands its
- * own creator a facet that allows them to call for votes on parameters that
+ * ContractGovernor is an ElectionManager that starts up a contract and hands
+ * its own creator a facet that allows them to call for votes on parameters that
  * were declared by the contract.
  *
- * The terms for this contract include the Timer, Electorate and
- * the Installation to be started, as well as an issuerKeywordRecord or terms
- * needed by the governed contract. Those details for the governed contract are
+ * The terms for this contract include the Timer, Electorate and the
+ * Installation to be started, as well as an issuerKeywordRecord or terms needed
+ * by the governed contract. Those details for the governed contract are
  * included in this contract's terms as a "governed" record. If the contract
  * expects privateArgs, those can be supplied as well.
  *
- * terms = {
- *    timer,
- *    electorateInstance,
- *    governedContractInstallation,
- *    governed: { issuerKeywordRecord, terms, privateArgs, },
- * };
+ * Terms = { timer, electorateInstance, governedContractInstallation, governed:
+ * { issuerKeywordRecord, terms, privateArgs, }, };
  *
  * The governedContract is responsible for supplying getParamMgrRetriever() in
  * its creatorFacet. getParamMgrRetriever() takes a ParamSpecification, which
@@ -70,28 +66,32 @@ const validateQuestionFromCounter = async (zoe, electorate, voteCounter) => {
  * only one) and the parameterName. The interpretation of ParamSpecification is
  * up to the contract.
  *
- * The contractGovernor creatorFacet includes voteOnParamChange(),
- * which is used to create questions that will automatically update
- * contract parameters if passed. This facet will usually be closely held. The
- * creatorFacet can also be used to retrieve the governed instance, publicFacet,
- * and it's creatorFacet with voteOnParamChange() omitted.
+ * The contractGovernor creatorFacet includes voteOnParamChange(), which is used
+ * to create questions that will automatically update contract parameters if
+ * passed. This facet will usually be closely held. The creatorFacet can also be
+ * used to retrieve the governed instance, publicFacet, and it's creatorFacet
+ * with voteOnParamChange() omitted.
  *
  * The governed contract's terms include the instance of this (governing)
- * contract (as electionManager) so clients will be able to look up the state
- * of the governed parameters.
+ * contract (as electionManager) so clients will be able to look up the state of
+ * the governed parameters.
  *
  * @template {object} PF Public facet of governed
  * @template {ContractPowerfulCreatorFacet} CF Creator facet of governed
- * @type {ContractStartFn<GovernorPublic, GovernedContractFacetAccess<PF>,{
- *   timer: TimerService,
- *   electorateInstance: Instance,
- *   governedContractInstallation: Installation<CF>,
- *   governed: {
- *     issuerKeywordRecord: IssuerKeywordRecord,
- *     terms: {main: {[CONTRACT_ELECTORATE]: Amount<'set'>}},
- *     privateArgs: unknown,
+ * @type {ContractStartFn<
+ *   GovernorPublic,
+ *   GovernedContractFacetAccess<PF>,
+ *   {
+ *     timer: TimerService;
+ *     electorateInstance: Instance;
+ *     governedContractInstallation: Installation<CF>;
+ *     governed: {
+ *       issuerKeywordRecord: IssuerKeywordRecord;
+ *       terms: { main: { [CONTRACT_ELECTORATE]: Amount<'set'> } };
+ *       privateArgs: unknown;
+ *     };
  *   }
- * }>}
+ * >}
  */
 const start = async zcf => {
   const zoe = zcf.getZoeService();

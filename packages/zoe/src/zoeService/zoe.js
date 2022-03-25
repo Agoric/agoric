@@ -3,11 +3,10 @@
 /**
  * Zoe uses ERTP, the Electronic Rights Transfer Protocol
  *
- * A note about ERTP AssetKinds: Within Zoe, the assetKind of
- * validated amounts must be consistent with the brand's assetKind.
- * This is stricter than the validation provided by AmountMath
- * currently. When the brand has an assetKind itself, AmountMath will
- * validate that.
+ * A note about ERTP AssetKinds: Within Zoe, the assetKind of validated amounts
+ * must be consistent with the brand's assetKind. This is stricter than the
+ * validation provided by AmountMath currently. When the brand has an assetKind
+ * itself, AmountMath will validate that.
  */
 import '@agoric/ertp/exported.js';
 import '@agoric/store/exported.js';
@@ -30,16 +29,15 @@ import { createFeeMint } from './feeMint.js';
 /**
  * Create an instance of Zoe.
  *
- * @param {VatAdminSvc} vatAdminSvc - The vatAdmin Service, which carries the power
- * to create a new vat.
- * @param {ShutdownWithFailure} shutdownZoeVat - a function to
- * shutdown the Zoe Vat. This function needs to use the vatPowers
- * available to a vat.
+ * @param {VatAdminSvc} vatAdminSvc - The vatAdmin Service, which carries the
+ *   power to create a new vat.
+ * @param {ShutdownWithFailure} shutdownZoeVat - A function to shutdown the Zoe
+ *   Vat. This function needs to use the vatPowers available to a vat.
  * @param {FeeIssuerConfig} feeIssuerConfig
  * @param {ZCFSpec} [zcfSpec] - Pointer to the contract facet bundle.
  * @returns {{
- *   zoeService: ZoeService,
- *   feeMintAccess: FeeMintAccess,
+ *   zoeService: ZoeService;
+ *   feeMintAccess: FeeMintAccess;
  * }}
  */
 const makeZoeKit = (
@@ -127,14 +125,10 @@ const makeZoeKit = (
     installBundleID,
     startInstance,
     offer,
-    /**
-     * @deprecated Useless but provided during transition to keep old
-     * code from breaking.
-     */
+    /** @deprecated Useless but provided during transition to keep old code from breaking. */
     makeFeePurse: async () => feeIssuer.makeEmptyPurse(),
     /**
-     * @deprecated Useless but provided during transition to keep old
-     * code from breaking.
+     * @deprecated Useless but provided during transition to keep old code from breaking.
      * @param {ERef<Purse>} _defaultFeePurse
      */
     bindDefaultFeePurse: _defaultFeePurse => zoeService,

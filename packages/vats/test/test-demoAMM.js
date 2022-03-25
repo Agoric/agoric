@@ -14,7 +14,7 @@ import {
   splitAllCentralPayments,
 } from '../src/demoIssuers.js';
 
-/** @param { bigint } n */
+/** @param {bigint} n */
 const showRUN = n => `${decimal(n, 6)} RUN`;
 
 test('urun -> RUN formatting test utility', t => {

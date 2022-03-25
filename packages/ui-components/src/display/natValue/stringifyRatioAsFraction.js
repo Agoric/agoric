@@ -12,7 +12,7 @@ const PLACES_TO_SHOW = 2;
 
 /**
  * @param {Ratio} ratio
- * @param {(brand: Brand) => number | undefined } getDecimalPlaces
+ * @param {(brand: Brand) => number | undefined} getDecimalPlaces
  * @param {number} [numPlacesToShow]
  * @param {number} [denomPlacesToShow]
  * @returns {string}

@@ -7,12 +7,12 @@ import osTop from 'os';
 
 const { freeze } = Object;
 
-/** @param { string } path */
+/** @param {string} path */
 const asset = path => new URL(path, import.meta.url).pathname;
 
 const ModdableSDK = {
   MODDABLE: asset('../moddable'),
-  /** @type { Record<string, { path: string, make?: string }>} */
+  /** @type {Record<string, { path: string; make?: string }>} */
   platforms: {
     Linux: { path: 'lin' },
     Darwin: { path: 'mac' },
@@ -26,11 +26,11 @@ const ModdableSDK = {
  *
  * @param {string} command
  * @param {{
- *   spawn: typeof import('child_process').spawn,
+ *   spawn: typeof import('child_process').spawn;
  * }} io
  */
 function makeCLI(command, { spawn }) {
-  /** @param { import('child_process').ChildProcess } child */
+  /** @param {import('child_process').ChildProcess} child */
   const wait = child =>
     new Promise((resolve, reject) => {
       child.on('close', () => {
@@ -49,7 +49,7 @@ function makeCLI(command, { spawn }) {
   return freeze({
     /**
      * @param {string[]} args
-     * @param {{ cwd?: string }=} opts
+     * @param {{ cwd?: string }} [opts]
      */
     run: (args, opts) => {
       const { cwd = '.' } = opts || {};
@@ -61,7 +61,7 @@ function makeCLI(command, { spawn }) {
     },
     /**
      * @param {string[]} args
-     * @param {{ cwd?: string }=} opts
+     * @param {{ cwd?: string }} [opts]
      */
     pipe: (args, opts) => {
       const { cwd = '.' } = opts || {};
@@ -85,7 +85,7 @@ function makeCLI(command, { spawn }) {
  * @param {{ git: ReturnType<typeof makeCLI> }} io
  */
 const makeSubmodule = (path, repoUrl, { git }) => {
-  /** @param { string } text */
+  /** @param {string} text */
   const parseStatus = text =>
     text
       .split('\n')
@@ -110,13 +110,13 @@ const makeSubmodule = (path, repoUrl, { git }) => {
   return freeze({
     path,
     clone: async () => git.run(['clone', repoUrl, path]),
-    /** @param { string } commitHash */
+    /** @param {string} commitHash */
     checkout: async commitHash =>
       git.run(['checkout', commitHash], { cwd: path }),
     init: async () => git.run(['submodule', 'update', '--init', '--checkout']),
     status: async () =>
       git.pipe(['submodule', 'status', path]).then(parseStatus),
-    /** @param { string } leaf */
+    /** @param {string} leaf */
     config: async leaf => {
       // git rev-parse --show-toplevel
       const top = await git
@@ -140,18 +140,18 @@ const makeSubmodule = (path, repoUrl, { git }) => {
 };
 
 /**
- * @param { string[] } args
+ * @param {string[]} args
  * @param {{
- *   env: Record<string, string | undefined>,
- *   stdout: typeof process.stdout,
- *   spawn: typeof import('child_process').spawn,
+ *   env: Record<string, string | undefined>;
+ *   stdout: typeof process.stdout;
+ *   spawn: typeof import('child_process').spawn;
  *   fs: {
- *     existsSync: typeof import('fs').existsSync,
- *     readFile: typeof import('fs').promises.readFile,
- *   },
+ *     existsSync: typeof import('fs').existsSync;
+ *     readFile: typeof import('fs').promises.readFile;
+ *   };
  *   os: {
- *     type: typeof import('os').type,
- *   }
+ *     type: typeof import('os').type;
+ *   };
  * }} io
  */
 async function main(args, { env, stdout, spawn, fs, os }) {

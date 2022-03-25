@@ -5,7 +5,7 @@
  * It is hooked into the existing ag-solo by that script.
  *
  * Most of the interface defined by this code is only used within this dapp
- * itself.  The parts that are relied on by other dapps are documented in the
+ * itself. The parts that are relied on by other dapps are documented in the
  * types.js file.
  */
 import { E } from '@endo/eventual-send';
@@ -26,9 +26,9 @@ export function buildRootObject(vatPowers) {
   let walletRoot;
   /** @type {WalletAdminFacet} */
   let walletAdmin;
-  /** @type {Array<PursesJSONState>} */
+  /** @type {PursesJSONState[]} */
   let pursesState = [];
-  /** @type {Array<OfferState>} */
+  /** @type {OfferState[]} */
   let inboxState = [];
   let http;
 
@@ -124,14 +124,13 @@ export function buildRootObject(vatPowers) {
 
   /**
    * Create a bridge that a dapp can use to interact with the wallet without
-   * compromising the wallet's integrity.  This is the preferred way to use the
-   * wallet.
+   * compromising the wallet's integrity. This is the preferred way to use the wallet.
    *
-   * @param {() => Promise<void>} approve return a promise that resolves only
-   * when the dapp is allowed to interact with the wallet.
-   * @param {string} dappOrigin the Web origin of the connecting dapp
-   * @param {Record<string, any>} meta metadata for this dapp's connection
-   * @returns {WalletBridge} the bridge bound to a specific dapp
+   * @param {() => Promise<void>} approve Return a promise that resolves only
+   *   when the dapp is allowed to interact with the wallet.
+   * @param {string} dappOrigin The Web origin of the connecting dapp
+   * @param {Record<string, any>} meta Metadata for this dapp's connection
+   * @returns {WalletBridge} The bridge bound to a specific dapp
    */
   const makeBridge = (approve, dappOrigin, meta = {}) => {
     async function* makeApprovedNotifier(sourceNotifier) {
@@ -231,7 +230,7 @@ export function buildRootObject(vatPowers) {
   };
 
   /**
-   * This bridge doesn't wait for approvals before acting.  This can be obtained
+   * This bridge doesn't wait for approvals before acting. This can be obtained
    * from `home.wallet~.getBridge()` in the REPL as a WalletBridge to grab and
    * use for testing and exploration without having to think about approvals.
    *
@@ -356,14 +355,14 @@ export function buildRootObject(vatPowers) {
   function getBridgeURLHandler() {
     return Far('bridgeURLHandler', {
       /**
-       * @typedef {Object} WalletOtherSide
-       * The callbacks from a CapTP wallet client.
-       * @property {(dappOrigin: string,
-       *             suggestedDappPetname: Petname
+       * @typedef {Object} WalletOtherSide The callbacks from a CapTP wallet client.
+       * @property {(
+       *   dappOrigin: string,
+       *   suggestedDappPetname: Petname,
        * ) => void} needDappApproval
-       * Let the other side know that this dapp is still unapproved
-       * @property {(dappOrigin: string) => void} dappApproved
-       * Let the other side know that the dapp has been approved
+       *   Let the other side know that this dapp is still unapproved
+       * @property {(dappOrigin: string) => void} dappApproved Let the other
+       *   side know that the dapp has been approved
        */
 
       /**
@@ -403,16 +402,16 @@ export function buildRootObject(vatPowers) {
 
       /**
        * This is the legacy WebSocket wrapper for an origin-specific
-       * WalletBridge.  This wrapper is accessible from a dapp UI via the
+       * WalletBridge. This wrapper is accessible from a dapp UI via the
        * wallet-bridge.html iframe.
        *
        * This custom RPC protocol must maintain compatibility with existing
-       * dapps.  It would be preferable not to add to it either, since that
-       * means more legacy code that must be supported.
+       * dapps. It would be preferable not to add to it either, since that means
+       * more legacy code that must be supported.
        *
        * We hope to migrate dapps to use the ocap interfaces (such as
        * getBootstrap() above) so that they can interact with the WalletBridge
-       * methods directly.  Then we would like to deprecate this handler.
+       * methods directly. Then we would like to deprecate this handler.
        */
       getCommandHandler() {
         return Far('commandHandler', {

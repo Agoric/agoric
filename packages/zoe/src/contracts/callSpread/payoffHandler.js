@@ -10,11 +10,11 @@ import { Position } from './position.js';
 import { calculateShares } from './calculateShares.js';
 
 /**
- * makePayoffHandler returns an object with methods that are useful for
+ * MakePayoffHandler returns an object with methods that are useful for
  * callSpread contracts.
  *
  * @param {ZCF<Record<string, any>>} zcf
- * @param {Record<PositionKind,PromiseRecord<ZCFSeat>>} seatPromiseKits
+ * @param {Record<PositionKind, PromiseRecord<ZCFSeat>>} seatPromiseKits
  * @param {ZCFSeat} collateralSeat
  * @returns {PayoffHandler}
  */

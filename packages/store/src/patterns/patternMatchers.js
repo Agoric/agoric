@@ -35,16 +35,14 @@ const { quote: q, details: X } = assert;
 /** @type WeakSet<Pattern> */
 const patternMemo = new WeakSet();
 
-/**
- * @returns {PatternKit}
- */
+/** @returns {PatternKit} */
 const makePatternKit = () => {
   /**
-   * If this is a recognized match tag, return the MatchHelper.
-   * Otherwise result undefined.
+   * If this is a recognized match tag, return the MatchHelper. Otherwise result
+   * undefined.
    *
    * @param {string} tag
-   * @returns {MatchHelper=}
+   * @returns {MatchHelper}
    */
   const maybeMatchHelper = tag =>
     // eslint-disable-next-line no-use-before-define
@@ -71,7 +69,7 @@ const makePatternKit = () => {
 
   /**
    * @param {Passable} patt
-   * @param {Checker=} check
+   * @param {Checker} [check]
    * @returns {boolean}
    */
   const checkPatternInternal = (patt, check = x => x) => {
@@ -171,9 +169,7 @@ const makePatternKit = () => {
    */
   const isPattern = patt => checkPattern(patt);
 
-  /**
-   * @param {Pattern} patt
-   */
+  /** @param {Pattern} patt */
   const assertPattern = patt => {
     checkPattern(patt, assertChecker);
   };
@@ -193,7 +189,7 @@ const makePatternKit = () => {
 
   /**
    * @param {Passable} patt
-   * @param {Checker=} check
+   * @param {Checker} [check]
    * @returns {boolean}
    */
   const checkKeyPatternInternal = (patt, check = x => x) => {
@@ -245,9 +241,7 @@ const makePatternKit = () => {
    */
   const isKeyPattern = patt => checkKeyPattern(patt);
 
-  /**
-   * @param {Pattern} patt
-   */
+  /** @param {Pattern} patt */
   const assertKeyPattern = patt => {
     checkKeyPattern(patt, assertChecker);
   };

@@ -12,14 +12,14 @@ const { freeze } = Object;
 /**
  * @param {string} root
  * @param {{
- *   tmpName: typeof import('tmp').tmpName,
- *   existsSync: typeof import('fs').existsSync
- *   createReadStream: typeof import('fs').createReadStream,
- *   createWriteStream: typeof import('fs').createWriteStream,
- *   resolve: typeof import('path').resolve,
- *   rename: typeof import('fs').promises.rename,
- *   unlink: typeof import('fs').promises.unlink,
- *   unlinkSync: typeof import('fs').unlinkSync,
+ *   tmpName: typeof import('tmp').tmpName;
+ *   existsSync: typeof import('fs').existsSync;
+ *   createReadStream: typeof import('fs').createReadStream;
+ *   createWriteStream: typeof import('fs').createWriteStream;
+ *   resolve: typeof import('path').resolve;
+ *   rename: typeof import('fs').promises.rename;
+ *   unlink: typeof import('fs').promises.unlink;
+ *   unlinkSync: typeof import('fs').unlinkSync;
  * }} io
  */
 export function makeSnapStore(
@@ -38,10 +38,10 @@ export function makeSnapStore(
   /** @type {(opts: unknown) => Promise<string>} */
   const ptmpName = promisify(tmpName);
   /**
-   * @param { (name: string) => Promise<T> } thunk
-   * @param { string= } prefix
-   * @returns { Promise<T> }
    * @template T
+   * @param {(name: string) => Promise<T>} thunk
+   * @param {string} [prefix]
+   * @returns {Promise<T>}
    */
   async function withTempName(thunk, prefix = 'tmp') {
     const name = await ptmpName({
@@ -62,10 +62,10 @@ export function makeSnapStore(
   }
 
   /**
-   * @param {string} dest basename, relative to root
-   * @param { (name: string) => Promise<T> } thunk
-   * @returns { Promise<T> }
    * @template T
+   * @param {string} dest Basename, relative to root
+   * @param {(name: string) => Promise<T>} thunk
+   * @returns {Promise<T>}
    */
   async function atomicWrite(dest, thunk) {
     assert(!dest.includes('/'));
@@ -84,7 +84,13 @@ export function makeSnapStore(
     return result;
   }
 
-  /** @type {(input: string, f: NodeJS.ReadWriteStream, output: string) => Promise<void>} */
+  /**
+   * @type {(
+   *   input: string,
+   *   f: NodeJS.ReadWriteStream,
+   *   output: string,
+   * ) => Promise<void>}
+   */
   async function filter(input, f, output) {
     const source = createReadStream(input);
     const destination = createWriteStream(output);
@@ -99,19 +105,19 @@ export function makeSnapStore(
     return hash.digest('hex');
   }
 
-  /** @param { unknown } hash */
+  /** @param {unknown} hash */
   function hashPath(hash) {
     assert.typeof(hash, 'string');
     assert(!hash.includes('/'));
     return resolve(root, `${hash}.gz`);
   }
 
-  /** @type { Set<string> } */
+  /** @type {Set<string>} */
   const toDelete = new Set();
 
   /**
    * @param {(fn: string) => Promise<void>} saveRaw
-   * @returns { Promise<string> } sha256 hash of (uncompressed) snapshot
+   * @returns {Promise<string>} Sha256 hash of (uncompressed) snapshot
    */
   async function save(saveRaw) {
     return withTempName(async snapFile => {
@@ -132,9 +138,9 @@ export function makeSnapStore(
   }
 
   /**
+   * @template T
    * @param {string} hash
    * @param {(fn: string) => Promise<T>} loadRaw
-   * @template T
    */
   async function load(hash, loadRaw) {
     return withTempName(async raw => {
@@ -148,9 +154,7 @@ export function makeSnapStore(
     }, `${hash}-load`);
   }
 
-  /**
-   * @param {string} hash
-   */
+  /** @param {string} hash */
   function prepareToDelete(hash) {
     hashPath(hash); // check constraints early
     toDelete.add(hash);

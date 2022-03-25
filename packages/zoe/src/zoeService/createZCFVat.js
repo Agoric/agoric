@@ -1,8 +1,8 @@
 import { E } from '@endo/eventual-send';
 
 /**
- * Attenuate the power of vatAdminSvc by restricting it such that only
- * ZCF Vats can be created.
+ * Attenuate the power of vatAdminSvc by restricting it such that only ZCF Vats
+ * can be created.
  *
  * @param {VatAdminSvc} vatAdminSvc
  * @param {ZCFSpec} zcfSpec

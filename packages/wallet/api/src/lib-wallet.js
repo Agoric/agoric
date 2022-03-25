@@ -2,7 +2,7 @@
 
 /**
  * This file defines the wallet internals without dependency on the ag-solo on
- * which it runs.  It could be better factored, as it evolved ex nihilo.
+ * which it runs. It could be better factored, as it evolved ex nihilo.
  *
  * Ideally, the APIs defined by ./types.js would drive the organization of this
  * and other implementation files.
@@ -75,7 +75,7 @@ export function makeWallet({
   let lastId = 0;
 
   /**
-   * Add or update a record's `meta` property.  Note that the Stamps are in
+   * Add or update a record's `meta` property. Note that the Stamps are in
    * milliseconds since the epoch, and they are only added if this backend has
    * been supplied a `localTimerService`.
    *
@@ -83,7 +83,7 @@ export function makeWallet({
    * doesn't have a `localTimerService`, or the stamp has not yet increased.
    *
    * @template {Record<string, any>} T
-   * @param {T} record what to add metadata to
+   * @param {T} record What to add metadata to
    * @returns {T & { meta: T['meta'] & RecordMetadata }}
    */
   const addMeta = record => {
@@ -303,9 +303,7 @@ export function makeWallet({
 
     const issuerRecord =
       brandTable.hasByBrand(brand) && brandTable.getByBrand(brand);
-    /**
-     * @type {PursesJSONState}
-     */
+    /** @type {PursesJSONState} */
     const jstate = addMeta({
       ...pursesState.get(purseKey),
       brand,
@@ -487,7 +485,7 @@ export function makeWallet({
   }
 
   const { updater: issuersUpdater, notifier: issuersNotifier } =
-    /** @type {NotifierRecord<Array<[Petname, BrandRecord]>>} */ (
+    /** @type {NotifierRecord<[Petname, BrandRecord][]>} */ (
       makeNotifierKit([])
     );
 
@@ -703,13 +701,11 @@ export function makeWallet({
   };
 
   const { updater: contactsUpdater, notifier: contactsNotifier } =
-    /** @type {NotifierRecord<Array<[Petname, Contact]>>} */ (
-      makeNotifierKit([])
-    );
+    /** @type {NotifierRecord<[Petname, Contact][]>} */ (makeNotifierKit([]));
 
   /**
    * @param {Petname} petname
-   * @param {ERef<{receive: (payment: Payment) => Promise<void>}>} actions
+   * @param {ERef<{ receive: (payment: Payment) => Promise<void> }>} actions
    * @param {string} [address]
    */
   const addContact = async (petname, actions, address = undefined) => {
@@ -1139,7 +1135,7 @@ export function makeWallet({
       return undefined;
     }
 
-    /** @type {{ depositedP?: Promise<any[]>, dappContext?: any }} */
+    /** @type {{ depositedP?: Promise<any[]>; dappContext?: any }} */
     let ret = {};
     let alreadyResolved = false;
     const rejected = e => {
@@ -1218,9 +1214,7 @@ export function makeWallet({
   const idToPaymentRecord = makeScalarMap('paymentId');
   const { updater: paymentsUpdater, notifier: paymentsNotifier } =
     /** @type {NotifierRecord<PaymentRecord[]>} */ (makeNotifierKit([]));
-  /**
-   * @param {PaymentRecord} param0
-   */
+  /** @param {PaymentRecord} param0 */
   const updatePaymentRecord = ({ actions, ...preDisplay }) => {
     const displayPayment = fillInSlots(dehydrate(harden(preDisplay)));
     const paymentRecord = addMeta({
@@ -1253,7 +1247,7 @@ export function makeWallet({
 
   /**
    * @param {ERef<Payment>} paymentP
-   * @param {Purse | Petname=} depositTo
+   * @param {Purse | Petname} [depositTo]
    */
   const addPayment = async (paymentP, depositTo = undefined) => {
     // We don't even create the record until we resolve the payment.
@@ -1547,36 +1541,36 @@ export function makeWallet({
     getOffersNotifier() {
       return offersNotifier;
     },
-    /** @deprecated use issuerManager.add instead */
+    /** @deprecated Use issuerManager.add instead */
     addIssuer: issuerManager.add,
     getBrand,
     getBrandPetnames,
     publishIssuer,
-    /** @deprecated use instanceManager.add instead */
+    /** @deprecated Use instanceManager.add instead */
     addInstance: instanceManager.add,
-    /** @deprecated use installationManager.add instead */
+    /** @deprecated Use installationManager.add instead */
     addInstallation: installationManager.add,
     getInstallationManager,
     getInstanceManager,
     getIssuerManager,
-    /** @deprecated use issuerManager.rename instead */
+    /** @deprecated Use issuerManager.rename instead */
     renameIssuer: issuerManager.rename,
-    /** @deprecated use instanceManager.rename instead */
+    /** @deprecated Use instanceManager.rename instead */
     renameInstance: instanceManager.rename,
-    /** @deprecated use installationManager.rename instead */
+    /** @deprecated Use installationManager.rename instead */
     renameInstallation: installationManager.rename,
     getSelfContact,
-    /** @deprecated use instanceManager.get instead */
+    /** @deprecated Use instanceManager.get instead */
     getInstance: instanceManager.get,
-    /** @deprecated use installationManager.get instead */
+    /** @deprecated Use installationManager.get instead */
     getInstallation: installationManager.get,
-    /** @deprecated use installationManager.getAll instead */
+    /** @deprecated Use installationManager.getAll instead */
     getInstallations: installationManager.getAll,
     makeEmptyPurse,
     deposit,
-    /** @deprecated use issuerManager.get instead */
+    /** @deprecated Use issuerManager.get instead */
     getIssuer: issuerManager.get,
-    /** @deprecated use issuerManager.getAll instead */
+    /** @deprecated Use issuerManager.getAll instead */
     getIssuers: issuerManager.getAll,
     getPurses,
     getPurse,

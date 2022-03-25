@@ -8,7 +8,7 @@ import { assertProposalShape } from '@agoric/zoe/src/contractSupport/index.js';
  * VaultFactory can reliably liquidate.
  *
  * @param {ZCF} zcf
- * @param {{feeMintAccess: FeeMintAccess}} privateArgs
+ * @param {{ feeMintAccess: FeeMintAccess }} privateArgs
  */
 export async function start(zcf, privateArgs) {
   const { feeMintAccess } = privateArgs;

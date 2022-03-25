@@ -34,7 +34,7 @@ export const makePriceAuthority = (
 
   /**
    * @param {PriceQuery} priceQuery
-   * @returns {ERef<PriceQuote>=}
+   * @returns {ERef<PriceQuote>}
    */
   function createQuote(priceQuery) {
     const quote = priceQuery(calcAmountOut, calcAmountIn);

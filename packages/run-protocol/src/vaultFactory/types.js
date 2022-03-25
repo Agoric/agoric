@@ -5,7 +5,7 @@
 /** @typedef {VaultKit['vault']} Vault */
 
 /**
- * @typedef  {Object} AutoswapLocal
+ * @typedef {Object} AutoswapLocal
  * @property {(amount: Amount, brand: Brand) => Amount} getInputPrice
  * @property {() => Invitation} makeSwapInvitation
  */
@@ -21,11 +21,11 @@
 
 /**
  * @typedef {Object} Rates
- * @property {Ratio} liquidationMargin - margin below which collateral will be
- * liquidated to satisfy the debt.
- * @property {Ratio} interestRate - annual interest rate charged on loans
- * @property {Ratio} loanFee - The fee (in BasisPoints) charged when opening
- * or increasing a loan.
+ * @property {Ratio} liquidationMargin - Margin below which collateral will be
+ *   liquidated to satisfy the debt.
+ * @property {Ratio} interestRate - Annual interest rate charged on loans
+ * @property {Ratio} loanFee - The fee (in BasisPoints) charged when opening or
+ *   increasing a loan.
  */
 
 /**
@@ -37,24 +37,21 @@
  */
 
 /**
- * @typedef  {Object} VaultFactory - the creator facet
+ * @typedef {Object} VaultFactory - The creator facet
  * @property {AddVaultType} addVaultType
- * @property {() => Promise<Array<Collateral>>} getCollaterals
+ * @property {() => Promise<Collateral[]>} getCollaterals
  * @property {() => Allocation} getRewardAllocation,
  * @property {() => Instance} getContractGovernor
  * @property {() => Promise<Invitation>} makeCollectFeesInvitation
  */
 
 /**
- * @callback ReallocateWithFee
- *
- * Transfer the indicated amount to the vaultFactory's reward
- * pool, taken from the `fromSeat`. Then reallocate over all the seat
- * arguments and the rewardPoolSeat.
- *
+ * @callback ReallocateWithFee Transfer the indicated amount to the
+ *   vaultFactory's reward pool, taken from the `fromSeat`. Then reallocate over
+ *   all the seat arguments and the rewardPoolSeat.
  * @param {Amount} amount
  * @param {ZCFSeat} fromSeat
- * @param {ZCFSeat=} otherSeat
+ * @param {ZCFSeat} [otherSeat]
  * @returns {void}
  */
 
@@ -70,19 +67,15 @@
  *   at which interest is recorded to the loan.
  */
 
-/**
- * @typedef {string} VaultId
- */
+/** @typedef {string} VaultId */
 
 /**
  * @typedef {Object} VaultManagerBase
- * @property {(seat: ZCFSeat) => Promise<VaultKit>}  makeVaultKit
+ * @property {(seat: ZCFSeat) => Promise<VaultKit>} makeVaultKit
  * @property {() => void} liquidateAll
  */
 
-/**
- * @typedef {VaultManagerBase & GetVaultParams} VaultManager
- */
+/** @typedef {VaultManagerBase & GetVaultParams} VaultManager */
 
 /**
  * @typedef {Object} LoanTiming
@@ -117,8 +110,8 @@
 /**
  * @typedef {Object} DebtStatus
  * @property {Timestamp} latestInterestUpdate
- * @property {NatValue} interest interest accrued since latestInterestUpdate
- * @property {NatValue} newDebt total including principal and interest
+ * @property {NatValue} interest Interest accrued since latestInterestUpdate
+ * @property {NatValue} newDebt Total including principal and interest
  */
 
 /**
@@ -130,12 +123,12 @@
 
 /**
  * @typedef {Object} CalculatorKit
- * @property {Calculate} calculate calculate new debt for charging periods up to
- * the present.
- * @property {Calculate} calculateReportingPeriod calculate new debt for
- * reporting periods up to the present. If some charging periods have elapsed
- * that don't constitute whole reporting periods, the time is not updated past
- * them and interest is not accumulated for them.
+ * @property {Calculate} calculate Calculate new debt for charging periods up to
+ *   the present.
+ * @property {Calculate} calculateReportingPeriod Calculate new debt for
+ *   reporting periods up to the present. If some charging periods have elapsed
+ *   that don't constitute whole reporting periods, the time is not updated past
+ *   them and interest is not accumulated for them.
  */
 
 /** @typedef {import('./vault').InnerVault} InnerVault */

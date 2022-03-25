@@ -5,7 +5,7 @@ import { E } from '@endo/eventual-send';
 
 /**
  * @param {ZoeService} zoe
- * @param {*} vatAdminState
+ * @param {any} vatAdminState
  * @param {string} path
  * @returns {Promise<Installation>}
  */

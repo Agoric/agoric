@@ -7,28 +7,27 @@ import { Far } from '@endo/marshal';
 import './types.js';
 
 /**
- * Adaptor from a notifierP to an async iterable.
- * The notifierP can be any object that has an eventually invokable
- * `getUpdateSince` method that behaves according to the notifier
- * spec. This can be a notifier, a promise for a local or remote
- * notfier, or a presence of a remote notifier.
+ * Adaptor from a notifierP to an async iterable. The notifierP can be any
+ * object that has an eventually invokable `getUpdateSince` method that behaves
+ * according to the notifier spec. This can be a notifier, a promise for a local
+ * or remote notfier, or a presence of a remote notifier.
  *
  * It is also used internally by notifier.js so that a notifier itself is an
  * async iterable.
  *
- * An async iterable is an object with a `[Symbol.asyncIterator]()` method
- * that returns an async iterator. The async iterator we return here has only
- * a `next()` method, without the optional `return` and `throw` methods. The
- * omitted methods, if present, would be used by the for/await/of loop to
- * inform the iterator of early termination. But this adaptor would not do
- * anything useful in reaction to this notification.
+ * An async iterable is an object with a `[Symbol.asyncIterator]()` method that
+ * returns an async iterator. The async iterator we return here has only a
+ * `next()` method, without the optional `return` and `throw` methods. The
+ * omitted methods, if present, would be used by the for/await/of loop to inform
+ * the iterator of early termination. But this adaptor would not do anything
+ * useful in reaction to this notification.
  *
  * An async iterator's `next()` method returns a promise for an iteration
  * result. An iteration result is a record with `value` and `done` properties.
  *
- * The purpose of building on the notifier protocol is to have a lossy
- * adaptor, where intermediate results can be missed in favor of more recent
- * results which are therefore less stale. See
+ * The purpose of building on the notifier protocol is to have a lossy adaptor,
+ * where intermediate results can be missed in favor of more recent results
+ * which are therefore less stale. See
  * https://github.com/Agoric/documentation/blob/master/main/distributed-programming.md#notifiers
  *
  * @template T
@@ -40,7 +39,7 @@ export const makeAsyncIterableFromNotifier = notifierP => {
     [Symbol.asyncIterator]: () => {
       /** @type {UpdateCount} */
       let localUpdateCount;
-      /** @type {Promise<{value: T, done: boolean}> | undefined} */
+      /** @type {Promise<{ value: T; done: boolean }> | undefined} */
       let myIterationResultP;
       return Far('asyncIteratorFromNotifier', {
         next: () => {
@@ -150,10 +149,10 @@ export const updateFromIterable = (iterationObserver, asyncIterableP) =>
   observeIteration(asyncIterableP, iterationObserver);
 
 /**
- * As updates come in from the possibly remote `notifierP`, update
- * the local `updater`. Since the updates come from a notifier, they
- * are lossy, i.e., once a more recent state can be reported, less recent
- * states are assumed irrelevant and dropped.
+ * As updates come in from the possibly remote `notifierP`, update the local
+ * `updater`. Since the updates come from a notifier, they are lossy, i.e., once
+ * a more recent state can be reported, less recent states are assumed
+ * irrelevant and dropped.
  *
  * @template T
  * @param {ERef<Notifier<T>>} notifierP

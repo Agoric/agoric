@@ -432,7 +432,7 @@ const M = 1_000_000n;
 
 test('calculateCompoundedInterest', t => {
   const brand = Far('brand');
-  /** @type {Array<[bigint, bigint, bigint, number, bigint, number]>} */
+  /** @type {[bigint, bigint, bigint, number, bigint, number][]} */
   const cases = [
     [250n, BASIS_POINTS, M, 1, 1025000n, 10], // 2.5% APR over 1 year yields 2.5%
     [250n, BASIS_POINTS, M, 10, 1280090n, 5], // 2.5% APR over 10 year yields 28%
@@ -491,7 +491,7 @@ test('chargeInterest when no time elapsed', async t => {
   const interestRate = makeRatio(250n, brand, BASIS_POINTS);
 
   const now = BigInt(Date.now().toFixed());
-  /** @type {*} */
+  /** @type {any} */
   const powers = {
     mint: {
       getIssuerRecord: () =>

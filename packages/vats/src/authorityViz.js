@@ -21,14 +21,15 @@ const styles = {
 };
 
 /**
- * @param { Set<GraphNode> } nodes
- * @param {Map<string, Set<{ id: string, style?: string }>>} neighbors
- * @yields { string }
+ * @param {Set<GraphNode>} nodes
+ * @param {Map<string, Set<{ id: string; style?: string }>>} neighbors
+ * @yields {string}
+ *
  * @typedef {{
- *   id: string,
- *   cluster?: string,
- *   label: string,
- *   style?: string,
+ *   id: string;
+ *   cluster?: string;
+ *   label: string;
+ *   style?: string;
  * }} GraphNode
  */
 function* fmtGraph(nodes, neighbors) {
@@ -61,33 +62,39 @@ function* fmtGraph(nodes, neighbors) {
 }
 
 /**
- *
  * @param {Record<string, Permit>} manifest
+ *
  * @typedef {{
- *   vatParameters?: Record<string, unknown>,
- *   vatPowers?: Record<string, boolean>
- *   vats?: Record<string, boolean>
- *   devices?: Record<string, boolean>
- *   home?: PowerSpace,
- *   issuer?: PowerSpace,
- *   brand?: PowerSpace,
- *   installation?: PowerSpace,
- *   instance?: PowerSpace,
- *   runBehaviors: Function,
- * } & PowerSpace } Permit
- * @typedef {{produce?: Record<string, Status>, consume?: Record<string, Status>}} PowerSpace
- * @typedef { boolean | VatName } Status
- * @typedef { string } VatName
+ *   vatParameters?: Record<string, unknown>;
+ *   vatPowers?: Record<string, boolean>;
+ *   vats?: Record<string, boolean>;
+ *   devices?: Record<string, boolean>;
+ *   home?: PowerSpace;
+ *   issuer?: PowerSpace;
+ *   brand?: PowerSpace;
+ *   installation?: PowerSpace;
+ *   instance?: PowerSpace;
+ *   runBehaviors: Function;
+ * } & PowerSpace} Permit
+ *
+ * @typedef {{
+ *   produce?: Record<string, Status>;
+ *   consume?: Record<string, Status>;
+ * }} PowerSpace
+ *
+ * @typedef {boolean | VatName} Status
+ *
+ * @typedef {string} VatName
  */
 const manifest2graph = manifest => {
-  /** @type { Set<GraphNode> } */
+  /** @type {Set<GraphNode>} */
   const nodes = new Set();
   const neighbors = new Map();
 
   /**
    * @param {string} src
    * @param {string} dest
-   * @param {string=} style
+   * @param {string} [style]
    */
   const addEdge = (src, dest, style = '') => {
     if (!neighbors.has(src)) {
@@ -100,7 +107,7 @@ const manifest2graph = manifest => {
    * @param {string} src
    * @param {string} ty
    * @param {Record<string, Status> | undefined} item
-   * @param {boolean=} reverse
+   * @param {boolean} [reverse]
    */
   const level1 = (src, ty, item, reverse = false) => {
     if (item) {
@@ -169,9 +176,9 @@ const manifest2graph = manifest => {
 };
 
 /**
- * @param { string[] } args
- * @param { Object } io
- * @param { typeof import('process').stdout } io.stdout
+ * @param {string[]} args
+ * @param {Object} io
+ * @param {typeof import('process').stdout} io.stdout
  */
 const main = async (args, { stdout }) => {
   const [...opts] = args;

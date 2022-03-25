@@ -51,15 +51,15 @@ function unhandledRejectionHandler(e) {
 }
 
 /**
- * @param {{ moduleFormat: string, source: string }[]} bundles
+ * @param {{ moduleFormat: string; source: string }[]} bundles
  * @param {{
- *   snapStore?: SnapStore,
- *   spawn: typeof import('child_process').spawn
- *   env: Record<string, string | undefined>,
+ *   snapStore?: SnapStore;
+ *   spawn: typeof import('child_process').spawn;
+ *   env: Record<string, string | undefined>;
  * }} opts
  */
 export function makeStartXSnap(bundles, { snapStore, env, spawn }) {
-  /** @type { import('@agoric/xsnap/src/xsnap').XSnapOptions } */
+  /** @type {import('@agoric/xsnap/src/xsnap').XSnapOptions} */
   const xsnapOpts = {
     os: osType(),
     spawn,
@@ -86,8 +86,8 @@ export function makeStartXSnap(bundles, { snapStore, env, spawn }) {
   /**
    * @param {string} name
    * @param {(request: Uint8Array) => Promise<Uint8Array>} handleCommand
-   * @param { boolean } [metered]
-   * @param { string } [snapshotHash]
+   * @param {boolean} [metered]
+   * @param {string} [snapshotHash]
    */
   async function startXSnap(
     name,
@@ -121,20 +121,19 @@ export function makeStartXSnap(bundles, { snapStore, env, spawn }) {
 }
 
 /**
- *
  * @param {HostStore} hostStorage
  * @param {Record<string, unknown>} deviceEndowments
  * @param {{
- *   verbose?: boolean,
- *   debugPrefix?: string,
- *   slogCallbacks?: unknown,
- *   slogFile?: string,
- *   slogSender?: (obj: any, jsonObj: string) => void,
- *   testTrackDecref?: unknown,
- *   warehousePolicy?: { maxVatsOnline?: number },
- *   overrideVatManagerOptions?: unknown,
- *   spawn?: typeof import('child_process').spawn,
- *   env?: Record<string, string | undefined>
+ *   verbose?: boolean;
+ *   debugPrefix?: string;
+ *   slogCallbacks?: unknown;
+ *   slogFile?: string;
+ *   slogSender?: (obj: any, jsonObj: string) => void;
+ *   testTrackDecref?: unknown;
+ *   warehousePolicy?: { maxVatsOnline?: number };
+ *   overrideVatManagerOptions?: unknown;
+ *   spawn?: typeof import('child_process').spawn;
+ *   env?: Record<string, string | undefined>;
  * }} runtimeOptions
  */
 export async function makeSwingsetController(
@@ -287,7 +286,7 @@ export async function makeSwingsetController(
   };
 
   const kernelOptions = { verbose, warehousePolicy, overrideVatManagerOptions };
-  /** @type { ReturnType<typeof import('../kernel').default> } */
+  /** @type {ReturnType<typeof import('../kernel').default>} */
   const kernel = buildKernel(kernelEndowments, deviceEndowments, kernelOptions);
 
   if (runtimeOptions.verbose) {
@@ -297,18 +296,18 @@ export async function makeSwingsetController(
   await kernel.start();
 
   /**
+   * @template T
    * @param {T} x
    * @returns {T}
-   * @template T
    */
   const defensiveCopy = x => JSON.parse(JSON.stringify(x));
 
   /**
    * Validate and install a code bundle.
    *
-   * @param { EndoZipBase64Bundle } bundle
-   * @param { BundleID? } allegedBundleID
-   * @returns { Promise<BundleID> }
+   * @param {EndoZipBase64Bundle} bundle
+   * @param {BundleID | null} allegedBundleID
+   * @returns {Promise<BundleID>}
    */
   async function validateAndInstallBundle(bundle, allegedBundleID) {
     // TODO The following assertion may be removed when checkBundle subsumes
@@ -440,18 +439,28 @@ export async function makeSwingsetController(
  * configure devices.
  *
  * The official API does these as two separate steps because the two sometimes
- * need to happen at different times.  In particular, sometimes you need the
- * host to be able to control whether or not to initialize independent of the
- * SwingSet's history.  Also sometimes you want different runtime options for
- * the two stages; this can happen, for example, in some debugging cases.
+ * need to happen at different times. In particular, sometimes you need the host
+ * to be able to control whether or not to initialize independent of the
+ * SwingSet's history. Also sometimes you want different runtime options for the
+ * two stages; this can happen, for example, in some debugging cases.
  *
  * @param {SwingSetConfig} config
  * @param {string[]} argv
- * @param {{ hostStorage?: HostStore, env?: Record<string, string>, verbose?:
- *   boolean, kernelBundles?: Record<string, string>, debugPrefix?: string,
- *   slogCallbacks?: unknown, testTrackDecref?: unknown, warehousePolicy?: {
- *   maxVatsOnline?: number }, slogFile?: string }} runtimeOptions
- * @typedef { import('@agoric/swing-store').KVStore } KVStore
+ * @param {{
+ *   hostStorage?: HostStore;
+ *   env?: Record<string, string>;
+ *   verbose?: boolean;
+ *   kernelBundles?: Record<string, string>;
+ *   debugPrefix?: string;
+ *   slogCallbacks?: unknown;
+ *   testTrackDecref?: unknown;
+ *   warehousePolicy?: {
+ *     maxVatsOnline?: number;
+ *   };
+ *   slogFile?: string;
+ * }} runtimeOptions
+ *
+ * @typedef {import('@agoric/swing-store').KVStore} KVStore
  */
 export async function buildVatController(
   config,

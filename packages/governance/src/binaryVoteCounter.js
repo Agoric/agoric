@@ -61,9 +61,9 @@ const makeBinaryVoteCounter = (questionSpec, threshold, instance) => {
 
   let isOpen = true;
   const positions = questionSpec.positions;
-  /** @type { PromiseRecord<Position> } */
+  /** @type {PromiseRecord<Position>} */
   const outcomePromise = makePromiseKit();
-  /** @type { PromiseRecord<VoteStatistics> } */
+  /** @type {PromiseRecord<VoteStatistics>} */
   const tallyPromise = makePromiseKit();
   // The Electorate is responsible for creating a unique seat for each voter.
   // This voteCounter allows voters to re-vote, and replaces their previous
@@ -74,7 +74,7 @@ const makeBinaryVoteCounter = (questionSpec, threshold, instance) => {
    * @property {Position} chosen
    * @property {bigint} shares
    */
-  /** @type {Store<Handle<'Voter'>,RecordedBallot> } */
+  /** @type {Store<Handle<'Voter'>, RecordedBallot>} */
   const allBallots = makeStore('voterHandle');
 
   /** @type {SubmitVote} */
@@ -111,7 +111,7 @@ const makeBinaryVoteCounter = (questionSpec, threshold, instance) => {
       }
     }
 
-    /** @type { VoteStatistics } */
+    /** @type {VoteStatistics} */
     const stats = {
       spoiled,
       votes: allBallots.getSize(),
@@ -172,7 +172,11 @@ const makeBinaryVoteCounter = (questionSpec, threshold, instance) => {
 // instance in the publicFacet before returning public and creator facets.
 
 /**
- * @type {ContractStartFn<VoteCounterPublicFacet, VoteCounterCreatorFacet, {questionSpec: QuestionSpec, quorumThreshold: bigint}>}
+ * @type {ContractStartFn<
+ *   VoteCounterPublicFacet,
+ *   VoteCounterCreatorFacet,
+ *   { questionSpec: QuestionSpec; quorumThreshold: bigint }
+ * >}
  */
 const start = zcf => {
   // There are a variety of ways of counting quorums. The parameters must be

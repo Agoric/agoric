@@ -144,9 +144,8 @@ const oCommsRoot = '@o+0'; // Always the root of the comms vat
 /**
  * Provide a syscall interface that simply logs everything it is told into an array.
  *
- * @param {unknown[]} log  The log array.
- *
- * @returns {unknown} a syscall object
+ * @param {unknown[]} log The log array.
+ * @returns {unknown} A syscall object
  */
 function loggingSyscall(log) {
   const fakestore = new Map();
@@ -177,12 +176,11 @@ function loggingSyscall(log) {
 
 /**
  * Extract the vref or rref embedded in a reference string as found in a test
- * script.  This will be a string of the form `@${ref}` or `@${ref}:${iface}`.
+ * script. This will be a string of the form `@${ref}` or `@${ref}:${iface}`.
  * This function extracts the `${ref}` part and returns it.
  *
- * @param {string} scriptRef  The string to be parsed
- *
- * @returns {string} the ref embedded within `scriptRef`
+ * @param {string} scriptRef The string to be parsed
+ * @returns {string} The ref embedded within `scriptRef`
  */
 function refOf(scriptRef) {
   assert(
@@ -205,13 +203,12 @@ function flipRefOf(scriptRef) {
 
 /**
  * Extract the interface name embedded in a reference string as found in a test
- * script.  This will be a string of the form `@${ref}` or `@${ref}:${iface}`.
+ * script. This will be a string of the form `@${ref}` or `@${ref}:${iface}`.
  * This function extracts the `${iface}` part and returns it, or undefined if
  * it's not there.
  *
- * @param {string} scriptRef  The string to be parsed
- *
- * @returns {string|undefined} the ref embedded within `scriptRef`
+ * @param {string} scriptRef The string to be parsed
+ * @returns {string | undefined} The ref embedded within `scriptRef`
  */
 function ifaceOf(scriptRef) {
   const delim = scriptRef.indexOf(':');
@@ -223,13 +220,12 @@ function ifaceOf(scriptRef) {
 }
 
 /**
- * Generate a capdata object from an arbitrary (more or less) value.  This is
+ * Generate a capdata object from an arbitrary (more or less) value. This is
  * similar to the marshal package's serialize, but (a) knows about scriptRefs
  * and (b) only handles a small subset of types that are needed for testing.
  *
- * @param {unknown} from the value to be serialized.
- *
- * @returns {unknown} a capdata object kinda sorta representing `from`
+ * @param {unknown} from The value to be serialized.
+ * @returns {unknown} A capdata object kinda sorta representing `from`
  */
 function capdata(from) {
   const slots = [];
@@ -275,14 +271,13 @@ function capdata(from) {
 /**
  * Translate a message into the form used by the comms protocol.
  *
- * @param {boolean} doFlip  If true, flip the polarity of any rrefs, as would be
+ * @param {boolean} doFlip If true, flip the polarity of any rrefs, as would be
  *   done for sending to a remote.
- * @param {string} target  Message target rref.
- * @param {string} method  Name of the method to be invoked.
- * @param {unknown} args  Capdata containing the message arguments
- * @param {string|undefined} result  Result promise rref, or undefined to be one-way
- *
- * @returns {string} the message encoded in comms protocol format
+ * @param {string} target Message target rref.
+ * @param {string} method Name of the method to be invoked.
+ * @param {unknown} args Capdata containing the message arguments
+ * @param {string | undefined} result Result promise rref, or undefined to be one-way
+ * @returns {string} The message encoded in comms protocol format
  */
 function remoteMessage(doFlip, target, method, args, result) {
   const slots = doFlip
@@ -302,22 +297,19 @@ function remoteMessage(doFlip, target, method, args, result) {
 }
 
 /**
- * @typedef {[string, boolean, unknown]} Resolution
- *
- * [target, reject, data]
- * target is the rpid of the promise to resolve
- * reject indicates if the promise is rejected (true) or fulfilled (false)
- * data is capdata describing the resolution value
+ * @typedef {[string, boolean, unknown]} Resolution [target, reject, data]
+ *   target is the rpid of the promise to resolve reject indicates if the
+ *   promise is rejected (true) or fulfilled (false) data is capdata describing
+ *   the resolution value
  */
 
 /**
  * Translate an array of promise resolutions into the form used by the comms protocol.
  *
- * @param {boolean} doFlip  If true, flip the polarity of any rrefs, as would be
+ * @param {boolean} doFlip If true, flip the polarity of any rrefs, as would be
  *   done for sending to a remote.
- * @param {Resolution[]} resolutions  The group of resolutions
- *
- * @returns {string} the resolutions encoded in comms protocol format
+ * @param {Resolution[]} resolutions The group of resolutions
+ * @returns {string} The resolutions encoded in comms protocol format
  */
 function remoteResolutions(doFlip, resolutions) {
   const msgs = [];
@@ -340,11 +332,10 @@ function remoteResolutions(doFlip, resolutions) {
 /**
  * Construct and return a new comms vat driver.
  *
- * @param {unknown} t  Ava assertions object
- * @param {[boolean]} verbose  If true (defaults false), output messages to the
+ * @param {unknown} t Ava assertions object
+ * @param {[boolean]} verbose If true (defaults false), output messages to the
  *   console describing scripted events as they happen.
- *
- * @returns {unknown} a new vat driver instance
+ * @returns {unknown} A new vat driver instance
  */
 export function commsVatDriver(t, verbose = false) {
   const log = [];
@@ -359,9 +350,8 @@ export function commsVatDriver(t, verbose = false) {
    * Generate args for a 'transmit' message delivering a comms protocol message
    * to a remote.
    *
-   * @param {unknown} remote  The remote the message will be transmitted to.
-   * @param {string} msg  The comms protocol formatted message itself
-   *
+   * @param {unknown} remote The remote the message will be transmitted to.
+   * @param {string} msg The comms protocol formatted message itself
    * @returns {unknown} A capdata representation of `msg` (with the appropriate
    *   sequence numbers attached) for delivery to `remote`.
    */
@@ -387,9 +377,8 @@ export function commsVatDriver(t, verbose = false) {
    * Generate args for a 'receive' message delivering a comms protocol message
    * from a remote.
    *
-   * @param {unknown} remote  The remote the message will be received from.
-   * @param {string} msg  The comms protocol formatted message itself
-   *
+   * @param {unknown} remote The remote the message will be received from.
+   * @param {string} msg The comms protocol formatted message itself
    * @returns {unknown} A capdata representation of `msg` (with the appropriate
    *   sequence numbers attached) for delivery from `remote`.
    */
@@ -410,16 +399,16 @@ export function commsVatDriver(t, verbose = false) {
   }
 
   /**
-   * Deliver a message into the comms vat.  It will be a test failure if the log
+   * Deliver a message into the comms vat. It will be a test failure if the log
    * is not empty at the beginning of this operation.
    *
-   * @param {string} who  Indicator of who is sending the message: 'k', the
+   * @param {string} who Indicator of who is sending the message: 'k', the
    *   kernel, or 'a', b', or 'c', one of the remotes.
-   * @param {string} target  Scriptref of the object or promise that is the
+   * @param {string} target Scriptref of the object or promise that is the
    *   target of the message.
-   * @param {string} method  The name of the method being invoked.
-   * @param {unknown} args  Capdata object containing the message arguments.
-   * @param {string|undefined} result  Scriptref of the result promise or
+   * @param {string} method The name of the method being invoked.
+   * @param {unknown} args Capdata object containing the message arguments.
+   * @param {string | undefined} result Scriptref of the result promise or
    *   undefined to indicate a one-way message.
    */
   function injectSend(who, target, method, args, result) {
@@ -437,16 +426,16 @@ export function commsVatDriver(t, verbose = false) {
   }
 
   /**
-   * Observe a message sent by the comms vat via a send syscall.  It will be a
+   * Observe a message sent by the comms vat via a send syscall. It will be a
    * test failure if the next entry in the log does not describe this message.
    *
-   * @param {string} who  Indicator of where the message is being directed: 'k',
+   * @param {string} who Indicator of where the message is being directed: 'k',
    *   the kernel, or 'a', b', or 'c', one of the remotes.
-   * @param {string} target  Scriptref of the object or promise that is the
+   * @param {string} target Scriptref of the object or promise that is the
    *   target of the message.
-   * @param {string} method  The name of the method being invoked.
-   * @param {unknown} args  Capdata object containing the message arguments.
-   * @param {string|undefined} result  Scriptref of the result promise or
+   * @param {string} method The name of the method being invoked.
+   * @param {unknown} args Capdata object containing the message arguments.
+   * @param {string | undefined} result Scriptref of the result promise or
    *   undefined to indicate a one-way message.
    */
   function observeSend(who, target, method, args, result) {
@@ -468,12 +457,12 @@ export function commsVatDriver(t, verbose = false) {
   }
 
   /**
-   * Deliver a group of promise resolutions into the comms vat.  It will be a
+   * Deliver a group of promise resolutions into the comms vat. It will be a
    * test failure if the log is not empty at the beginning of this operation.
    *
-   * @param {string} who  Indicator of who is doing the resolution message: 'k',
+   * @param {string} who Indicator of who is doing the resolution message: 'k',
    *   the kernel, or 'a', b', or 'c', one of the remotes.
-   * @param {Resolution[]} resolutions  Array of resolutions
+   * @param {Resolution[]} resolutions Array of resolutions
    */
   function injectResolutions(who, resolutions) {
     t.deepEqual(log, []);
@@ -488,12 +477,12 @@ export function commsVatDriver(t, verbose = false) {
 
   /**
    * Observe a group of promise resolutions originating in the comms vat via a
-   * notify or send syscall.  It will be a test failure if the next entry in the
+   * notify or send syscall. It will be a test failure if the next entry in the
    * log does not describe this group of resolutions.
    *
-   * @param {string} who  Indicator of where the resolution is directed: 'k',
-   *   the kernel, or 'a', b', or 'c', one of the remotes.
-   * @param {Resolution[]} resolutions  Array of resolutions
+   * @param {string} who Indicator of where the resolution is directed: 'k', the
+   *   kernel, or 'a', b', or 'c', one of the remotes.
+   * @param {Resolution[]} resolutions Array of resolutions
    */
   function observeResolutions(who, resolutions) {
     if (who === 'k') {
@@ -511,11 +500,11 @@ export function commsVatDriver(t, verbose = false) {
   }
 
   /**
-   * Observe the comms vat subscribing to a promise.  This is always directed to
-   * the kernel.  It will be a test failure if the next entry in the log does
-   * not describe this subscription.
+   * Observe the comms vat subscribing to a promise. This is always directed to
+   * the kernel. It will be a test failure if the next entry in the log does not
+   * describe this subscription.
    *
-   * @param {string} target  vref of the promise being subscribed to
+   * @param {string} target Vref of the promise being subscribed to
    */
   function observeSubscribe(target) {
     t.deepEqual(log.shift(), target);
@@ -523,17 +512,17 @@ export function commsVatDriver(t, verbose = false) {
 
   /**
    * Inject a message acknowledgement lag into the simulation of traffic between
-   * comms vat and one of the remotes.  Message acknowledgements from the
+   * comms vat and one of the remotes. Message acknowledgements from the
    * indicated remote will not advance until they are `lag` messages behind the
    * most recent message sent to that remote, at which point they will advance
-   * by one with each successive message, always `lag` messages behind.  If a
-   * lag is currently in effect and `lag` is any value less than that (including
-   * 0), the lag will immediately be reduced to the new setting and the next
+   * by one with each successive message, always `lag` messages behind. If a lag
+   * is currently in effect and `lag` is any value less than that (including 0),
+   * the lag will immediately be reduced to the new setting and the next
    * acknowledgement sent by the remote will "catch up".
    *
    * @param {string} who Indicator of which remote is being subjected to the
    *   lag:'a', b', or 'c'.
-   * @param {number} lag  How much lag the remote will be subjected to.
+   * @param {number} lag How much lag the remote will be subjected to.
    */
   function injectLag(who, lag = 1) {
     assert(typeof lag === 'number' && lag >= 0);
@@ -548,10 +537,10 @@ export function commsVatDriver(t, verbose = false) {
   /**
    * Generate a new remote and add it to the table of remotes.
    *
-   * @param {string} name  The name of the remote (typically 'a', 'b', or 'c')
-   * @param {string} transmitter  Scriptref of the transmitter object to send to
+   * @param {string} name The name of the remote (typically 'a', 'b', or 'c')
+   * @param {string} transmitter Scriptref of the transmitter object to send to
    *   the other end
-   * @param {string}  receiver Scriptref of the receiver objec that will be sent
+   * @param {string} receiver Scriptref of the receiver objec that will be sent
    *   to by the other end
    */
   function makeNewRemote(name, transmitter, receiver) {
@@ -576,10 +565,8 @@ export function commsVatDriver(t, verbose = false) {
   /**
    * Allocate a new scriptref for an imported promise.
    *
-   * @param {string} from  Who the promise is being imported from ('k', 'a', 'b',
-   *   or 'c')
-   *
-   * @returns {string} a scriptref ('@p-NN' or '@rp-NN' as appropriate) for an
+   * @param {string} from Who the promise is being imported from ('k', 'a', 'b', or 'c')
+   * @returns {string} A scriptref ('@p-NN' or '@rp-NN' as appropriate) for an
    *   imported promise
    */
   function newImportPromise(from) {
@@ -599,10 +586,8 @@ export function commsVatDriver(t, verbose = false) {
   /**
    * Allocate a new scriptref for an exported promise.
    *
-   * @param {string} to  Who the promise is being exported from ('k', 'a', 'b', or
-   *   'c')
-   *
-   * @returns {string} a scriptref ('@p+NN' or '@rp+NN' as appropriate) for an
+   * @param {string} to Who the promise is being exported from ('k', 'a', 'b', or 'c')
+   * @returns {string} A scriptref ('@p+NN' or '@rp+NN' as appropriate) for an
    *   exported promise
    */
   function newExportPromise(to) {
@@ -622,10 +607,8 @@ export function commsVatDriver(t, verbose = false) {
   /**
    * Allocate a new scriptref for an imported object.
    *
-   * @param {string} from  Who the object is being imported from ('k', 'a', 'b',
-   *   or 'c')
-   *
-   * @returns {string} a scriptref ('@o-NN' or '@ro-NN' as appropriate) for an
+   * @param {string} from Who the object is being imported from ('k', 'a', 'b', or 'c')
+   * @returns {string} A scriptref ('@o-NN' or '@ro-NN' as appropriate) for an
    *   imported object
    */
   function newImportObject(from) {
@@ -645,11 +628,9 @@ export function commsVatDriver(t, verbose = false) {
   /**
    * Allocate a new scriptref for an exported object.
    *
-   * @param {string} to  Who the object is being exported to ('k', 'a', 'b', or
-   *   'c')
-   * @param {[string]} iface  Optional interface name for the object
-   *
-   * @returns {string} a scriptref ('@o+NN', '@o+NN:IFACE', '@ro+NN', or
+   * @param {string} to Who the object is being exported to ('k', 'a', 'b', or 'c')
+   * @param {[string]} iface Optional interface name for the object
+   * @returns {string} A scriptref ('@o+NN', '@o+NN:IFACE', '@ro+NN', or
    *   '@ro+NN:IFACE' as appropriate) for an exported object
    */
   function newExportObject(to, iface) {
@@ -666,7 +647,7 @@ export function commsVatDriver(t, verbose = false) {
   }
 
   /**
-   * Indicate that the test is completed.  At this point it is a test failure if
+   * Indicate that the test is completed. At this point it is a test failure if
    * the log is not empty (i.e., if there are any unobserved syscalls remaining.
    */
   function done() {
@@ -732,14 +713,13 @@ export function commsVatDriver(t, verbose = false) {
   }
 
   /**
-   * Setup a new remote.  This will install a new entry in the remotes table and
+   * Setup a new remote. This will install a new entry in the remotes table and
    * perform the necessary message exchanges with the comms vat so that it knows
    * about the new remote and imagines it can communicate with it.
    *
-   * @param {string} remoteName  Name for the new remote.  Currently, for the new
+   * @param {string} remoteName Name for the new remote. Currently, for the new
    *   remote to work, other parts of the test driver require this to be 'a',
-   *   'b', or 'c', but there's nothing in the mechanism here that requires
-   *   this.
+   *   'b', or 'c', but there's nothing in the mechanism here that requires this.
    */
   function setupRemote(remoteName) {
     // objects from ersatz, hypothetical vattp vat:
@@ -759,14 +739,14 @@ export function commsVatDriver(t, verbose = false) {
   /**
    * Import a notional object from a remote into the local swingset.
    *
-   * @param {string} remoteName  Name of the remote from which the object is being imported
-   * @param {number} index  Index number on the remote of the object to be imported
-   * @param {string} iface  Name of the (alleged) interface presented by the imported object
-   *
-   * @returns {[string, string]}   A pair of scriptrefs.  The first is the vref
-   *   for the object as it will be known to the kernel, the second is for the
-   *   rref by which it will be referred when talking to the remote (the latter
-   *   is needed to correctly observe message sends to the remote).
+   * @param {string} remoteName Name of the remote from which the object is being imported
+   * @param {number} index Index number on the remote of the object to be imported
+   * @param {string} iface Name of the (alleged) interface presented by the
+   *   imported object
+   * @returns {[string, string]} A pair of scriptrefs. The first is the vref for
+   *   the object as it will be known to the kernel, the second is for the rref
+   *   by which it will be referred when talking to the remote (the latter is
+   *   needed to correctly observe message sends to the remote).
    */
   function importFromRemote(remoteName, index, iface) {
     const oRef = newExportObject('k', iface);
@@ -780,9 +760,9 @@ export function commsVatDriver(t, verbose = false) {
   /**
    * Export an object from the local swingset to a remote.
    *
-   * @param {string} remoteName  Name of the remote to which the object is being exported
-   * @param {number} index  Index number in the comms vat of the object to be exported
-   * @param {string} objRef  Scriptref of the object in the local swingset
+   * @param {string} remoteName Name of the remote to which the object is being exported
+   * @param {number} index Index number in the comms vat of the object to be exported
+   * @param {string} objRef Scriptref of the object in the local swingset
    */
   function exportToRemote(remoteName, index, objRef) {
     const pResult = newImportPromise('k');

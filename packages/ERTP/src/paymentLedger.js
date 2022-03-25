@@ -13,16 +13,16 @@ import { makePurseMaker } from './purse.js';
 import '@agoric/store/exported.js';
 
 /**
- * Make the paymentLedger, the source of truth for the balances of
- * payments. All minting and transfer authority originates here.
+ * Make the paymentLedger, the source of truth for the balances of payments. All
+ * minting and transfer authority originates here.
  *
  * @template {AssetKind} [K=AssetKind]
  * @param {string} allegedName
  * @param {Brand} brand
  * @param {AssetKind} assetKind
  * @param {DisplayInfo} displayInfo
- * @param {ShutdownWithFailure=} optShutdownWithFailure
- * @returns {{ issuer: Issuer<K>, mint: Mint<K> }}
+ * @param {ShutdownWithFailure} [optShutdownWithFailure]
+ * @returns {{ issuer: Issuer<K>; mint: Mint<K> }}
  */
 export const makePaymentLedger = (
   allegedName,
@@ -51,28 +51,27 @@ export const makePaymentLedger = (
   /** @type {WeakStore<Payment, Amount>} */
   const paymentLedger = makeScalarBigWeakMapStore('payment');
 
-  /** @type {(left: Amount, right: Amount) => Amount } */
+  /** @type {(left: Amount, right: Amount) => Amount} */
   const add = (left, right) => AmountMath.add(left, right, brand);
-  /** @type {(left: Amount, right: Amount) => Amount } */
+  /** @type {(left: Amount, right: Amount) => Amount} */
   const subtract = (left, right) => AmountMath.subtract(left, right, brand);
   /** @type {(allegedAmount: Amount) => Amount} */
   const coerce = allegedAmount => AmountMath.coerce(brand, allegedAmount);
-  /** @type {(left: Amount, right: Amount) => boolean } */
+  /** @type {(left: Amount, right: Amount) => boolean} */
   const isEqual = (left, right) => AmountMath.isEqual(left, right, brand);
 
   /** @type {Amount} */
   const emptyAmount = AmountMath.makeEmpty(brand, assetKind);
 
   /**
-   * Methods like deposit() have an optional second parameter
-   * `optAmountShape`
-   * which, if present, is supposed to match the balance of the
-   * payment. This helper function does that check.
+   * Methods like deposit() have an optional second parameter `optAmountShape`
+   * which, if present, is supposed to match the balance of the payment. This
+   * helper function does that check.
    *
    * Note: `optAmountShape` is user-supplied with no previous validation.
    *
    * @param {Amount} paymentBalance
-   * @param {Pattern=} optAmountShape
+   * @param {Pattern} [optAmountShape]
    * @returns {void}
    */
   const assertAmountConsistent = (paymentBalance, optAmountShape) => {
@@ -93,13 +92,13 @@ export const makePaymentLedger = (
   };
 
   /**
-   * Reallocate assets from the `payments` passed in to new payments
-   * created and returned, with balances from `newPaymentBalances`.
-   * Enforces that total assets are conserved.
+   * Reallocate assets from the `payments` passed in to new payments created and
+   * returned, with balances from `newPaymentBalances`. Enforces that total
+   * assets are conserved.
    *
-   * Note that this is not the only operation that moves assets.
-   * `purse.deposit` and `purse.withdraw` move assets between a purse and
-   * a payment, and so must also enforce conservation there.
+   * Note that this is not the only operation that moves assets. `purse.deposit`
+   * and `purse.withdraw` move assets between a purse and a payment, and so must
+   * also enforce conservation there.
    *
    * @param {Payment[]} payments
    * @param {Amount[]} newPaymentBalances
@@ -267,12 +266,11 @@ export const makePaymentLedger = (
   /**
    * Used by the purse code to implement purse.deposit
    *
-   * @param {Amount} currentBalance - the current balance of the purse
-   * before a deposit
-   * @param {(newPurseBalance: Amount) => void} updatePurseBalance -
-   * commit the purse balance
+   * @param {Amount} currentBalance - The current balance of the purse before a deposit
+   * @param {(newPurseBalance: Amount) => void} updatePurseBalance - Commit the
+   *   purse balance
    * @param {Payment} srcPayment
-   * @param {Pattern=} optAmountShape
+   * @param {Pattern} [optAmountShape]
    * @returns {Amount}
    */
   const deposit = (
@@ -306,11 +304,10 @@ export const makePaymentLedger = (
   /**
    * Used by the purse code to implement purse.withdraw
    *
-   * @param {Amount} currentBalance - the current balance of the purse
-   * before a withdrawal
-   * @param {(newPurseBalance: Amount) => void} updatePurseBalance -
-   * commit the purse balance
-   * @param {Amount} amount - the amount to be withdrawn
+   * @param {Amount} currentBalance - The current balance of the purse before a withdrawal
+   * @param {(newPurseBalance: Amount) => void} updatePurseBalance - Commit the
+   *   purse balance
+   * @param {Amount} amount - The amount to be withdrawn
    * @returns {Payment}
    */
   const withdraw = (currentBalance, updatePurseBalance, amount) => {

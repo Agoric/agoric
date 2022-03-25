@@ -5,9 +5,9 @@ import { E, Far } from '@endo/far';
 const { details: X } = assert;
 
 /**
- * per golang/cosmos/x/lien/lien.go
+ * Per golang/cosmos/x/lien/lien.go
  *
- * @typedef { 'bonded' | 'liened' | 'locked' | 'total' | 'unbonding' } AccountProperty
+ * @typedef {'bonded' | 'liened' | 'locked' | 'total' | 'unbonding'} AccountProperty
  */
 const XLien = {
   name: 'lien',
@@ -16,19 +16,22 @@ const XLien = {
 };
 
 /**
- * @typedef { Record<AccountProperty, T> & { currentTime: bigint } } AccountState<T>
  * @template T
+ * @typedef {Record<AccountProperty, T> & { currentTime: bigint }} AccountState<T>
  */
 
 /**
  * @typedef {Object} StakingAuthority
- * @property {(address: string, wantedBrand: Brand) => Promise<{
- *   bonded: Amount,
- *   liened: Amount,
- *   locked: Amount,
- *   total: Amount,
- *   unbonding: Amount,
- *   currentTime: bigint,
+ * @property {(
+ *   address: string,
+ *   wantedBrand: Brand,
+ * ) => Promise<{
+ *   bonded: Amount;
+ *   liened: Amount;
+ *   locked: Amount;
+ *   total: Amount;
+ *   unbonding: Amount;
+ *   currentTime: bigint;
  * }>} getAccountState
  */
 
@@ -49,7 +52,7 @@ export const makeStakeReporter = (bridgeManager, stake) => {
         wantedBrand === stake,
         X`Cannot getAccountState for ${wantedBrand}. Expected ${stake}.`,
       );
-      /** @type { AccountState<string> } */
+      /** @type {AccountState<string>} */
       const { currentTime, bonded, liened, locked, total, unbonding } = await E(
         bridgeManager,
       ).toBridge(XLien.name, {

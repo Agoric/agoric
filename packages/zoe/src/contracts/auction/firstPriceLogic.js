@@ -5,7 +5,7 @@ import { AmountMath } from '@agoric/ertp';
 /**
  * @param {ZCF} zcf
  * @param {ZCFSeat} sellSeat
- * @param {Array<ZCFSeat>} bidSeats
+ * @param {ZCFSeat[]} bidSeats
  */
 export const calcWinnerAndClose = (zcf, sellSeat, bidSeats) => {
   const {

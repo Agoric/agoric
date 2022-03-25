@@ -212,7 +212,7 @@ const makeBootstrap = (argv, cb, vatPowers) => async (vats, devices) => {
   const vatAdminSvc = await E(vats.vatAdmin).createVatAdminService(
     devices.vatAdmin,
   );
-  /** @type { ERef<ZoeService> } */
+  /** @type {ERef<ZoeService>} */
   const zoe = E(vats.zoe).buildZoe(vatAdminSvc);
 
   const [committee, binaryVoteCounter] = await Promise.all([

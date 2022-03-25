@@ -16,7 +16,7 @@ import { makeZCFZygote } from './zcfZygote.js';
 
 /**
  * @param {VatPowers} powers
- * @returns {{ executeContract: ExecuteContract}}
+ * @returns {{ executeContract: ExecuteContract }}
  */
 export function buildRootObject(powers) {
   // Currently, there is only one function, `executeContract` called

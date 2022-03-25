@@ -14,7 +14,7 @@ const log = makePrintLog();
  * @param {ZoeService} zoe
  * @param {Issuer[]} issuers
  * @param {Payment[]} payments
- * @param {Record<string,Installation>} installations
+ * @param {Record<string, Installation>} installations
  */
 async function build(name, zoe, issuers, payments, installations) {
   const { moola, simoleans, purses } = await setupPurses(

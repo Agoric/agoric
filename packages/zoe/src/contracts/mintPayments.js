@@ -7,18 +7,20 @@ import '../../exported.js';
 
 /**
  * This is a very simple contract that creates a new issuer and mints payments
- * from it, in order to give an example of how that can be done.  This contract
+ * from it, in order to give an example of how that can be done. This contract
  * sends new tokens to anyone who has an invitation.
  *
  * The expectation is that most contracts that want to do something similar
  * would use the ability to mint new payments internally rather than sharing
  * that ability widely as this one does.
  *
- * To pay others in tokens, the creator of the instance can make
- * invitations for them, which when used to make an offer, will payout
- * the specified amount of tokens.
+ * To pay others in tokens, the creator of the instance can make invitations for
+ * them, which when used to make an offer, will payout the specified amount of tokens.
  *
- * @type {ContractStartFn<{getTokenIssuer: unknown}, {makeInvitation: unknown, getTokenIssuer: unknown}>}
+ * @type {ContractStartFn<
+ *   { getTokenIssuer: unknown },
+ *   { makeInvitation: unknown; getTokenIssuer: unknown }
+ * >}
  */
 const start = async zcf => {
   // Create the internal token mint for a fungible digital asset. Note

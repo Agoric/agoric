@@ -26,12 +26,11 @@ const Tokens = harden({
 });
 
 /**
- * In golang/cosmos/app/app.go, we define
- * cosmosInitAction with type AG_COSMOS_INIT,
- * with the following shape.
+ * In golang/cosmos/app/app.go, we define cosmosInitAction with type
+ * AG_COSMOS_INIT, with the following shape.
  *
- * The urun supplyCoins value is taken from genesis,
- * thereby authorizing the minting an initial supply of RUN.
+ * The urun supplyCoins value is taken from genesis, thereby authorizing the
+ * minting an initial supply of RUN.
  */
 // eslint-disable-next-line no-unused-vars
 const bootMsgEx = {
@@ -49,8 +48,8 @@ const bootMsgEx = {
 };
 
 /**
- * TODO: review behaviors carefully for powers that go out of scope,
- * since we may want/need them later.
+ * TODO: review behaviors carefully for powers that go out of scope, since we
+ * may want/need them later.
  */
 
 /** @param {BootstrapPowers} powers */
@@ -74,8 +73,8 @@ export const makeVatsFromBundles = ({
 harden(makeVatsFromBundles);
 
 /**
- * @param { BootstrapPowers & {
- *   consume: { loadVat: ERef<VatLoader<ZoeVat>> }
+ * @param {BootstrapPowers & {
+ *   consume: { loadVat: ERef<VatLoader<ZoeVat>> };
  * }} powers
  *
  * @typedef {ERef<ReturnType<import('../vat-zoe.js').buildRootObject>>} ZoeVat
@@ -102,8 +101,9 @@ harden(buildZoe);
  * TODO: rename this to getBoard?
  *
  * @param {BootstrapPowers & {
- *   consume: { loadVat: ERef<VatLoader<BoardVat>>
- * }}} powers
+ *   consume: { loadVat: ERef<VatLoader<BoardVat>> };
+ * }} powers
+ *
  * @typedef {ERef<ReturnType<import('../vat-board.js').buildRootObject>>} BoardVat
  */
 export const makeBoard = async ({
@@ -121,15 +121,14 @@ harden(makeBoard);
 /**
  * Make the agoricNames, namesByAddress name hierarchies.
  *
- * agoricNames are well-known items such as the RUN issuer,
- * available as E(home.agoricNames).lookup('issuer', 'RUN')
+ * AgoricNames are well-known items such as the RUN issuer, available as
+ * E(home.agoricNames).lookup('issuer', 'RUN')
  *
- * namesByAddress is a NameHub for each provisioned client,
- * available, for example, as `E(home.namesByAddress).lookup('agoric1...')`.
- * `depositFacet` as in `E(home.namesByAddress).lookup('agoric1...', 'depositFacet')`
- * is reserved for use by the Agoric wallet. Each client
- * is given `home.myAddressNameAdmin`, which they can use to
- * assign (update / reserve) any other names they choose.
+ * NamesByAddress is a NameHub for each provisioned client, available, for
+ * example, as `E(home.namesByAddress).lookup('agoric1...')`. `depositFacet` as
+ * in `E(home.namesByAddress).lookup('agoric1...', 'depositFacet')` is reserved
+ * for use by the Agoric wallet. Each client is given `home.myAddressNameAdmin`,
+ * which they can use to assign (update / reserve) any other names they choose.
  *
  * @param {BootstrapSpace} powers
  */
@@ -176,8 +175,8 @@ harden(makeClientBanks);
 /**
  * Mint RUN genesis supply.
  *
- * @param { BootstrapPowers & {
- *   vatParameters: { argv: { bootMsg?: typeof bootMsgEx }},
+ * @param {BootstrapPowers & {
+ *   vatParameters: { argv: { bootMsg?: typeof bootMsgEx } };
  * }} powers
  */
 export const mintInitialSupply = async ({
@@ -198,7 +197,11 @@ export const mintInitialSupply = async ({
   ) || { amount: '0' };
   const bootstrapPaymentValue = Nat(BigInt(centralBootstrapSupply.amount));
 
-  /** @type {Installation<import('../../../run-protocol/src/centralSupply.js').CentralSupplyContract>} */
+  /**
+   * @type {Installation<
+   *   import('../../../run-protocol/src/centralSupply.js').CentralSupplyContract
+   * >}
+   */
   // @ts-expect-error bundle types are borked
   const installation = E(zoe).install(centralSupplyBundle);
   const start = E(zoe).startInstance(
@@ -216,8 +219,8 @@ harden(mintInitialSupply);
 /**
  * Add RUN (with initialSupply payment), BLD (with mint) to BankManager.
  *
- * @param { BootstrapSpace & {
- *   consume: { loadVat: ERef<VatLoader<BankVat>> },
+ * @param {BootstrapSpace & {
+ *   consume: { loadVat: ERef<VatLoader<BankVat>> };
  * }} powers
  */
 export const addBankAssets = async ({
@@ -236,7 +239,7 @@ export const addBankAssets = async ({
   const bundle = await mintHolderBundle;
   const installation = E(zoe).install(bundle);
 
-  /** @type {{ creatorFacet: ERef<Mint>, publicFacet: ERef<Issuer> }} */
+  /** @type {{ creatorFacet: ERef<Mint>; publicFacet: ERef<Issuer> }} */
   // @ts-expect-error cast
   const { creatorFacet: bldMint, publicFacet: bldIssuer } = E.get(
     E(zoe).startInstance(

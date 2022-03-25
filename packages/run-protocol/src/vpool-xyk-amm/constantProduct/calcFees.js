@@ -32,7 +32,7 @@ const amountGT = (left, right) =>
  * Apply the feeRatio to the amount that has a matching brand. This used to
  * calculate fees in the single pool case.
  *
- * @param {{ amountIn: Amount, amountOut: Amount}} amounts - a record with two
+ * @param {{ amountIn: Amount; amountOut: Amount }} amounts - A record with two
  *   amounts in different brands.
  * @param {Ratio} feeRatio
  * @returns {Amount}
@@ -69,8 +69,7 @@ const calcFee = ({ amountIn, amountOut }, feeRatio) => {
 
 /**
  * Estimate the swap values, then calculate fees. The swapFn provided by the
- * caller will be swapInNoFees or swapOutNoFees.
- * SwapOut.
+ * caller will be swapInNoFees or swapOutNoFees. SwapOut.
  *
  * @type {CalculateFees}
  */

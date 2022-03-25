@@ -1,6 +1,4 @@
-/**
- * Kernel's keeper of persistent state for a vat.
- */
+/** Kernel's keeper of persistent state for a vat. */
 // @ts-check
 import { Nat } from '@agoric/nat';
 import { assert, details as X, q } from '@agoric/assert';
@@ -25,10 +23,10 @@ const FIRST_DEVICE_ID = 70n;
 /**
  * Establish a vat's state.
  *
- * @param {*} kvStore  The key-value store in which the persistent state will be kept
- * @param {*} streamStore  Accompanying stream store
- * @param {string} vatID The vat ID string of the vat in question
- * TODO: consider making this part of makeVatKeeper
+ * @param {any} kvStore The key-value store in which the persistent state will be kept
+ * @param {any} streamStore Accompanying stream store
+ * @param {string} vatID The vat ID string of the vat in question TODO: consider
+ *   making this part of makeVatKeeper
  */
 export function initializeVatState(kvStore, streamStore, vatID) {
   kvStore.set(`${vatID}.o.nextID`, `${FIRST_OBJECT_ID}`);
@@ -44,26 +42,36 @@ export function initializeVatState(kvStore, streamStore, vatID) {
 /**
  * Produce a vat keeper for a vat.
  *
- * @param {KVStorePlus} kvStore  The keyValue store in which the persistent state will be kept
- * @param {StreamStore} streamStore  Accompanying stream store, for the transcripts
- * @param {*} kernelSlog
- * @param {string} vatID  The vat ID string of the vat in question
- * @param {*} addKernelObject  Kernel function to add a new object to the kernel's
- * mapping tables.
- * @param {*} addKernelPromiseForVat  Kernel function to add a new promise to the
- * kernel's mapping tables.
+ * @param {KVStorePlus} kvStore The keyValue store in which the persistent state
+ *   will be kept
+ * @param {StreamStore} streamStore Accompanying stream store, for the transcripts
+ * @param {any} kernelSlog
+ * @param {string} vatID The vat ID string of the vat in question
+ * @param {any} addKernelObject Kernel function to add a new object to the
+ *   kernel's mapping tables.
+ * @param {any} addKernelPromiseForVat Kernel function to add a new promise to
+ *   the kernel's mapping tables.
  * @param {(kernelSlot: string) => boolean} kernelObjectExists
- * @param {*} incrementRefCount
- * @param {*} decrementRefCount
- * @param {(kernelSlot: string) => {reachable: number, recognizable: number}} getObjectRefCount
- * @param {(kernelSlot: string, o: { reachable: number, recognizable: number }) => void} setObjectRefCount
- * @param {(vatID: string, kernelSlot: string) => {isReachable: boolean, vatSlot: string}} getReachableAndVatSlot
+ * @param {any} incrementRefCount
+ * @param {any} decrementRefCount
+ * @param {(kernelSlot: string) => {
+ *   reachable: number;
+ *   recognizable: number;
+ * }} getObjectRefCount
+ * @param {(
+ *   kernelSlot: string,
+ *   o: { reachable: number; recognizable: number },
+ * ) => void} setObjectRefCount
+ * @param {(
+ *   vatID: string,
+ *   kernelSlot: string,
+ * ) => { isReachable: boolean; vatSlot: string }} getReachableAndVatSlot
  * @param {(kernelSlot: string) => void} addMaybeFreeKref
- * @param {*} incStat
- * @param {*} decStat
- * @param {*} getCrankNumber
- * @param { SnapStore= } snapStore
- * returns an object to hold and access the kernel's state for the given vat
+ * @param {any} incStat
+ * @param {any} decStat
+ * @param {any} getCrankNumber
+ * @param {SnapStore} [snapStore] Returns an object to hold and access the
+ *   kernel's state for the given vat
  */
 export function makeVatKeeper(
   kvStore,
@@ -111,13 +119,13 @@ export function makeVatKeeper(
 
   function getSourceAndOptions() {
     const source = JSON.parse(getRequired(`${vatID}.source`));
-    /** @type { ManagerOptions } */
+    /** @type {ManagerOptions} */
     const options = JSON.parse(kvStore.get(`${vatID}.options`) || '{}');
     return harden({ source, options });
   }
 
   function getOptions() {
-    /** @type { ManagerOptions } */
+    /** @type {ManagerOptions} */
     const options = JSON.parse(kvStore.get(`${vatID}.options`) || '{}');
     return harden(options);
   }
@@ -228,17 +236,19 @@ export function makeVatKeeper(
   }
 
   /**
-   * Provide the kernel slot corresponding to a given vat slot, allocating a
-   * new one (for exports only) if it doesn't already exist. If we're allowed
-   * to allocate, we also ensure the 'reachable' flag is set on it (whether
-   * we allocated a new one or used an existing one). If we're not allowed to
+   * Provide the kernel slot corresponding to a given vat slot, allocating a new
+   * one (for exports only) if it doesn't already exist. If we're allowed to
+   * allocate, we also ensure the 'reachable' flag is set on it (whether we
+   * allocated a new one or used an existing one). If we're not allowed to
    * allocate, we insist that the reachable flag was already set.
    *
-   * @param {string} vatSlot  The vat slot of interest
-   * @param {{ setReachable?: boolean, required?: boolean }} options  'setReachable' will set the 'reachable' flag on vat exports, while 'required' means we refuse to allocate a missing entry
-   * @returns {string} the kernel slot that vatSlot maps to
-   * @throws {Error} if vatSlot is not a kind of thing that can be exported by vats
-   * or is otherwise invalid.
+   * @param {string} vatSlot The vat slot of interest
+   * @param {{ setReachable?: boolean; required?: boolean }} options
+   *   'setReachable' will set the 'reachable' flag on vat exports, while
+   *   'required' means we refuse to allocate a missing entry
+   * @returns {string} The kernel slot that vatSlot maps to
+   * @throws {Error} If vatSlot is not a kind of thing that can be exported by
+   *   vats or is otherwise invalid.
    */
   function mapVatSlotToKernelSlot(vatSlot, options = {}) {
     const { setReachable = true, required = false } = options;
@@ -306,11 +316,13 @@ export function makeVatKeeper(
    * Provide the vat slot corresponding to a given kernel slot, including
    * creating the vat slot if it doesn't already exist.
    *
-   * @param {string} kernelSlot  The kernel slot of interest
-   * @param {{ setReachable?: boolean, required?: boolean }} options  'setReachable' will set the 'reachable' flag on vat imports, while 'required' means we refuse to allocate a missing entry
-   * @returns {string} the vat slot kernelSlot maps to
-   * @throws {Error} if kernelSlot is not a kind of thing that can be imported by vats
-   * or is otherwise invalid.
+   * @param {string} kernelSlot The kernel slot of interest
+   * @param {{ setReachable?: boolean; required?: boolean }} options
+   *   'setReachable' will set the 'reachable' flag on vat imports, while
+   *   'required' means we refuse to allocate a missing entry
+   * @returns {string} The vat slot kernelSlot maps to
+   * @throws {Error} If kernelSlot is not a kind of thing that can be imported
+   *   by vats or is otherwise invalid.
    */
   function mapKernelSlotToVatSlot(kernelSlot, options = {}) {
     const { setReachable = true, required = false } = options;
@@ -374,9 +386,8 @@ export function makeVatKeeper(
   /**
    * Test if there's a c-list entry for some slot.
    *
-   * @param {string} slot  The slot of interest
-   *
-   * @returns {boolean} true iff this vat has a c-list entry mapping for `slot`.
+   * @param {string} slot The slot of interest
+   * @returns {boolean} True iff this vat has a c-list entry mapping for `slot`.
    */
   function hasCListEntry(slot) {
     return kvStore.has(`${vatID}.c.${slot}`);
@@ -385,8 +396,8 @@ export function makeVatKeeper(
   /**
    * Remove an entry from the vat's c-list.
    *
-   * @param {string} kernelSlot  The kernel slot being removed
-   * @param {string} vatSlot  The vat slot being removed
+   * @param {string} kernelSlot The kernel slot being removed
+   * @param {string} vatSlot The vat slot being removed
    */
   function deleteCListEntry(kernelSlot, vatSlot) {
     parseKernelSlot(kernelSlot); // used for its assert()
@@ -437,9 +448,8 @@ export function makeVatKeeper(
   /**
    * Generator function to return the vat's transcript, one entry at a time.
    *
-   * @param {StreamPosition=} startPos  Optional position to begin reading from
-   *
-   * @yields { TranscriptEntry } a stream of transcript entries
+   * @param {StreamPosition} [startPos] Optional position to begin reading from
+   * @yields {TranscriptEntry} A stream of transcript entries
    */
   function* getTranscript(startPos = streamStore.STREAM_START) {
     const endPos = JSON.parse(getRequired(`${vatID}.t.endPosition`));
@@ -448,14 +458,14 @@ export function makeVatKeeper(
       startPos,
       endPos,
     )) {
-      yield /** @type { TranscriptEntry } */ (JSON.parse(entry));
+      yield /** @type {TranscriptEntry} */ (JSON.parse(entry));
     }
   }
 
   /**
    * Append an entry to the vat's transcript.
    *
-   * @param {Object} entry  The transcript entry to append.
+   * @param {Object} entry The transcript entry to append.
    */
   function addToTranscript(entry) {
     const oldPos = JSON.parse(getRequired(`${vatID}.t.endPosition`));
@@ -467,7 +477,7 @@ export function makeVatKeeper(
     kvStore.set(`${vatID}.t.endPosition`, `${JSON.stringify(newPos)}`);
   }
 
-  /** @returns { StreamPosition } */
+  /** @returns {StreamPosition} */
   function getTranscriptEndPosition() {
     return JSON.parse(
       kvStore.get(`${vatID}.t.endPosition`) ||
@@ -475,9 +485,7 @@ export function makeVatKeeper(
     );
   }
 
-  /**
-   * @returns {{ snapshotID: string, startPos: StreamPosition } | undefined}
-   */
+  /** @returns {{ snapshotID: string; startPos: StreamPosition } | undefined} */
   function getLastSnapshot() {
     const notation = kvStore.get(`local.${vatID}.lastSnapshot`);
     if (!notation) {
@@ -543,8 +551,8 @@ export function makeVatKeeper(
   /**
    * Store a snapshot, if given a snapStore.
    *
-   * @param { VatManager } manager
-   * @returns { Promise<boolean> }
+   * @param {VatManager} manager
+   * @returns {Promise<boolean>}
    */
   async function saveSnapshot(manager) {
     if (!snapStore || !manager.makeSnapshot) {
@@ -592,7 +600,7 @@ export function makeVatKeeper(
   /**
    * Produce a dump of this vat's state for debugging purposes.
    *
-   * @returns {Array<[string, string, string]>} an array of this vat's state information
+   * @returns {[string, string, string][]} An array of this vat's state information
    */
   function dumpState() {
     const res = [];
@@ -604,7 +612,7 @@ export function makeVatKeeper(
           const vatSlot = slot;
           const kernelSlot =
             kvStore.get(k) || assert.fail('getKeys ensures get');
-          /** @type { [string, string, string] } */
+          /** @type {[string, string, string]} */
           const item = [kernelSlot, vatID, vatSlot];
           res.push(item);
         }

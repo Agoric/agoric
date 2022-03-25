@@ -28,7 +28,9 @@ import '../../../src/contracts/exported.js';
  * @typedef {Object} TestContext
  * @property {ZoeService} zoe
  * @property {MakeFakePriceOracle} makeFakePriceOracle
- * @property {(POLL_INTERVAL: bigint) => Promise<PriceAggregatorKit & { instance: Instance }>} makeMedianAggregator
+ * @property {(
+ *   POLL_INTERVAL: bigint,
+ * ) => Promise<PriceAggregatorKit & { instance: Instance }>} makeMedianAggregator
  * @property {Amount} feeAmount
  * @property {IssuerKit} link
  *
@@ -102,9 +104,7 @@ test.before(
     };
 
     const quote = makeIssuerKit('quote', AssetKind.SET);
-    /**
-     * @param {RelativeTime} POLL_INTERVAL
-     */
+    /** @param {RelativeTime} POLL_INTERVAL */
 
     const makeChainlinkAggregator = async (
       maxSubmissionCount,

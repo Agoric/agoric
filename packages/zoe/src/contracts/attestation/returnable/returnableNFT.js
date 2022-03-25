@@ -13,14 +13,16 @@ import { addToLiened } from './returnableHelpers.js';
 const { details: X } = assert;
 
 /**
- * @param {string} attestationTokenName - the name for the attestation
- * token
+ * @param {string} attestationTokenName - The name for the attestation token
  * @param {Amount} empty
  * @param {ZCF} zcf
- * @returns {Promise<{makeReturnAttInvitation:
- * MakeReturnAttInvitation, addReturnableLien: AddReturnableLien,
- * getLienAmount: GetReturnableLienAmount, getIssuer: () => Issuer,
- * getBrand: () => Brand}>}
+ * @returns {Promise<{
+ *   makeReturnAttInvitation: MakeReturnAttInvitation;
+ *   addReturnableLien: AddReturnableLien;
+ *   getLienAmount: GetReturnableLienAmount;
+ *   getIssuer: () => Issuer;
+ *   getBrand: () => Brand;
+ * }>}
  */
 const setupAttestation = async (attestationTokenName, empty, zcf) => {
   assert(AmountMath.isEmpty(empty), X`empty ${empty} was not empty`);
@@ -32,7 +34,7 @@ const setupAttestation = async (attestationTokenName, empty, zcf) => {
 
   // Amount in `lienedAmounts` is of the brand `externalBrand`
 
-  /** @type {Store<Address,Amount>} */
+  /** @type {Store<Address, Amount>} */
   const lienedAmounts = makeStore('address');
 
   // IMPORTANT: only expose this function to the owner of the address.
@@ -67,7 +69,7 @@ const setupAttestation = async (attestationTokenName, empty, zcf) => {
     zcfMint.burnLosses(harden({ Attestation: attestationAmount }), seat);
     seat.exit();
 
-    const attestationValue = /** @type {Array<ReturnableAttElem>} */ (
+    const attestationValue = /** @type {ReturnableAttElem[]} */ (
       attestationAmount.value
     );
 

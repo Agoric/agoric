@@ -38,7 +38,7 @@ export const assertKeywordName = keyword => {
 };
 
 /**
- * @param {{[name: string]: any}} uncleanKeywordRecord
+ * @param {{ [name: string]: any }} uncleanKeywordRecord
  * @returns {string[]}
  */
 export const cleanKeywords = uncleanKeywordRecord => {
@@ -96,9 +96,8 @@ export const coerceAmountKeywordRecord = (
 };
 
 /**
- * Just checks residual issues after matching ProposalShape.
- * Only known residual issue is verifying that it only has one of the
- * optional properties.
+ * Just checks residual issues after matching ProposalShape. Only known residual
+ * issue is verifying that it only has one of the optional properties.
  *
  * @param {ExitRule} exit
  */
@@ -106,10 +105,10 @@ const assertExit = exit =>
   assert(ownKeys(exit).length === 1, X`exit ${exit} should only have one key`);
 
 /**
- * check that keyword is not in both 'want' and 'give'.
+ * Check that keyword is not in both 'want' and 'give'.
  *
- * @param {ProposalRecord["want"]} want
- * @param {ProposalRecord["give"]} give
+ * @param {ProposalRecord['want']} want
+ * @param {ProposalRecord['give']} give
  */
 const assertKeywordNotInBoth = (want, give) => {
   const wantKeywordSet = new Set(ownKeys(want));
@@ -124,16 +123,15 @@ const assertKeywordNotInBoth = (want, give) => {
 };
 
 /**
- * cleanProposal checks the keys and values of the proposal, including
- * the keys and values of the internal objects. The proposal may have
- * the following keys: `give`, `want`, and `exit`. These keys may be
- * omitted in the `proposal` argument passed to cleanProposal, but
- * anything other than these keys is not allowed. The values of `give`
- * and `want` must be "amountKeywordRecords", meaning that the keys
- * must be keywords and the values must be amounts. The value of
- * `exit`, if present, must be a record of one of the following forms:
- * `{ waived: null }` `{ onDemand: null }` `{ afterDeadline: { timer
- * :Timer, deadline :bigint } }
+ * CleanProposal checks the keys and values of the proposal, including the keys
+ * and values of the internal objects. The proposal may have the following keys:
+ * `give`, `want`, and `exit`. These keys may be omitted in the `proposal`
+ * argument passed to cleanProposal, but anything other than these keys is not
+ * allowed. The values of `give` and `want` must be "amountKeywordRecords",
+ * meaning that the keys must be keywords and the values must be amounts. The
+ * value of `exit`, if present, must be a record of one of the following forms:
+ * `{ waived: null }` `{ onDemand: null }` `{ afterDeadline: { timer :Timer,
+ * deadline :bigint } }
  *
  * @param {Proposal} proposal
  * @param {GetAssetKindByBrand} getAssetKindByBrand

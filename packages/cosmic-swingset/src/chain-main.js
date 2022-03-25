@@ -94,20 +94,20 @@ const makeChainStorage = (call, prefix = '', imp = x => x, exp = x => x) => {
  *
  * The queue uses the following storage layout, prefixed by `prefix`, such as
  * `actionQueue.`:
+ *
  * - `<prefix>head`: the index of the first entry of the queue.
- * - `<prefix>tail`: the index *past* the last entry in the queue.
+ * - `<prefix>tail`: the index _past_ the last entry in the queue.
  * - `<prefix><index>`: the contents of the queue at the given index.
  *
  * For the `actionQueue`, the Cosmos side of the queue will push into the queue,
- * updating `<prefix>tail` and `<prefix><index>`.  The JS side will shift the
+ * updating `<prefix>tail` and `<prefix><index>`. The JS side will shift the
  * queue, updating `<prefix>head` and reading and deleting `<prefix><index>`.
  *
- * Parallel access is not supported, only a single outstanding operation at a
- * time.
+ * Parallel access is not supported, only a single outstanding operation at a time.
  *
- * @param {(obj: any) => any} call send a message to the chain's storage API and
- * receive a reply
- * @param {string} [prefix] string to prepend to the queue's storage keys
+ * @param {(obj: any) => any} call Send a message to the chain's storage API and
+ *   receive a reply
+ * @param {string} [prefix] String to prepend to the queue's storage keys
  */
 const makeChainQueue = (call, prefix = '') => {
   const storage = makeChainStorage(call, prefix);

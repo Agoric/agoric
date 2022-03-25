@@ -11,17 +11,20 @@
 
 /**
  * @callback MakeOfferAndFindInvitationAmount
- * @param {ERef<WalletAdminFacet>} walletAdmin - an internal type of the
- * wallet, not defined here
+ * @param {ERef<WalletAdminFacet>} walletAdmin - An internal type of the wallet,
+ *   not defined here
  * @param {ERef<ZoeService>} zoe
  * @param {ERef<Purse>} zoeInvitationPurse
- * @returns {{ offer: OfferHelper, findInvitationAmount: FindInvitationAmount }}
+ * @returns {{
+ *   offer: OfferHelper;
+ *   findInvitationAmount: FindInvitationAmount;
+ * }}
  */
 
 /**
  * @callback MakeSaveIssuerHelper
- * @param {ERef<WalletAdminFacet>} walletAdmin - an internal type of the
- * wallet, not defined here
+ * @param {ERef<WalletAdminFacet>} walletAdmin - An internal type of the wallet,
+ *   not defined here
  * @param {ERef<IssuerManager>} issuerManager
  * @returns {SaveIssuerHelper}
  */

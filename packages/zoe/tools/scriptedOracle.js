@@ -6,11 +6,10 @@ import { Far } from '@endo/marshal';
  * Start an instance of an Oracle that follows a script. The Oracle has access
  * to a timer, and looks in the script for events indexed by the current time.
  * It responds to onQuery() by reporting any current event. This is intended to
- * be useful for tests.
- * The queries return an object that has fields { event, time, query }. event is
- * whatever was in the script indexed by the time. The query is returned in the
- * result, but has no impact on the result. If the script has no entry for the
- * time, the event is 'nothing to report'.
+ * be useful for tests. The queries return an object that has fields { event,
+ * time, query }. event is whatever was in the script indexed by the time. The
+ * query is returned in the result, but has no impact on the result. If the
+ * script has no entry for the time, the event is 'nothing to report'.
  *
  * @param {Record<string, any>} script
  * @param {Installation<import('../src/contracts/oracle').start>} oracleInstallation

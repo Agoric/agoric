@@ -118,7 +118,7 @@ export function makeDeliveryKit(
     handleResolutions(localResolutions);
   }
 
-  /** @type { (remoteID: string, ackSeqNum: number) => void } */
+  /** @type {(remoteID: string, ackSeqNum: number) => void} */
   function handleAckFromRemote(remoteID, ackSeqNum) {
     retireAcknowledgedRemotePromiseIDs(remoteID, ackSeqNum);
   }
@@ -126,7 +126,7 @@ export function makeDeliveryKit(
   // dispatch.deliver with msg from vattp lands here, containing a message
   // from some remote machine. figure out whether it's a deliver or a
   // resolve, parse, merge with handleSend/handleResolutions
-  /** @type { (remoteID: string, message: string, result?: string) => void} */
+  /** @type {(remoteID: string, message: string, result?: string) => void} */
   function messageFromRemote(remoteID, message, result) {
     if (result) {
       // TODO: eventually, the vattp vat will be changed to send the 'receive'

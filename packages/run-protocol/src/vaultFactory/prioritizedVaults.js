@@ -11,7 +11,6 @@ import { toVaultKey } from './storeUtils.js';
 /** @typedef {import('./vault').InnerVault} InnerVault */
 
 /**
- *
  * @param {Amount<'nat'>} debtAmount
  * @param {Amount<'nat'>} collateralAmount
  * @returns {Ratio}
@@ -27,7 +26,6 @@ const calculateDebtToCollateral = (debtAmount, collateralAmount) => {
 };
 
 /**
- *
  * @param {InnerVault} vault
  * @returns {Ratio}
  */
@@ -37,14 +35,14 @@ export const currentDebtToCollateral = vault =>
     vault.getCollateralAmount(),
   );
 
-/** @typedef {{debtToCollateral: Ratio, vault: InnerVault}} VaultRecord */
+/** @typedef {{ debtToCollateral: Ratio; vault: InnerVault }} VaultRecord */
 
 /**
- * InnerVaults, ordered by their liquidation ratio so that all the
- * vaults below a threshold can be quickly found and liquidated.
+ * InnerVaults, ordered by their liquidation ratio so that all the vaults below
+ * a threshold can be quickly found and liquidated.
  *
- * @param {() => void} reschedulePriceCheck called when there is a new
- * least-collateralized vault
+ * @param {() => void} reschedulePriceCheck Called when there is a new
+ *   least-collateralized vault
  */
 export const makePrioritizedVaults = reschedulePriceCheck => {
   const vaults = makeOrderedVaultStore();
@@ -55,7 +53,7 @@ export const makePrioritizedVaults = reschedulePriceCheck => {
   // current high-water mark fires, we reschedule at the new (presumably
   // lower) rate.
   // Without this we'd be calling reschedulePriceCheck() unnecessarily
-  /** @type {Ratio=} */
+  /** @type {Ratio | undefined} */
   let oracleQueryThreshold;
 
   // Check if this ratio of debt to collateral would be the highest known. If
@@ -74,10 +72,7 @@ export const makePrioritizedVaults = reschedulePriceCheck => {
     }
   };
 
-  /**
-   *
-   * @returns {Ratio=} actual debt over collateral
-   */
+  /** @returns {Ratio | undefined} Actual debt over collateral */
   const firstDebtRatio = () => {
     if (vaults.getSize() === 0) {
       return undefined;
@@ -112,7 +107,6 @@ export const makePrioritizedVaults = reschedulePriceCheck => {
   };
 
   /**
-   *
    * @param {Amount<'nat'>} oldDebt
    * @param {Amount<'nat'>} oldCollateral
    * @param {string} vaultId
@@ -123,7 +117,6 @@ export const makePrioritizedVaults = reschedulePriceCheck => {
   };
 
   /**
-   *
    * @param {VaultId} vaultId
    * @param {InnerVault} vault
    */

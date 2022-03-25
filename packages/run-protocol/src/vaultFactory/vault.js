@@ -23,29 +23,31 @@ const { details: X, quote: q } = assert;
 const trace = makeTracer('IV');
 
 /**
- * @file This has most of the logic for a Vault, to borrow RUN against collateral.
+ * @file This Has most of the logic for a Vault, to borrow RUN against collateral.
  *
- * The logic here is for InnerVault which is the majority of logic of vaults but
- * the user view is the `vault` value contained in VaultKit.
+ *   The logic here is for InnerVault which is the majority of logic of vaults but
+ *   the user view is the `vault` value contained in VaultKit.
  *
- * A note on naming convention:
- * - `Pre` is used as a postfix for any mutable value retrieved *before* an
- *    `await`, to flag values that must used very carefully after the `await`
- * - `new` is a prefix for values that describe the result of executing a
- *   transaction; e.g., `debt` is the value before the txn, and `newDebt`
- *   will be value if the txn completes.
- * - the absence of one of these implies the opposite, so `newDebt` is the
- *   future value fo `debt`, as computed based on values after any `await`
+ *   A note on naming convention:
+ *
+ *   - `Pre` is used as a postfix for any mutable value retrieved _before_ an
+ *       `await`, to flag values that must used very carefully after the `await`
+ *   - `new` is a prefix for values that describe the result of executing a
+ *       transaction; e.g., `debt` is the value before the txn, and `newDebt`
+ *       will be value if the txn completes.
+ *   - The absence of one of these implies the opposite, so `newDebt` is the future
+ *       value fo `debt`, as computed based on values after any `await`
  */
 
 /**
  * Constants for vault phase.
  *
- * ACTIVE       - vault is in use and can be changed
- * LIQUIDATING  - vault is being liquidated by the vault manager, and cannot be changed by the user
- * TRANSFER     - vault is able to be transferred (payments and debits frozen until it has a new owner)
- * CLOSED       - vault was closed by the user and all assets have been paid out
- * LIQUIDATED   - vault was closed by the manager, with remaining assets paid to owner
+ * ACTIVE - vault is in use and can be changed LIQUIDATING - vault is being
+ * liquidated by the vault manager, and cannot be changed by the user TRANSFER -
+ * vault is able to be transferred (payments and debits frozen until it has a
+ * new owner) CLOSED - vault was closed by the user and all assets have been
+ * paid out LIQUIDATED - vault was closed by the manager, with remaining assets
+ * paid to owner
  */
 export const VaultPhase = /** @type {const} */ ({
   ACTIVE: 'active',
@@ -57,7 +59,7 @@ export const VaultPhase = /** @type {const} */ ({
 
 /**
  * @typedef {VaultPhase[keyof Omit<typeof VaultPhase, 'TRANSFER'>]} InnerPhase
- * @type {{[K in InnerPhase]: Array<InnerPhase>}}
+ * @type {{ [K in InnerPhase]: InnerPhase[] }}
  */
 const validTransitions = {
   [VaultPhase.ACTIVE]: [VaultPhase.LIQUIDATING, VaultPhase.CLOSED],
@@ -71,7 +73,8 @@ const validTransitions = {
  *
  * @typedef {Object} VaultUIState
  * @property {Amount<'nat'>} locked Amount of Collateral locked
- * @property {{run: Amount<'nat'>, interest: Ratio}} debtSnapshot Debt of 'run' at the point the compounded interest was 'interest'
+ * @property {{ run: Amount<'nat'>; interest: Ratio }} debtSnapshot Debt of
+ *   'run' at the point the compounded interest was 'interest'
  * @property {Ratio} interestRate Annual interest rate charge
  * @property {Ratio} liquidationRatio
  * @property {OuterPhase} vaultState
@@ -82,19 +85,24 @@ const validTransitions = {
  * @property {(oldDebt: Amount, newDebt: Amount) => void} applyDebtDelta
  * @property {() => Brand} getCollateralBrand
  * @property {ReallocateWithFee} reallocateWithFee
- * @property {() => Ratio} getCompoundedInterest - coefficient on existing debt to calculate new debt
- * @property {(oldDebt: Amount, oldCollateral: Amount, vaultId: VaultId) => void} updateVaultPriority
+ * @property {() => Ratio} getCompoundedInterest - Coefficient on existing debt
+ *   to calculate new debt
+ * @property {(
+ *   oldDebt: Amount,
+ *   oldCollateral: Amount,
+ *   vaultId: VaultId,
+ * ) => void} updateVaultPriority
  */
 
 /**
  * @typedef {Readonly<{
- * assetNotifier: Notifier<import('./vaultManager').AssetState>,
- * idInManager: VaultId,
- * manager: InnerVaultManagerBase & GetVaultParams,
- * priceAuthority: ERef<PriceAuthority>,
- * mint: ZCFMint,
- * vaultSeat: ZCFSeat,
- * zcf: ZCF,
+ *   assetNotifier: Notifier<import('./vaultManager').AssetState>;
+ *   idInManager: VaultId;
+ *   manager: InnerVaultManagerBase & GetVaultParams;
+ *   priceAuthority: ERef<PriceAuthority>;
+ *   mint: ZCFMint;
+ *   vaultSeat: ZCFSeat;
+ *   zcf: ZCF;
  * }>} ImmutableState
  */
 
@@ -102,10 +110,10 @@ const validTransitions = {
  * Snapshot is of the debt and compounded interest when the principal was last changed.
  *
  * @typedef {{
- * interestSnapshot: Ratio,
- * outerUpdater: IterationObserver<VaultUIState> | null,
- * phase: InnerPhase,
- * debtSnapshot: Amount<'nat'>,
+ *   interestSnapshot: Ratio;
+ *   outerUpdater: IterationObserver<VaultUIState> | null;
+ *   phase: InnerPhase;
+ *   debtSnapshot: Amount<'nat'>;
  * }} MutableState
  */
 
@@ -127,7 +135,7 @@ export const makeInnerVault = (
 ) => {
   // CONSTANTS
   const collateralBrand = manager.getCollateralBrand();
-  /** @type {{brand: Brand<'nat'>}} */
+  /** @type {{ brand: Brand<'nat'> }} */
   const { brand: debtBrand } = mint.getIssuerRecord();
 
   const emptyCollateral = AmountMath.makeEmpty(collateralBrand);
@@ -161,9 +169,7 @@ export const makeInnerVault = (
   };
 
   // #region Phase logic
-  /**
-   * @param {InnerPhase} newPhase
-   */
+  /** @param {InnerPhase} newPhase */
   const assignPhase = newPhase => {
     const { phase } = state;
     const validNewPhases = validTransitions[phase];
@@ -189,10 +195,10 @@ export const makeInnerVault = (
   // #endregion
 
   /**
-   * Called whenever the debt is paid or created through a transaction,
-   * but not for interest accrual.
+   * Called whenever the debt is paid or created through a transaction, but not
+   * for interest accrual.
    *
-   * @param {Amount} newDebt - principal and all accrued interest
+   * @param {Amount} newDebt - Principal and all accrued interest
    */
   const updateDebtSnapshot = newDebt => {
     // update local state
@@ -201,12 +207,12 @@ export const makeInnerVault = (
   };
 
   /**
-   * Update the debt balance and propagate upwards to
-   * maintain aggregate debt and liquidation order.
+   * Update the debt balance and propagate upwards to maintain aggregate debt
+   * and liquidation order.
    *
-   * @param {Amount} oldDebt - prior principal and all accrued interest
-   * @param {Amount} oldCollateral - actual collateral
-   * @param {Amount} newDebt - actual principal and all accrued interest
+   * @param {Amount} oldDebt - Prior principal and all accrued interest
+   * @param {Amount} oldCollateral - Actual collateral
+   * @param {Amount} newDebt - Actual principal and all accrued interest
    */
   const updateDebtAccounting = (oldDebt, oldCollateral, newDebt) => {
     updateDebtSnapshot(newDebt);
@@ -225,8 +231,8 @@ export const makeInnerVault = (
    * calculate what the current debt is given what's recorded in this vault and
    * what interest has compounded since this vault record was written.
    *
-   * @see getNormalizedDebt
    * @returns {Amount<'nat'>}
+   * @see getNormalizedDebt
    */
   const getCurrentDebt = () => {
     return calculateCurrentDebt(
@@ -242,8 +248,9 @@ export const makeInnerVault = (
    * by their debt-to-collateral ratios without having to mutate the debts as
    * the interest accrues.
    *
+   * @returns {Amount<'nat'>} As if the vault was open at the launch of this
+   *   manager, before any interest accrued
    * @see getActualDebAmount
-   * @returns {Amount<'nat'>} as if the vault was open at the launch of this manager, before any interest accrued
    */
   const getNormalizedDebt = () => {
     return reverseInterest(state.debtSnapshot, state.interestSnapshot);
@@ -284,10 +291,7 @@ export const makeInnerVault = (
     );
   };
 
-  /**
-   *
-   * @returns {Amount<'nat'>}
-   */
+  /** @returns {Amount<'nat'>} */
   const getCollateralAmount = () => {
     const { vaultSeat } = state;
     // getCollateralAllocated would return final allocations
@@ -296,10 +300,7 @@ export const makeInnerVault = (
       : getCollateralAllocated(vaultSeat);
   };
 
-  /**
-   *
-   * @param {OuterPhase} newPhase
-   */
+  /** @param {OuterPhase} newPhase */
   const snapshotState = newPhase => {
     const { debtSnapshot: run, interestSnapshot: interest } = state;
     /** @type {VaultUIState} */
@@ -433,9 +434,9 @@ export const makeInnerVault = (
   };
 
   /**
-   * Stage a transfer between `fromSeat` and `toSeat`, specified as the delta between
-   * the gain and a loss on the `fromSeat`. The gain/loss are typically from the
-   * give/want respectively of a proposal. The `key` is the allocation keyword.
+   * Stage a transfer between `fromSeat` and `toSeat`, specified as the delta
+   * between the gain and a loss on the `fromSeat`. The gain/loss are typically
+   * from the give/want respectively of a proposal. The `key` is the allocation keyword.
    *
    * @param {ZCFSeat} fromSeat
    * @param {ZCFSeat} toSeat
@@ -454,11 +455,11 @@ export const makeInnerVault = (
   };
 
   /**
-   * Apply a delta to the `base` Amount, where the delta is represented as
-   * an amount to gain and an amount to lose. Typically one of those will
-   * be empty because gain/loss comes from the give/want for a specific asset
-   * on a proposal. We use two Amounts because an Amount cannot represent
-   * a negative number (so we use a "loss" that will be subtracted).
+   * Apply a delta to the `base` Amount, where the delta is represented as an
+   * amount to gain and an amount to lose. Typically one of those will be empty
+   * because gain/loss comes from the give/want for a specific asset on a
+   * proposal. We use two Amounts because an Amount cannot represent a negative
+   * number (so we use a "loss" that will be subtracted).
    *
    * @param {Amount} base
    * @param {Amount} gain
@@ -469,11 +470,10 @@ export const makeInnerVault = (
     AmountMath.subtract(AmountMath.add(base, gain), loss);
 
   /**
-   * Calculate the fee, the amount to mint and the resulting debt.
-   * The give and the want together reflect a delta, where typically
-   * one is zero because they come from the gave/want of an offer
-   * proposal. If the `want` is zero, the `fee` will also be zero,
-   * so the simple math works.
+   * Calculate the fee, the amount to mint and the resulting debt. The give and
+   * the want together reflect a delta, where typically one is zero because they
+   * come from the gave/want of an offer proposal. If the `want` is zero, the
+   * `fee` will also be zero, so the simple math works.
    *
    * @param {Amount} currentDebt
    * @param {Amount} giveAmount
@@ -665,7 +665,6 @@ export const makeInnerVault = (
   };
 
   /**
-   *
    * @param {ZCFSeat} seat
    * @returns {VaultKit}
    */

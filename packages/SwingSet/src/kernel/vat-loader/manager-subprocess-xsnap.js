@@ -20,16 +20,22 @@ const decoder = new TextDecoder();
 
 /**
  * @param {{
- *   allVatPowers: VatPowers,
- *   kernelKeeper: KernelKeeper,
- *   kernelSlog: KernelSlog,
- *   startXSnap: (name: string, handleCommand: AsyncHandler, metered?: boolean, snapshotHash?: string) => Promise<XSnap>,
- *   testLog: (...args: unknown[]) => void,
+ *   allVatPowers: VatPowers;
+ *   kernelKeeper: KernelKeeper;
+ *   kernelSlog: KernelSlog;
+ *   startXSnap: (
+ *     name: string,
+ *     handleCommand: AsyncHandler,
+ *     metered?: boolean,
+ *     snapshotHash?: string,
+ *   ) => Promise<XSnap>;
+ *   testLog: (...args: unknown[]) => void;
  * }} tools
- * @returns { VatManagerFactory }
+ * @returns {VatManagerFactory}
  *
- * @typedef { { moduleFormat: 'getExport', source: string } } ExportBundle
- * @typedef { (msg: Uint8Array) => Promise<Uint8Array> } AsyncHandler
+ * @typedef {{ moduleFormat: 'getExport'; source: string }} ExportBundle
+ *
+ * @typedef {(msg: Uint8Array) => Promise<Uint8Array>} AsyncHandler
  */
 export function makeXsSubprocessFactory({
   kernelKeeper,
@@ -38,10 +44,10 @@ export function makeXsSubprocessFactory({
   testLog,
 }) {
   /**
-   * @param { string } vatID
-   * @param { unknown } bundle
-   * @param { ManagerOptions } managerOptions
-   * @param { (vso: VatSyscallObject) => VatSyscallResult } vatSyscallHandler
+   * @param {string} vatID
+   * @param {unknown} bundle
+   * @param {ManagerOptions} managerOptions
+   * @param {(vso: VatSyscallObject) => VatSyscallResult} vatSyscallHandler
    */
   async function createFromBundle(
     vatID,
@@ -78,7 +84,7 @@ export function makeXsSubprocessFactory({
       useTranscript,
     );
 
-    /** @type { (item: Tagged) => unknown } */
+    /** @type {(item: Tagged) => unknown} */
     function handleUpstream([type, ...args]) {
       parentLog(vatID, `handleUpstream`, type, args.length);
       switch (type) {
@@ -109,7 +115,7 @@ export function makeXsSubprocessFactory({
       }
     }
 
-    /** @type { (msg: Uint8Array) => Promise<Uint8Array> } */
+    /** @type {(msg: Uint8Array) => Promise<Uint8Array>} */
     async function handleCommand(msg) {
       // parentLog('handleCommand', { length: msg.byteLength });
       const tagged = handleUpstream(JSON.parse(decoder.decode(msg)));
@@ -127,7 +133,7 @@ export function makeXsSubprocessFactory({
       lastSnapshot ? lastSnapshot.snapshotID : undefined,
     );
 
-    /** @type { (item: Tagged) => Promise<CrankResults> } */
+    /** @type {(item: Tagged) => Promise<CrankResults>} */
     async function issueTagged(item) {
       parentLog(item[0], '...', item.length - 1);
       const result = await worker.issueStringCommand(JSON.stringify(item));
@@ -159,8 +165,8 @@ export function makeXsSubprocessFactory({
     }
 
     /**
-     * @param { VatDeliveryObject} delivery
-     * @returns { Promise<VatDeliveryResult> }
+     * @param {VatDeliveryObject} delivery
+     * @returns {Promise<VatDeliveryResult>}
      */
     async function deliverToWorker(delivery) {
       parentLog(vatID, `sending delivery`, delivery);

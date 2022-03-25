@@ -279,7 +279,7 @@ async function setupServices(
 
   const governorCreatorFacet = consume.vaultFactoryGovernorCreator;
   /** @type {Promise<VaultFactory & LimitedCreatorFacet>} */
-  const vaultFactoryCreatorFacet = /** @type { any } */ (
+  const vaultFactoryCreatorFacet = /** @type {any} */ (
     E(governorCreatorFacet).getCreatorFacet()
   );
   /** @type {[any, VaultFactory, VFC['publicFacet']]} */

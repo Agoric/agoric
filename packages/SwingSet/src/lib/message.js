@@ -3,16 +3,13 @@ import { insistCapData } from './capdata.js';
 
 /**
  * Assert function to ensure that something expected to be a message object
- * actually is.  A message object should have a .method property that's a
- * string, a .args property that's a capdata object, and optionally a .result
- * property that, if present, must be a string.
+ * actually is. A message object should have a .method property that's a string,
+ * a .args property that's a capdata object, and optionally a .result property
+ * that, if present, must be a string.
  *
- * @param {unknown} message  The object to be tested
- *
- * @throws {Error} if, upon inspection, the parameter does not satisfy the above
- *   criteria.
- *
- * @returns { asserts message is Message }
+ * @param {unknown} message The object to be tested
+ * @returns {asserts message is Message}
+ * @throws {Error} If, upon inspection, the parameter does not satisfy the above criteria.
  */
 export function insistMessage(message) {
   assert.typeof(
@@ -33,7 +30,7 @@ export function insistMessage(message) {
 
 /**
  * @param {unknown} vdo
- * @returns { asserts vdo is VatDeliveryObject }
+ * @returns {asserts vdo is VatDeliveryObject}
  */
 export function insistVatDeliveryObject(vdo) {
   assert(Array.isArray(vdo));
@@ -83,7 +80,7 @@ export function insistVatDeliveryObject(vdo) {
 
 /**
  * @param {unknown} vdr
- * @returns { asserts vdr is VatDeliveryResult }
+ * @returns {asserts vdr is VatDeliveryResult}
  */
 export function insistVatDeliveryResult(vdr) {
   assert(Array.isArray(vdr));
@@ -104,9 +101,8 @@ export function insistVatDeliveryResult(vdr) {
 }
 
 /**
- *
  * @param {unknown} vso
- * @returns { asserts vso is VatSyscallObject }
+ * @returns {asserts vso is VatSyscallObject}
  */
 export function insistVatSyscallObject(vso) {
   assert(Array.isArray(vso));
@@ -188,8 +184,8 @@ export function insistVatSyscallObject(vso) {
 }
 
 /**
- * @param { unknown } vsr
- * @returns { asserts vsr is VatSyscallResult }
+ * @param {unknown} vsr
+ * @returns {asserts vsr is VatSyscallResult}
  */
 export function insistVatSyscallResult(vsr) {
   assert(Array.isArray(vsr));

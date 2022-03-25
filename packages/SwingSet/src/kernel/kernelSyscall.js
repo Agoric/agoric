@@ -5,7 +5,7 @@ import { insistKernelType } from './parseKernelSlots.js';
 import { insistCapData } from '../lib/capdata.js';
 import { insistDeviceID, insistVatID } from '../lib/id.js';
 
-/** @type { KernelSyscallResult } */
+/** @type {KernelSyscallResult} */
 const OKNULL = harden(['ok', null]);
 
 export function makeKernelSyscallHandler(tools) {
@@ -56,10 +56,9 @@ export function makeKernelSyscallHandler(tools) {
   }
 
   /**
-   *
-   * @param { string } vatID
-   * @param { string } key
-   * @returns { KernelSyscallResult }
+   * @param {string} vatID
+   * @param {string} key
+   * @returns {KernelSyscallResult}
    */
   function vatstoreGet(vatID, key) {
     const actualKey = vatstoreKeyKey(vatID, key);
@@ -70,11 +69,10 @@ export function makeKernelSyscallHandler(tools) {
   }
 
   /**
-   *
-   * @param { string } vatID
-   * @param { string } key
-   * @param { string } value
-   * @returns { KernelSyscallResult }
+   * @param {string} vatID
+   * @param {string} key
+   * @param {string} value
+   * @returns {KernelSyscallResult}
    */
   function vatstoreSet(vatID, key, value) {
     const actualKey = vatstoreKeyKey(vatID, key);
@@ -88,35 +86,14 @@ export function makeKernelSyscallHandler(tools) {
   /**
    * Execute one step of iteration over a range of vatstore keys.
    *
-   * @param {string} vatID  The vat whose vatstore is being iterated
-   * @param {string} priorKey  The key that was returned by the prior cycle of
-   *   the iteration, or '' if this is the first cycle
-   * @param {string} lowerBound  The lower bound of the iteration range
-   * @param {string} [upperBound]  The uppper bound of the iteration range.  If
-   *   omitted, this defaults to a string equivalent to the `lowerBound` string
-   *   with its rightmost character replaced by the lexically next character.
-   *   For example, if `lowerBound` is 'hello', then `upperBound` would default
-   *   to 'hellp')
-   *
-   * @returns {['ok', [string, string]|[undefined, undefined]]} A pair of a
-   *   status code and a result value.  In the case of this operation, the
-   *   status code is always 'ok'.  The result value is a pair of the key and
-   *   value of the first vatstore entry whose key is lexically greater than
-   *   both `priorKey` and `lowerBound`.  If there are no such entries or if the
-   *   first such entry has a key that is lexically greater than or equal to
-   *   `upperBound`, then result value is a pair of undefineds instead,
-   *   signalling the end of iteration.
-   *
-   * Usage notes:
-   *
    * Iteration is accomplished by repeatedly calling `vatstoreGetAfter` in a
    * loop, each time pass the key that was returned in the previous iteration,
-   * until undefined is returned.  While the initial value for `priorKey` is
+   * until undefined is returned. While the initial value for `priorKey` is
    * conventionally the empty string, in fact any value that is less than
    * `lowerBound` may be used to the same effect.
    *
    * Keys in the vatstore are arbitrary strings, but subsets of the keyspace are
-   * often organized hierarchically.  This iteration API allows simple iteration
+   * often organized hierarchically. This iteration API allows simple iteration
    * over an explicit key range or iteration over the set of keys with a given
    * prefix, depending on how you use it:
    *
@@ -127,16 +104,18 @@ export function makeKernelSyscallHandler(tools) {
    * iterate over all keys that have `lowerBound` as a prefix.
    *
    * For example, if the stored keys are:
-   * bar
-   * baz
-   * foocount
-   * foopriority
-   * joober
-   * plugh.3
-   * plugh.47
-   * plugh.8
-   * zot
    *
+   * - Bar
+   * - Baz
+   * - Foocount
+   * - Foopriority
+   * - Joober
+   * - Plugh.3
+   * - Plugh.47
+   * - Plugh.8
+   * - Zot
+   *
+   * ```md
    * Then the bounds    would iterate over the key sequence
    * ----------------   -----------------------------------
    * 'bar', 'goomba'    bar, baz, foocount, foopriority
@@ -145,6 +124,25 @@ export function makeKernelSyscallHandler(tools) {
    * 'plugh.'           plugh.3, plugh.47, plugh.8
    * 'baz', 'plugh'     baz, foocount, foopriority, joober
    * 'bar', '~'         bar, baz, foocount, foopriority, joober, plugh.3, plugh.47, plugh.8, zot
+   * ```
+   *
+   * @param {string} vatID The vat whose vatstore is being iterated
+   * @param {string} priorKey The key that was returned by the prior cycle of
+   *   the iteration, or '' if this is the first cycle
+   * @param {string} lowerBound The lower bound of the iteration range
+   * @param {string} [upperBound] The uppper bound of the iteration range. If
+   *   omitted, this defaults to a string equivalent to the `lowerBound` string
+   *   with its rightmost character replaced by the lexically next character.
+   *   For example, if `lowerBound` is 'hello', then `upperBound` would default
+   *   to 'hellp')
+   * @returns {['ok', [string, string] | [undefined, undefined]]} A pair of a
+   *   status code and a result value. In the case of this operation, the status
+   *   code is always 'ok'. The result value is a pair of the key and value of
+   *   the first vatstore entry whose key is lexically greater than both
+   *   `priorKey` and `lowerBound`. If there are no such entries or if the first
+   *   such entry has a key that is lexically greater than or equal to
+   *   `upperBound`, then result value is a pair of undefineds instead,
+   *   signalling the end of iteration.
    */
   function vatstoreGetAfter(vatID, priorKey, lowerBound, upperBound) {
     const actualPriorKey = vatstoreKeyKey(vatID, priorKey);
@@ -210,10 +208,9 @@ export function makeKernelSyscallHandler(tools) {
   }
 
   /**
-   *
-   * @param { string } vatID
-   * @param { string } key
-   * @returns { KernelSyscallResult }
+   * @param {string} vatID
+   * @param {string} key
+   * @returns {KernelSyscallResult}
    */
 
   function vatstoreDelete(vatID, key) {
@@ -226,11 +223,10 @@ export function makeKernelSyscallHandler(tools) {
   }
 
   /**
-   *
-   * @param { string } deviceSlot
-   * @param { string } method
-   * @param { SwingSetCapData } args
-   * @returns { KernelSyscallResult }
+   * @param {string} deviceSlot
+   * @param {string} method
+   * @param {SwingSetCapData} args
+   * @returns {KernelSyscallResult}
    */
   function invoke(deviceSlot, method, args) {
     insistKernelType('device', deviceSlot);
@@ -243,9 +239,9 @@ export function makeKernelSyscallHandler(tools) {
     assert(dev, X`unknown deviceRef ${deviceSlot}`);
     const ki = harden([deviceSlot, method, args]);
     const di = dev.translators.kernelInvocationToDeviceInvocation(ki);
-    /** @type { DeviceInvocationResult } */
+    /** @type {DeviceInvocationResult} */
     const dr = dev.manager.invoke(di);
-    /** @type { KernelSyscallResult } */
+    /** @type {KernelSyscallResult} */
     const kr = dev.translators.deviceResultToKernelResult(dr);
     assert.equal(kr.length, 2);
     if (kr[0] === 'ok') {
@@ -306,17 +302,17 @@ export function makeKernelSyscallHandler(tools) {
     const hook = hooks[hookName];
     assert(hook, `device ${deviceID} has no hook named ${hookName}`);
     insistCapData(args);
-    /** @type { SwingSetCapData } */
+    /** @type {SwingSetCapData} */
     const hres = hook(args);
     insistCapData(hres);
-    /** @type { KernelSyscallResult } */
+    /** @type {KernelSyscallResult} */
     const ksr = harden(['ok', hres]);
     return ksr;
   }
 
   /**
-   * @param { KernelSyscallObject } ksc
-   * @returns {  KernelSyscallResult }
+   * @param {KernelSyscallObject} ksc
+   * @returns {KernelSyscallResult}
    */
   function kernelSyscallHandler(ksc) {
     // this repeated pattern is necessary to get the typechecker to refine 'ksc' and 'args' properly

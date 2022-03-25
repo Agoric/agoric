@@ -79,7 +79,10 @@ export const makeSlogToOtelKit = (tracer, overrideAttrs = {}) => {
 
   /**
    * @typedef {{
-   *   context: SpanContext, name: string, error?: string, attrs?: Record<string, string>
+   *   context: SpanContext;
+   *   name: string;
+   *   error?: string;
+   *   attrs?: Record<string, string>;
    * }} Cause
    */
   /** @type {LegacyMap<any, Cause>} */
@@ -141,7 +144,7 @@ export const makeSlogToOtelKit = (tracer, overrideAttrs = {}) => {
 
     let lastNamedPopTime;
 
-    /** @type {{ span: Span, name: string }[]} */
+    /** @type {{ span: Span; name: string }[]} */
     const spanStack = [];
 
     const makeSpanKey = keyArray => JSON.stringify(keyArray.map(cleanValue));
@@ -229,7 +232,6 @@ export const makeSlogToOtelKit = (tracer, overrideAttrs = {}) => {
       },
 
       /**
-       *
        * @param {string | string[]} key
        * @param {Record<string, any>} attrs
        * @param {string} [errorMessage]
@@ -444,7 +446,7 @@ export const makeSlogToOtelKit = (tracer, overrideAttrs = {}) => {
         /**
          * @param {string} name
          * @param {Record<string, any>} [additionalAttributes]
-         * @param {SpanOptions} [options ]
+         * @param {SpanOptions} [options]
          */
         const makeSyscallSpan = (
           name,

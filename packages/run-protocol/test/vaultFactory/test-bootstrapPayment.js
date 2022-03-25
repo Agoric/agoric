@@ -52,7 +52,11 @@ const startContract = async bootstrapPaymentValue => {
   const runIssuer = E(zoe).getFeeIssuer();
   const runBrand = await E(runIssuer).getBrand();
 
-  /** @type {import('@agoric/zoe/src/zoeService/utils').Installation<import('../../src/centralSupply.js').CentralSupplyContract>} */
+  /**
+   * @type {import('@agoric/zoe/src/zoeService/utils').Installation<
+   *   import('../../src/centralSupply.js').CentralSupplyContract
+   * >}
+   */
   const centralSupplyInstall = await installBundle(zoe, centralSupplyBundle);
 
   const terms = {

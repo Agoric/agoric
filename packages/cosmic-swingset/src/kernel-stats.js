@@ -18,9 +18,9 @@ import {
 export { getTelemetryProviders } from '@agoric/telemetry';
 
 /**
- * TODO Would be nice somehow to label the vats individually, but it's too
- * high cardinality for us unless we can somehow limit the number of active
- * metrics (many more than 20 vats).
+ * TODO Would be nice somehow to label the vats individually, but it's too high
+ * cardinality for us unless we can somehow limit the number of active metrics
+ * (many more than 20 vats).
  */
 const VAT_ID_IS_TOO_HIGH_CARDINALITY = true;
 
@@ -62,8 +62,8 @@ const recordToKey = record =>
 
 /**
  * @param {{
- *   metricMeter: import('@opentelemetry/sdk-metrics-base').Meter,
- *   attributes?: import('@opentelemetry/api-metrics').Attributes,
+ *   metricMeter: import('@opentelemetry/sdk-metrics-base').Meter;
+ *   attributes?: import('@opentelemetry/api-metrics').Attributes;
  * }} param0
  */
 export function makeSlogCallbacks({ metricMeter, attributes = {} }) {
@@ -87,11 +87,10 @@ export function makeSlogCallbacks({ metricMeter, attributes = {} }) {
   /**
    * This function reuses or creates per-group named metrics.
    *
-   * @param {string} name name of the base metric
-   * @param {Attributes} [group] the
-   * attributes to associate with a group
-   * @param {Attributes} [instance] the specific metric attributes
-   * @returns {Pick<Histogram, 'record'>} the attribute-aware recorder
+   * @param {string} name Name of the base metric
+   * @param {Attributes} [group] The attributes to associate with a group
+   * @param {Attributes} [instance] The specific metric attributes
+   * @returns {Pick<Histogram, 'record'>} The attribute-aware recorder
    */
   const getGroupedRecorder = (name, group = undefined, instance = {}) => {
     let nameToRecorder;
@@ -147,7 +146,7 @@ export function makeSlogCallbacks({ metricMeter, attributes = {} }) {
    * Return the vat metric group that should be reset when the stats change.
    *
    * @param {string} vatID
-   * @returns {Record<string,string> | undefined}
+   * @returns {Record<string, string> | undefined}
    */
   const getVatGroup = vatID => {
     if (VAT_ID_IS_TOO_HIGH_CARDINALITY) {
@@ -157,8 +156,8 @@ export function makeSlogCallbacks({ metricMeter, attributes = {} }) {
   };
 
   /**
-   * Measure some interesting stats.  We currently do a per-vat recording of
-   * time spent in the vat for startup and delivery.
+   * Measure some interesting stats. We currently do a per-vat recording of time
+   * spent in the vat for startup and delivery.
    */
   const slogCallbacks = {
     startup(_method, [vatID], finisher) {

@@ -14,9 +14,7 @@ const BASIS_POINTS = 10000;
 // single digit APR is less than a basis point per day.
 const LARGE_DENOMINATOR = BASIS_POINTS * BASIS_POINTS;
 
-/**
- * Number chosen from 6 digits for a basis point, doubled for multiplication.
- */
+/** Number chosen from 6 digits for a basis point, doubled for multiplication. */
 const COMPOUNDED_INTEREST_DENOMINATOR = 10n ** 20n;
 
 /**
@@ -74,8 +72,7 @@ export const makeInterestCalculator = (
   /**
    * Calculate new debt for reporting periods up to the present. If some
    * charging periods have elapsed that don't constitute whole reporting
-   * periods, the time is not updated past them and interest is not accumulated
-   * for them.
+   * periods, the time is not updated past them and interest is not accumulated for them.
    *
    * @type {Calculate}
    */
@@ -92,7 +89,7 @@ export const makeInterestCalculator = (
 };
 
 /**
- * compoundedInterest *= (new debt) / (prior total debt)
+ * CompoundedInterest *= (new debt) / (prior total debt)
  *
  * @param {Ratio} priorCompoundedInterest
  * @param {NatValue} priorDebt
@@ -112,8 +109,6 @@ export const calculateCompoundedInterest = (
 };
 
 /**
- *
- *
  * @param {ZCFMint} mint
  * @param {Amount} debt
  */
@@ -131,20 +126,27 @@ const validatedBrand = (mint, debt) => {
  * Charge interest accrued between `latestInterestUpdate` and `accruedUntil`.
  *
  * @param {{
- *  mint: ZCFMint,
- *  reallocateWithFee: ReallocateWithFee,
- *  poolIncrementSeat: ZCFSeat,
- *  seatAllocationKeyword: Keyword }} powers
+ *   mint: ZCFMint;
+ *   reallocateWithFee: ReallocateWithFee;
+ *   poolIncrementSeat: ZCFSeat;
+ *   seatAllocationKeyword: Keyword;
+ * }} powers
  * @param {{
- *  interestRate: Ratio,
- *  chargingPeriod: bigint,
- *  recordingPeriod: bigint}} params
+ *   interestRate: Ratio;
+ *   chargingPeriod: bigint;
+ *   recordingPeriod: bigint;
+ * }} params
  * @param {{
- *  latestInterestUpdate: bigint,
- *  compoundedInterest: Ratio,
- *  totalDebt: Amount<'nat'>}} prior
+ *   latestInterestUpdate: bigint;
+ *   compoundedInterest: Ratio;
+ *   totalDebt: Amount<'nat'>;
+ * }} prior
  * @param {bigint} accruedUntil
- * @returns {{compoundedInterest: Ratio, latestInterestUpdate: bigint, totalDebt: Amount<'nat'> }}
+ * @returns {{
+ *   compoundedInterest: Ratio;
+ *   latestInterestUpdate: bigint;
+ *   totalDebt: Amount<'nat'>;
+ * }}
  */
 export const chargeInterest = (powers, params, prior, accruedUntil) => {
   const brand = validatedBrand(powers.mint, prior.totalDebt);

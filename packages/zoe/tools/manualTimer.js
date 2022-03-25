@@ -22,7 +22,7 @@ import { makePromiseKit } from '@endo/promise-kit';
 export default function buildManualTimer(log, startValue = 0n, timeStep = 1n) {
   let ticks = Nat(startValue);
 
-  /** @type {LegacyMap<Timestamp, Array<ERef<TimerWaker>>>} */
+  /** @type {LegacyMap<Timestamp, ERef<TimerWaker>[]>} */
   // Legacy because the value is mutated after it is stored.
   const schedule = makeLegacyMap('Timestamp');
 
@@ -38,7 +38,7 @@ export default function buildManualTimer(log, startValue = 0n, timeStep = 1n) {
       `timer has a resolution of ${timeStep}; ${interval} is not divisible`,
     );
 
-    /** @type {Array<ERef<TimerWaker>> | null} */
+    /** @type {ERef<TimerWaker>[] | null} */
     let wakers = [];
     let nextWakeup;
 
@@ -115,7 +115,7 @@ export default function buildManualTimer(log, startValue = 0n, timeStep = 1n) {
       return baseTime;
     },
     removeWakeup(waker) {
-      /** @type {Array<Timestamp>} */
+      /** @type {Timestamp[]} */
       const baseTimes = [];
       for (const [baseTime, wakers] of schedule.entries()) {
         if (wakers.includes(waker)) {

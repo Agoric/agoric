@@ -14,23 +14,20 @@ const BASIS_POINTS = 10000n; // TODO change to 10_000n once tooling copes.
  */
 
 /**
- * Contains the logic for calculating how much should be given
- * back to the user in exchange for what they sent in. Reused in
- * several different places, including to check whether an offer
- * is valid, getting the current price for an asset on user
- * request, and to do the actual reallocation after an offer has
- * been made.
+ * Contains the logic for calculating how much should be given back to the user
+ * in exchange for what they sent in. Reused in several different places,
+ * including to check whether an offer is valid, getting the current price for
+ * an asset on user request, and to do the actual reallocation after an offer
+ * has been made.
  *
- * @param {any} inputValue - the value of the asset sent
- * in to be swapped
- * @param {any} inputReserve - the value in the liquidity
- * pool of the kind of asset sent in
- * @param {any} outputReserve - the value in the liquidity
- * pool of the kind of asset to be sent out
- * @param {bigint} [feeBasisPoints=30n] - the fee taken in
- * basis points. The default is 0.3% or 30 basis points. The fee
- * is taken from inputValue
- * @returns {NatValue} outputValue - the current price, in value form
+ * @param {any} inputValue - The value of the asset sent in to be swapped
+ * @param {any} inputReserve - The value in the liquidity pool of the kind of
+ *   asset sent in
+ * @param {any} outputReserve - The value in the liquidity pool of the kind of
+ *   asset to be sent out
+ * @param {bigint} [feeBasisPoints=30n] - The fee taken in basis points. The
+ *   default is 0.3% or 30 basis points. The fee is taken from inputValue
+ * @returns {NatValue} OutputValue - the current price, in value form
  */
 export const getInputPrice = (
   inputValue,
@@ -56,23 +53,19 @@ export const getInputPrice = (
 };
 
 /**
- * Contains the logic for calculating how much should be taken
- * from the user in exchange for what they want to obtain. Reused in
- * several different places, including to check whether an offer
- * is valid, getting the current price for an asset on user
- * request, and to do the actual reallocation after an offer has
- * been made.
+ * Contains the logic for calculating how much should be taken from the user in
+ * exchange for what they want to obtain. Reused in several different places,
+ * including to check whether an offer is valid, getting the current price for
+ * an asset on user request, and to do the actual reallocation after an offer
+ * has been made.
  *
- * @param {any} outputValue - the value of the asset the user wants
- * to get
- * @param {any} inputReserve - the value in the liquidity
- * pool of the asset being spent
- * @param {any} outputReserve - the value in the liquidity
- * pool of the kind of asset to be sent out
- * @param {bigint} [feeBasisPoints=30n] - the fee taken in
- * basis points. The default is 0.3% or 30 basis points. The fee is taken from
- * outputValue
- * @returns {NatValue} inputValue - the value of input required to purchase output
+ * @param {any} outputValue - The value of the asset the user wants to get
+ * @param {any} inputReserve - The value in the liquidity pool of the asset being spent
+ * @param {any} outputReserve - The value in the liquidity pool of the kind of
+ *   asset to be sent out
+ * @param {bigint} [feeBasisPoints=30n] - The fee taken in basis points. The
+ *   default is 0.3% or 30 basis points. The fee is taken from outputValue
+ * @returns {NatValue} InputValue - the value of input required to purchase output
  */
 export const getOutputPrice = (
   outputValue,
@@ -109,7 +102,6 @@ export const getOutputPrice = (
 // already held. If the current supply is zero, return the inputValue as the
 // initial liquidity to mint is arbitrary.
 /**
- *
  * @param {bigint} liqTokenSupply
  * @param {bigint} inputValue
  * @param {bigint} inputReserve
@@ -138,9 +130,9 @@ export const calcLiqValueToMint = (
  * @param {any} centralIn - The value of central assets being deposited
  * @param {any} centralPool - The value of central assets in the pool
  * @param {any} secondaryPool - The value of secondary assets in the pool
- * @param {any} secondaryIn - The value of secondary assets provided. If
- * the pool is empty, the entire amount will be accepted
- * @returns {NatValue} - the amount of secondary required
+ * @param {any} secondaryIn - The value of secondary assets provided. If the
+ *   pool is empty, the entire amount will be accepted
+ * @returns {NatValue} - The amount of secondary required
  */
 export const calcSecondaryRequired = (
   centralIn,

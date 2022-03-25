@@ -7,12 +7,12 @@ const { details: X, quote: q } = assert;
 
 /**
  * @template K,V
- * @param {WeakMap<K & Object,V>} jsmap
+ * @param {WeakMap<K & Object, V>} jsmap
  * @param {(k: K, v: V) => void} assertKVOkToAdd
  * @param {(k: K, v: V) => void} assertKVOkToSet
- * @param {((k: K) => void)=} assertKeyOkToDelete
- * @param {string=} keyName
- * @returns {WeakMapStore<K,V>}
+ * @param {(k: K) => void} [assertKeyOkToDelete]
+ * @param {string} [keyName]
+ * @returns {WeakMapStore<K, V>}
  */
 export const makeWeakMapStoreMethods = (
   jsmap,
@@ -69,22 +69,22 @@ export const makeWeakMapStoreMethods = (
 };
 
 /**
- * This is a *scalar* mapStore in that the keys can only be atomic values:
- * primitives or remotables.
- * Other mapStores will accept, for example, copyArrays and
- * copyRecords as keys and look them up based on equality of their contents.
+ * This is a _scalar_ mapStore in that the keys can only be atomic values:
+ * primitives or remotables. Other mapStores will accept, for example,
+ * copyArrays and copyRecords as keys and look them up based on equality of
+ * their contents.
  *
  * TODO For now, this scalarWeakMap accepts only remotables, reflecting the
- * constraints of the underlying JavaScript WeakMap it uses internally. But
- * it should accept the primitives as well, storing them in a separate internal
+ * constraints of the underlying JavaScript WeakMap it uses internally. But it
+ * should accept the primitives as well, storing them in a separate internal
  * map. What makes it "weak" is that it provides no API for enumerating what's
- * there. Though note that this would only enables collection of the
- * remotables, since the other primitives may always reappear.
+ * there. Though note that this would only enables collection of the remotables,
+ * since the other primitives may always reappear.
  *
  * @template K,V
- * @param {string} [keyName='key'] - the column name for the key
- * @param {StoreOptions=} options
- * @returns {WeakMapStore<K,V>}
+ * @param {string} [keyName='key'] - The column name for the key
+ * @param {StoreOptions} [options]
+ * @returns {WeakMapStore<K, V>}
  */
 export const makeScalarWeakMapStore = (
   keyName = 'key',

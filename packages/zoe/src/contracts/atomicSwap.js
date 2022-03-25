@@ -13,11 +13,10 @@ import '../../exported.js';
  * Trade one item for another.
  * https://agoric.com/documentation/zoe/guide/contracts/atomic-swap.html
  *
- * The initial offer is { give: { Asset: A }, want: { Price: B } }.
- * The outcome from the first offer is an invitation for the second party,
- * who should offer { give: { Price: B }, want: { Asset: A } }, with a want
- * amount no greater than the original's give, and a give amount at least as
- * large as the original's want.
+ * The initial offer is { give: { Asset: A }, want: { Price: B } }. The outcome
+ * from the first offer is an invitation for the second party, who should offer
+ * { give: { Price: B }, want: { Asset: A } }, with a want amount no greater
+ * than the original's give, and a give amount at least as large as the original's want.
  *
  * @param {ZCF} zcf
  */

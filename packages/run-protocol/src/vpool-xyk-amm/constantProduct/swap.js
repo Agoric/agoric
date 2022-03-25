@@ -77,7 +77,11 @@ const addFees = (amount, { poolFee, protocolFee }) => {
  *
  * The first parameter specifies whether we're incrementing or decrementing from the pool
  *
- * @param {(amountLeft: Amount, amountRight: Amount, brand?: Brand) => Amount} addOrSub
+ * @param {(
+ *   amountLeft: Amount,
+ *   amountRight: Amount,
+ *   brand?: Brand,
+ * ) => Amount} addOrSub
  * @param {PoolAllocation} poolAllocation
  * @param {Amount} amount
  * @returns {Amount}
@@ -165,8 +169,8 @@ const makeNoTransaction = (
  *
  * We start by calculating the amounts that would be traded if no fees were
  * charged. The actual fees are based on these amounts. Once we know the actual
- * fees, we calculate the deltaX and deltaY that will best maintain the
- * constant product invariant.
+ * fees, we calculate the deltaX and deltaY that will best maintain the constant
+ * product invariant.
  *
  * The amounts by which the pool will be adjusted, that the trader will pay and
  * receive, and the fees are then computed based on deltaX and deltaY.

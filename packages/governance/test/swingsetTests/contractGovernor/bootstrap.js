@@ -12,11 +12,11 @@ const { quote: q } = assert;
 
 /**
  * @param {ERef<ZoeService>} zoe
- * @param {(string:string) => undefined} log
- * @param {Record<string,Installation>} installations
+ * @param {(string: string) => undefined} log
+ * @param {Record<string, Installation>} installations
  * @param {ERef<GovernedContractFacetAccess<unknown>>} contractFacetAccess
  * @param {bigint} deadline
- * @returns {Promise<*>}
+ * @returns {Promise<any>}
  */
 const voteToChangeParameter = async (
   zoe,
@@ -188,7 +188,7 @@ const makeBootstrap = (argv, cb, vatPowers) => async (vats, devices) => {
   const vatAdminSvc = await E(vats.vatAdmin).createVatAdminService(
     devices.vatAdmin,
   );
-  /** @type { ERef<ZoeService> } */
+  /** @type {ERef<ZoeService>} */
   const zoe = E(vats.zoe).buildZoe(vatAdminSvc);
   const installations = await installContracts(zoe, cb);
   const timer = buildManualTimer(log);

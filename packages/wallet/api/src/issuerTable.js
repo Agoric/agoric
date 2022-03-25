@@ -15,15 +15,15 @@ import './internal-types.js';
  *
  * Record: { brand, issuer, amountMath }
  *
- * To save an issuerRecord, pass the full record to
- * `initIssuerByRecord` (synchronous), or more commonly, pass an
- * issuer to `initIssuer` (asynchronous). `initIssuer` will make the
- * remote calls to get the brand and AmountMath and save them.
+ * To save an issuerRecord, pass the full record to `initIssuerByRecord`
+ * (synchronous), or more commonly, pass an issuer to `initIssuer`
+ * (asynchronous). `initIssuer` will make the remote calls to get the brand and
+ * AmountMath and save them.
  */
 const makeIssuerTable = () => {
-  /** @type {WeakStore<Brand,IssuerRecord>} */
+  /** @type {WeakStore<Brand, IssuerRecord>} */
   const brandToIssuerRecord = makeWeakStore('brand');
-  /** @type {WeakStore<Issuer,IssuerRecord>} */
+  /** @type {WeakStore<Issuer, IssuerRecord>} */
   const issuerToIssuerRecord = makeWeakStore('issuer');
 
   /** @type {IssuerTable} */
@@ -38,7 +38,7 @@ const makeIssuerTable = () => {
       const brandP = E(issuerP).getBrand();
       const brandIssuerMatchP = E(brandP).isMyIssuer(issuerP);
       const displayInfoP = E(brandP).getDisplayInfo();
-      /** @type {[Issuer,Brand,boolean,DisplayInfo]} */
+      /** @type {[Issuer, Brand, boolean, DisplayInfo]} */
       const [issuer, brand, brandIssuerMatch, displayInfo] = await Promise.all([
         issuerP,
         brandP,

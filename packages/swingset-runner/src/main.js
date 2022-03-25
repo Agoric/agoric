@@ -144,9 +144,7 @@ function generateIndirectConfig(baseConfig) {
 
 /* eslint-disable no-use-before-define */
 
-/**
- * Command line utility to run a swingset for development and testing purposes.
- */
+/** Command line utility to run a swingset for development and testing purposes. */
 export async function main() {
   const argv = process.argv.slice(2);
 

@@ -10,20 +10,19 @@ import {
 
 /**
  * @typedef {Object} Context
- * @property {any?} error
- * @property {string?} location
- * @property {Record<string,any>} connectionParams
+ * @property {any | null} error
+ * @property {string | null} location
+ * @property {Record<string, any>} connectionParams
  */
 
 /**
- * @type {(fn: import('robot3').ReduceFunction<Context, any>) =>
- * import('robot3').Reducer<Context, any>}
+ * @type {(
+ *   fn: import('robot3').ReduceFunction<Context, any>,
+ * ) => import('robot3').Reducer<Context, any>}
  */
 const reduce = rawReduce;
 
-/**
- * @returns {Context}
- */
+/** @returns {Context} */
 const initialContext = () => ({
   error: null,
   location: null,
@@ -41,9 +40,7 @@ const common = [
   ),
 ];
 
-/**
- * Create a state machine for the wallet connection.
- */
+/** Create a state machine for the wallet connection. */
 export const makeConnectionMachine = () =>
   createMachine(
     {

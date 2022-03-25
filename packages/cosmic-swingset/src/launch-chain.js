@@ -100,7 +100,7 @@ function computronCounter({
   assert.typeof(vatCreation, 'bigint');
   assert.typeof(xsnapComputron, 'bigint');
   let totalBeans = 0n;
-  /** @type { RunPolicy } */
+  /** @type {RunPolicy} */
   const policy = harden({
     vatCreated() {
       totalBeans += vatCreation;

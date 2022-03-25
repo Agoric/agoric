@@ -42,7 +42,7 @@ export function makeDummyMeterControl() {
     return harden(wrapped);
   }
 
-  /** @type { MeterControl } */
+  /** @type {MeterControl} */
   const meterControl = {
     isMeteringDisabled,
     assertIsMetered,

@@ -15,9 +15,7 @@ import '../types.js';
 /** @type {CopyBagValue} */
 const empty = makeCopyBag([]);
 
-/**
- * @type {CopyBagMathHelpers}
- */
+/** @type {CopyBagMathHelpers} */
 export const copyBagMathHelpers = harden({
   doCoerce: bag => {
     fit(bag, M.bag());

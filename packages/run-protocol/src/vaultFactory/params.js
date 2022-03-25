@@ -16,9 +16,7 @@ export const LIQUIDATION_MARGIN_KEY = 'LiquidationMargin';
 export const INTEREST_RATE_KEY = 'InterestRate';
 export const LOAN_FEE_KEY = 'LoanFee';
 
-/**
- * @param {Amount} electorateInvitationAmount
- */
+/** @param {Amount} electorateInvitationAmount */
 const makeElectorateParams = electorateInvitationAmount => {
   return harden({
     [CONTRACT_ELECTORATE]: {
@@ -28,9 +26,7 @@ const makeElectorateParams = electorateInvitationAmount => {
   });
 };
 
-/**
- * @param {Rates} rates
- */
+/** @param {Rates} rates */
 const makeVaultParamManager = rates =>
   makeParamManagerSync({
     [LIQUIDATION_MARGIN_KEY]: [ParamTypes.RATIO, rates.liquidationMargin],
@@ -60,7 +56,7 @@ const makeElectorateParamManager = async (zoe, electorateInvitation) => {
  * @param {Amount} invitationAmount
  * @param {Rates} rates
  * @param {XYKAMMPublicFacet} ammPublicFacet
- * @param {bigint=} bootstrapPaymentValue
+ * @param {bigint} [bootstrapPaymentValue]
  */
 const makeGovernedTerms = (
   priceAuthority,

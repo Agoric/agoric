@@ -5,33 +5,31 @@
 /* eslint no-bitwise:[0] */
 
 /**
- * This variation on the xorshift128+ psuedo-random number generator provides
- * an API that allows the user to inject more entropy into the generator's
- * state between extractions.
+ * This variation on the xorshift128+ psuedo-random number generator provides an
+ * API that allows the user to inject more entropy into the generator's state
+ * between extractions.
  *
  * The generator provides an API suitable for use both as a random number
- * generator and also a hash digest.
- * As a random number generator, it accepts a seed and returns an object
- * implementing `random()`, like `Math.random()`.
- * To preserve integer integrity, it also provides `randomUint32()`, which
- * returns the noiser high 32 bits of randomness from the underlying 64 bits of
+ * generator and also a hash digest. As a random number generator, it accepts a
+ * seed and returns an object implementing `random()`, like `Math.random()`. To
+ * preserve integer integrity, it also provides `randomUint32()`, which returns
+ * the noiser high 32 bits of randomness from the underlying 64 bits of
  * randomness provided by a crank of the xorshift128+ algorithm.
  *
  * As a hash digest, like one that implements {`update()` and `digest()`}, the
  * generator provides `update(array)`, which will fold an arbitrary amount of
  * entropy into its own state from an array or typed array of 32 bit unsigned
- * integers.
- * The `random()` function serves as `digest()`, but doesn't leave the
+ * integers. The `random()` function serves as `digest()`, but doesn't leave the
  * generator in a useless state.
  *
  * In addition, `fork()` will create a new branch of the generator sequence
  * beginning with the same state, and is useful for testing.
  *
  * Once significant difference in this implementation to the prior version by
- * Andreas Madsen & Emil Bay is that there is no method that returns an duple
- * of [high and low] unsigned 32 bit integers, owing to a prejudice against
- * unnecessary allocation.
- * Instead, pass a reusable array or typed array to the `scribble` method.
+ * Andreas Madsen & Emil Bay is that there is no method that returns an duple of
+ * [high and low] unsigned 32 bit integers, owing to a prejudice against
+ * unnecessary allocation. Instead, pass a reusable array or typed array to the
+ * `scribble` method.
  */
 
 // Chris Hibbert really wanted the default seed to be Bob's Coffee Façade,

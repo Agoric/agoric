@@ -274,9 +274,9 @@ export function makeState(syscall) {
    * Note that currently we are only reference counting promises, but ultimately
    * we intend to keep track of all local objects.
    *
-   * @param {string} lref  Ref of the local object whose refcount is to be incremented.
-   * @param {string} _tag  Descriptive label for use in diagnostics
-   * @param {string} mode  Reference type
+   * @param {string} lref Ref of the local object whose refcount is to be incremented.
+   * @param {string} _tag Descriptive label for use in diagnostics
+   * @param {string} mode Reference type
    */
   function incrementRefCount(lref, _tag, mode = 'data') {
     assert(referenceModes.includes(mode), `unknown reference mode ${mode}`);
@@ -299,10 +299,10 @@ export function makeState(syscall) {
   /**
    * Decrement the reference counts associated with some local object/promise.
    *
-   * @param {string} lref  Ref of the local object whose refcount is to be decremented.
-   * @param {string} tag  Descriptive label for use in diagnostics
-   * @param {string} mode  Reference type
-   * @throws if this tries to decrement a reference count below zero.
+   * @param {string} lref Ref of the local object whose refcount is to be decremented.
+   * @param {string} tag Descriptive label for use in diagnostics
+   * @param {string} mode Reference type
+   * @throws If this tries to decrement a reference count below zero.
    */
   function decrementRefCount(lref, tag, mode = 'data') {
     assert(referenceModes.includes(mode), `unknown reference mode ${mode}`);
@@ -352,10 +352,10 @@ export function makeState(syscall) {
   }
 
   /**
-   * Delete any local promises that have zero references. Return a list of
-   * work for unreachable/unrecognizable objects.
+   * Delete any local promises that have zero references. Return a list of work
+   * for unreachable/unrecognizable objects.
    *
-   * Note that this should only be called *after* all work for a crank is done,
+   * Note that this should only be called _after_ all work for a crank is done,
    * because transient zero refCounts are possible during the middle of a crank.
    */
   function processMaybeFree() {

@@ -5,7 +5,6 @@ import { roundToDecimalPlaces } from './helpers/roundToDecimalPlaces.js';
 const PLACES_TO_SHOW = 2;
 
 /**
- *
  * @param {Ratio} ratio
  * @param {(brand: Brand) => number | undefined} getDecimalPlaces
  * @param {number} [placesToShow]

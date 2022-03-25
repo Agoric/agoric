@@ -12,31 +12,30 @@ import { Far } from '@endo/marshal';
 
 /**
  * @typedef {Object} PriceAuthorityRegistryAdmin
- * @property {(pa: ERef<PriceAuthority>,
- *             brandIn: Brand,
- *             brandOut: Brand,
- *             force?: boolean) => Deleter} registerPriceAuthority Add a unique price authority for a given
- * pair
+ * @property {(
+ *   pa: ERef<PriceAuthority>,
+ *   brandIn: Brand,
+ *   brandOut: Brand,
+ *   force?: boolean,
+ * ) => Deleter} registerPriceAuthority
+ *   Add a unique price authority for a given pair
  */
 
 /**
  * @typedef {Object} PriceAuthorityRegistry A price authority that is a facade
- * for other backing price authorities registered for a given asset and price
- * brand
+ *   for other backing price authorities registered for a given asset and price brand
  * @property {PriceAuthority} priceAuthority
  * @property {PriceAuthorityRegistryAdmin} adminFacet
  */
 
-/**
- * @returns {PriceAuthorityRegistry}
- */
+/** @returns {PriceAuthorityRegistry} */
 export const makePriceAuthorityRegistry = () => {
   /**
    * @typedef {Object} PriceAuthorityRecord A record indicating a registered
-   * price authority.  We put a box around the priceAuthority to ensure the
-   * deleter doesn't delete the wrong thing.
-   * @property {ERef<PriceAuthority>} priceAuthority the sub-authority for a
-   * given input and output brand pair
+   *   price authority. We put a box around the priceAuthority to ensure the
+   *   deleter doesn't delete the wrong thing.
+   * @property {ERef<PriceAuthority>} priceAuthority The sub-authority for a
+   *   given input and output brand pair
    */
 
   /** @type {Store<Brand, Store<Brand, PriceAuthorityRecord>>} */
@@ -63,10 +62,10 @@ export const makePriceAuthorityRegistry = () => {
     /**
      * Return a quote when relation is true of the arguments.
      *
-     * @param {Amount} amountIn monitor the amountOut corresponding to this amountIn
-     * @param {Amount} amountOutLimit the value to compare with the monitored amountOut
-     * @returns {Promise<PriceQuote>} resolve with a quote when `amountOut
-     * relation amountOutLimit` is true
+     * @param {Amount} amountIn Monitor the amountOut corresponding to this amountIn
+     * @param {Amount} amountOutLimit The value to compare with the monitored amountOut
+     * @returns {Promise<PriceQuote>} Resolve with a quote when `amountOut
+     *   relation amountOutLimit` is true
      */
     async function quoteWhenRelation(amountIn, amountOutLimit) {
       const pa = paFor(amountIn.brand, amountOutLimit.brand);
@@ -82,10 +81,10 @@ export const makePriceAuthorityRegistry = () => {
     /**
      * Return a mutable quote when relation is true of the arguments.
      *
-     * @param {Amount} amountIn monitor the amountOut corresponding to this amountIn
-     * @param {Amount} amountOutLimit the value to compare with the monitored amountOut
-     * @returns {Promise<MutableQuote>} resolve with a quote when `amountOut
-     * relation amountOutLimit` is true
+     * @param {Amount} amountIn Monitor the amountOut corresponding to this amountIn
+     * @param {Amount} amountOutLimit The value to compare with the monitored amountOut
+     * @returns {Promise<MutableQuote>} Resolve with a quote when `amountOut
+     *   relation amountOutLimit` is true
      */
     async function mutableQuoteWhenRelation(amountIn, amountOutLimit) {
       const pa = paFor(amountIn.brand, amountOutLimit.brand);
@@ -93,8 +92,7 @@ export const makePriceAuthorityRegistry = () => {
     };
 
   /**
-   * This PriceAuthority is just a wrapper for multiple registered
-   * PriceAuthorities.
+   * This PriceAuthority is just a wrapper for multiple registered PriceAuthorities.
    *
    * @type {PriceAuthority}
    */

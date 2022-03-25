@@ -6,13 +6,12 @@ import { assertKeywordName } from './cleanProposal.js';
 const { ownKeys } = Reflect;
 
 /**
- * The InstanceRecord stores the installation, customTerms, issuers,
- * and brands for a particular Zoe contract instance. The installation
- * and customTerms are never changed, but new issuers (and their
- * matching brands) may be added by the contract code. Thus, an
- * InstanceRecord may be outdated at any particular point. This file
- * manages the creation and updating of an InstanceRecord and returns
- * functions for getting the latest data.
+ * The InstanceRecord stores the installation, customTerms, issuers, and brands
+ * for a particular Zoe contract instance. The installation and customTerms are
+ * never changed, but new issuers (and their matching brands) may be added by
+ * the contract code. Thus, an InstanceRecord may be outdated at any particular
+ * point. This file manages the creation and updating of an InstanceRecord and
+ * returns functions for getting the latest data.
  */
 
 /**
@@ -20,9 +19,7 @@ const { ownKeys } = Reflect;
  * @returns {InstanceRecord}
  */
 
-/**
- * @returns {InstanceRecordManager}
- */
+/** @returns {InstanceRecordManager} */
 export const makeInstanceRecordStorage = () => {
   let instanceRecord;
 

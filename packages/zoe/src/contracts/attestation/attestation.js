@@ -115,9 +115,7 @@ export const makeAttestationFacets = async (
   return harden({ creatorFacet, publicFacet });
 };
 
-/**
- * @param {ZCF<{returnableAttName: string}>} zcf
- */
+/** @param {ZCF<{ returnableAttName: string }>} zcf */
 const start = async zcf => {
   const {
     brands: { Underlying: underlyingBrand },

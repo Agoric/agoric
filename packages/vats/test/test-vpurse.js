@@ -20,9 +20,7 @@ const setup = (t, escrowValue = 0n) => {
   /** @type {Amount} */
   let expectedAmount;
 
-  /**
-   * @param {Amount} amt
-   */
+  /** @param {Amount} amt */
   const expected = harden({
     /** @param {Amount} amt */
     pullAmount(amt) {

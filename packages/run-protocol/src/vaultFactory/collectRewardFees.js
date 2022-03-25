@@ -6,7 +6,7 @@
  * @param {Brand} runBrand
  */
 export const makeMakeCollectFeesInvitation = (zcf, feeSeat, runBrand) => {
-  /** @param { ZCFSeat } seat */
+  /** @param {ZCFSeat} seat */
   const collectFees = async seat => {
     seat.incrementBy(
       feeSeat.decrementBy(

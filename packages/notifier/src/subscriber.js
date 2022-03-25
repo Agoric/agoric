@@ -19,8 +19,8 @@ const makeSubscription = sharableInternalsP => {
     [Symbol.asyncIterator]: () => makeSubscriptionIterator(sharableInternalsP),
 
     /**
-     * Use this to distribute a Subscription efficiently over the network,
-     * by obtaining this from the Subscription to be replicated, and applying
+     * Use this to distribute a Subscription efficiently over the network, by
+     * obtaining this from the Subscription to be replicated, and applying
      * `makeSubscription` to it at the new site to get an equivalent local
      * Subscription at that site.
      *
@@ -59,7 +59,10 @@ const makeSubscriptionIterator = tailP => {
  * @returns {SubscriptionRecord<T>}
  */
 const makeSubscriptionKit = () => {
-  /** @type {((internals: ERef<SubscriptionInternals<T>>) => void) | undefined} */
+  /**
+   * @type {| ((internals: ERef<SubscriptionInternals<T>>) => void)
+   *   | undefined}
+   */
   let rear;
   const hp = new HandledPromise(r => (rear = r));
   const subscription = makeSubscription(hp);

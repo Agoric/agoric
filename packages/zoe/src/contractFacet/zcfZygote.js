@@ -210,7 +210,7 @@ export const makeZCFZygote = (
    * @template {AssetKind} [K='nat']
    * @param {Keyword} keyword
    * @param {K} [assetKind]
-   * @param {AdditionalDisplayInfo=} displayInfo
+   * @param {AdditionalDisplayInfo} [displayInfo]
    * @returns {Promise<ZCFMint>}
    */
   const makeZCFMint = async (
@@ -344,7 +344,7 @@ export const makeZCFZygote = (
    * startContract every time a contract instance is created.
    *
    * @type {ZCFZygote}
-   * */
+   */
   const zcfZygote = {
     evaluateContract: bundleOrBundleCap => {
       let bundle;

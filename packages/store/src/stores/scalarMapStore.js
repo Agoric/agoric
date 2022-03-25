@@ -16,12 +16,12 @@ const { quote: q } = assert;
 
 /**
  * @template K,V
- * @param {Map<K,V>} jsmap
+ * @param {Map<K, V>} jsmap
  * @param {(k: K, v: V) => void} assertKVOkToAdd
  * @param {(k: K, v: V) => void} assertKVOkToSet
- * @param {((k: K) => void)=} assertKeyOkToDelete
- * @param {string=} keyName
- * @returns {MapStore<K,V>}
+ * @param {(k: K) => void} [assertKeyOkToDelete]
+ * @param {string} [keyName]
+ * @returns {MapStore<K, V>}
  */
 export const makeMapStoreMethods = (
   jsmap,
@@ -41,8 +41,8 @@ export const makeMapStoreMethods = (
     );
 
   /**
-   * @param {Pattern=} keyPatt
-   * @param {Pattern=} valuePatt
+   * @param {Pattern} [keyPatt]
+   * @param {Pattern} [valuePatt]
    * @returns {Iterable<K>}
    */
   const keys = (keyPatt = undefined, valuePatt = undefined) => {
@@ -63,17 +63,17 @@ export const makeMapStoreMethods = (
   };
 
   /**
-   * @param {Pattern=} keyPatt
-   * @param {Pattern=} valuePatt
+   * @param {Pattern} [keyPatt]
+   * @param {Pattern} [valuePatt]
    * @returns {Iterable<V>}
    */
   const values = (keyPatt = undefined, valuePatt = undefined) =>
     mapIterable(keys(keyPatt, valuePatt), k => /** @type {V} */ (jsmap.get(k)));
 
   /**
-   * @param {Pattern=} keyPatt
-   * @param {Pattern=} valuePatt
-   * @returns {Iterable<[K,V]>}
+   * @param {Pattern} [keyPatt]
+   * @param {Pattern} [valuePatt]
+   * @returns {Iterable<[K, V]>}
    */
   const entries = (keyPatt = undefined, valuePatt = undefined) =>
     mapIterable(keys(keyPatt, valuePatt), k => [
@@ -113,20 +113,20 @@ export const makeMapStoreMethods = (
 };
 
 /**
- * Distinguishes between adding a new key (init) and updating or
- * referencing a key (get, set, delete).
+ * Distinguishes between adding a new key (init) and updating or referencing a
+ * key (get, set, delete).
  *
- * `init` is only allowed if the key does not already exist. `Get`,
- * `set` and `delete` are only allowed if the key does already exist.
+ * `init` is only allowed if the key does not already exist. `Get`, `set` and
+ * `delete` are only allowed if the key does already exist.
  *
- * This is a *scalar* map in that the keys can only be atomic values, primitives
+ * This is a _scalar_ map in that the keys can only be atomic values, primitives
  * or remotables. Other storeMaps will accept, for example, copyArrays and
  * copyRecords, as keys and look them up based on equality of their contents.
  *
  * @template K,V
- * @param {string} [keyName='key'] - the column name for the key
- * @param {StoreOptions=} options
- * @returns {MapStore<K,V>}
+ * @param {string} [keyName='key'] - The column name for the key
+ * @param {StoreOptions} [options]
+ * @returns {MapStore<K, V>}
  */
 export const makeScalarMapStore = (
   keyName = 'key',

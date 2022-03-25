@@ -10,10 +10,7 @@ import { toBytes } from './bytes.js';
 import '@agoric/store/exported.js';
 import './types.js';
 
-/**
- * Compatibility note: this must match what our peers use,
- * so don't change it casually.
- */
+/** Compatibility note: this must match what our peers use, so don't change it casually. */
 export const ENDPOINT_SEPARATOR = '/';
 
 export const rethrowUnlessMissing = err => {
@@ -44,13 +41,9 @@ export const makeConnection = (
   current = new Set(),
 ) => {
   let closed;
-  /**
-   * @type {Set<PromiseRecord<Bytes>>}
-   */
+  /** @type {Set<PromiseRecord<Bytes>>} */
   const pendingAcks = new Set();
-  /**
-   * @type {Connection}
-   */
+  /** @type {Connection} */
   const connection = Far('Connection', {
     getLocalAddress() {
       return localAddr;
@@ -108,7 +101,6 @@ export const makeConnection = (
 };
 
 /**
- *
  * @param {ConnectionHandler} handler0
  * @param {Endpoint} addr0
  * @param {ConnectionHandler} handler1
@@ -123,17 +115,11 @@ export function crossoverConnection(
   addr1,
   current = new WeakSet(),
 ) {
-  /**
-   * @type {Connection[]}
-   */
+  /** @type {Connection[]} */
   const conns = [];
-  /**
-   * @type {ConnectionHandler[]}
-   */
+  /** @type {ConnectionHandler[]} */
   const handlers = [handler0, handler1];
-  /**
-   * @type {Endpoint[]}
-   */
+  /** @type {Endpoint[]} */
   const addrs = [addr0, addr1];
 
   function makeHalfConnection(l, r) {
@@ -171,8 +157,8 @@ export function crossoverConnection(
   makeHalfConnection(1, 0);
 
   /**
-   * @param {number} l local side of the connection
-   * @param {number} r remote side of the connection
+   * @param {number} l Local side of the connection
+   * @param {number} r Remote side of the connection
    */
   function openHalfConnection(l, r) {
     current.add(conns[l]);
@@ -196,9 +182,7 @@ export function crossoverConnection(
 export function getPrefixes(addr) {
   const parts = addr.split(ENDPOINT_SEPARATOR);
 
-  /**
-   * @type {string[]}
-   */
+  /** @type {string[]} */
   const ret = [];
   for (let i = parts.length; i > 0; i -= 1) {
     // Try most specific match.
@@ -212,7 +196,7 @@ export function getPrefixes(addr) {
  * Create a protocol that has a handler.
  *
  * @param {ProtocolHandler} protocolHandler
- * @returns {Protocol} the local capability for connecting and listening
+ * @returns {Protocol} The local capability for connecting and listening
  */
 export function makeNetworkProtocol(protocolHandler) {
   /** @type {LegacyMap<Port, Set<Closable>>} */
@@ -220,21 +204,17 @@ export function makeNetworkProtocol(protocolHandler) {
   const currentConnections = makeLegacyMap('port');
 
   /**
-   * Currently must be a single listenHandler.
-   * TODO: Do something sensible with multiple handlers?
+   * Currently must be a single listenHandler. TODO: Do something sensible with
+   * multiple handlers?
    *
    * @type {Store<Endpoint, [Port, ListenHandler]>}
    */
   const listening = makeScalarMap('localAddr');
 
-  /**
-   * @type {Store<string, Port>}
-   */
+  /** @type {Store<string, Port>} */
   const boundPorts = makeScalarMap('localAddr');
 
-  /**
-   * @param {Endpoint} localAddr
-   */
+  /** @param {Endpoint} localAddr */
   const bind = async localAddr => {
     // Check if we are underspecified (ends in slash)
     if (localAddr.endsWith(ENDPOINT_SEPARATOR)) {
@@ -252,24 +232,18 @@ export function makeNetworkProtocol(protocolHandler) {
       }
     }
 
-    /**
-     * @enum {number}
-     */
+    /** @enum {number} */
     const RevokeState = {
       NOT_REVOKED: 0,
       REVOKING: 1,
       REVOKED: 2,
     };
 
-    /**
-     * @type {RevokeState}
-     */
+    /** @type {RevokeState} */
     let revoked = RevokeState.NOT_REVOKED;
     const openConnections = new Set();
 
-    /**
-     * @type {Port}
-     */
+    /** @type {Port} */
     const port = Far('Port', {
       getLocalAddress() {
         // Works even after revoke().
@@ -321,9 +295,7 @@ export function makeNetworkProtocol(protocolHandler) {
       },
       async connect(remotePort, connectionHandler = {}) {
         assert(!revoked, X`Port ${localAddr} is revoked`);
-        /**
-         * @type {Endpoint}
-         */
+        /** @type {Endpoint} */
         const dst = harden(remotePort);
         // eslint-disable-next-line no-use-before-define
         const conn = await protocolImpl.outbound(port, dst, connectionHandler);
@@ -366,9 +338,7 @@ export function makeNetworkProtocol(protocolHandler) {
     return port;
   };
 
-  /**
-   * @type {ProtocolImpl}
-   */
+  /** @type {ProtocolImpl} */
   const protocolImpl = Far('ProtocolImpl', {
     bind,
     async inbound(listenAddr, remoteAddr) {
@@ -517,9 +487,7 @@ export function makeNetworkProtocol(protocolHandler) {
  */
 export function makeEchoConnectionHandler() {
   let closed;
-  /**
-   * @type {Connection}
-   */
+  /** @type {Connection} */
   return Far('ConnectionHandler', {
     async onReceive(_connection, bytes, _connectionHandler) {
       if (closed) {
@@ -553,9 +521,7 @@ export function makeNonceMaker(prefix = '', suffix = '') {
 export function makeLoopbackProtocolHandler(
   onInstantiate = makeNonceMaker('nonce/'),
 ) {
-  /**
-   * @type {Store<string, [Port, ListenHandler]>}
-   */
+  /** @type {Store<string, [Port, ListenHandler]>} */
   const listeners = makeScalarMap('localAddr');
 
   const makePortID = makeNonceMaker('port');

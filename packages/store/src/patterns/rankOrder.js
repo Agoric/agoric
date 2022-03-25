@@ -16,12 +16,12 @@ const { ownKeys } = Reflect;
 
 /**
  * This is the equality comparison used by JavaScript's Map and Set
- * abstractions, where NaN is the same as NaN and -0 is the same as
- * 0. Marshal serializes -0 as zero, so the semantics of our distributed
- * object system does not distinguish 0 from -0.
+ * abstractions, where NaN is the same as NaN and -0 is the same as 0. Marshal
+ * serializes -0 as zero, so the semantics of our distributed object system does
+ * not distinguish 0 from -0.
  *
- * `sameValueZero` is the EcmaScript spec name for this equality comparison,
- * but TODO we need a better name for the API.
+ * `sameValueZero` is the EcmaScript spec name for this equality comparison, but
+ * TODO we need a better name for the API.
  *
  * @param {any} x
  * @param {any} y
@@ -29,9 +29,7 @@ const { ownKeys } = Reflect;
  */
 const sameValueZero = (x, y) => x === y || is(x, y);
 
-/**
- * @type {[PassStyle, RankCover][]}
- */
+/** @type {[PassStyle, RankCover][]} */
 const PassStyleRankAndCover = harden([
   /* !  */ ['error', ['!', '!~']],
   /* (  */ ['copyRecord', ['(', '(~']],
@@ -63,14 +61,10 @@ export const getPassStyleCover = passStyle =>
   PassStyleRankAndCover[PassStyleRank[passStyle]][1];
 harden(getPassStyleCover);
 
-/**
- * @type {WeakMap<RankCompare,WeakSet<Passable[]>>}
- */
+/** @type {WeakMap<RankCompare, WeakSet<Passable[]>>} */
 const memoOfSorted = new WeakMap();
 
-/**
- * @type {WeakMap<RankCompare,RankCompare>}
- */
+/** @type {WeakMap<RankCompare, RankCompare>} */
 const comparatorMirrorImages = new WeakMap();
 
 export const recordParts = record => {
@@ -86,11 +80,10 @@ export const recordParts = record => {
 harden(recordParts);
 
 /**
- * @param {RankCompare=} compareRemotables
- * An option to create a comparator in which an internal order is
- * assigned to remotables. This defaults to a comparator that
- * always returns `0`, meaning that all remotables are tied
- * for the same rank.
+ * @param {RankCompare} [compareRemotables] An option to create a comparator in
+ *   which an internal order is assigned to remotables. This defaults to a
+ *   comparator that always returns `0`, meaning that all remotables are tied
+ *   for the same rank.
  * @returns {RankComparatorKit}
  */
 export const makeComparatorKit = (compareRemotables = (_x, _y) => 0) => {
@@ -211,7 +204,7 @@ export const makeComparatorKit = (compareRemotables = (_x, _y) => 0) => {
 };
 /**
  * @param {RankCompare} comparator
- * @returns {RankCompare=}
+ * @returns {RankCompare | undefined}
  */
 export const comparatorMirrorImage = comparator =>
   comparatorMirrorImages.get(comparator);
@@ -253,13 +246,12 @@ harden(assertRankSorted);
 
 /**
  * TODO SECURITY BUG: https://github.com/Agoric/agoric-sdk/issues/4260
- * sortByRank currently uses `Array.prototype.sort` directly, and
- * so only works correctly when given a `compare` function that considers
- * `undefined` strictly bigger (`>`) than everything else. This is
- * because `Array.prototype.sort` bizarrely moves all `undefined`s to
- * the end of the array regardless, without consulting the `compare`
- * function. This is a genuine bug for us NOW because sometimes we sort
- * in reverse order by passing a reversed rank comparison function.
+ * sortByRank currently uses `Array.prototype.sort` directly, and so only works
+ * correctly when given a `compare` function that considers `undefined` strictly
+ * bigger (`>`) than everything else. This is because `Array.prototype.sort`
+ * bizarrely moves all `undefined`s to the end of the array regardless, without
+ * consulting the `compare` function. This is a genuine bug for us NOW because
+ * sometimes we sort in reverse order by passing a reversed rank comparison function.
  *
  * @param {Iterable<Passable>} passables
  * @param {RankCompare} compare
@@ -292,7 +284,7 @@ harden(sortByRank);
  * @param {Passable[]} sorted
  * @param {RankCompare} compare
  * @param {Passable} key
- * @param {("leftMost" | "rightMost")=} bias
+ * @param {'leftMost' | 'rightMost'} [bias]
  * @returns {number}
  */
 const rankSearch = (sorted, compare, key, bias = 'leftMost') => {
@@ -404,29 +396,26 @@ export const { comparator: compareRank, antiComparator: compareAntiRank } =
   makeComparatorKit();
 
 /**
- * Create a comparator kit in which remotables are fully ordered
- * by the order in which they are first seen by *this* comparator kit.
- * BEWARE: This is observable mutable state, so such a comparator kit
- * should never be shared among subsystems that should not be able
- * to communicate.
+ * Create a comparator kit in which remotables are fully ordered by the order in
+ * which they are first seen by _this_ comparator kit. BEWARE: This is
+ * observable mutable state, so such a comparator kit should never be shared
+ * among subsystems that should not be able to communicate.
  *
- * Note that this order does not meet the requirements for store
- * ordering, since it has no memory of deleted keys.
+ * Note that this order does not meet the requirements for store ordering, since
+ * it has no memory of deleted keys.
  *
- * These full order comparator kit is strictly more precise that the
- * rank order comparator kits above. As a result, any array which is
- * sorted by such a full order will pass the isRankSorted test with
- * a corresponding rank order.
+ * These full order comparator kit is strictly more precise that the rank order
+ * comparator kits above. As a result, any array which is sorted by such a full
+ * order will pass the isRankSorted test with a corresponding rank order.
  *
- * An array which is sorted by a *fresh* full order comparator, i.e.,
- * one that has not yet seen any remotables, will of course remain
- * sorted by according to *that* full order comparator. An array *of
- * scalars* sorted by a fresh full order will remain sorted even
- * according to a new fresh full order comparator, since it will see
- * the remotables in the same order again. Unfortunately, this is
- * not true of arrays of passables in general.
+ * An array which is sorted by a _fresh_ full order comparator, i.e., one that
+ * has not yet seen any remotables, will of course remain sorted by according to
+ * _that_ full order comparator. An array _of scalars_ sorted by a fresh full
+ * order will remain sorted even according to a new fresh full order comparator,
+ * since it will see the remotables in the same order again. Unfortunately, this
+ * is not true of arrays of passables in general.
  *
- * @param {boolean=} longLived
+ * @param {boolean} [longLived]
  * @returns {FullComparatorKit}
  */
 export const makeFullOrderComparatorKit = (longLived = false) => {

@@ -18,13 +18,13 @@ import '../types-ambient.js';
 /**
  * Produce an object that will serve as the kernel's handle onto a device.
  *
- * @param {string} deviceName  The device's name, for human readable diagnostics
- * @param {*} deviceNamespace The module namespace object exported by the device bundle
- * @param {*} state  A get/set object for the device's persistent state
- * @param {Record<string, any>} endowments  The device's configured endowments
- * @param {*} testLog
- * @param {*} deviceParameters  Parameters from the device's config entry
- * @param {*} deviceSyscallHandler
+ * @param {string} deviceName The device's name, for human readable diagnostics
+ * @param {any} deviceNamespace The module namespace object exported by the device bundle
+ * @param {any} state A get/set object for the device's persistent state
+ * @param {Record<string, any>} endowments The device's configured endowments
+ * @param {any} testLog
+ * @param {any} deviceParameters Parameters from the device's config entry
+ * @param {any} deviceSyscallHandler
  */
 export default function makeDeviceManager(
   deviceName,
@@ -87,13 +87,13 @@ export default function makeDeviceManager(
   /**
    * Invoke a method on a device node.
    *
-   * @param { DeviceInvocation } deviceInvocation
-   * @returns { DeviceInvocationResult }
+   * @param {DeviceInvocation} deviceInvocation
+   * @returns {DeviceInvocationResult}
    */
   function invoke(deviceInvocation) {
     const [target, method, args] = deviceInvocation;
     try {
-      /** @type { DeviceInvocationResult } */
+      /** @type {DeviceInvocationResult} */
       const deviceResults = dispatch.invoke(target, method, args);
       // common error: raw devices returning capdata instead of ['ok', capdata]
       assert.equal(deviceResults.length, 2, deviceResults);

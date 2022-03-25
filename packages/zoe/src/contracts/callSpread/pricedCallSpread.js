@@ -30,40 +30,38 @@ const BASIS_POINTS = 10000n;
  * invitations which require depositing amounts summing to the settlement amount
  * in the proportions longCollateralShare and (100 - longCollateralShare) to
  * redeem the respective options/invitations. (They are returned under the
- * Keyword 'Option'.) The options are ERTP invitations that are suitable for
- * resale.
+ * Keyword 'Option'.) The options are ERTP invitations that are suitable for resale.
  *
  * This option contract is settled financially. There is no requirement that the
- * creator have ownership of the underlying asset at the start, and
- * the beneficiaries shouldn't expect to take delivery at closing.
+ * creator have ownership of the underlying asset at the start, and the
+ * beneficiaries shouldn't expect to take delivery at closing.
  *
  * The issuerKeywordRecord specifies the issuers for three keywords: Underlying,
  * Strike, and Collateral. The payout is in Collateral. Strike amounts are used
  * for the price oracle's quotes as to the value of the Underlying, as well as
  * the strike prices in the terms.
  *
- * terms include:
- * `timer` is a timer, and must be recognized by `priceAuthority`.
- * `expiration` is a time recognized by the `timer`.
+ * Terms include: `timer` is a timer, and must be recognized by
+ * `priceAuthority`. `expiration` is a time recognized by the `timer`.
  * `underlyingAmount` is passed to `priceAuthority`. It could be an NFT or a
- *   fungible amount.
- * `strikePrice2` must be greater than `strikePrice1`.
+ * fungible amount. `strikePrice2` must be greater than `strikePrice1`.
  * `settlementAmount` is the amount deposited by the funder and split between
- *   the holders of the options. It uses Collateral.
- * `priceAuthority` is an oracle that has a timer so it can respond to requests
- *   for prices as of a stated time. After the deadline, it will issue a
- *   PriceQuote giving the value of the underlying asset in the strike currency.
+ * the holders of the options. It uses Collateral. `priceAuthority` is an oracle
+ * that has a timer so it can respond to requests for prices as of a stated
+ * time. After the deadline, it will issue a PriceQuote giving the value of the
+ * underlying asset in the strike currency.
  *
  * Future enhancements:
- * + issue multiple option pairs with the same expiration from a single instance
+ *
+ * - Issue multiple option pairs with the same expiration from a single instance
  *
  * @param {ZCF<{
- * strikePrice1: Amount,
- * strikePrice2: Amount,
- * settlementAmount: Amount,
- * priceAuthority: PriceAuthority,
- * expiration: bigint,
- * underlyingAmount: Amount,
+ *   strikePrice1: Amount;
+ *   strikePrice2: Amount;
+ *   settlementAmount: Amount;
+ *   priceAuthority: PriceAuthority;
+ *   expiration: bigint;
+ *   underlyingAmount: Amount;
  * }>} zcf
  */
 const start = zcf => {
@@ -87,7 +85,7 @@ const start = zcf => {
   // invitations for the options themselves are exercised, we don't have those
   // seats at the time of creation of the options, so we use Promises, and
   // allocate the payouts when those promises resolve.
-  /** @type {Record<PositionKind,PromiseRecord<ZCFSeat>>} */
+  /** @type {Record<PositionKind, PromiseRecord<ZCFSeat>>} */
   const seatPromiseKits = {
     [Position.LONG]: makePromiseKit(),
     [Position.SHORT]: makePromiseKit(),

@@ -23,7 +23,13 @@ const startCounter = async (
   };
 
   // facets of the voteCounter. creatorInvitation and adminFacet not used
-  /** @type {{ creatorFacet: VoteCounterCreatorFacet, publicFacet: VoteCounterPublicFacet, instance: Instance }} */
+  /**
+   * @type {{
+   *   creatorFacet: VoteCounterCreatorFacet;
+   *   publicFacet: VoteCounterPublicFacet;
+   *   instance: Instance;
+   * }}
+   */
   const { creatorFacet, publicFacet, instance } = await E(
     zcf.getZoeService(),
   ).startInstance(voteCounter, {}, voteCounterTerms);

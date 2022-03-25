@@ -9,6 +9,4 @@
  * @property {ManualTimerTick} tick
  */
 
-/**
- * @typedef {ManualTimerAdmin & TimerService} ManualTimer
- */
+/** @typedef {ManualTimerAdmin & TimerService} ManualTimer */

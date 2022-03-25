@@ -21,10 +21,10 @@ export const makeNotifier = sharableInternalsP => {
     ...asyncIterable,
 
     /**
-     * Use this to distribute a Notifier efficiently over the network,
-     * by obtaining this from the Notifier to be replicated, and applying
-     * `makeNotifier` to it at the new site to get an equivalent local
-     * Notifier at that site.
+     * Use this to distribute a Notifier efficiently over the network, by
+     * obtaining this from the Notifier to be replicated, and applying
+     * `makeNotifier` to it at the new site to get an equivalent local Notifier
+     * at that site.
      */
     getSharableNotifierInternals: () => sharableInternalsP,
   });
@@ -34,25 +34,24 @@ export const makeNotifier = sharableInternalsP => {
  * Produces a pair of objects, which allow a service to produce a stream of
  * update promises.
  *
- * The initial state argument has to be truly optional even though it can
- * be any first class value including `undefined`. We need to distinguish the
- * presence vs the absence of it, which we cannot do with the optional argument
- * syntax. Rather we use the arity of the `args` array.
+ * The initial state argument has to be truly optional even though it can be any
+ * first class value including `undefined`. We need to distinguish the presence
+ * vs the absence of it, which we cannot do with the optional argument syntax.
+ * Rather we use the arity of the `args` array.
  *
  * If no initial state is provided to `makeNotifierKit`, then it starts without
- * an initial state. Its initial state will instead be the state of the first
- * update.
+ * an initial state. Its initial state will instead be the state of the first update.
  *
  * @template T
- * @param {[] | [T]} args the first state to be returned
- * @returns {NotifierRecord<T>} the notifier and updater
+ * @param {[] | [T]} args The first state to be returned
+ * @returns {NotifierRecord<T>} The notifier and updater
  */
 export const makeNotifierKit = (...args) => {
-  /** @type {PromiseRecord<UpdateRecord<T>>|undefined} */
+  /** @type {PromiseRecord<UpdateRecord<T>> | undefined} */
   let optNextPromiseKit;
   /** @type {UpdateCount} */
   let currentUpdateCount = 1; // avoid falsy numbers
-  /** @type {UpdateRecord<T>|undefined} */
+  /** @type {UpdateRecord<T> | undefined} */
   let currentResponse;
 
   const hasState = () => currentResponse !== undefined;
@@ -157,11 +156,11 @@ export const makeNotifierKit = (...args) => {
 export const makeNotifierFromAsyncIterable = asyncIterableP => {
   const iteratorP = E(asyncIterableP)[Symbol.asyncIterator]();
 
-  /** @type {Promise<UpdateRecord<T>>|undefined} */
+  /** @type {Promise<UpdateRecord<T>> | undefined} */
   let optNextPromise;
   /** @type {UpdateCount} */
   let currentUpdateCount = 1; // avoid falsy numbers
-  /** @type {UpdateRecord<T>|undefined} */
+  /** @type {UpdateRecord<T> | undefined} */
   let currentResponse;
 
   const hasState = () => currentResponse !== undefined;
@@ -221,10 +220,10 @@ export const makeNotifierFromAsyncIterable = asyncIterableP => {
     ...baseNotifier,
 
     /**
-     * Use this to distribute a Notifier efficiently over the network,
-     * by obtaining this from the Notifier to be replicated, and applying
-     * `makeNotifier` to it at the new site to get an equivalent local
-     * Notifier at that site.
+     * Use this to distribute a Notifier efficiently over the network, by
+     * obtaining this from the Notifier to be replicated, and applying
+     * `makeNotifier` to it at the new site to get an equivalent local Notifier
+     * at that site.
      */
     getSharableNotifierInternals: () => baseNotifier,
   });

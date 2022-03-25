@@ -64,7 +64,7 @@ export const setupAMMBootstrap = async (
   }
 
   const space = /** @type {any} */ (makePromiseSpace());
-  const { produce, consume } = /** @type { EconomyBootstrapPowers } */ (space);
+  const { produce, consume } = /** @type {EconomyBootstrapPowers} */ (space);
 
   produce.chainTimerService.resolve(timer);
   produce.zoe.resolve(zoe);
@@ -72,7 +72,7 @@ export const setupAMMBootstrap = async (
   const { agoricNames, spaces } = makeAgoricNamesAccess();
   produce.agoricNames.resolve(agoricNames);
 
-  /** @type {Record<string, Promise<{moduleFormat: string}>>} */
+  /** @type {Record<string, Promise<{ moduleFormat: string }>>} */
   const governanceBundlePs = {
     contractGovernor: contractGovernorBundleP,
     committee: committeeBundleP,
@@ -87,10 +87,10 @@ export const setupAMMBootstrap = async (
 /**
  * NOTE: called separately by each test so AMM/zoe/priceAuthority don't interfere
  *
- * @param {{ committeeName: string, committeeSize: number}} electorateTerms
- * @param {{ brand: Brand, issuer: Issuer }} centralR
- * @param {ManualTimer | undefined=} timer
- * @param {ERef<ZoeService> | undefined=} zoe
+ * @param {{ committeeName: string; committeeSize: number }} electorateTerms
+ * @param {{ brand: Brand; issuer: Issuer }} centralR
+ * @param {ManualTimer | undefined} [timer]
+ * @param {ERef<ZoeService> | undefined} [zoe]
  */
 export const setupAmmServices = async (
   electorateTerms,
@@ -132,7 +132,7 @@ export const setupAmmServices = async (
   };
   const governedInstance = E(governorPublicFacet).getGovernedContract();
 
-  /** @type { GovernedPublicFacet<XYKAMMPublicFacet> } */
+  /** @type {GovernedPublicFacet<XYKAMMPublicFacet>} */
   // @ts-expect-error cast from unknown
   const ammPublicFacet = await E(governorCreatorFacet).getPublicFacet();
   const amm = {

@@ -13,62 +13,52 @@ import { assert, details as X } from '@agoric/assert';
 // But still "slot" implies containership which I think is wrong.)
 
 /**
- * Parse a vref string into its component parts:
- *   {
- *      type: STRING, // 'object', 'device', 'promise'
- *      allocatedByVat: BOOL, // true=>allocated by vat, false=>by the kernel
- *      id: Nat,
- *      subid: Nat,
- *      baseRef: STRING,
- *      facet: Nat
- *   }
+ * Parse a vref string into its component parts: { type: STRING, // 'object',
+ * 'device', 'promise' allocatedByVat: BOOL, // true=>allocated by vat,
+ * false=>by the kernel id: Nat, subid: Nat, baseRef: STRING, facet: Nat }
  *
  * A vref string can take one of the forms:
  *
- *   T-N
- *   T+N
- *   T+N/I
- *   T+N/I:F
+ * T-N T+N T+N/I T+N/I:F
  *
  * Where:
  *
- *   T is a single character encoding the type of entity being referenced: 'd'
- *      for 'device', 'o' for 'object', or 'p' for 'promise'.  One of the string
- *      values 'device', 'object', or 'promise' is returned as the `type`
- *      property of the result.
+ * T is a single character encoding the type of entity being referenced: 'd' for
+ * 'device', 'o' for 'object', or 'p' for 'promise'. One of the string values
+ * 'device', 'object', or 'promise' is returned as the `type` property of the result.
  *
- *   '+' or '-' encodes who allocated the reference: '-' for the kernel
- *      (typically an import) or '+ for the vat (typically an export).  This is
- *      returned in the `allocatedByVat` property of the result as a boolean.
+ * '+' or '-' encodes who allocated the reference: '-' for the kernel (typically
+ * an import) or '+ for the vat (typically an export). This is returned in the
+ * `allocatedByVat` property of the result as a boolean.
  *
- *   N is a decimal integer representing the identity of the referenced entity.
- *      This is returned in the `id` property of the result as a BigInt.
+ * N is a decimal integer representing the identity of the referenced entity.
+ * This is returned in the `id` property of the result as a BigInt.
  *
- *   I if present (only allowed if T is 'o') is a decimal integer representing
- *      the instance id of the referenced object.  In this case N denotes a
- *      category of objects that share a common shape, either one of the store
- *      types or a virtual object kind, and I indicates which instance of that
- *      category is being referred to.  If present this is returned as the
- *      `subid` property of the result as a BigInt.
+ * I if present (only allowed if T is 'o') is a decimal integer representing the
+ * instance id of the referenced object. In this case N denotes a category of
+ * objects that share a common shape, either one of the store types or a virtual
+ * object kind, and I indicates which instance of that category is being
+ * referred to. If present this is returned as the `subid` property of the
+ * result as a BigInt.
  *
- *   F if present (only allowed if I is also present) is a decimal integer
- *      referencing a facet of the referenced object.  In this case N/I denotes
- *      a particular object instance and F indicates which of several possible
- *      facets of that instance is being addressed.  If present this is returned
- *      in the `facet` property of the result as a BigInt.
+ * F if present (only allowed if I is also present) is a decimal integer
+ * referencing a facet of the referenced object. In this case N/I denotes a
+ * particular object instance and F indicates which of several possible facets
+ * of that instance is being addressed. If present this is returned in the
+ * `facet` property of the result as a BigInt.
  *
  * The `baseRef` property of the result is `vref` stripped of any facet indicator.
  *
  * A "vref" identifies an entity visible to vat code to which messages may be
- * sent and which may be compared for equality to other such entities.  Let's
+ * sent and which may be compared for equality to other such entities. Let's
  * call such an entity an "addressable object".
  *
  * A "baseRef" designates an entity that is managed by LiveSlots, both as a unit
  * of garbage collection specifically and as a unit of memory management more
- * generally.  Such an entity may be a promise or remotable object or imported
+ * generally. Such an entity may be a promise or remotable object or imported
  * presence, all of which will always be JavaScript objects in memory, or it may
  * be a virtual object or collection, which can be in memory or on disk or both.
- * Let's call such an entity a "base object".  In most cases this is one and the
+ * Let's call such an entity a "base object". In most cases this is one and the
  * same with the addressable object that the vref designates, but in the case of
  * a faceted object it is the faceted object as a whole (represented in memory,
  * though not on disk, as the cohort array) rather than any particular
@@ -78,23 +68,18 @@ import { assert, details as X } from '@agoric/assert';
  * XXX TODO: The previous comment suggests some renaming is warranted:
  *
  * `slotToVal` maps a baseRef to a base object (actually to a weakRef that
- *    points to a base object)
- * `getValForSlot` maps a baseRef to a base object, or to undefined if it is not
- *    resident in memory
- * `convertSlotToVal` maps a vref to to an addressable object, loading it from
- *    disk if necessary
+ * points to a base object) `getValForSlot` maps a baseRef to a base object, or
+ * to undefined if it is not resident in memory `convertSlotToVal` maps a vref
+ * to to an addressable object, loading it from disk if necessary
  *
- * `valToSlot` maps an addressable object to a vref
- * `getSlotForVal` maps an addressable object to a vref
- * `convertValToSlot` maps an addressable object to a vref, generating a new
- *    vref if necessary
+ * `valToSlot` maps an addressable object to a vref `getSlotForVal` maps an
+ * addressable object to a vref `convertValToSlot` maps an addressable object to
+ * a vref, generating a new vref if necessary
  *
- * @param {string} vref  The string to be parsed, as described above.
- *
- * @returns {*} a vref components descriptor corresponding to the vref string
- *    parameter, assuming it is syntactically well formed.
- *
- * @throws if the given vref string is syntactically incorrect.
+ * @param {string} vref The string to be parsed, as described above.
+ * @returns {any} A vref components descriptor corresponding to the vref string
+ *   parameter, assuming it is syntactically well formed.
+ * @throws If the given vref string is syntactically incorrect.
  */
 export function parseVatSlot(vref) {
   assert.typeof(vref, 'string');
@@ -148,13 +133,11 @@ export function parseVatSlot(vref) {
 /**
  * Generate a vat slot reference string given a type, ownership, and id.
  *
- * @param {'object'|'device'|'promise'} type The type
- * @param {boolean} allocatedByVat  Flag: true=>vat allocated, false=>kernel allocated
- * @param {number | bigint} id    The id, a Nat.
- *
- * @returns {string} the corresponding vat slot reference string.
- *
- * @throws if type is not one of the above known types.
+ * @param {'object' | 'device' | 'promise'} type The type
+ * @param {boolean} allocatedByVat Flag: true=>vat allocated, false=>kernel allocated
+ * @param {number | bigint} id The id, a Nat.
+ * @returns {string} The corresponding vat slot reference string.
+ * @throws If type is not one of the above known types.
  */
 export function makeVatSlot(type, allocatedByVat, id) {
   let idSuffix;
@@ -177,15 +160,13 @@ export function makeVatSlot(type, allocatedByVat, id) {
 }
 
 /**
- * Assert function to ensure that a vat slot reference string refers to a
- * slot of a given type.
+ * Assert function to ensure that a vat slot reference string refers to a slot
+ * of a given type.
  *
- * @param {string} type  The vat slot type desired, a string.
- * @param {string} vatSlot  The vat slot reference string being tested
- *
- * @throws if vatSlot is not of the given type or is malformed.
- *
+ * @param {string} type The vat slot type desired, a string.
+ * @param {string} vatSlot The vat slot reference string being tested
  * @returns {void}
+ * @throws If vatSlot is not of the given type or is malformed.
  */
 export function insistVatType(type, vatSlot) {
   assert.equal(

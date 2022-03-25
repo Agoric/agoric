@@ -15,8 +15,7 @@
  */
 
 /**
- * Make a Ratio representing a fee expressed in Basis Points.  (hundredths of a
- *    percent)
+ * Make a Ratio representing a fee expressed in Basis Points. (hundredths of a percent)
  *
  * @callback MakeFeeRatio
  * @param {BASIS_POINTS} feeBP

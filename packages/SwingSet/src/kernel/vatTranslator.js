@@ -10,7 +10,7 @@ import {
   legibilizeValue,
 } from '../lib/kdebug.js';
 
-/** @type { VatDeliveryBringOutYourDead } */
+/** @type {VatDeliveryBringOutYourDead} */
 const reapMessageVatDelivery = harden(['bringOutYourDead']);
 
 export function assertValidVatstoreKey(key) {
@@ -18,12 +18,11 @@ export function assertValidVatstoreKey(key) {
 }
 
 /**
- * Return a function that converts KernelDelivery objects into VatDelivery
- * objects
+ * Return a function that converts KernelDelivery objects into VatDelivery objects
  *
- * @param { string } vatID
- * @param { KernelKeeper } kernelKeeper
- * @returns { (kd: KernelDeliveryObject) => VatDeliveryObject }
+ * @param {string} vatID
+ * @param {KernelKeeper} kernelKeeper
+ * @returns {(kd: KernelDeliveryObject) => VatDeliveryObject}
  */
 function makeTranslateKernelDeliveryToVatDelivery(vatID, kernelKeeper) {
   const vatKeeper = kernelKeeper.provideVatKeeper(vatID);
@@ -63,15 +62,14 @@ function makeTranslateKernelDeliveryToVatDelivery(vatID, kernelKeeper) {
       args: { ...msg.args, slots: inputSlots },
       result: resultSlot,
     });
-    /** @type { VatDeliveryMessage } */
+    /** @type {VatDeliveryMessage} */
     const vatDelivery = harden(['message', targetSlot, vatMessage]);
     return vatDelivery;
   }
 
   /**
-   *
-   * @param { { state: string, data: SwingSetCapData } } kp
-   * @returns { [ isReject: boolean, resolution: SwingSetCapData ]}
+   * @param {{ state: string; data: SwingSetCapData }} kp
+   * @returns {[isReject: boolean, resolution: SwingSetCapData]}
    */
   function translatePromiseDescriptor(kp) {
     if (kp.state === 'fulfilled' || kp.state === 'rejected') {
@@ -91,9 +89,8 @@ function makeTranslateKernelDeliveryToVatDelivery(vatID, kernelKeeper) {
   }
 
   /**
-   *
-   * @param { KernelDeliveryOneNotify[] } kResolutions
-   * @returns { VatDeliveryNotify }
+   * @param {KernelDeliveryOneNotify[]} kResolutions
+   * @returns {VatDeliveryNotify}
    */
   function translateNotify(kResolutions) {
     const vResolutions = [];
@@ -102,13 +99,13 @@ function makeTranslateKernelDeliveryToVatDelivery(vatID, kernelKeeper) {
       const [kpid, p] = resolution;
       assert(p.state !== 'unresolved', X`spurious notification ${kpid}`);
       const vpid = mapKernelSlotToVatSlot(kpid);
-      /** @type { VatOneResolution } */
+      /** @type {VatOneResolution} */
       const vres = [vpid, ...translatePromiseDescriptor(p)];
       vResolutions.push(vres);
       kdebug(`notify ${idx} ${kpid} ${JSON.stringify(vres)}`);
       idx += 1;
     }
-    /** @type { VatDeliveryNotify } */
+    /** @type {VatDeliveryNotify} */
     const vatDelivery = harden(['notify', vResolutions]);
     return vatDelivery;
   }
@@ -119,7 +116,7 @@ function makeTranslateKernelDeliveryToVatDelivery(vatID, kernelKeeper) {
       mapKernelSlotToVatSlot(kref, gcDeliveryMapOpts),
     );
     krefs.map(kref => vatKeeper.clearReachableFlag(kref, 'dropE'));
-    /** @type { VatDeliveryDropExports } */
+    /** @type {VatDeliveryDropExports} */
     const vatDelivery = harden(['dropExports', vrefs]);
     return vatDelivery;
   }
@@ -131,7 +128,7 @@ function makeTranslateKernelDeliveryToVatDelivery(vatID, kernelKeeper) {
       vatKeeper.deleteCListEntry(kref, vref);
       vrefs.push(vref);
     }
-    /** @type { VatDeliveryRetireExports } */
+    /** @type {VatDeliveryRetireExports} */
     const vatDelivery = harden(['retireExports', vrefs]);
     return vatDelivery;
   }
@@ -143,20 +140,19 @@ function makeTranslateKernelDeliveryToVatDelivery(vatID, kernelKeeper) {
       vatKeeper.deleteCListEntry(kref, vref);
       vrefs.push(vref);
     }
-    /** @type { VatDeliveryRetireImports } */
+    /** @type {VatDeliveryRetireImports} */
     const vatDelivery = harden(['retireImports', vrefs]);
     return vatDelivery;
   }
 
   /**
-   *
    * @param {SwingSetCapData} kernelVP
-   * @returns { VatDeliveryStartVat }
+   * @returns {VatDeliveryStartVat}
    */
   function translateStartVat(kernelVP) {
     const slots = kernelVP.slots.map(slot => mapKernelSlotToVatSlot(slot));
     const vatVP = { ...kernelVP, slots };
-    /** @type { VatDeliveryStartVat } */
+    /** @type {VatDeliveryStartVat} */
     const startVatMessageVatDelivery = harden(['startVat', vatVP]);
     return startVatMessageVatDelivery;
   }
@@ -166,9 +162,8 @@ function makeTranslateKernelDeliveryToVatDelivery(vatID, kernelKeeper) {
   }
 
   /**
-   *
-   * @param { KernelDeliveryObject } kd
-   * @returns { VatDeliveryObject }
+   * @param {KernelDeliveryObject} kd
+   * @returns {VatDeliveryObject}
    */
   function kernelDeliveryToVatDelivery(kd) {
     switch (kd[0]) {
@@ -217,12 +212,11 @@ function makeTranslateKernelDeliveryToVatDelivery(vatID, kernelKeeper) {
 }
 
 /**
- * return a function that converts VatSyscall objects into KernelSyscall
- * objects
+ * Return a function that converts VatSyscall objects into KernelSyscall objects
  *
- * @param { string } vatID
- * @param { KernelKeeper } kernelKeeper
- * @returns { (vsc: VatSyscallObject) => KernelSyscallObject }
+ * @param {string} vatID
+ * @param {KernelKeeper} kernelKeeper
+ * @returns {(vsc: VatSyscallObject) => KernelSyscallObject}
  */
 function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
   const vatKeeper = kernelKeeper.provideVatKeeper(vatID);
@@ -268,16 +262,15 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
       result,
     });
     insistMessage(kmsg);
-    /** @type { KernelSyscallSend } */
+    /** @type {KernelSyscallSend} */
     const ks = harden(['send', target, kmsg]);
     return ks;
   }
 
   /**
-   *
-   * @param { boolean } isFailure
-   * @param { SwingSetCapData } info
-   * @returns { KernelSyscallExit }
+   * @param {boolean} isFailure
+   * @param {SwingSetCapData} info
+   * @returns {KernelSyscallExit}
    */
   function translateExit(isFailure, info) {
     insistCapData(info);
@@ -288,9 +281,8 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
   }
 
   /**
-   *
-   * @param { string } key
-   * @returns { KernelSyscallVatstoreGet }
+   * @param {string} key
+   * @returns {KernelSyscallVatstoreGet}
    */
   function translateVatstoreGet(key) {
     assertValidVatstoreKey(key);
@@ -299,10 +291,9 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
   }
 
   /**
-   *
-   * @param { string } key
-   * @param { string } value
-   * @returns { KernelSyscallVatstoreSet }
+   * @param {string} key
+   * @param {string} value
+   * @returns {KernelSyscallVatstoreSet}
    */
   function translateVatstoreSet(key, value) {
     assertValidVatstoreKey(key);
@@ -312,11 +303,10 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
   }
 
   /**
-   *
-   * @param { string } priorKey
-   * @param { string } lowerBound
-   * @param { string | undefined } upperBound
-   * @returns { KernelSyscallVatstoreGetAfter }
+   * @param {string} priorKey
+   * @param {string} lowerBound
+   * @param {string | undefined} upperBound
+   * @returns {KernelSyscallVatstoreGetAfter}
    */
   function translateVatstoreGetAfter(priorKey, lowerBound, upperBound) {
     if (priorKey !== '') {
@@ -342,9 +332,8 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
   }
 
   /**
-   *
-   * @param { string } key
-   * @returns { KernelSyscallVatstoreDelete }
+   * @param {string} key
+   * @returns {KernelSyscallVatstoreDelete}
    */
   function translateVatstoreDelete(key) {
     assertValidVatstoreKey(key);
@@ -355,9 +344,8 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
   const gcSyscallMapOpts = { required: true, setReachable: false };
 
   /**
-   *
-   * @param { string[] } vrefs
-   * @returns { KernelSyscallDropImports }
+   * @param {string[]} vrefs
+   * @returns {KernelSyscallDropImports}
    */
   function translateDropImports(vrefs) {
     assert(Array.isArray(vrefs), X`dropImports() given non-Array ${vrefs}`);
@@ -378,9 +366,8 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
   }
 
   /**
-   *
-   * @param { string[] } vrefs
-   * @returns { KernelSyscallRetireImports }
+   * @param {string[]} vrefs
+   * @returns {KernelSyscallRetireImports}
    */
   function translateRetireImports(vrefs) {
     assert(Array.isArray(vrefs), X`retireImports() given non-Array ${vrefs}`);
@@ -403,9 +390,8 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
   }
 
   /**
-   *
-   * @param { string[] } vrefs
-   * @returns { KernelSyscallRetireExports }
+   * @param {string[]} vrefs
+   * @returns {KernelSyscallRetireExports}
    */
   function translateRetireExports(vrefs) {
     assert(Array.isArray(vrefs), X`retireExports() given non-Array ${vrefs}`);
@@ -425,11 +411,10 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
   }
 
   /**
-   *
-   * @param { string } target
-   * @param { string } method
-   * @param { SwingSetCapData } args
-   * @returns { KernelSyscallInvoke }
+   * @param {string} target
+   * @param {string} method
+   * @param {SwingSetCapData} args
+   * @returns {KernelSyscallInvoke}
    */
   function translateCallNow(target, method, args) {
     insistCapData(args);
@@ -456,18 +441,17 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
       kernelKeeper.hasKernelPromise(kpid),
       X`unknown kernelPromise id '${kpid}'`,
     );
-    /** @type { KernelSyscallSubscribe } */
+    /** @type {KernelSyscallSubscribe} */
     const ks = harden(['subscribe', vatID, kpid]);
     return ks;
   }
 
   /**
-   *
-   * @param { VatOneResolution[] } vresolutions
-   * @returns { KernelSyscallResolve }
+   * @param {VatOneResolution[]} vresolutions
+   * @returns {KernelSyscallResolve}
    */
   function translateResolve(vresolutions) {
-    /** @type { KernelOneResolution[] } */
+    /** @type {KernelOneResolution[]} */
     const kresolutions = [];
     const kpidsResolved = [];
     let idx = 0;
@@ -495,9 +479,8 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
   // ksc is:
   //  ['send', ktarget, kmsg]
   /**
-   *
-   * @param { VatSyscallObject } vsc
-   * @returns { KernelSyscallObject }
+   * @param {VatSyscallObject} vsc
+   * @returns {KernelSyscallObject}
    */
   function vatSyscallToKernelSyscall(vsc) {
     switch (vsc[0]) {
@@ -573,10 +556,9 @@ function makeTranslateKernelSyscallResultToVatSyscallResult(
   // and vatstoreGet() returns ['ok', string] or ['ok', undefined], and
   // invoke() can return ['error', problem].
   /**
-   *
-   * @param { string } type
-   * @param { KernelSyscallResult } kres
-   * @returns { VatSyscallResult }
+   * @param {string} type
+   * @param {KernelSyscallResult} kres
+   * @returns {VatSyscallResult}
    */
   function kernelSyscallResultToVatSyscallResult(type, kres) {
     const [successFlag, resultData] = kres;
@@ -588,7 +570,7 @@ function makeTranslateKernelSyscallResultToVatSyscallResult(
           const slots =
                 resultData.slots.map(slot => mapKernelSlotToVatSlot(slot));
           const vdata = { ...resultData, slots };
-          /** @type { VatSyscallResultOk } */
+          /** @type {VatSyscallResultOk} */
           const vres = harden(['ok', vdata]);
           return vres;
         } else {

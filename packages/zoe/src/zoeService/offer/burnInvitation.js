@@ -4,14 +4,14 @@ import { assert, details as X } from '@agoric/assert';
 import { E } from '@endo/eventual-send';
 
 /**
- * Burn the invitation, assert that only one invitation was burned,
- * and extract and return the instanceHandle and invitationHandle
+ * Burn the invitation, assert that only one invitation was burned, and extract
+ * and return the instanceHandle and invitationHandle
  *
  * @param {Issuer} invitationIssuer
  * @param {ERef<Payment>} invitation
  * @returns {Promise<{
- *   instanceHandle: Instance,
- *   invitationHandle: InvitationHandle,
+ *   instanceHandle: Instance;
+ *   invitationHandle: InvitationHandle;
  * }>}
  */
 export const burnInvitation = (invitationIssuer, invitation) => {

@@ -6,6 +6,7 @@ import { assert, details as X, q } from '@agoric/assert';
 
 /**
  * @typedef {string[]} Path
+ *
  * @typedef {{} & 'Strongname'} Strongname
  * @param {any} x
  * @returns {x is Path}
@@ -90,7 +91,7 @@ export const makeDehydrator = (initialUnnamedCount = 0) => {
   /**
    * @template T
    * @param {string} kind
-   * @param {{useLegacyMap?: boolean}=} legacyOptions
+   * @param {{ useLegacyMap?: boolean }} [legacyOptions]
    * @returns {Mapping<T>}
    */
   const makeMapping = (kind, { useLegacyMap = false } = {}) => {
@@ -362,7 +363,7 @@ export const makeDehydrator = (initialUnnamedCount = 0) => {
     /**
      * @template T
      * @param {string} kind
-     * @param {{useLegacyMap?: boolean}=} legacyOptions
+     * @param {{ useLegacyMap?: boolean }} [legacyOptions]
      * @returns {Mapping<T>}
      */
     makeMapping: (kind, legacyOptions = undefined) => {

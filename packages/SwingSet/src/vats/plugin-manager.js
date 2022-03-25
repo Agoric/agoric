@@ -13,7 +13,7 @@ import '@agoric/store/exported.js';
  * @typedef {T | PromiseLike<T>} ERef
  */
 
-/** @type {{ onReset: (firstTime: Promise<boolean>) => void}} */
+/** @type {{ onReset: (firstTime: Promise<boolean>) => void }} */
 const DEFAULT_RESETTER = Far('resetter', { onReset: _ => {} });
 
 /** @type {{ walk: (pluginRootP: any) => any }} */
@@ -28,9 +28,11 @@ const DEFAULT_WALKER = Far('walker', { walk: pluginRootP => pluginRootP });
  * @callback LoadPlugin
  * @param {string} specifier
  * @param {any} [opts=undefined]
- * @param {{ onReset: (firstTime: Promise<boolean>) => void}} [resetter=DEFAULT_RESETTER]
- * @returns {ERef<{ pluginRoot: ERef<any>, actions: { makeStableForwarder:
- * MakeStableForwarder }}>}
+ * @param {{ onReset: (firstTime: Promise<boolean>) => void }} [resetter=DEFAULT_RESETTER]
+ * @returns {ERef<{
+ *   pluginRoot: ERef<any>;
+ *   actions: { makeStableForwarder: MakeStableForwarder };
+ * }>}
  *
  * @callback MakeStableForwarder
  * @param {{ walk: (pluginRootP: Promise<any>) => any }} [walker=DEFAULT_WALKER]
@@ -60,19 +62,17 @@ const DEFAULT_WALKER = Far('walker', { walk: pluginRootP => pluginRootP });
  * Create a handler that manages a promise interface to external modules.
  *
  * @param {Device<PluginDevice>} pluginDevice The bridge to manage
- * @param {{ [prop: string]: any, D: <T>(target: Device<T>) => T}} param1
- * @returns {PluginManager} admin facet for this handler
+ * @param {{ [prop: string]: any; D: <T>(target: Device<T>) => T }} param1
+ * @returns {PluginManager} Admin facet for this handler
  */
 export function makePluginManager(pluginDevice, { D, ...vatPowers }) {
   /**
    * @typedef {Object} AbortDispatch
    * @property {(epoch: number) => void} reset
-   * @property {(obj: Record<string,any>) => void} dispatch
+   * @property {(obj: Record<string, any>) => void} dispatch
    */
 
-  /**
-   * @type {Store<number, AbortDispatch>}
-   */
+  /** @type {Store<number, AbortDispatch>} */
   const modConnection = makeStore('moduleIndex');
 
   // Dispatch object to the right index.
@@ -94,8 +94,8 @@ export function makePluginManager(pluginDevice, { D, ...vatPowers }) {
       return D(pluginDevice).getPluginDir();
     },
     /**
-     * Load a module, and call resetter.onReset(pluginRootP) every time
-     * it is instantiated.
+     * Load a module, and call resetter.onReset(pluginRootP) every time it is
+     * instantiated.
      *
      * @type {LoadPlugin}
      */
@@ -173,8 +173,7 @@ export function makePluginManager(pluginDevice, { D, ...vatPowers }) {
 
       const actions = Far('actions', {
         /**
-         * Create a stable identity that just forwards to the current
-         * implementation.
+         * Create a stable identity that just forwards to the current implementation.
          *
          * @type {MakeStableForwarder}
          */

@@ -12,13 +12,12 @@ import '../types.js';
 import '../internal-types.js';
 
 /**
- * makeZoeSeatAdminKit makes an object that manages the state of a seat
+ * MakeZoeSeatAdminKit makes an object that manages the state of a seat
  * participating in a Zoe contract and return its two facets.
  *
- * The UserSeat
- * is suitable to be handed to an agent outside zoe and the contract and allows
- * them to query or monitor the current state, access the payouts and result,
- * and call exit() if that's allowed for this seat.
+ * The UserSeat is suitable to be handed to an agent outside zoe and the
+ * contract and allows them to query or monitor the current state, access the
+ * payouts and result, and call exit() if that's allowed for this seat.
  *
  * The zoeSeatAdmin is passed by Zoe to the ContractFacet (zcf), to allow zcf to
  * query or update the allocation or exit the seat cleanly.

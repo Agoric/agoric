@@ -36,7 +36,7 @@ const NUM_IBC_PORTS_PER_CLIENT = 3;
 
 /**
  * This registers the code triggered by `agd tx gov submit-proposal
- * swingset-core-eval permit.json code.js`.  It is the "big hammer" governance
+ * swingset-core-eval permit.json code.js`. It is the "big hammer" governance
  * that allows code.js access to all powers permitted by permit.json.
  *
  * @param {BootstrapPowers} allPowers
@@ -59,9 +59,10 @@ export const bridgeCoreEval = async allPowers => {
       switch (obj.type) {
         case 'CORE_EVAL': {
           /**
-           * Type defined by `agoric-sdk/golang/cosmos/proto/agoric/swingset/swingset.proto` CoreEval.
+           * Type defined by
+           * `agoric-sdk/golang/cosmos/proto/agoric/swingset/swingset.proto` CoreEval.
            *
-           * @type {{ evals: { json_permits: string, js_code: string }[]}}
+           * @type {{ evals: { json_permits: string; js_code: string }[] }}
            */
           const { evals } = obj;
           return Promise.all(
@@ -99,7 +100,7 @@ harden(bridgeCoreEval);
 
 /**
  * @param {BootstrapPowers & {
- *   consume: { loadVat: ERef<VatLoader<ProvisioningVat>> }
+ *   consume: { loadVat: ERef<VatLoader<ProvisioningVat>> };
  * }} powers
  */
 export const makeProvisioner = async ({
@@ -266,7 +267,7 @@ export const makeBridgeManager = async ({
 harden(makeBridgeManager);
 
 /**
- * no free lunch on chain
+ * No free lunch on chain
  *
  * @param {BootstrapPowers} powers
  */
@@ -362,7 +363,7 @@ export const registerNetworkProtocols = async (vats, dibcBridgeManager) => {
 
 /**
  * @param {NetVats} vats
- * @param {*} pegasus
+ * @param {any} pegasus
  * @param {NameAdmin} pegasusConnectionsAdmin
  */
 const addPegasusTransferPort = async (
@@ -398,15 +399,18 @@ const addPegasusTransferPort = async (
 };
 
 /**
- * @param { BootstrapPowers & {
- *   consume: { loadVat: VatLoader<any> }
+ * @param {BootstrapPowers & {
+ *   consume: { loadVat: VatLoader<any> };
  * }} powers
+ *   // TODO: why doesn't overloading VatLoader work???
  *
- * // TODO: why doesn't overloading VatLoader work???
- * @typedef { ((name: 'network') => NetworkVat) &
- *            ((name: 'ibc') => IBCVat) } VatLoader2
+ * @typedef {((name: 'network') => NetworkVat) & ((name: 'ibc') => IBCVat)} VatLoader2
  *
- * @typedef {{ network: NetworkVat, ibc: IBCVat, provisioning: ProvisioningVat}} NetVats
+ * @typedef {{
+ *   network: NetworkVat;
+ *   ibc: IBCVat;
+ *   provisioning: ProvisioningVat;
+ * }} NetVats
  */
 export const setupNetworkProtocols = async ({
   consume: { client, loadVat, bridgeManager, zoe, provisioning },
@@ -415,7 +419,7 @@ export const setupNetworkProtocols = async ({
     consume: { [PEGASUS_NAME]: pegasusInstance },
   },
 }) => {
-  /** @type { NetVats } */
+  /** @type {NetVats} */
   const vats = {
     network: E(loadVat)('network'),
     ibc: E(loadVat)('ibc'),

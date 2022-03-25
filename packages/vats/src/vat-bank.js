@@ -12,6 +12,7 @@ import '@agoric/notifier/exported.js';
 
 /**
  * @typedef {import('./virtual-purse').VirtualPurseController} VirtualPurseController
+ *
  * @typedef {ReturnType<typeof makeVirtualPurse>} VirtualPurse
  */
 
@@ -81,9 +82,7 @@ const makePurseController = (
  * @property {Brand} brand
  */
 
-/**
- * @typedef {AssetIssuerKit & { denom: string, escrowPurse?: ERef<Purse> }} AssetRecord
- */
+/** @typedef {AssetIssuerKit & { denom: string; escrowPurse?: ERef<Purse> }} AssetRecord */
 
 /**
  * @typedef {Object} AssetDescriptor
@@ -97,17 +96,17 @@ const makePurseController = (
 /**
  * @typedef {Object} Bank
  * @property {() => Subscription<AssetDescriptor>} getAssetSubscription Returns
- * assets as they are added to the bank
+ *   assets as they are added to the bank
  * @property {(brand: Brand) => VirtualPurse} getPurse Find any existing vpurse
- * (keyed by address and brand) or create a new one.
+ *   (keyed by address and brand) or create a new one.
  */
 
 export function buildRootObject(_vatPowers) {
   return Far('bankMaker', {
     /**
-     * @param {ERef<import('./bridge').BridgeManager | undefined>} [bankBridgeManagerP] a bridge
-     * manager for the "remote" bank (such as on cosmos-sdk).  If not supplied
-     * (such as on sim-chain), we just use local purses.
+     * @param {ERef<import('./bridge').BridgeManager | undefined>} [bankBridgeManagerP]
+     *   A bridge manager for the "remote" bank (such as on cosmos-sdk). If not
+     *   supplied (such as on sim-chain), we just use local purses.
      */
     async makeBankManager(bankBridgeManagerP = undefined) {
       const bankBridgeManager = await bankBridgeManagerP;
@@ -139,9 +138,7 @@ export function buildRootObject(_vatPowers) {
         }
       };
 
-      /**
-       * @param {ERef<import('./bridge').BridgeManager>} [bankBridgeMgr]
-       */
+      /** @param {ERef<import('./bridge').BridgeManager>} [bankBridgeMgr] */
       async function makeBankCaller(bankBridgeMgr) {
         // We do the logic here if the bridge manager is available.  Otherwise,
         // the bank is not "remote" (such as on sim-chain), so we just use
@@ -176,7 +173,7 @@ export function buildRootObject(_vatPowers) {
       /**
        * Create a new personal bank interface for a given address.
        *
-       * @param {string} address lower-level bank account address
+       * @param {string} address Lower-level bank account address
        * @returns {Bank}
        */
       const getBankForAddress = address => {
@@ -302,10 +299,11 @@ export function buildRootObject(_vatPowers) {
         /**
          * Add an asset to the bank, and publish it to the subscriptions.
          *
-         * @param {string} denom lower-level denomination string
+         * @param {string} denom Lower-level denomination string
          * @param {string} issuerName
          * @param {string} proposedName
-         * @param {AssetIssuerKit & { payment?: ERef<Payment> }} kit ERTP issuer kit (mint, brand, issuer)
+         * @param {AssetIssuerKit & { payment?: ERef<Payment> }} kit ERTP issuer
+         *   kit (mint, brand, issuer)
          */
         async addAsset(denom, issuerName, proposedName, kit) {
           assert.typeof(denom, 'string');

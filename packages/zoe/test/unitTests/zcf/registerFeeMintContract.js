@@ -6,7 +6,10 @@ import { E } from '@endo/eventual-send';
 /**
  * Tests zcf.registerFeeMint
  *
- * @type {ContractStartFn<undefined, {getMintedAmount: unknown, getMintedPayout: unknown}>}
+ * @type {ContractStartFn<
+ *   undefined,
+ *   { getMintedAmount: unknown; getMintedPayout: unknown }
+ * >}
  */
 const start = async (zcf, privateArgs) => {
   // make the `zcf` and `instance` available to the tests

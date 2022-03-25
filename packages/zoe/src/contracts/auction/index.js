@@ -18,26 +18,25 @@ const FIRST_PRICE = 'first-price';
 const SECOND_PRICE = 'second-price';
 
 /**
- * NOT TO BE USED IN PRODUCTION CODE. BIDS ARE PUBLIC. An auction
- * contract in which the seller offers an Asset for sale, and states a
- * minimum price. The auction closes at the deadline specified by the
- * timeAuthority, bidDuration, winnerPriceOption parameters in the terms provided by
- * the creator of the contract instance.
- * Winner price option can be `first-price` or `second-price`, default to `second-price`.
+ * NOT TO BE USED IN PRODUCTION CODE. BIDS ARE PUBLIC. An auction contract in
+ * which the seller offers an Asset for sale, and states a minimum price. The
+ * auction closes at the deadline specified by the timeAuthority, bidDuration,
+ * winnerPriceOption parameters in the terms provided by the creator of the
+ * contract instance. Winner price option can be `first-price` or
+ * `second-price`, default to `second-price`.
  *
- * startInstance() specifies the issuers and the terms. An invitation
- * for the seller is returned as the creatorInvitation. The seller's
- * offer should look like { give: { Asset: asset }, want: { Ask:
- * minimumBidAmount}} The asset can be non-fungible, but the Ask
- * amount should be of a fungible brand. The bidder invitations can be
- * made by calling makeBidInvitation on the object returned from the
- * seller's offer. Each bidder can submit an offer: { give: { Bid:
- * null } want: { Asset: null } }.
+ * StartInstance() specifies the issuers and the terms. An invitation for the
+ * seller is returned as the creatorInvitation. The seller's offer should look
+ * like { give: { Asset: asset }, want: { Ask: minimumBidAmount}} The asset can
+ * be non-fungible, but the Ask amount should be of a fungible brand. The bidder
+ * invitations can be made by calling makeBidInvitation on the object returned
+ * from the seller's offer. Each bidder can submit an offer: { give: { Bid: null
+ * } want: { Asset: null } }.
  *
  * @param {ZCF<{
- * timeAuthority: TimerService,
- * winnerPriceOption?: FIRST_PRICE | SECOND_PRICE,
- * bidDuration: bigint,
+ *   timeAuthority: TimerService;
+ *   winnerPriceOption?: FIRST_PRICE | SECOND_PRICE;
+ *   bidDuration: bigint;
  * }>} zcf
  */
 const start = zcf => {

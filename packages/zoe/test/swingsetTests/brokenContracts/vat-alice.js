@@ -10,11 +10,11 @@ async function logCounter(log, publicAPI) {
 }
 
 /**
- * @param {*} log
+ * @param {any} log
  * @param {ZoeService} zoe
- * @param {*} issuers
- * @param {*} payments
- * @param {*} installations
+ * @param {any} issuers
+ * @param {any} payments
+ * @param {any} installations
  */
 const build = async (log, zoe, issuers, payments, installations) => {
   const [moolaPayment, simoleansPayment] = payments;

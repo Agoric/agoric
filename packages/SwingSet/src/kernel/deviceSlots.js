@@ -187,11 +187,10 @@ export function makeDeviceSlots(
   // this function throws an exception if anything goes wrong, or if the
   // device node itself throws an exception during invocation
   /**
-   *
-   * @param { string } deviceID
-   * @param { string } method
-   * @param { SwingSetCapData } args
-   * @returns { DeviceInvocationResult }
+   * @param {string} deviceID
+   * @param {string} method
+   * @param {SwingSetCapData} args
+   * @returns {DeviceInvocationResult}
    */
   function invoke(deviceID, method, args) {
     insistVatType('device', deviceID);
@@ -219,7 +218,7 @@ export function makeDeviceSlots(
     }
     const res = fn.apply(t, m.unserialize(args));
     const vres = m.serialize(res);
-    /** @type { DeviceInvocationResultOk } */
+    /** @type {DeviceInvocationResultOk} */
     const ires = harden(['ok', vres]);
     lsdebug(` results ${vres.body} ${JSON.stringify(vres.slots)}`);
     return ires;

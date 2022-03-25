@@ -43,8 +43,19 @@ test('attestation contract basic tests', async t => {
 
   const mockAuthority = Far(
     'stakeReporter',
-    /** @type {{getAccountState: (address: Address, brand: Brand) => {total: Amount,
-     * bonded: Amount, locked: Amount, currentTime: Timestamp}}} */ ({
+    /**
+     * @type {{
+     *   getAccountState: (
+     *     address: Address,
+     *     brand: Brand,
+     *   ) => {
+     *     total: Amount;
+     *     bonded: Amount;
+     *     locked: Amount;
+     *     currentTime: Timestamp;
+     *   };
+     * }}
+     */ ({
       getAccountState: (_address, _brand) => {
         return harden({
           total: AmountMath.make(uBrand, 500n),

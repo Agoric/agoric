@@ -9,10 +9,9 @@ import { parseAsSet } from './setValue/parseAsSet.js';
 import { stringifySet } from './setValue/stringifySet.js';
 
 /**
- *
- * @param {string} str - string to parse as a value
- * @param {AssetKind} [assetKind] - assetKind of the value
- * @param {number} [decimalPlaces] - places to move the decimal to the left
+ * @param {string} str - String to parse as a value
+ * @param {AssetKind} [assetKind] - AssetKind of the value
+ * @param {number} [decimalPlaces] - Places to move the decimal to the left
  * @returns {AmountValue}
  */
 export const parseAsValue = (
@@ -30,10 +29,10 @@ export const parseAsValue = (
 };
 
 /**
- * @param {string} str - string to parse as a value
- * @param {Brand} brand - brand to use in the amount
- * @param {AssetKind} [assetKind] - assetKind of the value
- * @param {number} [decimalPlaces] - places to move the decimal to the left
+ * @param {string} str - String to parse as a value
+ * @param {Brand} brand - Brand to use in the amount
+ * @param {AssetKind} [assetKind] - AssetKind of the value
+ * @param {number} [decimalPlaces] - Places to move the decimal to the left
  * @returns {Amount}
  */
 export const parseAsAmount = (
@@ -46,12 +45,10 @@ export const parseAsAmount = (
 };
 
 /**
- *
- * @param {AmountValue} value - value to stringify
- * @param {AssetKind} [assetKind] - assetKind of the value
- * @param {number} [decimalPlaces] - places to move the decimal to the
- * right in the string
- * @param {number} [placesToShow] - places after the decimal to show
+ * @param {AmountValue} value - Value to stringify
+ * @param {AssetKind} [assetKind] - AssetKind of the value
+ * @param {number} [decimalPlaces] - Places to move the decimal to the right in the string
+ * @param {number} [placesToShow] - Places after the decimal to show
  * @returns {string}
  */
 export const stringifyValue = (
@@ -92,10 +89,9 @@ export const stringifyPurseValue = purse => {
  * Stringify the value in an amount
  *
  * @param {Amount} amount
- * @param {AssetKind} [assetKind] - assetKind of the value
- * @param {number} [decimalPlaces] - places to move the decimal to the
- * right in the string
- * @param {number} [placesToShow] - places after the decimal to show
+ * @param {AssetKind} [assetKind] - AssetKind of the value
+ * @param {number} [decimalPlaces] - Places to move the decimal to the right in the string
+ * @param {number} [placesToShow] - Places after the decimal to show
  * @returns {string}
  */
 export function stringifyAmountValue(

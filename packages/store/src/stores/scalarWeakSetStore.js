@@ -9,8 +9,8 @@ const { details: X, quote: q } = assert;
  * @template K
  * @param {WeakSet<K & Object>} jsset
  * @param {(k: K) => void} assertKeyOkToAdd
- * @param {((k: K) => void)=} assertKeyOkToDelete
- * @param {string=} keyName
+ * @param {(k: K) => void} [assertKeyOkToDelete]
+ * @param {string} [keyName]
  * @returns {WeakSetStore<K>}
  */
 export const makeWeakSetStoreMethods = (
@@ -52,20 +52,20 @@ export const makeWeakSetStoreMethods = (
 };
 
 /**
- * This is a *scalar* set in that the keys can only be atomic values, primitives
+ * This is a _scalar_ set in that the keys can only be atomic values, primitives
  * or remotables. Other storeSets will accept, for example, copyArrays and
  * copyRecords, as keys and look them up based on equality of their contents.
  *
  * TODO For now, this scalarWeakSet accepts only remotables, reflecting the
- * constraints of the underlying JavaScript WeakSet it uses internally. But
- * it should accept the primitives as well, storing them in a separate internal
+ * constraints of the underlying JavaScript WeakSet it uses internally. But it
+ * should accept the primitives as well, storing them in a separate internal
  * set. What makes it "weak" is that it provides no API for enumerating what's
- * there. Though note that this would only enables collection of the
- * remotables, since the other primitives may always appear.
+ * there. Though note that this would only enables collection of the remotables,
+ * since the other primitives may always appear.
  *
  * @template K
- * @param {string} [keyName='key'] - the column name for the key
- * @param {StoreOptions=} options
+ * @param {string} [keyName='key'] - The column name for the key
+ * @param {StoreOptions} [options]
  * @returns {WeakSetStore<K>}
  */
 export const makeScalarWeakSetStore = (

@@ -21,17 +21,10 @@ const makeParamTerms = (number, invitationAmount) => {
 };
 
 /**
- * @type ContractStartFn<
- * GovernedPublicFacet<{}>,
- * GovernedCreatorFacet<any>,
- * {
- *   electionManager: VoteOnParamChange,
- *   main: {
- *     MalleableNumber: ParamRecord<'nat'>,
- *     Electorate: ParamRecord<'invitation'>,
- *   },
- * },
- * {initialPoserInvitation: Payment}>
+ * @type ContractStartFn< GovernedPublicFacet<{}>, GovernedCreatorFacet<any>, {
+ *   electionManager: VoteOnParamChange, main: { MalleableNumber:
+ *   ParamRecord<'nat'>, Electorate: ParamRecord<'invitation'>, }, },
+ *   {initialPoserInvitation: Payment}>
  */
 const start = async (zcf, privateArgs) => {
   const {

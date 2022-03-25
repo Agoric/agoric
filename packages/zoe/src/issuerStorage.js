@@ -8,13 +8,11 @@ import { arrayToObj } from './objArrayConversion.js';
 import { cleanKeywords } from './cleanProposal.js';
 import { makeIssuerRecord } from './issuerRecord.js';
 
-/**
- *  Make the Issuer Storage.
- */
+/** Make the Issuer Storage. */
 export const makeIssuerStorage = () => {
-  /** @type {WeakStore<Brand,IssuerRecord>} */
+  /** @type {WeakStore<Brand, IssuerRecord>} */
   const brandToIssuerRecord = makeWeakStore('brand');
-  /** @type {WeakStore<Issuer,IssuerRecord>} */
+  /** @type {WeakStore<Issuer, IssuerRecord>} */
   const issuerToIssuerRecord = makeWeakStore('issuer');
 
   let instantiated = false;
@@ -22,32 +20,27 @@ export const makeIssuerStorage = () => {
     assert(instantiated, X`issuerStorage has not been instantiated`);
 
   /**
-   * If we already know the entire issuer record, such as for a
-   * ZCFMint issuer, or for an issuer that Zoe has told us about,
-   * store the issuerRecord directly.
+   * If we already know the entire issuer record, such as for a ZCFMint issuer,
+   * or for an issuer that Zoe has told us about, store the issuerRecord directly.
    *
-   * A note on checking that the issuer and brand match: Because of
-   * how we use `storeIssuerRecord`, the issuer and brand in the
-   * `issuerRecord` parameter are guaranteed to match, and we do not
-   * need to do another asynchronous call.
+   * A note on checking that the issuer and brand match: Because of how we use
+   * `storeIssuerRecord`, the issuer and brand in the `issuerRecord` parameter
+   * are guaranteed to match, and we do not need to do another asynchronous call.
    *
-   * We use `storeIssuerRecord` in 4 cases: 1) ZoeMint records, 2)
-   * ZCFMint records, 3) within `storeIssuer`, and 4) storing an
-   * issuer record in ZCF that we obtained from Zoe that originally
-   * went through `storeIssuer`. In ZoeMints (repackaged as ZCFMints),
-   * we create the issuers and brands ourselves using ERTP directly,
-   * so we know they are not malicious and that the issuers and brands
-   * match. In the last two cases, we go through the
+   * We use `storeIssuerRecord` in 4 cases: 1) ZoeMint records, 2) ZCFMint
+   * records, 3) within `storeIssuer`, and 4) storing an issuer record in ZCF
+   * that we obtained from Zoe that originally went through `storeIssuer`. In
+   * ZoeMints (repackaged as ZCFMints), we create the issuers and brands
+   * ourselves using ERTP directly, so we know they are not malicious and that
+   * the issuers and brands match. In the last two cases, we go through the
    * brand-issuer-match check in `storeIssuer`.
    *
-   * The reason why we need the `has` check below is for the 4th case
-   * above, in which we store an issuer record in ZCF that we obtained
-   * from Zoe. `WeakStore.init` errors if the key is already present,
-   * and because an issuer can be used more than once in the same
-   * contract, we need to make sure we aren't trying to `init` twice.
-   * If the issuer and its record are already present, we do not need
-   * to add the issuer again in ZCF.
-   *
+   * The reason why we need the `has` check below is for the 4th case above, in
+   * which we store an issuer record in ZCF that we obtained from Zoe.
+   * `WeakStore.init` errors if the key is already present, and because an
+   * issuer can be used more than once in the same contract, we need to make
+   * sure we aren't trying to `init` twice. If the issuer and its record are
+   * already present, we do not need to add the issuer again in ZCF.
    *
    * @param {IssuerRecord} issuerRecord
    * @returns {IssuerRecord}
@@ -70,8 +63,8 @@ export const makeIssuerStorage = () => {
   };
 
   /**
-   * If the issuer is already stored, return the issuerRecord.
-   * Otherwise, make and save the issuerRecord.
+   * If the issuer is already stored, return the issuerRecord. Otherwise, make
+   * and save the issuerRecord.
    *
    * @param {ERef<Issuer>} issuerP
    * @returns {Promise<IssuerRecord>}
@@ -81,7 +74,7 @@ export const makeIssuerStorage = () => {
     const brandP = E(issuerP).getBrand();
     const brandIssuerMatchP = E(brandP).isMyIssuer(issuerP);
     const displayInfoP = E(brandP).getDisplayInfo();
-    /** @type {[Issuer,Brand,boolean,DisplayInfo]} */
+    /** @type {[Issuer, Brand, boolean, DisplayInfo]} */
     const [issuer, brand, brandIssuerMatch, displayInfo] = await Promise.all([
       issuerP,
       brandP,
@@ -126,10 +119,11 @@ export const makeIssuerStorage = () => {
   };
 
   /**
-   *
    * @param {IssuerKeywordRecord} uncleanIssuerKeywordRecord
-   * @returns {Promise<{ issuers: IssuerKeywordRecord,
-   *                     brands: BrandKeywordRecord }>}
+   * @returns {Promise<{
+   *   issuers: IssuerKeywordRecord;
+   *   brands: BrandKeywordRecord;
+   * }>}
    */
   const storeIssuerKeywordRecord = async uncleanIssuerKeywordRecord => {
     assertInstantiated();

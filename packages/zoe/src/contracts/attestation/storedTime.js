@@ -1,8 +1,6 @@
 // @ts-check
 
-/**
- * @returns {StoredTime}
- */
+/** @returns {StoredTime} */
 const makeStoredTime = () => {
   let storedTime = 0n;
 

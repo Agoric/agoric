@@ -12,8 +12,7 @@
  * scheduling will not accumulate drift.
  *
  * The main entry point is buildRootDeviceNode(). The other exports are for
- * testing. Selected vats that need to schedule events can be given access to
- * the device.
+ * testing. Selected vats that need to schedule events can be given access to the device.
  *
  * This code runs in the inner half of the device vat. It handles kernel objects
  * in serialized format, and uses SO() to send messages to them. The only device
@@ -50,7 +49,7 @@ function copyState(schedState) {
 /**
  * @typedef {Object} Event
  * @property {bigint} time
- * @property {Array<IndexedHandler>} handlers
+ * @property {IndexedHandler[]} handlers
  *
  * @typedef {Object} IndexedHandler
  * @property {number} [index]
@@ -68,17 +67,16 @@ function copyState(schedState) {
  * repeater (stored as { handler, repeater }).
  *
  * To support quiescent solo vats (which normally only run if there's an
- * incoming event), we'd want to tell the host loop when we should next be
- * scheduled.
+ * incoming event), we'd want to tell the host loop when we should next be scheduled.
  *
- * @param {Array<Event>} [state=undefined]
+ * @param {Event[]} [state=undefined]
  */
 function makeTimerMap(state = undefined) {
   /**
-   * @type {Array<Event>} an array containing events that should be triggered
-   * after specific times.  Multiple events can be stored with the same time
-   * {time, handlers: [hander, ...]}. The array will be kept sorted in
-   * increasing order by timestamp.
+   * @type {Event[]} an Array containing events that should be triggered after
+   *   specific times. Multiple events can be stored with the same time {time,
+   *   handlers: [hander, ...]}. The array will be kept sorted in increasing
+   *   order by timestamp.
    */
   const schedule = state ? copyState(state) : [];
 

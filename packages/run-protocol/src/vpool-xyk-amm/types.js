@@ -7,7 +7,7 @@
  */
 
 /**
- * @typedef {Object} VPool - virtual pool for price quotes and trading
+ * @typedef {Object} VPool - Virtual pool for price quotes and trading
  * @property {(amountIn: Amount, amountOut: Amount) => VPoolPriceQuote} getInputPrice
  * @property {(amountIn: Amount, amountOut: Amount) => VPoolPriceQuote} getOutputPrice
  * @property {(seat: ZCFSeat, amountIn: Amount, amountOut: Amount) => string} swapIn
@@ -40,7 +40,7 @@
  */
 
 /**
- * @typedef {Object} VPoolInternalFacet - virtual pool for price quotes and trading
+ * @typedef {Object} VPoolInternalFacet - Virtual pool for price quotes and trading
  * @property {GetDoublePoolSwapQuote} getPriceForInput
  * @property {GetDoublePoolSwapQuote} getPriceForOutput
  */
@@ -64,7 +64,7 @@
 
 /**
  * @template T
- * @typedef {Object} VPoolWrapper - wrapper holding external and internal facets
+ * @typedef {Object} VPoolWrapper - Wrapper holding external and internal facets
  * @property {VPool} externalFacet
  * @property {T} internalFacet
  */
@@ -92,35 +92,38 @@
 /**
  * @typedef {Object} XYKAMMPublicFacet
  * @property {(issuer: Issuer, keyword: Keyword) => Promise<Issuer>} addPool
- * add a new liquidity pool
- * @property {() => Promise<Invitation>} makeSwapInvitation synonym for
- * makeSwapInInvitation
- * @property {() => Promise<Invitation>} makeSwapInInvitation make an invitation
- * that allows one to do a swap in which the In amount is specified and the Out
- * amount is calculated
- * @property {() => Promise<Invitation>} makeSwapOutInvitation make an invitation
- * that allows one to do a swap in which the Out amount is specified and the In
- * amount is calculated
- * @property {() => Promise<Invitation>} makeAddLiquidityInvitation make an
- * invitation that allows one to add liquidity to the pool.
- * @property {() => Promise<Invitation>} makeRemoveLiquidityInvitation make an
- * invitation that allows one to remove liquidity from the pool.
+ *   Add a new liquidity pool
+ * @property {() => Promise<Invitation>} makeSwapInvitation Synonym for
+ *   makeSwapInInvitation
+ * @property {() => Promise<Invitation>} makeSwapInInvitation Make an invitation
+ *   that allows one to do a swap in which the In amount is specified and the
+ *   Out amount is calculated
+ * @property {() => Promise<Invitation>} makeSwapOutInvitation Make an
+ *   invitation that allows one to do a swap in which the Out amount is
+ *   specified and the In amount is calculated
+ * @property {() => Promise<Invitation>} makeAddLiquidityInvitation Make an
+ *   invitation that allows one to add liquidity to the pool.
+ * @property {() => Promise<Invitation>} makeRemoveLiquidityInvitation Make an
+ *   invitation that allows one to remove liquidity from the pool.
  * @property {(brand: Brand) => Issuer} getLiquidityIssuer
- * @property {(brand: Brand) => bigint} getLiquiditySupply get the current value of
- * liquidity in the pool for brand held by investors.
+ * @property {(brand: Brand) => bigint} getLiquiditySupply Get the current value
+ *   of liquidity in the pool for brand held by investors.
  * @property {(amountIn: Amount, amountOut: Amount) => VPoolPriceQuote} getInputPrice
- * calculate the amount of brandOut that will be returned if the amountIn is
- * offered using makeSwapInInvitation at the current price.
+ *   Calculate the amount of brandOut that will be returned if the amountIn is
+ *   offered using makeSwapInInvitation at the current price.
  * @property {(amountOut: Amount, amountIn: Amount) => VPoolPriceQuote} getOutputPrice
- * calculate the amount of brandIn that is required in order to get amountOut
- * using makeSwapOutInvitation at the current price
- * @property {(brand: Brand) => Record<string, Amount>} getPoolAllocation get an
- * AmountKeywordRecord showing the current balances in the pool for brand.
- * @property {() => Issuer} getQuoteIssuer - get the Issuer that attests to
- * the prices in the priceQuotes issued by the PriceAuthorities
- * @property {(brand: Brand) => {toCentral: PriceAuthority, fromCentral: PriceAuthority}} getPriceAuthorities
- * get a pair of PriceAuthorities { toCentral, fromCentral } for requesting
- * Prices and notifications about changing prices.
+ *   Calculate the amount of brandIn that is required in order to get amountOut
+ *   using makeSwapOutInvitation at the current price
+ * @property {(brand: Brand) => Record<string, Amount>} getPoolAllocation Get an
+ *   AmountKeywordRecord showing the current balances in the pool for brand.
+ * @property {() => Issuer} getQuoteIssuer - Get the Issuer that attests to the
+ *   prices in the priceQuotes issued by the PriceAuthorities
+ * @property {(brand: Brand) => {
+ *   toCentral: PriceAuthority;
+ *   fromCentral: PriceAuthority;
+ * }} getPriceAuthorities
+ *   Get a pair of PriceAuthorities { toCentral, fromCentral } for requesting
+ *   Prices and notifications about changing prices.
  * @property {() => Brand[]} getAllPoolBrands
  * @property {() => Allocation} getProtocolPoolBalance
  */
@@ -130,6 +133,6 @@
  * @param {ERef<ZoeService>} zoe
  * @param {bigint} poolFeeBP
  * @param {bigint} protocolFeeBP
- * @param {Invitation} poserInvitation - invitation for the question poser
+ * @param {Invitation} poserInvitation - Invitation for the question poser
  * @returns {Promise<ParamManagerFull>}
  */

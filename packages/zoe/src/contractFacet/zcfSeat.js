@@ -17,7 +17,7 @@ export const createSeatManager = (
   getAssetKindByBrand,
   shutdownWithFailure,
 ) => {
-  /** @type {WeakStore<ZCFSeat, Allocation>}  */
+  /** @type {WeakStore<ZCFSeat, Allocation>} */
   let activeZCFSeats = makeWeakStore('zcfSeat');
   /** @type {Store<ZCFSeat, Allocation>} */
   const zcfSeatToStagedAllocations = makeStore('zcfSeat');
@@ -75,11 +75,10 @@ export const createSeatManager = (
 
   /**
    * Get the stagedAllocation. If one does not exist, return the
-   * currentAllocation. We return the currentAllocation in this case
-   * so that downstream users do not have to check whether the
-   * stagedAllocation is defined before adding to it or subtracting
-   * from it. To check whether a stagedAllocation exists, use
-   * `hasStagedAllocation`
+   * currentAllocation. We return the currentAllocation in this case so that
+   * downstream users do not have to check whether the stagedAllocation is
+   * defined before adding to it or subtracting from it. To check whether a
+   * stagedAllocation exists, use `hasStagedAllocation`
    *
    * @param {ZCFSeat} zcfSeat
    * @returns {Allocation}
@@ -112,9 +111,8 @@ export const createSeatManager = (
   };
 
   /**
-   * Unlike the zcf.reallocate method, this one does not check conservation,
-   * and so can be used internally for reallocations that violate
-   * conservation.
+   * Unlike the zcf.reallocate method, this one does not check conservation, and
+   * so can be used internally for reallocations that violate conservation.
    *
    * @type {ReallocateForZCFMint}
    */
@@ -225,9 +223,7 @@ export const createSeatManager = (
     zoeSeatAdmin,
     { proposal, notifier, initialAllocation, seatHandle },
   ) => {
-    /**
-     * @param {ZCFSeat} zcfSeat
-     */
+    /** @param {ZCFSeat} zcfSeat */
     const assertNoStagedAllocation = zcfSeat => {
       if (hasStagedAllocation(zcfSeat)) {
         assert.fail(

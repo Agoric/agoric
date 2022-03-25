@@ -9,15 +9,11 @@
 // @ts-check
 /* eslint-disable no-bitwise */
 
-/**
- * @typedef {string | number | Uint8Array | ArrayBuffer} Data
- */
+/** @typedef {string | number | Uint8Array | ArrayBuffer} Data */
 
 const encoder = new TextEncoder();
 
-/**
- * @param {Data} data
- */
+/** @param {Data} data */
 function convert(data) {
   if (typeof data === 'number') {
     const bytes = [];
@@ -77,9 +73,7 @@ export class CRC {
     this.table = table;
 
     if (this.width === 8 && !this.xorIn && !this.xorOut && !this.reflect) {
-      /**
-       * @param {Data} data
-       */
+      /** @param {Data} data */
       this.calculate = function calculate(data) {
         const buffer = convert(data);
         let crc = 0;
@@ -91,9 +85,7 @@ export class CRC {
     }
   }
 
-  /**
-   * @param {Data} data
-   */
+  /** @param {Data} data */
   calculate(data) {
     const buffer = convert(data);
     let crc;
@@ -118,9 +110,7 @@ export class CRC {
     return crc >>> 0;
   }
 
-  /**
-   * @param {Data} data
-   */
+  /** @param {Data} data */
   calculateNoTable(data) {
     const buffer = convert(data);
     let crc = this.xorIn;

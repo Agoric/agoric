@@ -32,10 +32,11 @@ harden(setUpZoeForTest);
 
 test('connectFaucet produces payments', async t => {
   const space = /** @type {any} */ (makePromiseSpace());
-  const { consume, produce } =
-    /** @type { BootstrapPowers & { consume: { loadVat: (n: 'mints') => MintsVat }} } */ (
-      space
-    );
+  const { consume, produce } = /**
+   * @type {BootstrapPowers & {
+   *   consume: { loadVat: (n: 'mints') => MintsVat };
+   * }}
+   */ (space);
   const { agoricNames, spaces } = makeAgoricNamesAccess();
   produce.agoricNames.resolve(agoricNames);
 
@@ -76,7 +77,7 @@ test('connectFaucet produces payments', async t => {
     ),
   );
 
-  /** @param { BootstrapSpace } powers */
+  /** @param {BootstrapSpace} powers */
   const stubProps = async ({ consume: { client } }) => {
     const stub = {
       agoricNames: true,
@@ -105,7 +106,7 @@ test('connectFaucet produces payments', async t => {
 
   // t.deepEqual(Object.keys(userBundle), '@@todo');
 
-  /** @type { import('../src/demoIssuers.js').UserPaymentRecord[] } */
+  /** @type {import('../src/demoIssuers.js').UserPaymentRecord[]} */
   const pmts = await E(userBundle.faucet).tapFaucet();
 
   const detail = await Promise.all(

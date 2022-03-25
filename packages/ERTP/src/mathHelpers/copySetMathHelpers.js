@@ -15,9 +15,7 @@ import '../types.js';
 /** @type {CopySetValue} */
 const empty = makeCopySet([]);
 
-/**
- * @type {CopySetMathHelpers}
- */
+/** @type {CopySetMathHelpers} */
 export const copySetMathHelpers = harden({
   doCoerce: set => {
     fit(set, M.set());

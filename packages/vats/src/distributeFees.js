@@ -4,8 +4,8 @@ import { observeNotifier } from '@agoric/notifier';
 import { E, Far } from '@endo/far';
 
 /**
- * wrapper to take the vaultFactory or AMM's creatorFacet, and make a function that
- * will request an invitation and return a promise for a payment.
+ * Wrapper to take the vaultFactory or AMM's creatorFacet, and make a function
+ * that will request an invitation and return a promise for a payment.
  *
  * @param {ERef<ZoeService>} zoe
  * @param {{ makeCollectFeesInvitation: () => Promise<Invitation> }} creatorFacet
@@ -22,9 +22,9 @@ export function makeFeeCollector(zoe, creatorFacet) {
 }
 
 /**
- * A distributor of fees from vaultFactory or AMM to the Bank module. Each time the
- * epochTimer signals the end of an Epoch, it will ask the contracts for fees
- * that have been collected to date and send that payment to the depositFacet.
+ * A distributor of fees from vaultFactory or AMM to the Bank module. Each time
+ * the epochTimer signals the end of an Epoch, it will ask the contracts for
+ * fees that have been collected to date and send that payment to the depositFacet.
  *
  * @type {BuildFeeDistributor}
  */

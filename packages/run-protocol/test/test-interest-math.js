@@ -9,7 +9,7 @@ import { calculateCurrentDebt, reverseInterest } from '../src/interest-math.js';
 const runBrand = makeIssuerKit('run').brand;
 
 /**
- * @param {*} t
+ * @param {any} t
  * @param {readonly [bigint, bigint, bigint]} input
  * @param {bigint} result
  */

@@ -81,7 +81,7 @@ test('notifier - update after state change', async t => {
 
 test('notifier - final state', async t => {
   t.plan(6);
-  /** @type {NotifierRecord<number|string>} */
+  /** @type {NotifierRecord<number | string>} */
   const { notifier, updater } = makeNotifierKit(1);
 
   const updateDeNovo = await notifier.getUpdateSince();

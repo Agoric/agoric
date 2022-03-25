@@ -15,17 +15,15 @@ import { makeInstanceAdminStorage } from './instanceAdminStorage.js';
 import { makeInstallationStorage } from './installationStorage.js';
 
 /**
- * The Zoe Storage Manager encapsulates and composes important
- * capabilities, such as the ability to create a new purse and deposit
- * and withdraw into a purse, according to the Principle of Least
- * Authority. The code for these capabilities is imported from smaller
- * files which should have unit tests. After composing, Zoe Storage
- * Manager divides up the resulting capabilities between those needed
- * by a new contract instance (returned as the result of
+ * The Zoe Storage Manager encapsulates and composes important capabilities,
+ * such as the ability to create a new purse and deposit and withdraw into a
+ * purse, according to the Principle of Least Authority. The code for these
+ * capabilities is imported from smaller files which should have unit tests.
+ * After composing, Zoe Storage Manager divides up the resulting capabilities
+ * between those needed by a new contract instance (returned as the result of
  * `makeZoeInstanceStorageManager`) and those needed for other purposes.
  *
- * @param {CreateZCFVat} createZCFVat - the ability to create a new
- * ZCF Vat
+ * @param {CreateZCFVat} createZCFVat - The ability to create a new ZCF Vat
  * @param {GetBundleCapForID} getBundleCapForID
  * @param {GetFeeIssuerKit} getFeeIssuerKit
  * @param {ShutdownWithFailure} shutdownZoeVat

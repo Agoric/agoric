@@ -56,8 +56,8 @@ export function makeNodeSubprocessFactory(tools) {
     let waiting;
 
     /**
-     * @param { VatDeliveryObject } delivery
-     * @returns { Promise<VatDeliveryResult> }
+     * @param {VatDeliveryObject} delivery
+     * @returns {Promise<VatDeliveryResult>}
      */
     function deliverToWorker(delivery) {
       parentLog(`sending delivery`, delivery);

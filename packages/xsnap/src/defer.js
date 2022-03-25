@@ -10,9 +10,9 @@ function assert(_flag) {}
 /**
  * @template T
  * @typedef {{
- *   resolve(value?: T | Promise<T>): void,
- *   reject(error: Error): void,
- *   promise: Promise<T>
+ *   resolve(value?: T | Promise<T>): void;
+ *   reject(error: Error): void;
+ *   promise: Promise<T>;
  * }} Deferred
  */
 

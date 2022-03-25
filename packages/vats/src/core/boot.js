@@ -43,12 +43,12 @@ const roleToGovernanceActions = harden({
  * Build root object of the bootstrap vat.
  *
  * @param {{
- *   D: DProxy
+ *   D: DProxy;
  * }} vatPowers
  * @param {{
- *   argv: { ROLE: string },
- *   bootstrapManifest?: Record<string, Record<string, unknown>>,
- *   governanceActions?: boolean,
+ *   argv: { ROLE: string };
+ *   bootstrapManifest?: Record<string, Record<string, unknown>>;
+ *   governanceActions?: boolean;
  * }} vatParameters
  */
 const buildRootObject = (vatPowers, vatParameters) => {
@@ -82,7 +82,7 @@ const buildRootObject = (vatPowers, vatParameters) => {
       D(devices.mailbox).registerInboundHandler(vats.vattp);
       await E(vats.vattp).registerMailboxDevice(devices.mailbox);
 
-      /** @param { Record<string, Record<string, unknown>> } manifest */
+      /** @param {Record<string, Record<string, unknown>>} manifest */
       const runBehaviors = manifest => {
         // TODO: Aspires to be BootstrapPowers, but it's too specific.
         const allPowers = harden({

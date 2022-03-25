@@ -717,7 +717,6 @@ test(`zcfSeat.isOfferSafe from zcf.makeEmptySeatKit`, async t => {
 });
 
 /**
- *
  * @param {ZCF} zcf
  * @param {Keyword} zcfMintKeyword
  * @param {ZCFSeat} zcfSeat

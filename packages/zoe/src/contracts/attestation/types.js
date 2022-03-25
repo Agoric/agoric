@@ -1,6 +1,4 @@
-/**
- * @typedef {string} Address
- */
+/** @typedef {string} Address */
 
 /**
  * @callback GetAttMaker
@@ -21,9 +19,7 @@
  */
 
 /**
- * @callback Max
- * Return the greater of two Amounts.
- *
+ * @callback Max Return the greater of two Amounts.
  * @param {Amount} x
  * @param {Amount} y
  * @returns {Amount}
@@ -31,7 +27,6 @@
 
 /**
  * @callback GetLienAmount
- *
  * @param {Address} address
  * @param {Timestamp} currentTime
  * @returns {Amount}
@@ -39,18 +34,14 @@
 
 /**
  * @callback GetReturnableLienAmount
- *
  * @param {Address} address
  * @returns {Amount}
  */
 
 /**
- * @callback AddReturnableLien
- *
- * Given an address string and an Amount to put a lien on, record that
- * the Amount is "liened", and mint an attestation payment for the
- * amount liened. Return the payment.
- *
+ * @callback AddReturnableLien Given an address string and an Amount to put a
+ *   lien on, record that the Amount is "liened", and mint an attestation
+ *   payment for the amount liened. Return the payment.
  * @param {Address} address
  * @param {Amount} amount
  * @returns {Promise<Payment>}
@@ -75,27 +66,20 @@
  */
 
 /**
- * @callback Slashed
- *
- * On slashing, we disallow any extensions. We do not reduce the liens.
- *
- * @param {Array<Address>} addresses
+ * @callback Slashed On slashing, we disallow any extensions. We do not reduce the liens.
+ * @param {Address[]} addresses
  * @param {Timestamp} currentTime
  * @returns {void}
  */
 
 /**
- * @callback MakeReturnAttInvitation
- *
- * Make an invitation for returning a returnable attestation.
- *
+ * @callback MakeReturnAttInvitation Make an invitation for returning a
+ *   returnable attestation.
  * @returns {Promise<Invitation>}
  */
 
 /**
- * @callback GetLiened
- * Get the amount currently liened for the address and brand.
- *
+ * @callback GetLiened Get the amount currently liened for the address and brand.
  * @param {Address} addresses
  * @param {Timestamp} currentTime
  * @param {Brand} brand
@@ -103,13 +87,16 @@
  */
 
 /**
- * @typedef {{getTime: () => Timestamp, updateTime: (currentTime:
- * Timestamp) => void}} StoredTime
+ * @typedef {{
+ *   getTime: () => Timestamp;
+ *   updateTime: (currentTime: Timestamp) => void;
+ * }} StoredTime
  */
 
 /**
  * @typedef {Object} StakingAuthority
- * @property {(address: string, brand: Brand) => ERef<AccountState> } getAccountState
+ * @property {(address: string, brand: Brand) => ERef<AccountState>} getAccountState
+ *
  * @typedef {Object} AccountState
  * @property {Amount} bonded
  * @property {Amount} liened

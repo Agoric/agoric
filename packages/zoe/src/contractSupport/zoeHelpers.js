@@ -31,11 +31,10 @@ export const assertIssuerKeywords = (zcf, expected) => {
  */
 
 /**
- * Check whether an update to currentAllocation satisfies
- * proposal.want. Note that this is half of the offer safety
- * check; whether the allocation constitutes a refund is not
- * checked. The update is merged with currentAllocation
- * (update's values prevailing if the keywords are the same)
+ * Check whether an update to currentAllocation satisfies proposal.want. Note
+ * that this is half of the offer safety check; whether the allocation
+ * constitutes a refund is not checked. The update is merged with
+ * currentAllocation (update's values prevailing if the keywords are the same)
  * to produce the newAllocation.
  *
  * @param {ZCF} zcf
@@ -100,9 +99,9 @@ export const swapExact = (zcf, leftSeat, rightSeat) => {
  */
 
 /**
- * Check the seat's proposal against `proposalShape`.
- * If the client submits an offer which does not match
- * these expectations, the seat will be exited (and payments refunded).
+ * Check the seat's proposal against `proposalShape`. If the client submits an
+ * offer which does not match these expectations, the seat will be exited (and
+ * payments refunded).
  *
  * @param {ZCFSeat} seat
  * @param {Pattern} proposalShape
@@ -112,13 +111,13 @@ export const fitProposalShape = (seat, proposalShape) =>
   fit(seat.getProposal(), harden(proposalShape));
 
 /**
- * Check the seat's proposal against an `expected` record that says
- * what shape of proposal is acceptable.
+ * Check the seat's proposal against an `expected` record that says what shape
+ * of proposal is acceptable.
  *
- * This ExpectedRecord is like a Proposal, but the amounts in 'want'
- * and 'give' should be null; the exit clause should specify a rule with
- * null contents. If the client submits an offer which does not match
- * these expectations, the seat will be exited (and payments refunded).
+ * This ExpectedRecord is like a Proposal, but the amounts in 'want' and 'give'
+ * should be null; the exit clause should specify a rule with null contents. If
+ * the client submits an offer which does not match these expectations, the seat
+ * will be exited (and payments refunded).
  *
  * @param {ZCFSeat} seat
  * @param {ExpectedRecord} expected
@@ -168,9 +167,8 @@ export const assertNatAssetKind = (zcf, brand) => {
 export const depositToSeatSuccessMsg = `Deposit and reallocation successful.`;
 
 /**
- * Deposit payments such that their amounts are reallocated to a seat.
- * The `amounts` and `payments` records must have corresponding
- * keywords.
+ * Deposit payments such that their amounts are reallocated to a seat. The
+ * `amounts` and `payments` records must have corresponding keywords.
  *
  * @param {ZCF} zcf
  * @param {ZCFSeat} recipientSeat
@@ -212,9 +210,9 @@ export async function depositToSeat(zcf, recipientSeat, amounts, payments) {
 }
 
 /**
- * Withdraw payments from a seat. Note that withdrawing the amounts of
- * the payments must not and cannot violate offer safety for the seat. The
- * `amounts` and `payments` records must have corresponding keywords.
+ * Withdraw payments from a seat. Note that withdrawing the amounts of the
+ * payments must not and cannot violate offer safety for the seat. The `amounts`
+ * and `payments` records must have corresponding keywords.
  *
  * @param {ZCF} zcf
  * @param {ZCFSeat} seat
@@ -232,13 +230,12 @@ export async function withdrawFromSeat(zcf, seat, amounts) {
 }
 
 /**
- * Save all of the issuers in an issuersKeywordRecord to ZCF, using
- * the method `zcf.saveIssuer`. This does not error if any of the keywords
- * already exist. If the keyword is already present, it is ignored.
+ * Save all of the issuers in an issuersKeywordRecord to ZCF, using the method
+ * `zcf.saveIssuer`. This does not error if any of the keywords already exist.
+ * If the keyword is already present, it is ignored.
  *
  * @param {ZCF} zcf
- * @param {IssuerKeywordRecord} issuerKeywordRecord Issuers to save to
- * ZCF
+ * @param {IssuerKeywordRecord} issuerKeywordRecord Issuers to save to ZCF
  */
 export async function saveAllIssuers(zcf, issuerKeywordRecord = harden({})) {
   const { issuers } = zcf.getTerms();
@@ -279,34 +276,26 @@ const reverse = (keywordRecord = {}) => {
 
 /**
  * Make an offer to another contract instance (labeled contractB below),
- * withdrawing the payments for the offer from a seat in the current
- * contract instance (contractA) and depositing the payouts in another
- * seat in the current contract instance (contractA).
+ * withdrawing the payments for the offer from a seat in the current contract
+ * instance (contractA) and depositing the payouts in another seat in the
+ * current contract instance (contractA).
  *
- * @param {ZCF} zcf
- *   Zoe Contract Facet for contractA
- *
- * @param {ERef<Invitation>} invitation
- *   Invitation to contractB
- *
- * @param {KeywordKeywordRecord=} keywordMapping
- *   Mapping of keywords used in contractA to keywords to be used in
- *   contractB. Note that the pathway to deposit the payout back to
- *   contractA reverses this mapping.
- *
- * @param {Proposal=} proposal
- *   The proposal for the offer to be made to contractB
- *
- * @param {ZCFSeat} fromSeat
- *   The seat in contractA to take the offer payments from.
- *
- * @param {ZCFSeat=} [toSeat=fromSeat]
- *   The seat in contractA to deposit the payout of the offer to.
- *   If `toSeat` is not provided, this defaults to the `fromSeat`.
- *
- * @returns {Promise<{userSeatPromise: Promise<UserSeat>, deposited: Promise<AmountKeywordRecord>}>}
- *   A promise for the userSeat for the offer to the other contract, and a
- *   promise (`deposited`) which resolves when the payout for the offer has been
+ * @param {ZCF} zcf Zoe Contract Facet for contractA
+ * @param {ERef<Invitation>} invitation Invitation to contractB
+ * @param {KeywordKeywordRecord} [keywordMapping] Mapping of keywords used in
+ *   contractA to keywords to be used in contractB. Note that the pathway to
+ *   deposit the payout back to contractA reverses this mapping.
+ * @param {Proposal} [proposal] The proposal for the offer to be made to contractB
+ * @param {ZCFSeat} fromSeat The seat in contractA to take the offer payments from.
+ * @param {ZCFSeat} [toSeat=fromSeat] The seat in contractA to deposit the
+ *   payout of the offer to. If `toSeat` is not provided, this defaults to the
+ *   `fromSeat`.
+ * @returns {Promise<{
+ *   userSeatPromise: Promise<UserSeat>;
+ *   deposited: Promise<AmountKeywordRecord>;
+ * }>}
+ *   A promise for the userSeat for the offer to the other contract, and a promise
+ *   (`deposited`) which resolves when the payout for the offer has been
  *   deposited to the `toSeat`
  */
 export const offerTo = async (
@@ -359,12 +348,12 @@ export const offerTo = async (
 };
 
 /**
- * Create a wrapped version of zcf that asserts an invariant
- * before performing a reallocation.
+ * Create a wrapped version of zcf that asserts an invariant before performing a
+ * reallocation.
  *
  * @param {ZCF} zcf
- * @param {(seats: ZCFSeat[]) => void} assertFn - an assertion
- * that must be true for the reallocate to occur
+ * @param {(seats: ZCFSeat[]) => void} assertFn - An assertion that must be true
+ *   for the reallocate to occur
  * @returns {ZCF}
  */
 export const checkZCF = (zcf, assertFn) => {

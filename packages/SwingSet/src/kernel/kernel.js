@@ -47,10 +47,9 @@ const VAT_TERMINATION_ERROR = makeError('vat terminated');
 /**
  * Provide the kref of a vat's root object, as if it had been exported.
  *
- * @param {*} kernelKeeper  Kernel keeper managing persistent kernel state.
- * @param {string} vatID  Vat ID of the vat whose root kref is sought.
- *
- * @returns {string} the kref of the root object of the given vat.
+ * @param {any} kernelKeeper Kernel keeper managing persistent kernel state.
+ * @param {string} vatID Vat ID of the vat whose root kref is sought.
+ * @returns {string} The kref of the root object of the given vat.
  */
 export function exportRootObject(kernelKeeper, vatID) {
   insistVatID(vatID);
@@ -105,7 +104,7 @@ export default function buildKernel(
 
   const vatAdminRootKref = hostStorage.kvStore.get('vatAdminRootKref');
 
-  /** @type { KernelSlog } */
+  /** @type {KernelSlog} */
   const kernelSlog = writeSlogObject
     ? makeSlogger(slogCallbacks, writeSlogObject)
     : makeDummySlogger(slogCallbacks, makeConsole);
@@ -116,23 +115,27 @@ export default function buildKernel(
 
   /**
    * @typedef {{
-   *   manager: unknown,
-   *   translators: ReturnType<makeDeviceTranslators>,
+   *   manager: unknown;
+   *   translators: ReturnType<makeDeviceTranslators>;
    * }} DeviceInfo
    */
   const ephemeral = {
-    /** @type { Map<string, DeviceInfo> } key is deviceID */
+    /** @type {Map<string, DeviceInfo>} key Is deviceID */
     devices: new Map(),
     /** @type {string[]} */
     log: [],
   };
 
   /**
-   * @typedef { (args: SwingSetCapData) => SwingSetCapData } DeviceHook
-   * @typedef { string } HookName
-   * @typedef { Record<HookName, DeviceHook> } HooksForOneDevice
-   * @typedef { string } DeviceID
-   * @typedef { Map<DeviceID, HooksForOneDevice> } HooksForAllDevices
+   * @typedef {(args: SwingSetCapData) => SwingSetCapData} DeviceHook
+   *
+   * @typedef {string} HookName
+   *
+   * @typedef {Record<HookName, DeviceHook>} HooksForOneDevice
+   *
+   * @typedef {string} DeviceID
+   *
+   * @typedef {Map<DeviceID, HooksForOneDevice>} HooksForAllDevices
    * @type HooksForAllDevices
    */
   const deviceHooks = new Map();
@@ -229,7 +232,7 @@ export default function buildKernel(
   // error at the first opportunity
   let kernelPanic = null;
 
-  /** @type {(problem: unknown, err?: Error) => void } */
+  /** @type {(problem: unknown, err?: Error) => void} */
   function panic(problem, err = undefined) {
     console.error(`##### KERNEL PANIC: ${problem} #####`);
     kernelPanic = err || new Error(`kernel panic ${problem}`);
@@ -239,9 +242,8 @@ export default function buildKernel(
     makeKernelQueueHandler({ kernelKeeper, panic });
 
   /**
-   * Terminate a vat; that is: delete vat DB state,
-   * resolve orphaned promises, notify parent, and
-   * shutdown worker.
+   * Terminate a vat; that is: delete vat DB state, resolve orphaned promises,
+   * notify parent, and shutdown worker.
    *
    * @param {string} vatID
    * @param {boolean} shouldReject
@@ -327,22 +329,18 @@ export default function buildKernel(
   });
 
   /**
+   * @typedef {{ compute: number }} MeterConsumption Any delivery crank (send,
+   *   notify, start-vat.. anything which is allowed to make vat delivery) emits
+   *   one of these status events if a delivery actually happened.
    *
-   * @typedef { { compute: number } } MeterConsumption
-   *
-   *  Any delivery crank (send, notify, start-vat.. anything which is allowed
-   *  to make vat delivery) emits one of these status events if a delivery
-   *  actually happened.
-   *
-   * @typedef { {
-   *    vatID?: VatID, // vat to which the delivery was made
-   *    metering?: MeterConsumption | null, // delivery metering results
-   *    useMeter?: boolean, // this delivery should count against the vat's meter
-   *    decrementReapCount?: boolean, // the reap counter should decrement
-   *    discardFailedDelivery?: boolean, // crank abort should not repeat the delivery
-   *    terminate?: string | null, // vat should be terminated
-   *  } } DeliveryStatus
-   *
+   * @typedef {{
+   *   vatID?: VatID; // vat to which the delivery was made
+   *   metering?: MeterConsumption | null; // delivery metering results
+   *   useMeter?: boolean; // this delivery should count against the vat's meter
+   *   decrementReapCount?: boolean; // the reap counter should decrement
+   *   discardFailedDelivery?: boolean; // crank abort should not repeat the delivery
+   *   terminate?: string | null; // vat should be terminated
+   * }} DeliveryStatus
    */
 
   /**
@@ -359,7 +357,7 @@ export default function buildKernel(
     // Ensure that the vatSlogger is available before clist translation.
     const vs = kernelSlog.provideVatSlogger(vatID).vatSlog;
     try {
-      /** @type { VatDeliveryResult } */
+      /** @type {VatDeliveryResult} */
       // eslint-disable-next-line no-use-before-define
       const deliveryResult = await vatWarehouse.deliverToVat(vatID, kd, vd, vs);
 
@@ -381,10 +379,10 @@ export default function buildKernel(
   /**
    * Deliver one message to a vat.
    *
-   * @param { VatID } vatID
-   * @param { string } target
-   * @param { Message } msg
-   * @returns { Promise<DeliveryStatus | null> }
+   * @param {VatID} vatID
+   * @param {string} target
+   * @param {Message} msg
+   * @returns {Promise<DeliveryStatus | null>}
    */
   async function processSend(vatID, target, msg) {
     insistMessage(msg);
@@ -399,7 +397,7 @@ export default function buildKernel(
       return null;
     }
 
-    /** @type { KernelDeliveryMessage } */
+    /** @type {KernelDeliveryMessage} */
     const kd = harden(['message', target, msg]);
     // eslint-disable-next-line no-use-before-define
     const vd = vatWarehouse.kernelDeliveryToVatDelivery(vatID, kd);
@@ -426,9 +424,8 @@ export default function buildKernel(
   }
 
   /**
-   *
-   * @param { RunQueueEventNotify } message
-   * @returns { Promise<DeliveryStatus | null> }
+   * @param {RunQueueEventNotify} message
+   * @returns {Promise<DeliveryStatus | null>}
    */
   async function processNotify(message) {
     const { vatID, kpid } = message;
@@ -446,7 +443,7 @@ export default function buildKernel(
     const vatKeeper = kernelKeeper.provideVatKeeper(vatID);
 
     assert(p.state !== 'unresolved', X`spurious notification ${kpid}`);
-    /** @type { KernelDeliveryOneNotify[] } */
+    /** @type {KernelDeliveryOneNotify[]} */
     const resolutions = [];
     if (!vatKeeper.hasCListEntry(kpid)) {
       kdebug(`vat ${vatID} has no c-list entry for ${kpid}`);
@@ -463,7 +460,7 @@ export default function buildKernel(
       const { state, data } = kernelKeeper.getKernelPromise(toResolve);
       resolutions.push([toResolve, { state, data }]);
     }
-    /** @type { KernelDeliveryNotify } */
+    /** @type {KernelDeliveryNotify} */
     const kd = harden(['notify', resolutions]);
     // eslint-disable-next-line no-use-before-define
     const vd = vatWarehouse.kernelDeliveryToVatDelivery(vatID, kd);
@@ -473,9 +470,10 @@ export default function buildKernel(
   }
 
   /**
-   *
-   * @param { RunQueueEventDropExports | RunQueueEventRetireImports | RunQueueEventRetireExports } message
-   * @returns { Promise<DeliveryStatus | null> }
+   * @param {| RunQueueEventDropExports
+   *   | RunQueueEventRetireImports
+   *   | RunQueueEventRetireExports} message
+   * @returns {Promise<DeliveryStatus | null>}
    */
   async function processGCMessage(message) {
     // used for dropExports, retireExports, and retireImports
@@ -486,7 +484,11 @@ export default function buildKernel(
     if (!vatWarehouse.lookup(vatID)) {
       return null; // can't collect from the dead
     }
-    /** @type { KernelDeliveryDropExports | KernelDeliveryRetireExports | KernelDeliveryRetireImports } */
+    /**
+     * @type {| KernelDeliveryDropExports
+     *   | KernelDeliveryRetireExports
+     *   | KernelDeliveryRetireImports}
+     */
     const kd = harden([type, krefs]);
     if (type === 'retireExports') {
       for (const kref of krefs) {
@@ -502,9 +504,8 @@ export default function buildKernel(
   }
 
   /**
-   *
-   * @param { RunQueueEventBringOutYourDead } message
-   * @returns { Promise<DeliveryStatus | null> }
+   * @param {RunQueueEventBringOutYourDead} message
+   * @returns {Promise<DeliveryStatus | null>}
    */
   async function processBringOutYourDead(message) {
     const { type, vatID } = message;
@@ -514,7 +515,7 @@ export default function buildKernel(
     if (!vatWarehouse.lookup(vatID)) {
       return null; // can't collect from the dead
     }
-    /** @type { KernelDeliveryBringOutYourDead } */
+    /** @type {KernelDeliveryBringOutYourDead} */
     const kd = harden([type]);
     // eslint-disable-next-line no-use-before-define
     const vd = vatWarehouse.kernelDeliveryToVatDelivery(vatID, kd);
@@ -524,18 +525,18 @@ export default function buildKernel(
   /**
    * The 'startVat' event is queued by `initializeKernel` for all static vats,
    * so that we execute their bundle imports and call their `buildRootObject`
-   * functions in a transcript context.  The consequence of this is that if
-   * there are N static vats, N 'startVat' events will be the first N events on
-   * the initial run queue.  For dynamic vats, the handler of the 'create-vat'
-   * event, `processCreateVat`, calls `processStartVat` directly, rather than
-   * enqueing 'startVat', so that vat startup happens promptly after creation
-   * and so that there are no intervening events in the run queue between vat
-   * creation and vat startup (it would probably not be a problem if there were,
-   * but doing it this way simply guarantees there won't be such a problem
-   * without requiring any further analysis to be sure).
+   * functions in a transcript context. The consequence of this is that if there
+   * are N static vats, N 'startVat' events will be the first N events on the
+   * initial run queue. For dynamic vats, the handler of the 'create-vat' event,
+   * `processCreateVat`, calls `processStartVat` directly, rather than enqueing
+   * 'startVat', so that vat startup happens promptly after creation and so that
+   * there are no intervening events in the run queue between vat creation and
+   * vat startup (it would probably not be a problem if there were, but doing it
+   * this way simply guarantees there won't be such a problem without requiring
+   * any further analysis to be sure).
    *
-   * @param { RunQueueEventStartVat } message
-   * @returns { Promise<DeliveryStatus> }
+   * @param {RunQueueEventStartVat} message
+   * @returns {Promise<DeliveryStatus>}
    */
   async function processStartVat(message) {
     const { vatID, vatParameters } = message;
@@ -544,7 +545,7 @@ export default function buildKernel(
     insistCapData(vatParameters);
     // eslint-disable-next-line no-use-before-define
     assert(vatWarehouse.lookup(vatID));
-    /** @type { KernelDeliveryStartVat } */
+    /** @type {KernelDeliveryStartVat} */
     const kd = harden(['startVat', vatParameters]);
     // eslint-disable-next-line no-use-before-define
     const vd = vatWarehouse.kernelDeliveryToVatDelivery(vatID, kd);
@@ -559,9 +560,8 @@ export default function buildKernel(
   }
 
   /**
-   *
-   * @param { RunQueueEventCreateVat } message
-   * @returns { Promise<DeliveryStatus | null> }
+   * @param {RunQueueEventCreateVat} message
+   * @returns {Promise<DeliveryStatus | null>}
    */
   async function processCreateVat(message) {
     assert(vatAdminRootKref, `initializeKernel did not set vatAdminRootKref`);
@@ -634,9 +634,8 @@ export default function buildKernel(
   }
 
   /**
-   *
-   * @param { RunQueueEventUpgradeVat } message
-   * @returns { Promise<DeliveryStatus | null> }
+   * @param {RunQueueEventUpgradeVat} message
+   * @returns {Promise<DeliveryStatus | null>}
    */
   async function processUpgradeVat(message) {
     assert(vatAdminRootKref, `initializeKernel did not set vatAdminRootKref`);
@@ -680,19 +679,19 @@ export default function buildKernel(
   }
 
   /**
-   * routeSend(message) figures out where a 'send' event should go. If the
-   * message needs to be queued (it is sent to an unresolved promise without
-   * a pipelining decider), this queues it, and returns null. If the message
-   * goes splat against a dead vat or a non-deliverable resolved promise,
-   * this rejects any result promise, and returns null. Otherwise it returns
-   * the vatID and actual target to which it should be delivered. If the
-   * original target was a promise that has been fulfilled to an object,
-   * this returns that settled object.
+   * RouteSend(message) figures out where a 'send' event should go. If the
+   * message needs to be queued (it is sent to an unresolved promise without a
+   * pipelining decider), this queues it, and returns null. If the message goes
+   * splat against a dead vat or a non-deliverable resolved promise, this
+   * rejects any result promise, and returns null. Otherwise it returns the
+   * vatID and actual target to which it should be delivered. If the original
+   * target was a promise that has been fulfilled to an object, this returns
+   * that settled object.
    *
    * This does not decrement any refcounts. The caller should do that.
    *
-   * @param { RunQueueEventSend } message
-   * @returns { { vatID: VatID, targetObject: string } | null }
+   * @param {RunQueueEventSend} message
+   * @returns {{ vatID: VatID; targetObject: string } | null}
    */
   function routeSendEvent(message) {
     const { target, msg } = message;
@@ -782,40 +781,64 @@ export default function buildKernel(
   const gcMessages = ['dropExports', 'retireExports', 'retireImports'];
 
   /**
-   * @typedef { import('../types-internal.js').VatID } VatID
-   * @typedef { import('../types-internal.js').InternalDynamicVatOptions } InternalDynamicVatOptions
+   * @typedef {import('../types-internal.js').VatID} VatID
    *
-   * @typedef { { type: 'notify', vatID: VatID, kpid: string } } RunQueueEventNotify
-   * @typedef { { type: 'send', target: string, msg: Message }} RunQueueEventSend
-   * @typedef { { type: 'create-vat', vatID: VatID,
-   *              source: { bundle: Bundle } | { bundleID: BundleID },
-   *              vatParameters: SwingSetCapData,
-   *              dynamicOptions: InternalDynamicVatOptions }
-   *          } RunQueueEventCreateVat
-   * @typedef { { type: 'upgrade-vat', vatID: VatID, upgradeID: string,
-   *              bundleID: BundleID, vatParameters: SwingSetCapData } } RunQueueEventUpgradeVat
-   * @typedef { { type: 'startVat', vatID: VatID, vatParameters: SwingSetCapData } } RunQueueEventStartVat
-   * @typedef { { type: 'dropExports', vatID: VatID, krefs: string[] } } RunQueueEventDropExports
-   * @typedef { { type: 'retireExports', vatID: VatID, krefs: string[] } } RunQueueEventRetireExports
-   * @typedef { { type: 'retireImports', vatID: VatID, krefs: string[] } } RunQueueEventRetireImports
-   * @typedef { { type: 'bringOutYourDead', vatID: VatID } } RunQueueEventBringOutYourDead
-   * @typedef { RunQueueEventNotify | RunQueueEventSend | RunQueueEventCreateVat |
-   *            RunQueueEventUpgradeVat | RunQueueEventStartVat |
-   *            RunQueueEventDropExports | RunQueueEventRetireExports | RunQueueEventRetireImports |
-   *            RunQueueEventBringOutYourDead
-   *          } RunQueueEvent
+   * @typedef {import('../types-internal.js').InternalDynamicVatOptions} InternalDynamicVatOptions
+   *
+   * @typedef {{ type: 'notify'; vatID: VatID; kpid: string }} RunQueueEventNotify
+   *
+   * @typedef {{ type: 'send'; target: string; msg: Message }} RunQueueEventSend
+   *
+   * @typedef {{
+   *   type: 'create-vat';
+   *   vatID: VatID;
+   *   source: { bundle: Bundle } | { bundleID: BundleID };
+   *   vatParameters: SwingSetCapData;
+   *   dynamicOptions: InternalDynamicVatOptions;
+   * }} RunQueueEventCreateVat
+   *
+   * @typedef {{
+   *   type: 'upgrade-vat';
+   *   vatID: VatID;
+   *   upgradeID: string;
+   *   bundleID: BundleID;
+   *   vatParameters: SwingSetCapData;
+   * }} RunQueueEventUpgradeVat
+   *
+   * @typedef {{
+   *   type: 'startVat';
+   *   vatID: VatID;
+   *   vatParameters: SwingSetCapData;
+   * }} RunQueueEventStartVat
+   *
+   * @typedef {{ type: 'dropExports'; vatID: VatID; krefs: string[] }} RunQueueEventDropExports
+   *
+   * @typedef {{ type: 'retireExports'; vatID: VatID; krefs: string[] }} RunQueueEventRetireExports
+   *
+   * @typedef {{ type: 'retireImports'; vatID: VatID; krefs: string[] }} RunQueueEventRetireImports
+   *
+   * @typedef {{ type: 'bringOutYourDead'; vatID: VatID }} RunQueueEventBringOutYourDead
+   *
+   * @typedef {| RunQueueEventNotify
+   *   | RunQueueEventSend
+   *   | RunQueueEventCreateVat
+   *   | RunQueueEventUpgradeVat
+   *   | RunQueueEventStartVat
+   *   | RunQueueEventDropExports
+   *   | RunQueueEventRetireExports
+   *   | RunQueueEventRetireImports
+   *   | RunQueueEventBringOutYourDead} RunQueueEvent
    */
 
   /**
+   * Dispatch one delivery event. Eventually, this will be called in a "delivery
+   * crank" for a DeliveryEvent, after the scheduler chooses a vat with a
+   * non-empty vat-input-queue, and we'll know the target vat ahead of time. For
+   * now, this is called for each run-queue event, so 'send' does not yet know
+   * which vat will be involved (if any).
    *
-   * Dispatch one delivery event. Eventually, this will be called in a
-   * "delivery crank" for a DeliveryEvent, after the scheduler chooses a
-   * vat with a non-empty vat-input-queue, and we'll know the target vat
-   * ahead of time. For now, this is called for each run-queue event, so
-   * 'send' does not yet know which vat will be involved (if any).
-   *
-   * @param { RunQueueEvent } message
-   * @returns { Promise<DeliveryStatus | null> }
+   * @param {RunQueueEvent} message
+   * @returns {Promise<DeliveryStatus | null>}
    */
   async function deliverRunQueueEvent(message) {
     // Decref everything in the message, under the assumption that most of
@@ -878,7 +901,7 @@ export default function buildKernel(
     kdebug(`processQ ${JSON.stringify(message)}`);
     kdebug(legibilizeMessage(message));
     kernelSlog.write({ type: 'crank-start', message });
-    /** @type { PolicyInput } */
+    /** @type {PolicyInput} */
     let policyInput = ['none'];
     if (message.type === 'create-vat') {
       policyInput = ['create-vat', {}];
@@ -1045,7 +1068,7 @@ export default function buildKernel(
       assert.fail(X`Kernel reentrancy is forbidden`);
     }
     kernelSlog.write({ type: 'crank-start', message });
-    /** @type { PolicyInput } */
+    /** @type {PolicyInput} */
     const policyInput = ['none'];
     try {
       processQueueRunning = Error('here');
@@ -1097,9 +1120,8 @@ export default function buildKernel(
     // the VatManager+VatWorker will see the error case, but liveslots will
     // not
     /**
-     *
-     * @param { VatSyscallObject } vatSyscallObject
-     * @returns { VatSyscallResult }
+     * @param {VatSyscallObject} vatSyscallObject
+     * @returns {VatSyscallResult}
      */
     function vatSyscallHandler(vatSyscallObject) {
       // eslint-disable-next-line no-use-before-define
@@ -1111,11 +1133,11 @@ export default function buildKernel(
         vatFatalSyscall(vatID, problem);
         return harden(['error', problem]);
       }
-      /** @type { KernelSyscallObject | undefined } */
+      /** @type {KernelSyscallObject | undefined} */
       let ksc;
-      /** @type { KernelSyscallResult } */
+      /** @type {KernelSyscallResult} */
       let kres = harden(['error', 'incomplete']);
-      /** @type { VatSyscallResult } */
+      /** @type {VatSyscallResult} */
       let vres = harden(['error', 'incomplete']);
 
       try {
@@ -1134,7 +1156,7 @@ export default function buildKernel(
         // we leave this catch() with ksc=undefined, so no doKernelSyscall()
       }
 
-      /** @type { SlogFinishSyscall } */
+      /** @type {SlogFinishSyscall} */
       const finish = kernelSlog.syscall(vatID, ksc, vatSyscallObject);
 
       if (ksc) {
@@ -1191,23 +1213,22 @@ export default function buildKernel(
   );
 
   /**
-   * Create a dynamically generated vat for testing purposes.  Such vats are
+   * Create a dynamically generated vat for testing purposes. Such vats are
    * defined by providing a setup function rather than a bundle and can be
-   * instantiated without a controller and without an initialized kernel.  These
+   * instantiated without a controller and without an initialized kernel. These
    * vats are subject to some severe limitations: they will have no reliable
    * persistent state (that is, after the kernel exits, there is no pretense
    * that the swingset could be resumed) and they are limited to local vats.
    * Although they are dynamically creatd, these vats will have names like
-   * static vats so that they can be looked up by calling
-   * `kernel.vatNameToID()`.
+   * static vats so that they can be looked up by calling `kernel.vatNameToID()`.
    *
-   * @param {string} name  Name for the vat
-   * @param {*} setup  Setup function that will return a dispatcher for the vat
-   * @param {*} vatParameters  Vat configuration parameters
-   * @param {*} creationOptions  Options controlling vat creation
+   * @param {string} name Name for the vat
+   * @param {any} setup Setup function that will return a dispatcher for the vat
+   * @param {any} vatParameters Vat configuration parameters
+   * @param {any} creationOptions Options controlling vat creation
    *
-   * This function is intended to provide minimal scaffolding for unit tests and
-   * should never be used in a production environment.
+   *   This function is intended to provide minimal scaffolding for unit tests and
+   *   should never be used in a production environment.
    */
   async function createTestVat(
     name,
@@ -1240,7 +1261,7 @@ export default function buildKernel(
     await vatWarehouse.loadTestVat(vatID, setup, creationOptions);
 
     const vpCapData = { body: stringify(harden(vatParameters)), slots: [] };
-    /** @type { RunQueueEventStartVat } */
+    /** @type {RunQueueEventStartVat} */
     const startVatMessage = {
       type: 'startVat',
       vatID,
@@ -1412,8 +1433,8 @@ export default function buildKernel(
   /**
    * Run the kernel until the policy says to stop, or the queue is empty.
    *
-   * @param {RunPolicy?} policy - a RunPolicy to limit the work being done
-   * @returns { Promise<number> } The number of cranks that were executed.
+   * @param {RunPolicy | null} policy - A RunPolicy to limit the work being done
+   * @returns {Promise<number>} The number of cranks that were executed.
    */
 
   async function run(policy = foreverPolicy()) {
@@ -1431,7 +1452,7 @@ export default function buildKernel(
         break;
       }
       count += 1;
-      /** @type { PolicyInput } */
+      /** @type {PolicyInput} */
       // eslint-disable-next-line no-await-in-loop
       const policyInput = await resultPromise;
       if (kernelPanic) {
@@ -1472,8 +1493,8 @@ export default function buildKernel(
   /**
    * Install a pre-validated bundle under the given ID.
    *
-   * @param { BundleID } bundleID
-   * @param { EndoZipBase64Bundle } bundle
+   * @param {BundleID} bundleID
+   * @param {EndoZipBase64Bundle} bundle
    */
   async function installBundle(bundleID, bundle) {
     // bundleID is b1-HASH

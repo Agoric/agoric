@@ -13,17 +13,17 @@ import { initializeKernel } from './initializeKernel.js';
 import { kdebugEnable } from '../lib/kdebug.js';
 
 /**
+ * @template X, Y
  * @param {X[]} xs
  * @param {Y[]} ys
  * @returns {[X, Y][]}
- * @template X, Y
  */
 const zip = (xs, ys) => xs.map((x, i) => [x, ys[i]]);
 const { keys, values, fromEntries } = Object;
 /**
+ * @template V
  * @param {Record<string, Promise<V>>} obj
  * @returns {Promise<Record<string, V>>}
- * @template V
  */
 const allValues = async obj =>
   fromEntries(zip(keys(obj), await Promise.all(values(obj))));
@@ -79,33 +79,28 @@ function byName(a, b) {
 
 /**
  * Scan a directory for files defining the vats to bootstrap for a swingset, and
- * produce a swingset config object for what was found there.  Looks for files
- * with names of the pattern `vat-NAME.js` as well as a file named
- * 'bootstrap.js'.
+ * produce a swingset config object for what was found there. Looks for files
+ * with names of the pattern `vat-NAME.js` as well as a file named 'bootstrap.js'.
  *
- * @param {string} basedir  The directory to scan
+ * @param {string} basedir The directory to scan
  * @param {Object} [options]
- * @param {boolean} [options.includeDevDependencies] whether to include devDependencies
- * @param {ModuleFormat} [options.bundleFormat] the bundle format to use
- * @returns {SwingSetConfig} a swingset config object: {
- *   bootstrap: "bootstrap",
- *   vats: {
- *     NAME: {
- *       sourceSpec: PATHSTRING
- *     }
- *   }
- * }
+ * @param {boolean} [options.includeDevDependencies] Whether to include devDependencies
+ * @param {ModuleFormat} [options.bundleFormat] The bundle format to use
+ * @returns {SwingSetConfig} A swingset config object: { bootstrap: "bootstrap",
+ *   vats: { NAME: { sourceSpec: PATHSTRING } } }
  *
- * Where NAME is the name of the vat; `sourceSpec` contains the path to the vat with that name.  Note that
- * the `bootstrap` property names the vat that should be used as the bootstrap vat.  Although a swingset
- * configuration can designate any vat as its bootstrap vat, `loadBasedir` will always look for a file named
- * 'bootstrap.js' and use that (note that if there is no 'bootstrap.js', there will be no bootstrap vat).
+ *   Where NAME is the name of the vat; `sourceSpec` contains the path to the vat
+ *   with that name. Note that the `bootstrap` property names the vat that
+ *   should be used as the bootstrap vat. Although a swingset configuration can
+ *   designate any vat as its bootstrap vat, `loadBasedir` will always look for
+ *   a file named 'bootstrap.js' and use that (note that if there is no
+ *   'bootstrap.js', there will be no bootstrap vat).
  *
- * Swingsets defined by scanning a directory in this manner define no devices.
+ *   Swingsets defined by scanning a directory in this manner define no devices.
  */
 export function loadBasedir(basedir, options = {}) {
   const { includeDevDependencies = false, bundleFormat = undefined } = options;
-  /** @type { SwingSetConfigDescriptor } */
+  /** @type {SwingSetConfigDescriptor} */
   const vats = {};
   const subs = fs.readdirSync(basedir, { withFileTypes: true });
   subs.sort(byName);
@@ -143,15 +138,14 @@ export function loadBasedir(basedir, options = {}) {
 }
 
 /**
- * Resolve a pathname found in a config descriptor.  First try to resolve it as
- * a module path, and then if that doesn't work try to resolve it as an
- * ordinary path relative to the directory in which the config file was found.
+ * Resolve a pathname found in a config descriptor. First try to resolve it as a
+ * module path, and then if that doesn't work try to resolve it as an ordinary
+ * path relative to the directory in which the config file was found.
  *
- * @param {string} referrer  URL of file or directory containing the config file
- * @param {string} specPath  Path found in a `sourceSpec` or `bundleSpec` property
- *
- * @returns {Promise<string>} the absolute path corresponding to `specPath` if it can be
- *    determined.
+ * @param {string} referrer URL of file or directory containing the config file
+ * @param {string} specPath Path found in a `sourceSpec` or `bundleSpec` property
+ * @returns {Promise<string>} The absolute path corresponding to `specPath` if
+ *   it can be determined.
  */
 async function resolveSpecFromConfig(referrer, specPath) {
   try {
@@ -169,11 +163,11 @@ async function resolveSpecFromConfig(referrer, specPath) {
  * it to normal form: resolve each pathname to a context-insensitive absolute
  * path and make sure it has a `parameters` property if it's supposed to.
  *
- * @param {SwingSetConfigDescriptor | void} desc  The config descriptor to be normalized.
- * @param {string} referrer  The pathname of the file or directory in which the
- * config file was found
- * @param {boolean} expectParameters `true` if the entries should have parameters (for
- *    example, `true` for `vats` but `false` for bundles).
+ * @param {SwingSetConfigDescriptor | void} desc The config descriptor to be normalized.
+ * @param {string} referrer The pathname of the file or directory in which the
+ *   config file was found
+ * @param {boolean} expectParameters `true` if the entries should have
+ *   parameters (for example, `true` for `vats` but `false` for bundles).
  */
 async function normalizeConfigDescriptor(desc, referrer, expectParameters) {
   const normalizeSpec = async (entry, key) => {
@@ -203,13 +197,11 @@ async function normalizeConfigDescriptor(desc, referrer, expectParameters) {
 /**
  * Read and parse a swingset config file and return it in normalized form.
  *
- * @param {string} configPath  Path to the config file to be processed
- *
- * @returns {Promise<SwingSetConfig | null>} the contained config object, in normalized form, or null if the
- *    requested config file did not exist.
- *
- * @throws {Error} if the file existed but was inaccessible, malformed, or otherwise
- *    invalid.
+ * @param {string} configPath Path to the config file to be processed
+ * @returns {Promise<SwingSetConfig | null>} The contained config object, in
+ *   normalized form, or null if the requested config file did not exist.
+ * @throws {Error} If the file existed but was inaccessible, malformed, or
+ *   otherwise invalid.
  */
 export async function loadSwingsetConfigFile(configPath) {
   try {
@@ -240,10 +232,15 @@ export function swingsetIsInitialized(hostStorage) {
   return !!hostStorage.kvStore.get('initialized');
 }
 
-/** @typedef {{ kernelBundles?: Record<string, string>, verbose?: boolean,
- *              addVatAdmin?: boolean, addComms?: boolean, addVattp?: boolean,
- *              addTimer?: boolean,
- *            }} InitializationOptions
+/**
+ * @typedef {{
+ *   kernelBundles?: Record<string, string>;
+ *   verbose?: boolean;
+ *   addVatAdmin?: boolean;
+ *   addComms?: boolean;
+ *   addVattp?: boolean;
+ *   addTimer?: boolean;
+ * }} InitializationOptions
  */
 
 /**
@@ -251,7 +248,7 @@ export function swingsetIsInitialized(hostStorage) {
  * @param {string[]} argv
  * @param {HostStore} hostStorage
  * @param {InitializationOptions} initializationOptions
- * @param {{ env?: Record<string, string | undefined > }} runtimeOptions
+ * @param {{ env?: Record<string, string | undefined> }} runtimeOptions
  */
 export async function initializeSwingset(
   config,
@@ -465,7 +462,7 @@ export async function initializeSwingset(
   const [nameToBundle, idToNamedBundle] = await processGroup('bundles');
   const [_1, idToVatBundle] = await processGroup('vats', nameToBundle);
   const [_2, idToDeviceBundle] = await processGroup('devices', nameToBundle);
-  /** @type { SwingSetKernelConfig } */
+  /** @type {SwingSetKernelConfig} */
   const kconfig = {
     ...config,
     namedBundleIDs: {},

@@ -9,9 +9,7 @@ export const AmountPatternKeywordRecordShape = M.recordOf(
   M.pattern(),
 );
 
-/**
- * After defaults are filled in
- */
+/** After defaults are filled in */
 export const ProposalShape = harden({
   want: AmountPatternKeywordRecordShape,
   give: AmountKeywordRecordShape,

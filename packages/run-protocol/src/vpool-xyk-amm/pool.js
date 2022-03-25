@@ -28,8 +28,8 @@ const { details: X } = assert;
  * @param {Brand} centralBrand
  * @param {ERef<Timer>} timer
  * @param {IssuerKit} quoteIssuerKit
- * @param {() => bigint} getProtocolFeeBP - retrieve governed protocol fee value
- * @param {() => bigint} getPoolFeeBP - retrieve governed pool fee value
+ * @param {() => bigint} getProtocolFeeBP - Retrieve governed protocol fee value
+ * @param {() => bigint} getPoolFeeBP - Retrieve governed pool fee value
  * @param {ZCFSeat} protocolSeat
  */
 export const makeAddPool = (
@@ -249,12 +249,12 @@ export const makeAddPool = (
   };
 
   /**
-   * Allows users to add new liquidity pools. `secondaryIssuer` and
-   * its keyword must not have been already used
+   * Allows users to add new liquidity pools. `secondaryIssuer` and its keyword
+   * must not have been already used
    *
    * @param {Issuer} secondaryIssuer
-   * @param {Keyword} keyword - will be used in the
-   * terms.issuers for the contract, but not used otherwise
+   * @param {Keyword} keyword - Will be used in the terms.issuers for the
+   *   contract, but not used otherwise
    */
   const addPool = async (secondaryIssuer, keyword) => {
     const liquidityKeyword = `${keyword}Liquidity`;

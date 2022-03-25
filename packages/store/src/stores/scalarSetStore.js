@@ -13,8 +13,8 @@ const { quote: q } = assert;
  * @template K
  * @param {Set<K>} jsset
  * @param {(k: K) => void} assertKeyOkToAdd
- * @param {((k: K) => void)=} assertKeyOkToDelete
- * @param {string=} keyName
+ * @param {(k: K) => void} [assertKeyOkToDelete]
+ * @param {string} [keyName]
  * @returns {SetStore<K>}
  */
 export const makeSetStoreMethods = (
@@ -34,7 +34,7 @@ export const makeSetStoreMethods = (
     );
 
   /**
-   * @param {Pattern=} keyPatt
+   * @param {Pattern} [keyPatt]
    * @returns {Iterable<K>}
    */
   const keys = (keyPatt = undefined) =>
@@ -71,19 +71,19 @@ export const makeSetStoreMethods = (
 };
 
 /**
- * Distinguishes between adding a new key (init) and updating or
- * referencing a key (get, set, delete).
+ * Distinguishes between adding a new key (init) and updating or referencing a
+ * key (get, set, delete).
  *
- * `init` is only allowed if the key does not already exist. `Get`,
- * `set` and `delete` are only allowed if the key does already exist.
+ * `init` is only allowed if the key does not already exist. `Get`, `set` and
+ * `delete` are only allowed if the key does already exist.
  *
- * This is a *scalar* set in that the keys can only be atomic values, primitives
+ * This is a _scalar_ set in that the keys can only be atomic values, primitives
  * or remotables. Other storeSets will accept, for example, copyArrays and
  * copyRecords, as keys and look them up based on equality of their contents.
  *
  * @template K
- * @param {string} [keyName='key'] - the column name for the key
- * @param {StoreOptions=} options
+ * @param {string} [keyName='key'] - The column name for the key
+ * @param {StoreOptions} [options]
  * @returns {SetStore<K>}
  */
 export const makeScalarSetStore = (

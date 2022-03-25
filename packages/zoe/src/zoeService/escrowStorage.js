@@ -11,10 +11,7 @@ import './internal-types.js';
 import { cleanKeywords } from '../cleanProposal.js';
 import { arrayToObj, objectMap } from '../objArrayConversion.js';
 
-/**
- * Store the pool purses whose purpose is to escrow assets, with one
- * purse per brand.
- */
+/** Store the pool purses whose purpose is to escrow assets, with one purse per brand. */
 export const makeEscrowStorage = () => {
   /** @type {WeakStore<Brand, ERef<Purse>>} */
   const brandToPurse = makeWeakStore('brand');
@@ -39,9 +36,7 @@ export const makeEscrowStorage = () => {
     );
   };
 
-  /**
-   * @type {MakeLocalPurse}
-   */
+  /** @type {MakeLocalPurse} */
   const makeLocalPurse = (issuer, brand) => {
     if (brandToPurse.has(brand)) {
       return /** @type {Purse} */ (brandToPurse.get(brand));
@@ -63,8 +58,7 @@ export const makeEscrowStorage = () => {
   };
 
   /**
-   *
-   *  Only used internally. Actually deposit a payment or promise for payment.
+   * Only used internally. Actually deposit a payment or promise for payment.
    *
    * @param {ERef<Payment>} paymentP
    * @param {Amount} amount

@@ -18,7 +18,7 @@ const trace = makeTracer('LM');
  * uses the AMM's swapIn instead.
  *
  * @param {ZCF<{
- *   amm: AutoswapPublicFacet,
+ *   amm: AutoswapPublicFacet;
  * }>} zcf
  */
 const start = async zcf => {
@@ -95,9 +95,7 @@ const start = async zcf => {
   return harden({ creatorFacet });
 };
 
-/**
- * @param {LiquidationCreatorFacet} creatorFacet
- */
+/** @param {LiquidationCreatorFacet} creatorFacet */
 const makeLiquidationStrategy = creatorFacet => {
   const makeInvitation = async runDebt =>
     E(creatorFacet).makeDebtorInvitation(runDebt);

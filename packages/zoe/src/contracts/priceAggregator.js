@@ -22,9 +22,9 @@ const { add, multiply, floorDivide, ceilDivide, isGTE } = natSafeMath;
  * PriceAuthority for their median.
  *
  * @param {ZCF<{
- * timer: TimerService,
- * POLL_INTERVAL: bigint,
- * unitAmountIn: Amount,
+ *   timer: TimerService;
+ *   POLL_INTERVAL: bigint;
+ *   unitAmountIn: Amount;
  * }>} zcf
  */
 const start = async zcf => {
@@ -49,10 +49,7 @@ const start = async zcf => {
   /** @type {bigint} */
   let lastValueOutForUnitIn;
 
-  /**
-   *
-   * @param {PriceQuoteValue} quote
-   */
+  /** @param {PriceQuoteValue} quote */
   const authenticateQuote = async quote => {
     const quoteAmount = AmountMath.make(quoteKit.brand, harden(quote));
     const quotePayment = await E(quoteKit.mint).mintPayment(quoteAmount);
@@ -64,7 +61,7 @@ const start = async zcf => {
 
   /**
    * @typedef {Object} OracleRecord
-   * @property {(timestamp: Timestamp) => Promise<void>=} querier
+   * @property {(timestamp: Timestamp) => Promise<void>} [querier]
    * @property {bigint} lastSample
    */
 
@@ -102,7 +99,7 @@ const start = async zcf => {
   const makeCreateQuote = ({ overrideValueOut, timestamp } = {}) =>
     /**
      * @param {PriceQuery} priceQuery
-     * @returns {ERef<PriceQuote>=}
+     * @returns {ERef<PriceQuote>}
      */
     function createQuote(priceQuery) {
       // Sniff the current baseValueOut.
@@ -116,8 +113,8 @@ const start = async zcf => {
       }
 
       /**
-       * @param {Amount} amountIn the given amountIn
-       * @returns {Amount} the amountOut that will be received
+       * @param {Amount} amountIn The given amountIn
+       * @returns {Amount} The amountOut that will be received
        */
       const calcAmountOut = amountIn => {
         const valueIn = AmountMath.getValue(brandIn, amountIn);
@@ -128,8 +125,8 @@ const start = async zcf => {
       };
 
       /**
-       * @param {Amount} amountOut the wanted amountOut
-       * @returns {Amount} the amountIn needed to give
+       * @param {Amount} amountOut The wanted amountOut
+       * @returns {Amount} The amountIn needed to give
        */
       const calcAmountIn = amountOut => {
         const valueOut = AmountMath.getValue(brandOut, amountOut);
@@ -165,7 +162,7 @@ const start = async zcf => {
     };
 
   /**
-   * @param {Array<bigint>} samples
+   * @param {bigint[]} samples
    * @param {Timestamp} timestamp
    */
   const updateQuote = async (samples, timestamp) => {
@@ -298,9 +295,7 @@ const start = async zcf => {
 
       let lastWakeTimestamp = 0n;
 
-      /**
-       * @param {Timestamp} timestamp
-       */
+      /** @param {Timestamp} timestamp */
       record.querier = async timestamp => {
         // Submit the query.
         const result = await E(oracle).query(query);

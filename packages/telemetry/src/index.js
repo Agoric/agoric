@@ -47,9 +47,7 @@ export const getResourceAttributes = ({
  * @property {string} [serviceName]
  */
 
-/**
- * @param {Partial<Powers>} param0
- */
+/** @param {Partial<Powers>} param0 */
 const getPrometheusMeterProvider = ({
   console = globalThis.console,
   env = process.env,
@@ -88,7 +86,7 @@ const getPrometheusMeterProvider = ({
 /**
  * Obtain the telemetry providers used by the `@opentelemetry` packages.
  *
- * @param {Partial<Powers>=} powers
+ * @param {Partial<Powers>} [powers]
  * @returns {{ metricsProvider?: MeterProvider }}
  */
 export const getTelemetryProviders = powers => {

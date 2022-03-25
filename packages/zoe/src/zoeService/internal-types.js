@@ -12,9 +12,9 @@
 /**
  * Create a purse for a new, local issuer. Used only for ZCFMint issuers.
  *
- * Note: in the case of the feeMint, it may have been registered
- * before with `feeMintAccess`. In that case, we do not create a new
- * purse, but reuse the existing purse.
+ * Note: in the case of the feeMint, it may have been registered before with
+ * `feeMintAccess`. In that case, we do not create a new purse, but reuse the
+ * existing purse.
  *
  * @callback MakeLocalPurse
  * @param {Issuer} issuer
@@ -23,10 +23,9 @@
  */
 
 /**
- * Deposits payments or promises for payments according to the
- * `give` property of the proposal. Using the proposal, creates an
- * initial allocation including the amount deposited for `give`
- * keywords and an empty amount for `want` keywords.
+ * Deposits payments or promises for payments according to the `give` property
+ * of the proposal. Using the proposal, creates an initial allocation including
+ * the amount deposited for `give` keywords and an empty amount for `want` keywords.
  *
  * @callback DepositPayments
  * @param {ProposalRecord} proposal
@@ -54,17 +53,14 @@
  */
 
 /**
- * @callback UnwrapInstallation
- *
- * Assert the installation is known, and return the bundle/bundlecap and
- * installation
- *
+ * @callback UnwrapInstallation Assert the installation is known, and return the
+ *   bundle/bundlecap and installation
  * @param {ERef<Installation>} installationP
  * @returns {Promise<{
- *   bundle?: SourceBundle,
- *   bundleCap?: BundleCap,
- *   bundleID?: BundleID,
- *   installation:Installation
+ *   bundle?: SourceBundle;
+ *   bundleCap?: BundleCap;
+ *   bundleID?: BundleID;
+ *   installation: Installation;
  * }>}
  */
 
@@ -89,15 +85,14 @@
  * @property {DeleteInstanceAdmin} deleteInstanceAdmin
  * @property {ZoeInstanceAdminMakeInvitation} makeInvitation
  * @property {Issuer} invitationIssuer
- * @property {Object} root of a RootAndAdminNode
- * @property {AdminNode} adminNode of a RootAndAdminNode
+ * @property {Object} root Of a RootAndAdminNode
+ * @property {AdminNode} adminNode Of a RootAndAdminNode
  */
 
 /**
  * Create a storage manager for a particular contract instance. The
- * ZoeInstanceStorageManager encapsulates access to the
- * issuerStorage and escrowStorage from Zoe, and stores the
- * instance-specific terms
+ * ZoeInstanceStorageManager encapsulates access to the issuerStorage and
+ * escrowStorage from Zoe, and stores the instance-specific terms
  *
  * @callback MakeZoeInstanceStorageManager
  * @param {Installation} installation
@@ -132,16 +127,13 @@
  */
 
 /**
- * Use VatAdminSvc to create a new vat, but only with the code of the
- * ZCF bundle
+ * Use VatAdminSvc to create a new vat, but only with the code of the ZCF bundle
  *
  * @callback CreateZCFVat
  * @returns {Promise<RootAndAdminNode>}
  */
 
-/**
- * @typedef {Handle<'feeMintAccess'>} FeeMintAccess
- */
+/** @typedef {Handle<'feeMintAccess'>} FeeMintAccess */
 
 /**
  * @callback GetFeeIssuerKit

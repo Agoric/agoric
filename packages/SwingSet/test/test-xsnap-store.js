@@ -13,7 +13,7 @@ import { resolve as importMetaResolve } from 'import-meta-resolve';
 const { freeze } = Object;
 
 const ld = (() => {
-  /** @param { string } ref */
+  /** @param {string} ref */
   // WARNING: ambient
   const resolve = async ref => {
     const parsed = await importMetaResolve(ref, import.meta.url);
@@ -22,7 +22,7 @@ const ld = (() => {
   const readFile = fs.promises.readFile;
   return freeze({
     resolve,
-    /**  @param { string } ref */
+    /** @param {string} ref */
     asset: async ref => readFile(await resolve(ref), 'utf-8'),
   });
 })();
@@ -38,8 +38,8 @@ const snapSize = {
 
 /**
  * @param {string} name
- * @param {(request:Uint8Array) => Promise<Uint8Array>} handleCommand
- * @param {string} script to execute
+ * @param {(request: Uint8Array) => Promise<Uint8Array>} handleCommand
+ * @param {string} script To execute
  */
 async function bootWorker(name, handleCommand, script) {
   const worker = xsnap({
@@ -58,7 +58,7 @@ async function bootWorker(name, handleCommand, script) {
 
 /**
  * @param {string} name
- * @param {(request:Uint8Array) => Promise<Uint8Array>} handleCommand
+ * @param {(request: Uint8Array) => Promise<Uint8Array>} handleCommand
  */
 async function bootSESWorker(name, handleCommand) {
   const bootScript = await ld.asset(
@@ -132,11 +132,9 @@ test('create SES worker, save, restore, resume', async t => {
 });
 
 /**
- * The snapshot hashes in this test are, naturally,
- * sensitive to any changes in bundle-ses-boot.umd.js;
- * that is: any changes to the SES shim or to the
- * xsnap-worker supervisor.
- * They are also sensitive to the XS code itself.
+ * The snapshot hashes in this test are, naturally, sensitive to any changes in
+ * bundle-ses-boot.umd.js; that is: any changes to the SES shim or to the
+ * xsnap-worker supervisor. They are also sensitive to the XS code itself.
  */
 test('XS + SES snapshots are long-term deterministic', async t => {
   const pool = tmp.dirSync({ unsafeCleanup: true });

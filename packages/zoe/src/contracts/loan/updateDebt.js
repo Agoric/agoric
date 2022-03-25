@@ -13,11 +13,9 @@ import { ceilMultiplyBy } from '../../contractSupport/index.js';
 // indicated by the periodNotifier
 
 /**
- * @type {CalcInterestFn} Calculate the interest using an interest
- * rate in basis points.
- * i.e. oldDebtValue is 40,000
- * interestRate (in basis points) is 5 = 5/10,000
- * interest charged this period is 20 loan brand
+ * @type {CalcInterestFn} Calculate The interest using an interest rate in basis
+ *   points. i.e. oldDebtValue is 40,000 interestRate (in basis points) is 5 =
+ *   5/10,000 interest charged this period is 20 loan brand
  */
 export const calculateInterest = (oldDebt, interestRate) =>
   ceilMultiplyBy(oldDebt, interestRate);

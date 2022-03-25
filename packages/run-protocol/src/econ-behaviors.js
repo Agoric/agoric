@@ -27,7 +27,7 @@ const CENTRAL_DENOM_NAME = 'urun';
 
 /**
  * @param {EconomyBootstrapPowers} powers
- * @param {{ committeeName: string, committeeSize: number }} electorateTerms
+ * @param {{ committeeName: string; committeeSize: number }} electorateTerms
  */
 export const startEconomicCommittee = async (
   {
@@ -63,7 +63,7 @@ export const startEconomicCommittee = async (
 };
 harden(startEconomicCommittee);
 
-/** @param { EconomyBootstrapPowers } powers */
+/** @param {EconomyBootstrapPowers} powers */
 export const setupAmm = async ({
   consume: {
     chainTimerService,
@@ -134,10 +134,12 @@ export const setupAmm = async ({
 
 /**
  * @param {BootstrapPowers & {
- *   consume: { loadVat: ERef<VatLoader<PriceAuthorityVat>>},
+ *   consume: { loadVat: ERef<VatLoader<PriceAuthorityVat>> };
  * }} powers
  *
- * @typedef {ERef<ReturnType<import('../../vats/src/vat-priceAuthority.js').buildRootObject>>} PriceAuthorityVat
+ * @typedef {ERef<
+ *   ReturnType<import('../../vats/src/vat-priceAuthority.js').buildRootObject>
+ * >} PriceAuthorityVat
  */
 export const startPriceAuthority = async ({
   consume: { loadVat },
@@ -155,9 +157,9 @@ export const startPriceAuthority = async ({
 harden(startPriceAuthority);
 
 /**
- * @param { EconomyBootstrapPowers } powers
- * @param { Object } config
- * @param { LoanTiming } config.loanParams
+ * @param {EconomyBootstrapPowers} powers
+ * @param {Object} config
+ * @param {LoanTiming} config.loanParams
  */
 export const startVaultFactory = async (
   {
@@ -264,11 +266,10 @@ export const startVaultFactory = async (
 };
 
 /**
- * Grant access to the VaultFactory creatorFacet
- * to up to one user based on address.
+ * Grant access to the VaultFactory creatorFacet to up to one user based on address.
  *
- * @param { BootstrapSpace & {
- *   vatParameters: { argv: { vaultFactoryControllerAddress?: string } }
+ * @param {BootstrapSpace & {
+ *   vatParameters: { argv: { vaultFactoryControllerAddress?: string } };
  * }} powers
  */
 export const grantVaultFactoryControl = async ({
@@ -294,7 +295,7 @@ export const grantVaultFactoryControl = async ({
 };
 harden(grantVaultFactoryControl);
 
-/** @param { BootstrapPowers } powers */
+/** @param {BootstrapPowers} powers */
 export const configureVaultFactoryUI = async ({
   consume: { board, zoe },
   issuer: {
@@ -383,10 +384,12 @@ harden(configureVaultFactoryUI);
  * Start the reward distributor.
  *
  * @param {BootstrapPowers & {
- *   consume: { loadVat: ERef<VatLoader<DistributeFeesVat>>},
+ *   consume: { loadVat: ERef<VatLoader<DistributeFeesVat>> };
  * }} powers
  *
- * @typedef {ERef<ReturnType<import('../../vats/src/vat-distributeFees.js').buildRootObject>>} DistributeFeesVat
+ * @typedef {ERef<
+ *   ReturnType<import('../../vats/src/vat-distributeFees.js').buildRootObject>
+ * >} DistributeFeesVat
  */
 export const startRewardDistributor = async ({
   consume: {

@@ -12,13 +12,12 @@ const { details: X, quote: q } = assert;
 
 /**
  * Asserts that `elements` is already rank sorted by `rankCompare`, where there
- * may be contiguous regions of elements tied for the same rank.
- * Returns an iterable that will enumerate all the elements in order
- * according to `fullOrder`, which should differ from `rankOrder` only
- * by being more precise.
+ * may be contiguous regions of elements tied for the same rank. Returns an
+ * iterable that will enumerate all the elements in order according to
+ * `fullOrder`, which should differ from `rankOrder` only by being more precise.
  *
  * This should be equivalent to resorting the entire `elements` array according
- *  to `fullOrder`. However, it optimizes for the case where these contiguous
+ * to `fullOrder`. However, it optimizes for the case where these contiguous
  * runs that need to be resorted are either absent or small.
  *
  * @template T
@@ -79,16 +78,16 @@ const windowResort = (elements, rankCompare, fullCompare) => {
 
 /**
  * Returns an iterable whose iteration results are [key, xCount, yCount] tuples
- * representing the next key in the local full order, as well as how many
- * times it ocurred in the x input iterator and the y input interator.
+ * representing the next key in the local full order, as well as how many times
+ * it ocurred in the x input iterator and the y input interator.
  *
- * For sets, these counts are always 0 or 1, but this representation
- * generalizes nicely for bags.
+ * For sets, these counts are always 0 or 1, but this representation generalizes
+ * nicely for bags.
  *
  * @template T
  * @param {T[]} xelements
  * @param {T[]} yelements
- * @returns {Iterable<[T,bigint,bigint]>}
+ * @returns {Iterable<[T, bigint, bigint]>}
  */
 const merge = (xelements, yelements) => {
   // This fullOrder contains history dependent state. It is specific
@@ -127,7 +126,7 @@ const merge = (xelements, yelements) => {
         next: () => {
           /** @type {boolean} */
           let done = false;
-          /** @type {[T,bigint,bigint]} */
+          /** @type {[T, bigint, bigint]} */
           let value;
           if (xDone && yDone) {
             done = true;

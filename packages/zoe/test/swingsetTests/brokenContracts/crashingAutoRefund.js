@@ -13,8 +13,8 @@ import '../../../exported.js';
 /**
  * This is an atomic swap contract to test Zoe handling contract failures.
  *
- * This contract throws exceptions in various
- * situations. We want to see that each is handled correctly.
+ * This contract throws exceptions in various situations. We want to see that
+ * each is handled correctly.
  *
  * @type {ContractStartFn<any>}
  */

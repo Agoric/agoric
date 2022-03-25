@@ -9,11 +9,12 @@ import { makeRatio, oneMinus } from '../../contractSupport/index.js';
 import { make100Percent, make0Percent } from './percent.js';
 
 /**
- * Calculate the portion (as a Ratio) of the collateral that should be
- * allocated to the long side of a call spread contract. price gives the value
- * of the underlying asset at closing that determines the payouts to the parties
+ * Calculate the portion (as a Ratio) of the collateral that should be allocated
+ * to the long side of a call spread contract. price gives the value of the
+ * underlying asset at closing that determines the payouts to the parties
  *
- * @type {CalculateShares} */
+ * @type {CalculateShares}
+ */
 function calculateShares(collateralBrand, price, strikePrice1, strikePrice2) {
   if (AmountMath.isGTE(strikePrice1, price)) {
     return {

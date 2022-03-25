@@ -11,22 +11,17 @@ import { assert } from '@agoric/assert';
  * This contract mints non-fungible tokens and creates a selling contract
  * instance to sell the tokens in exchange for some sort of money.
  *
- * startInstance() returns a creatorFacet which is a
- * ticketMaker with a `.sellTokens()` method. `.sellTokens()` takes a
- * specification of what is being sold, such as:
- * {
- *   customValueProperties: { ...arbitrary },
- *   count: 3n,
- *   moneyIssuer: moolaIssuer,
- *   sellItemsInstallationHandle,
- *   pricePerItem: AmountMath.make(moolaBrand, 20n),
- * }
- * The payouts are returned as an offerResult in the `outcome`, and an API that
- * allows selling the tickets that were produced. You can reuse the ticket maker
- * to mint more tickets (e.g. for a separate show.)
+ * StartInstance() returns a creatorFacet which is a ticketMaker with a
+ * `.sellTokens()` method. `.sellTokens()` takes a specification of what is
+ * being sold, such as: { customValueProperties: { ...arbitrary }, count: 3n,
+ * moneyIssuer: moolaIssuer, sellItemsInstallationHandle, pricePerItem:
+ * AmountMath.make(moolaBrand, 20n), } The payouts are returned as an
+ * offerResult in the `outcome`, and an API that allows selling the tickets that
+ * were produced. You can reuse the ticket maker to mint more tickets (e.g. for
+ * a separate show.)
  *
  * @param {ZCF<{
- * tokenName: string,
+ *   tokenName: string;
  * }>} zcf
  */
 const start = zcf => {
@@ -39,10 +34,10 @@ const start = zcf => {
   /**
    * @param {object} obj
    * @param {Installation<import('./sellItems.js').start>} obj.sellItemsInstallation
-   * @param {*} obj.customValueProperties
+   * @param {any} obj.customValueProperties
    * @param {number} obj.count
-   * @param {*} obj.moneyIssuer
-   * @param {*} obj.pricePerItem
+   * @param {any} obj.moneyIssuer
+   * @param {any} obj.pricePerItem
    */
   const sellTokens = ({
     customValueProperties,

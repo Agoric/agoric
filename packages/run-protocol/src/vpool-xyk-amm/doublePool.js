@@ -24,8 +24,8 @@ const publicPrices = prices => {
  * @param {ZCF} zcf
  * @param {XYKPool} collateralInPool
  * @param {XYKPool} collateralOutPool
- * @param {() => bigint} getProtocolFeeBP - retrieve governed protocol fee value
- * @param {() => bigint} getPoolFeeBP - retrieve governed pool fee value
+ * @param {() => bigint} getProtocolFeeBP - Retrieve governed protocol fee value
+ * @param {() => bigint} getPoolFeeBP - Retrieve governed pool fee value
  * @param {ZCFSeat} feeSeat
  * @returns {VPoolWrapper<VPoolInternalFacet>}
  */

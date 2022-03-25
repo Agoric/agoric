@@ -4,16 +4,15 @@
 import { makeIssuerKit } from '@agoric/ertp';
 
 /**
- * This contract holds one mint; it basically wraps
- * makeIssuerKit in its own contract, and hence in
- * its own vat.
+ * This contract holds one mint; it basically wraps makeIssuerKit in its own
+ * contract, and hence in its own vat.
  *
  * @param {ZCF<{
- *   keyword: string,
- *   assetKind: AssetKind,
- *   displayInfo: DisplayInfo,
+ *   keyword: string;
+ *   assetKind: AssetKind;
+ *   displayInfo: DisplayInfo;
  * }>} zcf
- * @returns {{ publicFacet: Issuer, creatorFacet: Mint }}
+ * @returns {{ publicFacet: Issuer; creatorFacet: Mint }}
  */
 export const start = zcf => {
   const { keyword, assetKind, displayInfo } = zcf.getTerms();

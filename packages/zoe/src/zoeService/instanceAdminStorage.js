@@ -3,11 +3,8 @@
 import { E } from '@endo/eventual-send';
 import { makeWeakStore } from '@agoric/store';
 
-/**
- *
- */
 export const makeInstanceAdminStorage = () => {
-  /** @type {WeakStore<Instance,InstanceAdmin>} */
+  /** @type {WeakStore<Instance, InstanceAdmin>} */
   const instanceToInstanceAdmin = makeWeakStore('instance');
 
   /** @type {GetPublicFacet} */

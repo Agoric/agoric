@@ -14,7 +14,12 @@ const { details: X, quote: q } = assert;
 /**
  * Constants for the kinds of assets we support.
  *
- * @type {{ NAT: 'nat', SET: 'set', COPY_SET: 'copySet', COPY_BAG: 'copyBag' }}
+ * @type {{
+ *   NAT: 'nat';
+ *   SET: 'set';
+ *   COPY_SET: 'copySet';
+ *   COPY_BAG: 'copyBag';
+ * }}
  */
 const AssetKind = harden({
   NAT: 'nat',
@@ -33,50 +38,47 @@ const assertAssetKind = allegedAK =>
 harden(assertAssetKind);
 
 /**
- * Amounts describe digital assets. From an amount, you can learn the
- * brand of digital asset as well as "how much" or "how many". Amounts
- * have two parts: a brand (loosely speaking, the type of digital
- * asset) and the value (the answer to "how much"). For example, in
- * the phrase "5 bucks", "bucks" takes the role of the brand and the
- * value is 5. Amounts can describe fungible and non-fungible digital
- * assets. Amounts are pass-by-copy and can be made by and sent to
- * anyone.
+ * Amounts describe digital assets. From an amount, you can learn the brand of
+ * digital asset as well as "how much" or "how many". Amounts have two parts: a
+ * brand (loosely speaking, the type of digital asset) and the value (the answer
+ * to "how much"). For example, in the phrase "5 bucks", "bucks" takes the role
+ * of the brand and the value is 5. Amounts can describe fungible and
+ * non-fungible digital assets. Amounts are pass-by-copy and can be made by and
+ * sent to anyone.
  *
- * The issuer is the authoritative source of the amount in payments
- * and purses. The issuer must be able to do things such as add
- * digital assets to a purse and withdraw digital assets from a purse.
- * To do so, it must know how to add and subtract digital assets.
- * Rather than hard-coding a particular solution, we chose to
- * parameterize the issuer with a collection of polymorphic functions,
- * which we call `AmountMath`. These math functions include concepts
+ * The issuer is the authoritative source of the amount in payments and purses.
+ * The issuer must be able to do things such as add digital assets to a purse
+ * and withdraw digital assets from a purse. To do so, it must know how to add
+ * and subtract digital assets. Rather than hard-coding a particular solution,
+ * we chose to parameterize the issuer with a collection of polymorphic
+ * functions, which we call `AmountMath`. These math functions include concepts
  * like addition, subtraction, and greater than or equal to.
  *
- * We also want to make sure there is no confusion as to what kind of
- * asset we are using. Thus, AmountMath includes checks of the
- * `brand`, the unique identifier for the type of digital asset. If
- * the wrong brand is used in AmountMath, an error is thrown and the
- * operation does not succeed.
+ * We also want to make sure there is no confusion as to what kind of asset we
+ * are using. Thus, AmountMath includes checks of the `brand`, the unique
+ * identifier for the type of digital asset. If the wrong brand is used in
+ * AmountMath, an error is thrown and the operation does not succeed.
  *
- * AmountMath uses mathHelpers to do most of the work, but then adds
- * the brand to the result. The function `value` gets the value from
- * the amount by removing the brand (amount -> value), and the
- * function `make` adds the brand to produce an amount (value ->
- * amount). The function `coerce` takes an amount and checks it,
- * returning an amount (amount -> amount).
+ * AmountMath uses mathHelpers to do most of the work, but then adds the brand
+ * to the result. The function `value` gets the value from the amount by
+ * removing the brand (amount -> value), and the function `make` adds the brand
+ * to produce an amount (value -> amount). The function `coerce` takes an amount
+ * and checks it, returning an amount (amount -> amount).
  *
- * Each issuer of digital assets has an associated brand in a
- * one-to-one mapping. In untrusted contexts, such as in analyzing
- * payments and amounts, we can get the brand and find the issuer
- * which matches the brand. The issuer and the brand mutually validate
- * each other.
+ * Each issuer of digital assets has an associated brand in a one-to-one
+ * mapping. In untrusted contexts, such as in analyzing payments and amounts, we
+ * can get the brand and find the issuer which matches the brand. The issuer and
+ * the brand mutually validate each other.
  */
 
-/** @type {{
- *   nat: NatMathHelpers,
- *   set: SetMathHelpers,
- *   copySet: CopySetMathHelpers,
- *   copyBag: CopyBagMathHelpers
- * }} */
+/**
+ * @type {{
+ *   nat: NatMathHelpers;
+ *   set: SetMathHelpers;
+ *   copySet: CopySetMathHelpers;
+ *   copyBag: CopyBagMathHelpers;
+ * }}
+ */
 const helpers = {
   nat: natMathHelpers,
   set: setMathHelpers,
@@ -117,7 +119,6 @@ const assertValueGetAssetKind = value => {
 };
 
 /**
- *
  * Asserts that value is a valid AmountMath and returns the appropriate helpers.
  *
  * Made available only for testing, but it is harmless for other uses.
@@ -147,7 +148,7 @@ const optionalBrandCheck = (allegedBrand, brand) => {
  * @param {Amount<K>} leftAmount
  * @param {Amount<K>} rightAmount
  * @param {Brand<K> | undefined} brand
- * @returns {MathHelpers<*>}
+ * @returns {MathHelpers<any>}
  */
 const checkLRAndGetHelpers = (leftAmount, rightAmount, brand = undefined) => {
   assertRecord(leftAmount, 'leftAmount');
@@ -190,9 +191,8 @@ const coerceLR = (h, leftAmount, rightAmount) => {
  *
  * Amounts are the canonical description of tradable goods. They are manipulated
  * by issuers and mints, and represent the goods and currency carried by purses
- * and
- * payments. They can be used to represent things like currency, stock, and the
- * abstract right to participate in a particular exchange.
+ * and payments. They can be used to represent things like currency, stock, and
+ * the abstract right to participate in a particular exchange.
  */
 const AmountMath = {
   /**
@@ -212,8 +212,7 @@ const AmountMath = {
     return harden({ brand, value });
   },
   /**
-   * Make sure this amount is valid enough, and return a corresponding
-   * valid amount if so.
+   * Make sure this amount is valid enough, and return a corresponding valid amount if so.
    *
    * @template {AssetKind} [K=AssetKind]
    * @param {Brand} brand
@@ -242,8 +241,8 @@ const AmountMath = {
    */
   getValue: (brand, amount) => AmountMath.coerce(brand, amount).value,
   /**
-   * Return the amount representing an empty amount. This is the
-   * identity element for MathHelpers.add and MatHelpers.subtract.
+   * Return the amount representing an empty amount. This is the identity
+   * element for MathHelpers.add and MatHelpers.subtract.
    *
    * @template {AssetKind} K
    * @param {Brand<K>} brand
@@ -260,8 +259,8 @@ const AmountMath = {
     return harden({ brand, value });
   },
   /**
-   * Return the amount representing an empty amount, using another
-   * amount as the template for the brand and assetKind.
+   * Return the amount representing an empty amount, using another amount as the
+   * template for the brand and assetKind.
    *
    * @template {AssetKind} K
    * @param {Amount<K>} amount
@@ -279,7 +278,7 @@ const AmountMath = {
    * Return true if the Amount is empty. Otherwise false.
    *
    * @param {Amount} amount
-   * @param {Brand=} brand
+   * @param {Brand} [brand]
    * @returns {boolean}
    */
   isEmpty: (amount, brand = undefined) => {
@@ -291,16 +290,16 @@ const AmountMath = {
     return h.doIsEmpty(h.doCoerce(value));
   },
   /**
-   * Returns true if the leftAmount is greater than or equal to the
-   * rightAmount. For non-scalars, "greater than or equal to" depends
-   * on the kind of amount, as defined by the MathHelpers. For example,
-   * whether rectangle A is greater than rectangle B depends on whether rectangle
-   * A includes rectangle B as defined by the logic in MathHelpers.
+   * Returns true if the leftAmount is greater than or equal to the rightAmount.
+   * For non-scalars, "greater than or equal to" depends on the kind of amount,
+   * as defined by the MathHelpers. For example, whether rectangle A is greater
+   * than rectangle B depends on whether rectangle A includes rectangle B as
+   * defined by the logic in MathHelpers.
    *
    * @template {AssetKind} [K=AssetKind]
    * @param {Amount<K>} leftAmount
    * @param {Amount<K>} rightAmount
-   * @param {Brand<K>=} brand
+   * @param {Brand<K>} [brand]
    * @returns {boolean}
    */
   isGTE: (leftAmount, rightAmount, brand = undefined) => {
@@ -308,13 +307,13 @@ const AmountMath = {
     return h.doIsGTE(...coerceLR(h, leftAmount, rightAmount));
   },
   /**
-   * Returns true if the leftAmount equals the rightAmount. We assume
-   * that if isGTE is true in both directions, isEqual is also true
+   * Returns true if the leftAmount equals the rightAmount. We assume that if
+   * isGTE is true in both directions, isEqual is also true
    *
    * @template {AssetKind} [K=AssetKind]
    * @param {Amount<K>} leftAmount
    * @param {Amount<K>} rightAmount
-   * @param {Brand<K>=} brand
+   * @param {Brand<K>} [brand]
    * @returns {boolean}
    */
   isEqual: (leftAmount, rightAmount, brand = undefined) => {
@@ -325,13 +324,12 @@ const AmountMath = {
    * Returns a new amount that is the union of both leftAmount and rightAmount.
    *
    * For fungible amount this means adding the values. For other kinds of
-   * amount, it usually means including all of the elements from both
-   * left and right.
+   * amount, it usually means including all of the elements from both left and right.
    *
    * @template {AssetKind} [K=AssetKind]
    * @param {Amount<K>} leftAmount
    * @param {Amount<K>} rightAmount
-   * @param {Brand<K>=} brand
+   * @param {Brand<K>} [brand]
    * @returns {Amount<K>}
    */
   add: (leftAmount, rightAmount, brand = undefined) => {
@@ -340,17 +338,16 @@ const AmountMath = {
     return harden({ brand: leftAmount.brand, value });
   },
   /**
-   * Returns a new amount that is the leftAmount minus the rightAmount
-   * (i.e. everything in the leftAmount that is not in the
-   * rightAmount). If leftAmount doesn't include rightAmount
-   * (subtraction results in a negative), throw  an error. Because the
-   * left amount must include the right amount, this is NOT equivalent
-   * to set subtraction.
+   * Returns a new amount that is the leftAmount minus the rightAmount (i.e.
+   * everything in the leftAmount that is not in the rightAmount). If leftAmount
+   * doesn't include rightAmount (subtraction results in a negative), throw an
+   * error. Because the left amount must include the right amount, this is NOT
+   * equivalent to set subtraction.
    *
    * @template {AssetKind} [K=AssetKind]
    * @param {Amount<K>} leftAmount
    * @param {Amount<K>} rightAmount
-   * @param {Brand<K>=} brand
+   * @param {Brand<K>} [brand]
    * @returns {Amount<K>}
    */
   subtract: (leftAmount, rightAmount, brand = undefined) => {
@@ -364,7 +361,7 @@ const AmountMath = {
    * @template {AssetKind} [K=AssetKind]
    * @param {Amount<K>} x
    * @param {Amount<K>} y
-   * @param {Brand<K>=} brand
+   * @param {Brand<K>} [brand]
    * @returns {Amount<K>}
    */
   min: (x, y, brand = undefined) => (AmountMath.isGTE(x, y, brand) ? y : x),
@@ -374,17 +371,14 @@ const AmountMath = {
    * @template {AssetKind} [K=AssetKind]
    * @param {Amount<K>} x
    * @param {Amount<K>} y
-   * @param {Brand<K>=} brand
+   * @param {Brand<K>} [brand]
    * @returns {Amount<K>}
    */
   max: (x, y, brand = undefined) => (AmountMath.isGTE(x, y, brand) ? x : y),
 };
 harden(AmountMath);
 
-/**
- *
- * @param {Amount} amount
- */
+/** @param {Amount} amount */
 const getAssetKind = amount => {
   assertRecord(amount, 'amount');
   const { value } = amount;

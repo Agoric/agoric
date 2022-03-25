@@ -6,17 +6,15 @@ import { Nat } from '@agoric/nat';
 import { parseVatSlot } from '../lib/parseVatSlots.js';
 
 /**
- * @param {*} syscall  Vat's syscall object, used to access the vatstore operations.
- * @param { (val: Object) => string} getSlotForVal  A function that returns the
- *   object ID (vref) for a given object, if any.  their corresponding export
- *   IDs
- * @param { (slot: string) => Object} requiredValForSlot  A function that
- *   converts an object ID (vref) to an object.
- * @param {*} FinalizationRegistry  Powerful JavaScript intrinsic normally denied
- *   by SES
- * @param {*} addToPossiblyDeadSet  Function to record objects whose deaths
+ * @param {any} syscall Vat's syscall object, used to access the vatstore operations.
+ * @param {(val: Object) => string} getSlotForVal A function that returns the
+ *   object ID (vref) for a given object, if any. their corresponding export IDs
+ * @param {(slot: string) => Object} requiredValForSlot A function that converts
+ *   an object ID (vref) to an object.
+ * @param {any} FinalizationRegistry Powerful JavaScript intrinsic normally denied by SES
+ * @param {any} addToPossiblyDeadSet Function to record objects whose deaths
  *   should be reinvestigated
- * @param {*} addToPossiblyRetiredSet  Function to record dead objects whose
+ * @param {any} addToPossiblyRetiredSet Function to record dead objects whose
  *   retirement should be reinvestigated
  */
 export function makeVirtualReferenceManager(
@@ -37,26 +35,26 @@ export function makeVirtualReferenceManager(
    *
    * A virtual object is kept alive if it or any of its facets are reachable by
    * any of three legs:
-   *  - in-memory references (if so, it will have a representative and thus a
-   *    non-null slot-to-val entry)
-   *  - virtual references (if so, it will have a refcount > 0)
-   *  - being exported (if so, its export flag will be set)
    *
-   * This function is called after a leg has been reported missing, and only
-   * if the memory (Representative) leg is currently missing, to see if the
-   * other two legs are now gone also.
+   * - In-memory references (if so, it will have a representative and thus a
+   *   non-null slot-to-val entry)
+   * - Virtual references (if so, it will have a refcount > 0)
+   * - Being exported (if so, its export flag will be set)
+   *
+   * This function is called after a leg has been reported missing, and only if
+   * the memory (Representative) leg is currently missing, to see if the other
+   * two legs are now gone also.
    *
    * Deletion consists of removing the vatstore entries that describe its state
-   * and track its refcount status.  In addition, when a virtual object is
+   * and track its refcount status. In addition, when a virtual object is
    * deleted, we delete any weak collection entries for which it was a key. If
    * it had been exported, we also inform the kernel that the vref has been
    * retired, so other vats can delete their weak collection entries too.
    *
-   * @param {string} baseRef  The virtual object cohort that's plausibly dead
-   *
+   * @param {string} baseRef The virtual object cohort that's plausibly dead
    * @returns {[boolean, string[]]} A pair of a flag that's true if this
-   *    possibly created a new GC opportunity and an array of vrefs that should
-   *    now be regarded as unrecognizable
+   *   possibly created a new GC opportunity and an array of vrefs that should
+   *   now be regarded as unrecognizable
    */
   function possibleVirtualObjectDeath(baseRef) {
     const refCount = getRefCount(baseRef);
@@ -75,11 +73,10 @@ export function makeVirtualReferenceManager(
   /**
    * Get information about the export status of a virtual object.
    *
-   * @param {string} baseRef  The baseRef of the virtual object of interest.
-   *
+   * @param {string} baseRef The baseRef of the virtual object of interest.
    * @returns {[boolean, string[]]} A pair of a flag that's true if the
-   *     indicated virtual object is reachable and an array of vrefs (to facets
-   *     of the object) that should now be regarded as unrecognizable
+   *   indicated virtual object is reachable and an array of vrefs (to facets of
+   *   the object) that should now be regarded as unrecognizable
    */
   function getExportStatus(baseRef) {
     const es = syscall.vatstoreGet(`vom.es.${baseRef}`);
@@ -209,10 +206,11 @@ export function makeVirtualReferenceManager(
   /**
    * Register information describing a persistent object kind.
    *
-   * @param {string} kindID  The kind of persistent object being handle
-   * @param {(string, boolean) => Object} reanimator  Reanimator function for the given kind.
-   * @param {(string) => boolean} deleter  Deleter function for the given kind.
-   * @param {boolean} durable  Flag indicating if instances survive vat termination
+   * @param {string} kindID The kind of persistent object being handle
+   * @param {(string, boolean) => Object} reanimator Reanimator function for the
+   *   given kind.
+   * @param {(string) => boolean} deleter Deleter function for the given kind.
+   * @param {boolean} durable Flag indicating if instances survive vat termination
    */
   function registerKind(kindID, reanimator, deleter, durable) {
     kindInfoTable.set(`${kindID}`, { reanimator, deleter, durable });
@@ -237,12 +235,12 @@ export function makeVirtualReferenceManager(
 
   /**
    * Check a list of facet names against what's already been established for a
-   * kind.  If they don't match, it's an error.  If nothing has been established
+   * kind. If they don't match, it's an error. If nothing has been established
    * yet, establish it now.
    *
-   * @param {string} kindID  The kind we're talking about
-   * @param {string[]|null} facetNames  A sorted array of facet names to be
-   *    checked or acquired, or null if the kind is unfaceted
+   * @param {string} kindID The kind we're talking about
+   * @param {string[] | null} facetNames A sorted array of facet names to be
+   *   checked or acquired, or null if the kind is unfaceted
    */
   function checkOrAcquireFacetNames(kindID, facetNames) {
     const kindInfo = kindInfoTable.get(`${kindID}`);
@@ -264,9 +262,8 @@ export function makeVirtualReferenceManager(
   /**
    * Inquire if a given persistent object kind is a durable kind or not.
    *
-   * @param {string} kindID  The kind of interest
-   *
-   * @returns {boolean}  true if the indicated kind is durable.
+   * @param {string} kindID The kind of interest
+   * @returns {boolean} True if the indicated kind is durable.
    */
   function isDurableKind(kindID) {
     const { durable } = kindInfoTable.get(`${kindID}`);
@@ -277,9 +274,8 @@ export function makeVirtualReferenceManager(
    * Inquire if a given vref is something that can be stored in a durable store
    * or virtual object.
    *
-   * @param {string} vref  The vref of interest
-   *
-   * @returns {boolean}  true if the indicated object reference is durable.
+   * @param {string} vref The vref of interest
+   * @returns {boolean} True if the indicated object reference is durable.
    */
   function isDurable(vref) {
     const { type, id, virtual, allocatedByVat } = parseVatSlot(vref);
@@ -300,13 +296,12 @@ export function makeVirtualReferenceManager(
 
   /**
    * Create an in-memory representation of a given object by reanimating it from
-   * persistent storage.  Used for deserializing.
+   * persistent storage. Used for deserializing.
    *
-   * @param {string} baseRef  The baseRef of the object being reanimated
-   * @param {boolean} proForma  If true, representative creation is for formal
+   * @param {string} baseRef The baseRef of the object being reanimated
+   * @param {boolean} proForma If true, representative creation is for formal
    *   use only and result will be ignored.
-   *
-   * @returns {Object}  A representative of the object identified by `baseRef`
+   * @returns {Object} A representative of the object identified by `baseRef`
    */
   function reanimate(baseRef, proForma) {
     const { id } = parseVatSlot(baseRef);
@@ -322,7 +317,7 @@ export function makeVirtualReferenceManager(
   /**
    * Delete the persistent representation of a virtual object given its ID
    *
-   * @param {string} vobjID  The virtual object ID of the object to be expunged
+   * @param {string} vobjID The virtual object ID of the object to be expunged
    */
   function deleteStoredRepresentation(vobjID) {
     const { id } = parseVatSlot(vobjID);
@@ -451,9 +446,8 @@ export function makeVirtualReferenceManager(
   /**
    * Check if a given vref points to a reachable presence.
    *
-   * @param {string} vref  The vref of the presence being enquired about
-   *
-   * @returns {boolean} true if the indicated presence remains reachable.
+   * @param {string} vref The vref of the presence being enquired about
+   * @returns {boolean} True if the indicated presence remains reachable.
    */
   function isPresenceReachable(vref) {
     return !!getRefCount(vref);
@@ -462,36 +456,33 @@ export function makeVirtualReferenceManager(
   /**
    * A map from vrefs (those which are recognizable by (i.e., used as keys in)
    * VOM aware collections) to sets of recognizers (the collections for which
-   * they are respectively used as keys).  These vrefs correspond to either
+   * they are respectively used as keys). These vrefs correspond to either
    * imported Presences or virtual objects (Remotables do not participate in
    * this as they are not keyed by vref but by the actual Remotable objects
    * themselves). We add to a vref's recognizer set whenever we use a Presence
    * or virtual object as a key into a weak store instance or an instance of
-   * VirtualObjectAwareWeakMap or VirtualObjectAwareWeakSet.  We remove it
+   * VirtualObjectAwareWeakMap or VirtualObjectAwareWeakSet. We remove it
    * whenever that key (or the whole collection containing it) is deleted.
    *
-   * A recognizer is one of:
-   *   Map - the map contained within a VirtualObjectAwareWeakMap to point to its vref-keyed entries.
-   *   Set - the set contained within a VirtualObjectAwareWeakSet to point to its vref-keyed entries.
-   *   deleter - a function within a WeakStore that can be called to remove an entry from that store.
+   * A recognizer is one of: Map - the map contained within a
+   * VirtualObjectAwareWeakMap to point to its vref-keyed entries. Set - the set
+   * contained within a VirtualObjectAwareWeakSet to point to its vref-keyed
+   * entries. deleter - a function within a WeakStore that can be called to
+   * remove an entry from that store.
    *
    * It is critical that each collection have exactly one recognizer that is
    * unique to that collection, because the recognizers themselves will be
    * tracked by their object identities, but the recognizer cannot be the
-   * collection itself else it would prevent the collection from being garbage
-   * collected.
+   * collection itself else it would prevent the collection from being garbage collected.
    *
    * TODO: all the "recognizers" in principle could be, and probably should be,
-   * reduced to deleter functions.  However, since the VirtualObjectAware
+   * reduced to deleter functions. However, since the VirtualObjectAware
    * collections are actual JavaScript classes I need to take some care to
-   * ensure that I've got the exactly-one-per-collection invariant handled
-   * correctly.
+   * ensure that I've got the exactly-one-per-collection invariant handled correctly.
    *
    * TODO: concoct a better type def than Set<any>
    */
-  /**
-   * @typedef { Map<string, *> | Set<string> | ((string) => void) } Recognizer
-   */
+  /** @typedef {Map<string, any> | Set<string> | ((string) => void)} Recognizer */
   /** @type {Map<string, Set<Recognizer>>} */
   const vrefRecognizers = new Map();
 
@@ -533,12 +524,10 @@ export function makeVirtualReferenceManager(
   }
 
   /**
-   * Remove a given vref from all weak collections in which it was used as a
-   * key.
+   * Remove a given vref from all weak collections in which it was used as a key.
    *
-   * @param {string} vref  The vref that shall henceforth no longer be recognized
-   *
-   * @returns {boolean} true if this possibly creates a GC opportunity
+   * @param {string} vref The vref that shall henceforth no longer be recognized
+   * @returns {boolean} True if this possibly creates a GC opportunity
    */
   function ceaseRecognition(vref) {
     let doMoreGC = false;

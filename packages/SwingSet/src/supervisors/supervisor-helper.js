@@ -7,25 +7,26 @@ import {
 import '../types-ambient.js';
 
 /**
- * @typedef { (delivery: VatDeliveryObject) => (VatDeliveryResult | Promise<VatDeliveryResult>) } VatDispatcherSyncAsync
- * @typedef { (delivery: VatDeliveryObject) => Promise<VatDeliveryResult> } VatDispatcher
+ * @typedef {(
+ *   delivery: VatDeliveryObject,
+ * ) => VatDeliveryResult | Promise<VatDeliveryResult>} VatDispatcherSyncAsync
+ *
+ * @typedef {(delivery: VatDeliveryObject) => Promise<VatDeliveryResult>} VatDispatcher
  */
 
 /**
- * Given the liveslots 'dispatch' function, return a version that never
- * rejects. It will always return a VatDeliveryResult, even if liveslots
- * throws or rejects. All supervisors should wrap the liveslots `dispatch`
- * function with this one, and call it in response to messages from the
- * manager process.
+ * Given the liveslots 'dispatch' function, return a version that never rejects.
+ * It will always return a VatDeliveryResult, even if liveslots throws or
+ * rejects. All supervisors should wrap the liveslots `dispatch` function with
+ * this one, and call it in response to messages from the manager process.
  *
- * @param { VatDispatcherSyncAsync } dispatch
- * @returns { VatDispatcher }
+ * @param {VatDispatcherSyncAsync} dispatch
+ * @returns {VatDispatcher}
  */
 function makeSupervisorDispatch(dispatch) {
   /**
-   * @param { VatDeliveryObject } delivery
-   * @returns { Promise<VatDeliveryResult> }
-   *
+   * @param {VatDeliveryObject} delivery
+   * @returns {Promise<VatDeliveryResult>}
    */
   async function dispatchToVat(delivery) {
     // the (low-level) vat is responsible for giving up agency, but we still
@@ -56,15 +57,16 @@ export { makeSupervisorDispatch };
  * I should be given a `syscallToManager` function that accepts a
  * VatSyscallObject and (synchronously) returns a VatSyscallResult.
  *
- * @param { VatSyscaller } syscallToManager
- * @param { boolean } workerCanBlock
- * @typedef { unknown } TheSyscallObjectWithMethodsThatLiveslotsWants
- * @returns { TheSyscallObjectWithMethodsThatLiveslotsWants }
+ * @param {VatSyscaller} syscallToManager
+ * @param {boolean} workerCanBlock
+ *
+ * @typedef {unknown} TheSyscallObjectWithMethodsThatLiveslotsWants
+ * @returns {TheSyscallObjectWithMethodsThatLiveslotsWants}
  */
 function makeSupervisorSyscall(syscallToManager, workerCanBlock) {
   function doSyscall(fields) {
     insistVatSyscallObject(fields);
-    /** @type { VatSyscallObject } */
+    /** @type {VatSyscallObject} */
     const vso = harden(fields);
     let r;
     try {
@@ -97,7 +99,14 @@ function makeSupervisorSyscall(syscallToManager, workerCanBlock) {
   // this will be given to liveslots, it should have distinct methods that
   // return immediate results or throw errors
   const syscallForVat = {
-    /** @type {(target: string, method: string, args: SwingSetCapData, result?: string) => unknown } */
+    /**
+     * @type {(
+     *   target: string,
+     *   method: string,
+     *   args: SwingSetCapData,
+     *   result?: string,
+     * ) => unknown}
+     */
     send: (target, method, args, result) =>
       doSyscall(['send', target, { method, args, result }]),
     subscribe: vpid => doSyscall(['subscribe', vpid]),
@@ -154,8 +163,8 @@ export { makeSupervisorSyscall };
 /**
  * Create a vat console from a log stream maker.
  *
- * TODO: consider other methods per SES VirtualConsole.
- * See https://github.com/Agoric/agoric-sdk/issues/2146
+ * TODO: consider other methods per SES VirtualConsole. See
+ * https://github.com/Agoric/agoric-sdk/issues/2146
  *
  * @param {(level: string) => (...args: any[]) => void} makeLog
  */

@@ -23,7 +23,7 @@ const DAY = SECONDS_PER_HOUR * 24n;
 
 /**
  * @param {ZCF} zcf
- * @param {{feeMintAccess: FeeMintAccess}} privateArgs
+ * @param {{ feeMintAccess: FeeMintAccess }} privateArgs
  */
 export async function start(zcf, privateArgs) {
   console.log(`contract started`);

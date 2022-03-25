@@ -18,8 +18,8 @@ import {
 import '../../exported.js';
 
 /**
- * Autoswap is a rewrite of Uniswap. Please see the documentation for
- * more https://agoric.com/documentation/zoe/guide/contracts/autoswap.html
+ * Autoswap is a rewrite of Uniswap. Please see the documentation for more
+ * https://agoric.com/documentation/zoe/guide/contracts/autoswap.html
  *
  * When the contract is instantiated, the two tokens (Central and Secondary) are
  * specified in the issuerKeywordRecord. There is no behavioral difference
@@ -69,7 +69,7 @@ const start = async zcf => {
   // we create the liquidityIssuer
   const { brands } = zcf.getTerms();
   Object.values(brands).forEach(brand => assertNatAssetKind(zcf, brand));
-  /** @type {Map<Brand,Keyword>} */
+  /** @type {Map<Brand, Keyword>} */
   const brandToKeyword = new Map(
     Object.entries(brands).map(([keyword, brand]) => [brand, keyword]),
   );
@@ -332,8 +332,7 @@ const start = async zcf => {
    * `getOutputForGivenInput` calculates the result of a trade, given a certain
    * amount of digital assets in.
    *
-   * @param {Amount} amountIn - the amount of digital
-   * assets to be sent in
+   * @param {Amount} amountIn - The amount of digital assets to be sent in
    * @param {Brand} brandOut - The brand of asset desired
    */
   const getOutputForGivenInput = (amountIn, brandOut) => {
@@ -355,7 +354,7 @@ const start = async zcf => {
    * `getInputForGivenOutput` calculates the amount of assets required to be
    * provided in order to obtain a specified gain.
    *
-   * @param {Amount} amountOut - the amount of digital assets desired
+   * @param {Amount} amountOut - The amount of digital assets desired
    * @param {Brand} brandIn - The brand of asset desired
    */
   const getInputForGivenOutput = (amountOut, brandIn) => {

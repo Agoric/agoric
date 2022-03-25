@@ -39,9 +39,8 @@ function makeDRTranslator(deviceID, kernelKeeper) {
   const { mapDeviceSlotToKernelSlot } = deviceKeeper;
 
   /**
-   *
-   * @param { DeviceInvocationResult } deviceInvocationResult
-   * @returns { KernelSyscallResult }
+   * @param {DeviceInvocationResult} deviceInvocationResult
+   * @returns {KernelSyscallResult}
    */
   function deviceResultToKernelResult(deviceInvocationResult) {
     // deviceInvocationResult is ['ok', capdata]
@@ -63,13 +62,12 @@ function makeDRTranslator(deviceID, kernelKeeper) {
 }
 
 /**
- * return a function that converts DeviceSyscall objects into KernelSyscall
- * objects
+ * Return a function that converts DeviceSyscall objects into KernelSyscall objects
  *
- * @param { string } deviceID
- * @param { string } deviceName
- * @param { * } kernelKeeper
- * @returns { (dsc: DeviceSyscallObject) => KernelSyscallObject }
+ * @param {string} deviceID
+ * @param {string} deviceName
+ * @param {any} kernelKeeper
+ * @returns {(dsc: DeviceSyscallObject) => KernelSyscallObject}
  */
 export function makeDSTranslator(deviceID, deviceName, kernelKeeper) {
   const deviceKeeper = kernelKeeper.allocateDeviceKeeperIfNeeded(deviceID);
@@ -152,8 +150,8 @@ export function makeDSTranslator(deviceID, deviceName, kernelKeeper) {
   /**
    * Convert syscalls from device space to kernel space
    *
-   * @param { DeviceSyscallObject } vsc
-   * @returns { KernelSyscallObject }
+   * @param {DeviceSyscallObject} vsc
+   * @returns {KernelSyscallObject}
    */
   function deviceSyscallToKernelSyscall(vsc) {
     const [type, ...args] = vsc;

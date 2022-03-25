@@ -2,10 +2,13 @@
 import { assert, details as X, q } from '@agoric/assert';
 
 /**
- * @typedef { import('./swingStore').KVStore } KVStore
- * @typedef { import('./swingStore').StreamPosition } StreamPosition
- * @typedef { import('./swingStore').StreamStore } StreamStore
- * @typedef { import('./swingStore').SwingStore } SwingStore
+ * @typedef {import('./swingStore').KVStore} KVStore
+ *
+ * @typedef {import('./swingStore').StreamPosition} StreamPosition
+ *
+ * @typedef {import('./swingStore').StreamStore} StreamStore
+ *
+ * @typedef {import('./swingStore').SwingStore} SwingStore
  */
 
 const streamPeek = new WeakMap(); // for tests to get raw access to the streams
@@ -21,11 +24,9 @@ export function initEphemeralSwingStore() {
   /**
    * Test if the state contains a value for a given key.
    *
-   * @param {string} key  The key that is of interest.
-   *
-   * @returns {boolean} true if a value is stored for the key, false if not.
-   *
-   * @throws if key is not a string.
+   * @param {string} key The key that is of interest.
+   * @returns {boolean} True if a value is stored for the key, false if not.
+   * @throws If key is not a string.
    */
   function has(key) {
     assert.typeof(key, 'string');
@@ -39,14 +40,12 @@ export function initEphemeralSwingStore() {
    * Note that this can be slow as it's only intended for use in debugging and
    * test result verification.
    *
-   * @param {string} start  Start of the key range of interest (inclusive).  An empty
-   *    string indicates a range from the beginning of the key set.
-   * @param {string} end  End of the key range of interest (exclusive).  An empty string
-   *    indicates a range through the end of the key set.
-   *
-   * @yields {string} an iterator for the keys from start <= key < end
-   *
-   * @throws if either parameter is not a string.
+   * @param {string} start Start of the key range of interest (inclusive). An
+   *   empty string indicates a range from the beginning of the key set.
+   * @param {string} end End of the key range of interest (exclusive). An empty
+   *   string indicates a range through the end of the key set.
+   * @yields {string} An iterator for the keys from start <= key < end
+   * @throws If either parameter is not a string.
    */
   function* getKeys(start, end) {
     assert.typeof(start, 'string');
@@ -63,12 +62,10 @@ export function initEphemeralSwingStore() {
   /**
    * Obtain the value stored for a given key.
    *
-   * @param {string} key  The key whose value is sought.
-   *
-   * @returns {string|undefined} the (string) value for the given key, or undefined if there is no
-   *    such value.
-   *
-   * @throws if key is not a string.
+   * @param {string} key The key whose value is sought.
+   * @returns {string | undefined} The (string) value for the given key, or
+   *   undefined if there is no such value.
+   * @throws If key is not a string.
    */
   function get(key) {
     assert.typeof(key, 'string');
@@ -76,13 +73,12 @@ export function initEphemeralSwingStore() {
   }
 
   /**
-   * Store a value for a given key.  The value will replace any prior value if
+   * Store a value for a given key. The value will replace any prior value if
    * there was one.
    *
-   * @param {string} key  The key whose value is being set.
-   * @param {string} value  The value to set the key to.
-   *
-   * @throws if either parameter is not a string.
+   * @param {string} key The key whose value is being set.
+   * @param {string} value The value to set the key to.
+   * @throws If either parameter is not a string.
    */
   function set(key, value) {
     assert.typeof(key, 'string');
@@ -91,12 +87,11 @@ export function initEphemeralSwingStore() {
   }
 
   /**
-   * Remove any stored value for a given key.  It is permissible for there to
-   * be no existing stored value for the key.
+   * Remove any stored value for a given key. It is permissible for there to be
+   * no existing stored value for the key.
    *
-   * @param {string} key  The key whose value is to be deleted
-   *
-   * @throws if key is not a string.
+   * @param {string} key The key whose value is to be deleted
+   * @throws If key is not a string.
    */
   function del(key) {
     assert.typeof(key, 'string');
@@ -111,7 +106,7 @@ export function initEphemeralSwingStore() {
     delete: del,
   };
 
-  /** @type {Map<string, Array<string>>} */
+  /** @type {Map<string, string[]>} */
   const streams = new Map();
   /** @type {Map<string, string>} */
   const streamStatus = new Map();
@@ -135,7 +130,7 @@ export function initEphemeralSwingStore() {
   /**
    * Close a stream that's open for read or write.
    *
-   * @param {string} streamName  The stream to close
+   * @param {string} streamName The stream to close
    */
   function closeStream(streamName) {
     insistStreamName(streamName);
@@ -145,11 +140,10 @@ export function initEphemeralSwingStore() {
   /**
    * Generator function that returns an iterator over the items in a stream.
    *
-   * @param {string} streamName  The stream to read
-   * @param {Object} startPosition  The position to start reading from
-   * @param {Object} endPosition  The position of the end of the stream
-   *
-   * @returns {Iterable<string>} an iterable for the items in the named stream
+   * @param {string} streamName The stream to read
+   * @param {Object} startPosition The position to start reading from
+   * @param {Object} endPosition The position of the end of the stream
+   * @returns {Iterable<string>} An iterable for the items in the named stream
    */
   function readStream(streamName, startPosition, endPosition) {
     insistStreamName(streamName);
@@ -193,11 +187,10 @@ export function initEphemeralSwingStore() {
   /**
    * Write to a stream.
    *
-   * @param {string} streamName  The stream to be written
-   * @param {string} item  The item to write
-   * @param {Object} position  The position to write the item
-   *
-   * @returns {Object} the new position after writing
+   * @param {string} streamName The stream to be written
+   * @param {string} item The item to write
+   * @param {Object} position The position to write the item
+   * @returns {Object} The new position after writing
    */
   function writeStreamItem(streamName, item, position) {
     insistStreamName(streamName);
@@ -223,16 +216,14 @@ export function initEphemeralSwingStore() {
     STREAM_START,
   };
 
-  /**
-   * Commit unsaved changes.
-   */
+  /** Commit unsaved changes. */
   function commit() {
     // Nothing to do here.
   }
 
   /**
-   * Close the "database", abandoning any changes made since the last commit
-   * (if you want to save them, call commit() first).
+   * Close the "database", abandoning any changes made since the last commit (if
+   * you want to save them, call commit() first).
    */
   function close() {
     // Nothing to do here.
@@ -247,20 +238,20 @@ export function initEphemeralSwingStore() {
  * Produce a representation of all the state found in a swing store.
  *
  * WARNING: This is a helper function intended for use in testing and debugging.
- * It extracts *everything*, and does so in the simplest and stupidest possible
+ * It extracts _everything_, and does so in the simplest and stupidest possible
  * way, hence it is likely to be a performance and memory hog if you attempt to
  * use it on anything real.
  *
- * @param {SwingStore} swingStore  The swing store whose state is to be extracted.
- *
+ * @param {SwingStore} swingStore The swing store whose state is to be extracted.
  * @returns {{
- *   kvStuff: Record<string, string>,
- *   streamStuff: Map<string, Array<string>>,
- * }}  A crude representation of all of the state of `swingStore`
+ *   kvStuff: Record<string, string>;
+ *   streamStuff: Map<string, string[]>;
+ * }}
+ *   A crude representation of all of the state of `swingStore`
  */
 export function getAllState(swingStore) {
   const { kvStore, streamStore } = swingStore;
-  /** @type { Record<string, string> } */
+  /** @type {Record<string, string>} */
   const kvStuff = {};
   for (const key of Array.from(kvStore.getKeys('', ''))) {
     // @ts-ignore get(key) of key from getKeys() is not undefined
@@ -280,14 +271,15 @@ export function getAllState(swingStore) {
  * Stuff a bunch of state into a swing store.
  *
  * WARNING: This is intended to support testing and should not be used as a
- * general store initialization mechanism.  In particular, note that it does not
+ * general store initialization mechanism. In particular, note that it does not
  * bother to remove any pre-existing state from the store that it is given.
  *
- * @param {SwingStore} swingStore  The swing store whose state is to be set.
+ * @param {SwingStore} swingStore The swing store whose state is to be set.
  * @param {{
- *   kvStuff: Record<string, string>,
- *   streamStuff: Map<string, Array<string>>,
- * }} stuff  The state to stuff into `swingStore`
+ *   kvStuff: Record<string, string>;
+ *   streamStuff: Map<string, string[]>;
+ * }} stuff
+ *   The state to stuff into `swingStore`
  */
 export function setAllState(swingStore, stuff) {
   const { kvStore, streamStore } = swingStore;

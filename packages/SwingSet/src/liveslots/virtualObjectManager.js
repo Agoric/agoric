@@ -10,17 +10,16 @@ import { parseVatSlot } from '../lib/parseVatSlots.js';
 /**
  * Make a simple LRU cache of virtual object inner selves.
  *
- * @param {number} size  Maximum number of entries to keep in the cache before
- *    starting to throw them away.
- * @param {(baseRef: string) => Object} fetch  Function to retrieve an
- *    object's raw state from the store by its baseRef
- * @param {(baseRef: string, rawState: Object) => void} store  Function to
- *   store raw object state by its baseRef
+ * @param {number} size Maximum number of entries to keep in the cache before
+ *   starting to throw them away.
+ * @param {(baseRef: string) => Object} fetch Function to retrieve an object's
+ *   raw state from the store by its baseRef
+ * @param {(baseRef: string, rawState: Object) => void} store Function to store
+ *   raw object state by its baseRef
+ * @returns {Object} An LRU cache of (up to) the given size
  *
- * @returns {Object}  An LRU cache of (up to) the given size
- *
- * This cache is part of the virtual object manager and is not intended to be
- * used independently; it is exported only for the benefit of test code.
+ *   This cache is part of the virtual object manager and is not intended to be
+ *   used independently; it is exported only for the benefit of test code.
  */
 export function makeCache(size, fetch, store) {
   let lruHead;
@@ -125,51 +124,43 @@ export function makeCache(size, fetch, store) {
 }
 
 /**
- * Create a new virtual object manager.  There is one of these for each vat.
+ * Create a new virtual object manager. There is one of these for each vat.
  *
- * @param {*} syscall  Vat's syscall object, used to access the vatstore operations.
- * @param {*} vrm  Virtual reference manager, to handle reference counting and GC
- *   of virtual references.
- * @param {() => number} allocateExportID  Function to allocate the next object
+ * @param {any} syscall Vat's syscall object, used to access the vatstore operations.
+ * @param {any} vrm Virtual reference manager, to handle reference counting and
+ *   GC of virtual references.
+ * @param {() => number} allocateExportID Function to allocate the next object
  *   export ID for the enclosing vat.
- * @param { (val: Object) => string} getSlotForVal  A function that returns the
- *   object ID (vref) for a given object, if any.  their corresponding export
- *   IDs
- * @param {*} registerValue  Function to register a new slot+value in liveSlot's
- *   various tables
- * @param {*} serialize  Serializer for this vat
- * @param {*} unserialize  Unserializer for this vat
- * @param {number} cacheSize  How many virtual objects this manager should cache
- *   in memory.
+ * @param {(val: Object) => string} getSlotForVal A function that returns the
+ *   object ID (vref) for a given object, if any. their corresponding export IDs
+ * @param {any} registerValue Function to register a new slot+value in
+ *   liveSlot's various tables
+ * @param {any} serialize Serializer for this vat
+ * @param {any} unserialize Unserializer for this vat
+ * @param {number} cacheSize How many virtual objects this manager should cache in memory.
+ * @returns {Object} A new virtual object manager.
  *
- * @returns {Object} a new virtual object manager.
+ *   The virtual object manager allows the creation of persistent objects that do
+ *   not need to occupy memory when they are not in use. It provides five functions:
  *
- * The virtual object manager allows the creation of persistent objects that do
- * not need to occupy memory when they are not in use.  It provides five
- * functions:
+ *   - `defineKind` and `defineDurableKind` enable users to define new types of
+ *       virtual object by providing an implementation of the new kind of
+ *       object's behavior. The result is a maker function that will produce new
+ *       virtualized instances of the defined object type on demand.
+ *   - `VirtualObjectAwareWeakMap` and `VirtualObjectAwareWeakSet` are drop-in
+ *       replacements for JavaScript's builtin `WeakMap` and `WeakSet` classes
+ *       which understand the magic internal voodoo used to implement virtual
+ *       objects and will do the right thing when virtual objects are used as
+ *       keys. The intent is that the hosting environment will inject these as
+ *       substitutes for their regular JS analogs in way that should be
+ *       transparent to ordinary users of those classes.
+ *   - `flushCache` will empty the object manager's cache of in-memory object
+ *       instances, writing any changed state to the persistent store. This is
+ *       provided for testing and to ensure that state that should be persisted
+ *       actually is prior to a controlled shutdown; normal code should not use this.
  *
- * - `defineKind` and `defineDurableKind` enable users to define new types of
- *    virtual object by providing an implementation of the new kind of object's
- *    behavior.  The result is a maker function that will produce new
- *    virtualized instances of the defined object type on demand.
- *
- * - `VirtualObjectAwareWeakMap` and `VirtualObjectAwareWeakSet` are drop-in
- *    replacements for JavaScript's builtin `WeakMap` and `WeakSet` classes
- *    which understand the magic internal voodoo used to implement virtual
- *    objects and will do the right thing when virtual objects are used as keys.
- *    The intent is that the hosting environment will inject these as
- *    substitutes for their regular JS analogs in way that should be transparent
- *    to ordinary users of those classes.
- *
- * - `flushCache` will empty the object manager's cache of in-memory object
- *    instances, writing any changed state to the persistent store.  This is
- *    provided for testing and to ensure that state that should be persisted
- *    actually is prior to a controlled shutdown; normal code should not use
- *    this.
- *
- * `defineKind` and `defineDurableKind` are made available to user vat code in
- * the `VatData` global (along with various other storage functions defined
- * elsewhere).
+ *   `defineKind` and `defineDurableKind` are made available to user vat code in
+ *   the `VatData` global (along with various other storage functions defined elsewhere).
  */
 export function makeVirtualObjectManager(
   syscall,
@@ -192,9 +183,8 @@ export function makeVirtualObjectManager(
   /**
    * Fetch an object's state from secondary storage.
    *
-   * @param {string} baseRef The baseRef of the object whose state is being
-   *    fetched.
-   * @returns {*} an object representing the object's stored state.
+   * @param {string} baseRef The baseRef of the object whose state is being fetched.
+   * @returns {any} An object representing the object's stored state.
    */
   function fetch(baseRef) {
     const rawState = syscall.vatstoreGet(`vom.${baseRef}`);
@@ -208,9 +198,8 @@ export function makeVirtualObjectManager(
   /**
    * Write an object's state to secondary storage.
    *
-   * @param {string} baseRef The baseRef of the object whose state is being
-   *    stored.
-   * @param {*} rawState  A data object representing the state to be written.
+   * @param {string} baseRef The baseRef of the object whose state is being stored.
+   * @param {any} rawState A data object representing the state to be written.
    */
   function store(baseRef, rawState) {
     syscall.vatstoreSet(`vom.${baseRef}`, JSON.stringify(rawState));
@@ -361,20 +350,18 @@ export function makeVirtualObjectManager(
   });
 
   /**
-   * Assess the facetiousness of a value.  If the value is an object containing
+   * Assess the facetiousness of a value. If the value is an object containing
    * only named properties and each such property's value is a function, `obj`
-   * represents a single facet and 'one' is returned.  If each property's value
+   * represents a single facet and 'one' is returned. If each property's value
    * is instead an object of facetiousness 'one', `obj` represents multiple
-   * facets and 'many' is returned.  In all other cases `obj` does not represent
+   * facets and 'many' is returned. In all other cases `obj` does not represent
    * any kind of facet abstraction and 'not' is returned.
    *
-   * @typedef {'one'|'many'|'not'} Facetiousness
-   *
-   * @param {*} obj  The (alleged) object to be assessed
-   * @param {boolean} [inner]  True if this is being called recursively; no more
-   *    than one level of recursion is allowed.
-   *
-   * @returns {Facetiousness} an assessment of the facetiousness of `obj`
+   * @typedef {'one' | 'many' | 'not'} Facetiousness
+   * @param {any} obj The (alleged) object to be assessed
+   * @param {boolean} [inner] True if this is being called recursively; no more
+   *   than one level of recursion is allowed.
+   * @returns {Facetiousness} An assessment of the facetiousness of `obj`
    */
   function assessFacetiousness(obj, inner) {
     if (typeof obj !== 'object') {
@@ -414,87 +401,81 @@ export function makeVirtualObjectManager(
   /**
    * Define a new kind of virtual object.
    *
-   * @param {string} kindID  The kind ID to associate with the new kind.
+   * @param {string} kindID The kind ID to associate with the new kind.
+   * @param {string} tag A descriptive tag string as used in calls to `Far`
+   * @param {any} init An initialization function that will return the initial
+   *   state of a new instance of the kind of virtual object being defined.
+   * @param {any} actualize An actualization function that will provide the
+   *   in-memory representative object that wraps behavior around the
+   *   virtualized state of an instance of the object kind being defined.
+   * @param {any} finish An optional finisher function that can perform
+   *   post-creation initialization operations, such as inserting the new object
+   *   in a cyclical object graph.
+   * @param {boolean} durable A flag indicating whether or not the newly defined
+   *   kind should be a durable kind.
+   * @returns {any} A maker function that can be called to manufacture new
+   *   instances of this kind of object. The parameters of the maker function
+   *   are those of the `init` function.
    *
-   * @param {string} tag  A descriptive tag string as used in calls to `Far`
+   *   Notes on theory of operation:
    *
-   * @param {*} init  An initialization function that will return the initial
-   *    state of a new instance of the kind of virtual object being defined.
+   *   Virtual objects are structured in three layers: representatives, inner
+   *   selves, and state data.
    *
-   * @param {*} actualize  An actualization function that will provide the
-   *    in-memory representative object that wraps behavior around the
-   *    virtualized state of an instance of the object kind being defined.
+   *   A representative is the manifestation of a virtual object that vat code has
+   *   direct access to. A given virtual object can have at most one
+   *   representative, which will be created as needed. This will happen when
+   *   the instance is initially made, and can also happen (if it does not
+   *   already exist) when the instance's virtual object ID is deserialized,
+   *   either when delivered as part of an incoming message or read as part of
+   *   another virtual object's state. A representative will be kept alive in
+   *   memory as long as there is a variable somewhere that references it
+   *   directly or indirectly. However, if a representative becomes unreferenced
+   *   in memory it is subject to garbage collection, leaving the representation
+   *   that is kept in the vat store as the record of its state from which a mew
+   *   representative can be reconsituted at need. Since only one representative
+   *   exists at a time, references to them may be compared with the equality
+   *   operator (===). Although the identity of a representative can change over
+   *   time, this is never visible to code running in the vat. Methods invoked
+   *   on a representative always operate on the underyling virtual object state.
    *
-   * @param {*} finish  An optional finisher function that can perform
-   *    post-creation initialization operations, such as inserting the new
-   *    object in a cyclical object graph.
+   *   The inner self represents the in-memory information about an object, aside
+   *   from its state. There is an inner self for each virtual object that is
+   *   currently resident in memory; that is, there is an inner self for each
+   *   virtual object for which there is currently a representative present
+   *   somewhere in the vat. The inner self maintains two pieces of information:
+   *   its corresponding virtual object's virtual object ID, and a pointer to
+   *   the virtual object's state in memory if the virtual object's state is, in
+   *   fact, currently resident in memory. If the state is not in memory, the
+   *   inner self's pointer to the state is null. In addition, the virtual
+   *   object manager maintains an LRU cache of inner selves. Inner selves that
+   *   are in the cache are not necessarily referenced by any existing
+   *   representative, but are available to be used should such a representative
+   *   be needed. How this all works will be explained in a moment.
    *
-   * @param {boolean} durable  A flag indicating whether or not the newly defined
-   *    kind should be a durable kind.
+   *   The state of a virtual object is a collection of mutable properties, each
+   *   of whose values is itself immutable and serializable. The methods of a
+   *   virtual object have access to this state by closing over a state object.
+   *   However, the state object they close over is not the actual state object,
+   *   but a wrapper with accessor methods that both ensure that a
+   *   representation of the state is in memory when needed and perform
+   *   deserialization on read and serialization on write; this wrapper is held
+   *   by the representative, so that method invocations always see the wrapper
+   *   belonging to the invoking representative. The actual state object holds
+   *   marshaled serializations of each of the state properties. When written to
+   *   persistent storage, this is representated as a JSON-stringified object
+   *   each of whose properties is one of the marshaled property values.
    *
-   * @returns {*} a maker function that can be called to manufacture new
-   *    instances of this kind of object.  The parameters of the maker function
-   *    are those of the `init` function.
-   *
-   * Notes on theory of operation:
-   *
-   * Virtual objects are structured in three layers: representatives, inner
-   * selves, and state data.
-   *
-   * A representative is the manifestation of a virtual object that vat code has
-   * direct access to.  A given virtual object can have at most one
-   * representative, which will be created as needed.  This will happen when the
-   * instance is initially made, and can also happen (if it does not already
-   * exist) when the instance's virtual object ID is deserialized, either when
-   * delivered as part of an incoming message or read as part of another virtual
-   * object's state.  A representative will be kept alive in memory as long as
-   * there is a variable somewhere that references it directly or indirectly.
-   * However, if a representative becomes unreferenced in memory it is subject
-   * to garbage collection, leaving the representation that is kept in the vat
-   * store as the record of its state from which a mew representative can be
-   * reconsituted at need.  Since only one representative exists at a time,
-   * references to them may be compared with the equality operator (===).
-   * Although the identity of a representative can change over time, this is
-   * never visible to code running in the vat.  Methods invoked on a
-   * representative always operate on the underyling virtual object state.
-   *
-   * The inner self represents the in-memory information about an object, aside
-   * from its state.  There is an inner self for each virtual object that is
-   * currently resident in memory; that is, there is an inner self for each
-   * virtual object for which there is currently a representative present
-   * somewhere in the vat.  The inner self maintains two pieces of information:
-   * its corresponding virtual object's virtual object ID, and a pointer to the
-   * virtual object's state in memory if the virtual object's state is, in fact,
-   * currently resident in memory.  If the state is not in memory, the inner
-   * self's pointer to the state is null.  In addition, the virtual object
-   * manager maintains an LRU cache of inner selves.  Inner selves that are in
-   * the cache are not necessarily referenced by any existing representative,
-   * but are available to be used should such a representative be needed.  How
-   * this all works will be explained in a moment.
-   *
-   * The state of a virtual object is a collection of mutable properties, each
-   * of whose values is itself immutable and serializable.  The methods of a
-   * virtual object have access to this state by closing over a state object.
-   * However, the state object they close over is not the actual state object,
-   * but a wrapper with accessor methods that both ensure that a representation
-   * of the state is in memory when needed and perform deserialization on read
-   * and serialization on write; this wrapper is held by the representative, so
-   * that method invocations always see the wrapper belonging to the invoking
-   * representative.  The actual state object holds marshaled serializations of
-   * each of the state properties.  When written to persistent storage, this is
-   * representated as a JSON-stringified object each of whose properties is one
-   * of the marshaled property values.
-   *
-   * When a method of a virtual object attempts to access one of the properties
-   * of the object's state, the accessor first checks to see if the state is in
-   * memory.  If it is not, it is loaded from persistent storage, the
-   * corresponding inner self is made to point at it, and then the inner self is
-   * placed at the head of the LRU cache (causing the least recently used inner
-   * self to fall off the end of the cache).  If it *is* in memory, it is
-   * promoted to the head of the LRU cache but the overall contents of the cache
-   * remain unchanged.  When an inner self falls off the end of the LRU, its
-   * reference to the state is nulled out and the object holding the state
-   * becomes garbage collectable.
+   *   When a method of a virtual object attempts to access one of the properties
+   *   of the object's state, the accessor first checks to see if the state is
+   *   in memory. If it is not, it is loaded from persistent storage, the
+   *   corresponding inner self is made to point at it, and then the inner self
+   *   is placed at the head of the LRU cache (causing the least recently used
+   *   inner self to fall off the end of the cache). If it _is_ in memory, it is
+   *   promoted to the head of the LRU cache but the overall contents of the
+   *   cache remain unchanged. When an inner self falls off the end of the LRU,
+   *   its reference to the state is nulled out and the object holding the state
+   *   becomes garbage collectable.
    */
   function defineKindInternal(kindID, tag, init, actualize, finish, durable) {
     let nextInstanceID = 1;

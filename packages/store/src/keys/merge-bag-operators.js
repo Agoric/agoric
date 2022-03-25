@@ -16,23 +16,20 @@ const { details: X, quote: q } = assert;
 
 /**
  * Asserts that `bagEntries` is already rank sorted by `rankCompare`, where
- * there
- * may be contiguous regions of bagEntries whose keys are tied for the same
- * rank.
- * Returns an iterable that will enumerate all the bagEntries in order
- * according to `fullOrder`, which should differ from `rankOrder` only
- * by being more precise.
+ * there may be contiguous regions of bagEntries whose keys are tied for the
+ * same rank. Returns an iterable that will enumerate all the bagEntries in
+ * order according to `fullOrder`, which should differ from `rankOrder` only by
+ * being more precise.
  *
  * This should be equivalent to resorting the entire `bagEntries` array
- * according
- * to `fullOrder`. However, it optimizes for the case where these contiguous
- * runs that need to be resorted are either absent or small.
+ * according to `fullOrder`. However, it optimizes for the case where these
+ * contiguous runs that need to be resorted are either absent or small.
  *
  * @template T
- * @param {[T,bigint][]} bagEntries
+ * @param {[T, bigint][]} bagEntries
  * @param {RankCompare} rankCompare
  * @param {FullCompare} fullCompare
- * @returns {Iterable<[T,bigint]>}
+ * @returns {Iterable<[T, bigint]>}
  */
 const bagWindowResort = (bagEntries, rankCompare, fullCompare) => {
   assertRankSorted(bagEntries, rankCompare);
@@ -89,16 +86,16 @@ const bagWindowResort = (bagEntries, rankCompare, fullCompare) => {
 
 /**
  * Returns an iterable whose iteration results are [key, xCount, yCount] tuples
- * representing the next key in the local full order, as well as how many
- * times it ocurred in the x input iterator and the y input interator.
+ * representing the next key in the local full order, as well as how many times
+ * it ocurred in the x input iterator and the y input interator.
  *
- * For sets, these counts are always 0 or 1, but this representation
- * generalizes nicely for bags.
+ * For sets, these counts are always 0 or 1, but this representation generalizes
+ * nicely for bags.
  *
  * @template T
- * @param {[T,bigint][]} xbagEntries
- * @param {[T,bigint][]} ybagEntries
- * @returns {Iterable<[T,bigint,bigint]>}
+ * @param {[T, bigint][]} xbagEntries
+ * @param {[T, bigint][]} ybagEntries
+ * @returns {Iterable<[T, bigint, bigint]>}
  */
 const merge = (xbagEntries, ybagEntries) => {
   // This fullOrder contains history dependent state. It is specific
@@ -145,7 +142,7 @@ const merge = (xbagEntries, ybagEntries) => {
         next: () => {
           /** @type {boolean} */
           let done = false;
-          /** @type {[T,bigint,bigint]} */
+          /** @type {[T, bigint, bigint]} */
           let value;
           if (xDone && yDone) {
             done = true;

@@ -28,7 +28,7 @@ export const DecimalPlaces = {
   simolean: 0,
 };
 
-/** @type {Record<string, { proposedName: string, balance: bigint}>} */
+/** @type {Record<string, { proposedName: string; balance: bigint }>} */
 const FaucetPurseDetail = {
   BLD: { proposedName: 'Agoric staking token', balance: 5000n },
   [CENTRAL_ISSUER_NAME]: { proposedName: 'Agoric RUN currency', balance: 53n },
@@ -46,7 +46,7 @@ const BASIS = 10_000n;
 const pad0 = (frac, exp) =>
   `${`${'0'.repeat(exp)}${frac}`.slice(-exp)}`.replace(/0+$/, '');
 
-/** @param { bigint } whole */
+/** @param {bigint} whole */
 const separators = whole => {
   const sep = '_';
   // ack: https://stackoverflow.com/a/45950572/7963, https://regex101.com/
@@ -77,17 +77,19 @@ export const showAmount = ({ brand, value }) => {
 
 /**
  * @typedef {[bigint, bigint]} Rational
- *
- * @type { Record<string, {
- *   config?: {
- *     collateralValue: bigint,
- *     initialMargin: Rational,
- *     liquidationMargin: Rational,
- *     interestRate: Rational,
- *     loanFee: Rational,
- *   },
- *   trades: Array<{ central: number, collateral: bigint}>
- * }>}
+ * @type {Record<
+ *   string,
+ *   {
+ *     config?: {
+ *       collateralValue: bigint;
+ *       initialMargin: Rational;
+ *       liquidationMargin: Rational;
+ *       interestRate: Rational;
+ *       loanFee: Rational;
+ *     };
+ *     trades: { central: number; collateral: bigint }[];
+ *   }
+ * >}
  */
 export const AMMDemoState = {
   // TODO: getRUN makes BLD obsolete here
@@ -182,7 +184,7 @@ export const AMMDemoState = {
   },
 };
 
-/** @param { number } f */
+/** @param {number} f */
 const run2places = f =>
   BigInt(Math.round(f * 100)) *
   10n ** BigInt(DecimalPlaces[CENTRAL_ISSUER_NAME] - 2);
@@ -190,11 +192,11 @@ const run2places = f =>
 /**
  * @param {bigint} value
  * @param {{
- *   centralSupplyBundle: ERef<SourceBundle>,
- *   feeMintAccess: ERef<FeeMintAccess>,
- *   zoe: ERef<ZoeService>,
+ *   centralSupplyBundle: ERef<SourceBundle>;
+ *   feeMintAccess: ERef<FeeMintAccess>;
+ *   zoe: ERef<ZoeService>;
  * }} powers
- * @returns { Promise<Payment> }
+ * @returns {Promise<Payment>}
  */
 const mintRunPayment = async (
   value,
@@ -227,17 +229,15 @@ const provideCoin = async (name, mints) => {
 };
 
 /**
- * @param { BootstrapSpace &
- *   { consume: {loadVat: VatLoader<MintsVat>} }
- * } powers
+ * @param {BootstrapSpace & { consume: { loadVat: VatLoader<MintsVat> } }} powers
+ *   TODO: sync this type with end-user docs?
  *
- * TODO: sync this type with end-user docs?
  * @typedef {{
- *   issuer: ERef<Issuer>,
- *   issuerPetname: string,
- *   payment: Payment,
- *   brand: Brand,
- *   pursePetname: string,
+ *   issuer: ERef<Issuer>;
+ *   issuerPetname: string;
+ *   payment: Payment;
+ *   brand: Brand;
+ *   pursePetname: string;
  * }} UserPaymentRecord
  */
 export const connectFaucet = async ({
@@ -338,9 +338,9 @@ export const connectFaucet = async ({
 
     const faucet = Far('faucet', {
       /**
-       * reap the spoils of our on-chain provisioning.
+       * Reap the spoils of our on-chain provisioning.
        *
-       * @returns {Promise<Array<UserPaymentRecord>>}
+       * @returns {Promise<UserPaymentRecord[]>}
        */
       tapFaucet: async () => faucetPaymentInfo,
       getFeePurse() {
@@ -368,7 +368,7 @@ export const ammPoolRunDeposits = issuers => {
       assert(record.config);
       assert(record.trades);
 
-      /** @param { bigint } n */
+      /** @param {bigint} n */
       const inCollateral = n => n * 10n ** BigInt(DecimalPlaces[issuerName]);
 
       // The initial trade represents the fair value of RUN for collateral.
@@ -395,7 +395,7 @@ export const ammPoolRunDeposits = issuers => {
 /**
  * @param {Payment} bootstrapPayment
  * @param {Record<string, bigint>} balances
- * @param {{ issuer: ERef<Issuer>, brand: Brand }} central
+ * @param {{ issuer: ERef<Issuer>; brand: Brand }} central
  */
 export const splitAllCentralPayments = async (
   bootstrapPayment,
@@ -427,11 +427,11 @@ export const splitAllCentralPayments = async (
 /**
  * @param {string} issuerName
  * @param {typeof AMMDemoState['ATOM']} record
- * @param {Record<string, { issuer: ERef<Issuer>, brand: Brand }>} kits
- * @param {{ issuer: ERef<Issuer>, brand: Brand }} central
+ * @param {Record<string, { issuer: ERef<Issuer>; brand: Brand }>} kits
+ * @param {{ issuer: ERef<Issuer>; brand: Brand }} central
  */
 export const poolRates = (issuerName, record, kits, central) => {
-  /** @param { bigint } n */
+  /** @param {bigint} n */
   const inCollateral = n => n * 10n ** BigInt(DecimalPlaces[issuerName]);
   const config = record.config;
   assert(config);
@@ -461,8 +461,8 @@ export const poolRates = (issuerName, record, kits, central) => {
 };
 
 /**
- * @param { BootstrapPowers & {
- *   consume: { mints }
+ * @param {BootstrapPowers & {
+ *   consume: { mints };
  * }} powers
  */
 export const fundAMM = async ({
@@ -597,7 +597,7 @@ export const fundAMM = async ({
    * @param {ERef<Issuer>} issuerOut
    * @param {ERef<Brand>} brandIn
    * @param {ERef<Brand>} brandOut
-   * @param {Array<[bigint | number, bigint | number]>} tradeList
+   * @param {[bigint | number, bigint | number][]} tradeList
    */
   const makeFakePriceAuthority = (
     issuerIn,
@@ -628,7 +628,7 @@ export const fundAMM = async ({
       console.debug(`Creating ${issuerName}-${CENTRAL_ISSUER_NAME}`);
       const issuer = kits[issuerName].issuer;
       const { trades } = record;
-      /** @param { bigint } n */
+      /** @param {bigint} n */
       const inCollateral = n => n * 10n ** BigInt(DecimalPlaces[issuerName]);
       const tradesGivenCentral = trades.map(
         ({ central: num, collateral: unit }) =>
@@ -672,7 +672,7 @@ export const fundAMM = async ({
         console.log(
           `Making fake price authority for ${issuerName}-${CENTRAL_ISSUER_NAME}`,
         );
-        /** @type {Array<[bigint | number, bigint | number]>} */
+        /** @type {[bigint | number, bigint | number][]} */
         const tradesGivenOther = tradesGivenCentral.map(
           ([valueCentral, valueOther]) => [valueOther, valueCentral],
         );

@@ -70,9 +70,8 @@ const startElectorate = async (zoe, installations) => {
 };
 
 /**
- *
  * @param {CommitteeElectorateCreatorFacet} electorateCreatorFacet
- * @param {*} voterCreator
+ * @param {any} voterCreator
  * @returns {Promise<unknown[]>}
  */
 const createCommittee = async (electorateCreatorFacet, voterCreator) => {
@@ -147,17 +146,17 @@ const makeVats = async (
 };
 
 /**
- * @param {(msg: any)=> void} log
+ * @param {(msg: any) => void} log
  * @param {ZoeService} zoe
  * @param {unknown[]} issuers
  * @param {Brand[]} brands
  * @param {Payment[]} payments
- * @param {*} installations
+ * @param {any} installations
  * @param {ManualTimer} timer
- * @param {*} priceAuthorityVat
- * @param {*} feeMintAccess
- * @param {*} electorateInstance
- * @param {*} electorateCreatorFacet
+ * @param {any} priceAuthorityVat
+ * @param {any} feeMintAccess
+ * @param {any} electorateInstance
+ * @param {any} electorateCreatorFacet
  */
 const buildOwner = async (
   log,

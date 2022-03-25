@@ -64,7 +64,7 @@ test('property name space exhaustion: orderly fail-stop', async t => {
   }
 });
 
-/** @typedef { [number | undefined, number, string | null] } TestCase */
+/** @typedef {[number | undefined, number, string | null]} TestCase */
 (() => {
   const grow = qty => `
   const send = it => issueCommand(new TextEncoder().encode(JSON.stringify(it)).buffer);
@@ -77,11 +77,7 @@ test('property name space exhaustion: orderly fail-stop', async t => {
   }
   `;
   for (const debug of [false, true]) {
-    for (const [
-      parserBufferSize,
-      qty,
-      failure,
-    ] of /** @type { TestCase[] } */ ([
+    for (const [parserBufferSize, qty, failure] of /** @type {TestCase[]} */ ([
       [undefined, 100, null],
       [undefined, (8192 * 1024) / 4 + 100, 'buffer overflow'],
       [2, 10, null],

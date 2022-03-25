@@ -5,7 +5,7 @@
  * @property {Notifier<Allocation>} notifier
  * @property {Allocation} initialAllocation
  * @property {SeatHandle} seatHandle
- * @property {Object=} offerArgs
+ * @property {Object} [offerArgs]
  */
 
 /**
@@ -22,8 +22,7 @@
  * @property {ZoeSeatAdmin} zoeSeatAdmin
  * @property {Notifier<Allocation>} notifier
  *
- * @callback MakeZoeSeatAdminKit
- * Make the Zoe seat admin, user seat and a notifier
+ * @callback MakeZoeSeatAdminKit Make the Zoe seat admin, user seat and a notifier
  * @param {Allocation} initialAllocation
  * @param {(zoeSeatAdmin: ZoeSeatAdmin) => void} exitZoeSeatAdmin
  * @param {(zoeSeatAdmin: ZoeSeatAdmin) => boolean} hasExited
@@ -36,7 +35,7 @@
 
 /**
  * @callback ZoeSeatAdminExit
- * @param {Completion=} completion
+ * @param {Completion} [completion]
  * @returns {void}
  */
 
@@ -44,13 +43,11 @@
  * @typedef {Object} ZoeSeatAdmin
  * @property {(allocation: Allocation) => void} replaceAllocation
  * @property {ZoeSeatAdminExit} exit
- * @property {ShutdownWithFailure} fail called with the reason
- * for calling fail on this seat, where reason is normally an instanceof Error.
+ * @property {ShutdownWithFailure} fail Called with the reason for calling fail
+ *   on this seat, where reason is normally an instanceof Error.
  */
 
-/**
- * @callback {(brand: Brand) => AssetKind} GetAssetKind
- */
+/** @callback {(brand: Brand) => AssetKind} GetAssetKind */
 
 /**
  * @typedef {Object} HandleOfferResult
@@ -59,17 +56,18 @@
  */
 
 /**
- * The seatHandle may be created in either the Zoe or ZCF vat,
- * depending on whether the seat comes from a normal offer or a
- * request by the contract for an "empty" seat.
+ * The seatHandle may be created in either the Zoe or ZCF vat, depending on
+ * whether the seat comes from a normal offer or a request by the contract for
+ * an "empty" seat.
  *
  * @typedef {Object} InstanceAdmin
  * @property {() => void} assertAcceptingOffers
- * @property {(invitationHandle: InvitationHandle,
- *     initialAllocation: Allocation,
- *     proposal: ProposalRecord,
- *     offerArgs?: Object,
- * ) => UserSeat } makeUserSeat
+ * @property {(
+ *   invitationHandle: InvitationHandle,
+ *   initialAllocation: Allocation,
+ *   proposal: ProposalRecord,
+ *   offerArgs?: Object,
+ * ) => UserSeat} makeUserSeat
  * @property {MakeNoEscrowSeat} makeNoEscrowSeat
  * @property {() => Instance} getInstance
  * @property {() => Object} getPublicFacet
@@ -83,31 +81,33 @@
  */
 
 /**
- * The seatHandle may be created in either the Zoe or ZCF vat,
- * depending on whether the seat comes from a normal offer or a
- * request by the contract for an "empty" seat.
+ * The seatHandle may be created in either the Zoe or ZCF vat, depending on
+ * whether the seat comes from a normal offer or a request by the contract for
+ * an "empty" seat.
  *
  * @typedef {Object} HandleOfferObj
- * @property {(invitationHandle: InvitationHandle,
- *             zoeSeatAdmin: ZoeSeatAdmin,
- *             seatData: SeatData,
- *            ) => HandleOfferResult} handleOffer
+ * @property {(
+ *   invitationHandle: InvitationHandle,
+ *   zoeSeatAdmin: ZoeSeatAdmin,
+ *   seatData: SeatData,
+ * ) => HandleOfferResult} handleOffer
  */
 
 /**
  * @callback ZoeInstanceAdminMakeInvitation
  * @param {InvitationHandle} invitationHandle
  * @param {string} description
- * @param {Record<string, any>=} customProperties
+ * @param {Record<string, any>} [customProperties]
  * @returns {Payment}
  */
 
 /**
  * @typedef {Object} ZoeInstanceAdmin
  * @property {ZoeInstanceAdminMakeInvitation} makeInvitation
- * @property {(issuerP: ERef<Issuer>,
- *             keyword: Keyword
- *            ) => Promise<IssuerRecord>} saveIssuer
+ * @property {(
+ *   issuerP: ERef<Issuer>,
+ *   keyword: Keyword,
+ * ) => Promise<IssuerRecord>} saveIssuer
  * @property {MakeZoeMint} makeZoeMint
  * @property {RegisterFeeMint} registerFeeMint
  * @property {MakeNoEscrowSeat} makeNoEscrowSeat
@@ -119,24 +119,23 @@
 
 /**
  * @callback RegisterFeeMint
- * @param {Keyword} keyword - the keyword to use for the issuer
- * @param {FeeMintAccess} allegedFeeMintAccess - an object that
- * purports to be the object that allows access to the feeMint
+ * @param {Keyword} keyword - The keyword to use for the issuer
+ * @param {FeeMintAccess} allegedFeeMintAccess - An object that purports to be
+ *   the object that allows access to the feeMint
  * @returns {ZoeMint}
  */
 
 /**
  * @callback WrapIssuerKitWithZoeMint
- * @param {Keyword} keyword - the keyword to use for the issuer
- * @param {IssuerKit} localIssuerKit - an issuer kit that originates
- * within Zoe
+ * @param {Keyword} keyword - The keyword to use for the issuer
+ * @param {IssuerKit} localIssuerKit - An issuer kit that originates within Zoe
  */
 
 /**
  * @callback MakeZoeMint
  * @param {Keyword} keyword
- * @param {AssetKind=} assetKind
- * @param {AdditionalDisplayInfo=} displayInfo
+ * @param {AssetKind} [assetKind]
+ * @param {AdditionalDisplayInfo} [displayInfo]
  * @returns {ZoeMint}
  */
 
@@ -164,11 +163,11 @@
  * @typedef {Object} ZoeMint
  * @property {() => IssuerRecord} getIssuerRecord
  * @property {(totalToMint: Amount) => void} mintAndEscrow
- * @property {(totalToBurn: Amount) => void} withdrawAndBurn
- * Note that the burning is asynchronous, and so may not have happened by
- * the time withdrawAndBurn returns. We rely on our other bookkeeping so that
- * these assets are assumed burned elsewhere, so no one will try to access
- * them even before they are actually burned.
+ * @property {(totalToBurn: Amount) => void} withdrawAndBurn Note that the
+ *   burning is asynchronous, and so may not have happened by the time
+ *   withdrawAndBurn returns. We rely on our other bookkeeping so that these
+ *   assets are assumed burned elsewhere, so no one will try to access them even
+ *   before they are actually burned.
  */
 
 /**
@@ -190,7 +189,7 @@
  * @param {ERef<ZoeInstanceAdmin>} zoeInstanceAdmin
  * @param {InstanceRecord} instanceRecordFromZoe
  * @param {IssuerRecords} issuerStorageFromZoe
- * @param {Object=} privateArgs
+ * @param {Object} [privateArgs]
  * @returns {Promise<ExecuteContractResult>}
  */
 
@@ -206,9 +205,7 @@
  * @property {() => void} exit
  */
 
-/**
- * @typedef {Handle<'SeatHandle'>} SeatHandle
- */
+/** @typedef {Handle<'SeatHandle'>} SeatHandle */
 
 /**
  * @typedef RootAndAdminNode
@@ -217,32 +214,27 @@
  */
 
 /**
- * @typedef {Object} AdminNode
- * A powerful object that can be used to terminate the vat in which a contract
- * is running, to get statistics, or to be notified when it terminates.
- *
- * @property {() => Promise<Completion>} done
- * returns a promise that will be fulfilled or rejected when the contract is
- * terminated. If the contract terminates with a failure, the promise will be
- * rejected with the reason. If the contract terminates successfully, the
- * promise will fulfill to the completion value.
- * @property {ShutdownWithFailure} terminateWithFailure
- * Terminate the vat in which the contract is running as a failure.
+ * @typedef {Object} AdminNode A powerful object that can be used to terminate
+ *   the vat in which a contract is running, to get statistics, or to be
+ *   notified when it terminates.
+ * @property {() => Promise<Completion>} done Returns a promise that will be
+ *   fulfilled or rejected when the contract is terminated. If the contract
+ *   terminates with a failure, the promise will be rejected with the reason. If
+ *   the contract terminates successfully, the promise will fulfill to the
+ *   completion value.
+ * @property {ShutdownWithFailure} terminateWithFailure Terminate the vat in
+ *   which the contract is running as a failure.
  */
 
 /**
- * @callback GetAssetKindByBrand
- * Get the assetKind for a brand known by Zoe
+ * @callback GetAssetKindByBrand Get the assetKind for a brand known by Zoe
  *
- * To be deleted when brands have a property for assetKind
- *
+ *   To be deleted when brands have a property for assetKind
  * @param {Brand} brand
  * @returns {AssetKind}
  */
 
-/**
- * @typedef {Array<IssuerRecord>} IssuerRecords
- */
+/** @typedef {IssuerRecord[]} IssuerRecords */
 
 /**
  * @callback MakeZCFSeat
@@ -252,10 +244,8 @@
  */
 
 /**
- * @callback DropAllReferences
- *
- * Drops all of the references in the seat-related weakStores by
- * dropping the stores
+ * @callback DropAllReferences Drops all of the references in the seat-related
+ *   weakStores by dropping the stores
  * @returns {void}
  */
 
@@ -267,27 +257,22 @@
  */
 
 /**
- *
- * @callback CreateSeatManager
- *
- * The SeatManager holds the active zcfSeats and can reallocate and
- * make new zcfSeats.
- *
+ * @callback CreateSeatManager The SeatManager holds the active zcfSeats and can
+ *   reallocate and make new zcfSeats.
  * @param {ERef<ZoeInstanceAdmin>} zoeInstanceAdmin
  * @param {GetAssetKindByBrand} getAssetKindByBrand
  * @param {ShutdownWithFailure} shutdownWithFailure
- * @returns {{ makeZCFSeat: MakeZCFSeat,
-    reallocate: Reallocate,
-    reallocateForZCFMint: ReallocateForZCFMint,
-    dropAllReferences: DropAllReferences }}
+ * @returns {{
+ *   makeZCFSeat: MakeZCFSeat;
+ *   reallocate: Reallocate;
+ *   reallocateForZCFMint: ReallocateForZCFMint;
+ *   dropAllReferences: DropAllReferences;
+ * }}
  */
 
 /**
- * @callback AddIssuerToInstanceRecord
- *
- * Add an issuer and its keyword to the instanceRecord for the
- * contract instance
- *
+ * @callback AddIssuerToInstanceRecord Add an issuer and its keyword to the
+ *   instanceRecord for the contract instance
  * @param {Keyword} keyword
  * @param {IssuerRecord} issuerRecord
  * @returns {void}

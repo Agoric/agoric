@@ -111,7 +111,14 @@ test('communication', async t => {
     message: /"brand" not found/,
   });
 
-  /** @type {undefined | IteratorResult<{brand: Brand, issuer: ERef<Issuer>, proposedName: string}>} */
+  /**
+   * @type {| undefined
+   *   | IteratorResult<{
+   *       brand: Brand;
+   *       issuer: ERef<Issuer>;
+   *       proposedName: string;
+   *     }>}
+   */
   let itResult;
   const p = it.next().then(r => (itResult = r));
   t.is(itResult, undefined);
@@ -197,9 +204,9 @@ test('communication', async t => {
 
 test('mintInitialSupply, addBankAssets bootstrap actions', async t => {
   // Supply bootstrap prerequisites.
-  const space = /** @type { any } */ (makePromiseSpace(t.log));
+  const space = /** @type {any} */ (makePromiseSpace(t.log));
   const { produce, consume } =
-    /** @type { BootstrapPowers & { consume: { loadVat: VatLoader<any> }}} */ (
+    /** @type {BootstrapPowers & { consume: { loadVat: VatLoader<any> } }} */ (
       space
     );
   const { agoricNames, spaces } = makeAgoricNamesAccess();
@@ -238,10 +245,10 @@ test('mintInitialSupply, addBankAssets bootstrap actions', async t => {
     },
     consume,
     produce,
-    devices: /** @type { any } */ ({}),
-    vats: /** @type { any } */ ({}),
-    vatPowers: /** @type { any } */ ({}),
-    runBehaviors: /** @type { any } */ ({}),
+    devices: /** @type {any} */ ({}),
+    vats: /** @type {any} */ ({}),
+    vatPowers: /** @type {any} */ ({}),
+    runBehaviors: /** @type {any} */ ({}),
     modules: {},
     ...spaces,
   });

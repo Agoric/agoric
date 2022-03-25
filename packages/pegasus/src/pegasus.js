@@ -28,9 +28,9 @@ const TRANSFER_PROPOSAL_SHAPE = {
 /**
  * Make a Pegasus public API.
  *
- * @param {ZCF} zcf the Zoe Contract Facet
- * @param {ERef<BoardDepositFacet>} board where to find depositFacets by boardID
- * @param {ERef<NameHub>} namesByAddress where to find depositFacets by bech32
+ * @param {ZCF} zcf The Zoe Contract Facet
+ * @param {ERef<BoardDepositFacet>} board Where to find depositFacets by boardID
+ * @param {ERef<NameHub>} namesByAddress Where to find depositFacets by bech32
  */
 const makePegasus = (zcf, board, namesByAddress) => {
   /**
@@ -41,7 +41,7 @@ const makePegasus = (zcf, board, namesByAddress) => {
    * @property {IterationObserver<Denom>} receiveDenomPublication
    * @property {Subscription<Denom>} remoteDenomSubscription
    * @property {bigint} lastDenomNonce Distinguish Pegasus-created denom names
-   * that are sent and received from a remote connection
+   *   that are sent and received from a remote connection
    * @property {(reason: CloseReason) => void} abort
    */
 
@@ -56,9 +56,7 @@ const makePegasus = (zcf, board, namesByAddress) => {
     return `Local${lastLocalIssuerNonce}`;
   };
 
-  /**
-   * @type {LegacyWeakMap<Peg, LocalDenomState>}
-   */
+  /** @type {LegacyWeakMap<Peg, LocalDenomState>} */
   // Legacy because Mappings mix functions and data
   const pegToDenomState = makeLegacyWeakMap('Peg');
 
@@ -70,7 +68,6 @@ const makePegasus = (zcf, board, namesByAddress) => {
    * @property {Denom} receiveDenom
    * @property {Denom} sendDenom
    * @property {string} allegedName
-   *
    * @param {LocalDenomState} state
    * @param {PegasusDescriptor} desc
    * @returns {Peg}
@@ -233,11 +230,11 @@ const makePegasus = (zcf, board, namesByAddress) => {
         /**
          * Transfer amount (of localBrand) from loser to winner seats.
          *
-         * @param {Amount} amount amount to transfer
-         * @param {Keyword} loserKeyword the keyword to take from the loser
-         * @param {ZCFSeat} loser seat to transfer from
-         * @param {Keyword} winnerKeyword the keyword to give to the winner
-         * @param {ZCFSeat} winner seat to transfer to
+         * @param {Amount} amount Amount to transfer
+         * @param {Keyword} loserKeyword The keyword to take from the loser
+         * @param {ZCFSeat} loser Seat to transfer from
+         * @param {Keyword} winnerKeyword The keyword to give to the winner
+         * @param {ZCFSeat} winner Seat to transfer to
          */
         const transferAmountFrom = (
           amount,
@@ -317,15 +314,11 @@ const makePegasus = (zcf, board, namesByAddress) => {
       transferProtocol = DEFAULT_TRANSFER_PROTOCOL,
       denomTransformer = DEFAULT_DENOM_TRANSFORMER,
     ) {
-      /**
-       * @type {LegacyWeakMap<Connection, LocalDenomState>}
-       */
+      /** @type {LegacyWeakMap<Connection, LocalDenomState>} */
       // Legacy because the value contains a JS Set
       const connectionToLocalDenomState = makeLegacyWeakMap('Connection');
 
-      /**
-       * @type {SubscriptionRecord<PegasusConnection>}
-       */
+      /** @type {SubscriptionRecord<PegasusConnection>} */
       const {
         subscription: connectionSubscription,
         publication: connectionPublication,
@@ -449,9 +442,10 @@ const makePegasus = (zcf, board, namesByAddress) => {
     /**
      * Create a Zoe invitation to transfer assets over network to a deposit address.
      *
-     * @param {ERef<Peg>} pegP the peg over which to transfer
-     * @param {DepositAddress} depositAddress the remote receiver's address
-     * @returns {Promise<Invitation>} to transfer, make an offer of { give: { Transfer: pegAmount } } to this invitation
+     * @param {ERef<Peg>} pegP The peg over which to transfer
+     * @param {DepositAddress} depositAddress The remote receiver's address
+     * @returns {Promise<Invitation>} To transfer, make an offer of { give: {
+     *   Transfer: pegAmount } } to this invitation
      */
     async makeInvitationToTransfer(pegP, depositAddress) {
       // Verify the peg.
@@ -483,12 +477,13 @@ const makePegasus = (zcf, board, namesByAddress) => {
   });
 };
 
-/**
- * @typedef {ReturnType<typeof makePegasus>} Pegasus
- */
+/** @typedef {ReturnType<typeof makePegasus>} Pegasus */
 
 /**
- * @param {ZCF<{board: ERef<BoardDepositFacet>, namesByAddress: ERef<NameHub>}>} zcf
+ * @param {ZCF<{
+ *   board: ERef<BoardDepositFacet>;
+ *   namesByAddress: ERef<NameHub>;
+ * }>} zcf
  */
 const start = zcf => {
   const { board, namesByAddress } = zcf.getTerms();

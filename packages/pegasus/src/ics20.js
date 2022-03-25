@@ -5,7 +5,7 @@ import { assert, details as X } from '@agoric/assert';
 
 /**
  * @typedef {Object} ICS20TransferPacket Packet shape defined at:
- * https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer#data-structures
+ *   https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer#data-structures
  * @property {string} amount The extent of the amount
  * @property {Denom} denom The denomination of the amount
  * @property {string} sender The sender address
@@ -20,9 +20,7 @@ const ICS20_TRANSFER_SUCCESS_RESULT = 'AQ==';
 // either, so we can just omit it.
 export const DUMMY_SENDER_ADDRESS = 'pegasus';
 
-/**
- * @param {string} s
- */
+/** @param {string} s */
 const safeJSONParseObject = s => {
   /** @type {unknown} */
   let obj;
@@ -65,7 +63,7 @@ export const parseICS20TransferPacket = async packet => {
 };
 
 /**
- * Convert the amount to a packet to send.  PacketParts.value is limited to
+ * Convert the amount to a packet to send. PacketParts.value is limited to
  * fungible (bigint) amounts.
  *
  * @param {PacketParts} param0
@@ -110,7 +108,7 @@ export const assertICS20TransferPacketAck = async ack => {
 };
 
 /**
- * Create results of the transfer.  Acknowledgement shape defined at:
+ * Create results of the transfer. Acknowledgement shape defined at:
  * https://github.com/cosmos/ibc/tree/master/spec/app/ics-020-fungible-token-transfer#data-structures
  *
  * @param {boolean} success

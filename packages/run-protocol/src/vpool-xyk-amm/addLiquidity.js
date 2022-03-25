@@ -53,33 +53,31 @@ export { imbalancedRequest };
  * the pool to have the ratio (poolX + giveX) / (poolY + giveY), without
  * changing K, the product of the two sides.
  *
- * Calculate targetX and targetY, which multiply to the same product as
- * poolX * poolY, but are in the ratio we'll end at. From this we can produce
- * a proposed trade that maintains K, but changes the ratio, so we can add
- * liquidity at the desired ratio.
+ * Calculate targetX and targetY, which multiply to the same product as poolX *
+ * poolY, but are in the ratio we'll end at. From this we can produce a proposed
+ * trade that maintains K, but changes the ratio, so we can add liquidity at the
+ * desired ratio.
  *
- * endX = poolX + giveX;   endY = poolY + giveY
- * desiredRatio = endX / endY
- * targetY = sqrt(startK / desiredRatio)
- * targetX = desiredRatio * targetY
- *   so targetK equals startK because we square targetY
- * targetK = targetX * targetY = desiredRatio * (startK / desiredRatio)
+ * EndX = poolX + giveX; endY = poolY + giveY desiredRatio = endX / endY targetY
+ * = sqrt(startK / desiredRatio) targetX = desiredRatio * targetY so targetK
+ * equals startK because we square targetY targetK = targetX * targetY =
+ * desiredRatio * (startK / desiredRatio)
  *
  * Since startK/endK is less than one, and we have to worry about early loss of
  * precision, we round and convert to bigint as the last step
  *
  * If the desired ratio (the ratio of the sums of contributed amounts and pool
  * balances) is larger than K (which most often happens when the pool balances
- * are small) we somewhat arbitrarily refuse the transaction.
- * For instance, if the desired ratio is 1000:1 because one currency uses 12
- * digits and the other 9, and the pool has single digits of liquidity, then
- * it would be better to manually adjust rather than using this approach.
+ * are small) we somewhat arbitrarily refuse the transaction. For instance, if
+ * the desired ratio is 1000:1 because one currency uses 12 digits and the other
+ * 9, and the pool has single digits of liquidity, then it would be better to
+ * manually adjust rather than using this approach.
  *
  * @param {Amount} poolX
  * @param {Amount} poolY
  * @param {Amount} giveX
  * @param {Amount} giveY
- * @returns {{targetX: Amount, targetY: Amount }}
+ * @returns {{ targetX: Amount; targetY: Amount }}
  */
 export const balancesToReachRatio = (poolX, poolY, giveX, giveY) => {
   const startK = multiply(poolX.value, poolY.value);

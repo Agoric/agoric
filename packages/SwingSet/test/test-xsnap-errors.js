@@ -20,7 +20,7 @@ test('child termination distinguished from meter exhaustion', async t => {
   );
   const bundles = [lockdown, supervisor];
 
-  /** @type { ReturnType<typeof spawn> } */
+  /** @type {ReturnType<typeof spawn>} */
   let theProc;
 
   const startXSnap = makeStartXSnap(bundles, {
@@ -35,7 +35,7 @@ test('child termination distinguished from meter exhaustion', async t => {
   });
 
   // just enough methods to not crash
-  /** @type { any } */
+  /** @type {any} */
   const kernelKeeper = {
     provideVatKeeper: () => ({
       getLastSnapshot: () => undefined,
@@ -55,7 +55,7 @@ test('child termination distinguished from meter exhaustion', async t => {
   const fn = new URL('vat-xsnap-hang.js', import.meta.url).pathname;
   const bundle = await bundleSource(fn);
 
-  /** @type { ManagerOptions } */
+  /** @type {ManagerOptions} */
   // @ts-ignore close enough for this test
   const managerOptions = { useTranscript: true };
   const schandler = _vso => ['ok', null];
@@ -69,7 +69,7 @@ test('child termination distinguished from meter exhaustion', async t => {
   await m.deliver(['startVat', capargs()]);
 
   const msg = { method: 'hang', args: capargs([]) };
-  /** @type { VatDeliveryObject } */
+  /** @type {VatDeliveryObject} */
   const delivery = ['message', 'o+0', msg];
 
   const p = m.deliver(delivery); // won't resolve until child dies

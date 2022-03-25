@@ -11,15 +11,13 @@ const log = anylogger('outbound');
 
 /**
  * @typedef {Object} TargetRecord
- * @property {(newMessages: Array<[number, string]>, acknum: number) => void} deliverator
+ * @property {(newMessages: [number, string][], acknum: number) => void} deliverator
  * @property {number} highestSent
  * @property {number} highestAck
  * @property {number} trips
  */
 
-/**
- * @type {Map<string, TargetRecord>}
- */
+/** @type {Map<string, TargetRecord>} */
 const knownTargets = new Map();
 
 export function deliver(mbs) {

@@ -4,13 +4,11 @@ import sqlite3ambient from 'better-sqlite3';
 import { assert, details as X, q } from '@agoric/assert';
 
 const STREAM_START = { itemCount: 0 };
-/**
- * @typedef { import('./swingStore').StreamPosition } StreamPosition
- */
+/** @typedef {import('./swingStore').StreamPosition} StreamPosition */
 
 /**
- * @param { unknown } streamName
- * @returns { asserts streamName is string }
+ * @param {unknown} streamName
+ * @returns {asserts streamName is string}
  */
 function insistStreamName(streamName) {
   assert.typeof(streamName, 'string');
@@ -20,7 +18,7 @@ function insistStreamName(streamName) {
 
 /**
  * @param {unknown} position
- * @returns { asserts position is StreamPosition }
+ * @returns {asserts position is StreamPosition}
  */
 function insistStreamPosition(position) {
   assert.typeof(position, 'object');
@@ -129,7 +127,7 @@ export function sqlStreamStore(dbDir, io) {
     return { itemCount: position.itemCount + 1 };
   };
 
-  /** @param { string } streamName */
+  /** @param {string} streamName */
   const closeStream = streamName => {
     insistStreamName(streamName);
     streamStatus.delete(streamName);

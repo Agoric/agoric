@@ -20,8 +20,8 @@ const { details: X, quote: q } = assert;
  * people to intuit when there are only two alternatives.
  *
  * @type {{
- *   UNRANKED: 'unranked',
- *   ORDER: 'order',
+ *   UNRANKED: 'unranked';
+ *   ORDER: 'order';
  * }}
  */
 const ChoiceMethod = {
@@ -29,10 +29,11 @@ const ChoiceMethod = {
   ORDER: 'order',
 };
 
-/** @type {{
- *   PARAM_CHANGE: 'param_change',
- *   ELECTION: 'election',
- *   SURVEY: 'survey',
+/**
+ * @type {{
+ *   PARAM_CHANGE: 'param_change';
+ *   ELECTION: 'election';
+ *   SURVEY: 'survey';
  * }}
  */
 const ElectionType = {
@@ -43,10 +44,11 @@ const ElectionType = {
   SURVEY: 'survey',
 };
 
-/** @type {{
- *   MAJORITY: 'majority',
- *   NO_QUORUM: 'no_quorum',
- *   ALL: 'all',
+/**
+ * @type {{
+ *   MAJORITY: 'majority';
+ *   NO_QUORUM: 'no_quorum';
+ *   ALL: 'all';
  * }}
  */
 const QuorumRule = {

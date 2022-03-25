@@ -17,9 +17,11 @@ const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
 /**
- * @param { { testNames: string[] } |
- *          { bundleSource: [string, ...unknown[]] } |
- *          TapMessage | Summary } item
+ * @param {| { testNames: string[] }
+ *   | { bundleSource: [string, ...unknown[]] }
+ *   | TapMessage
+ *   | Summary} item
+ *
  * @typedef {import('./avaXS').Summary} Summary
  */
 function send(item) {
@@ -28,7 +30,7 @@ function send(item) {
 }
 
 /**
- * @param { string } startFilename
+ * @param {string} startFilename
  * @param {...unknown} args
  */
 const bundleSource = async (startFilename, ...args) => {
@@ -61,7 +63,8 @@ const testRequire = function require(specifier) {
 /** @param {ArrayBuffer} rawMessage */
 function handler(rawMessage) {
   /**
-   * @type {{ method: 'loadScript', source: string } | { method: 'runTest', name: string }}
+   * @type {| { method: 'loadScript'; source: string }
+   *   | { method: 'runTest'; name: string }}
    */
   const msg = JSON.parse(decoder.decode(rawMessage));
 

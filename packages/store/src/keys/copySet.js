@@ -15,15 +15,15 @@ const { details: X } = assert;
 /**
  * @template T
  * @param {T[]} elements
- * @param {FullCompare=} fullCompare If provided and `elements` is already known
- * to be sorted by this `fullCompare`, then we should get a memo hit rather
- * than a resorting. However, currently, we still enumerate the entire array
- * each time.
+ * @param {FullCompare} [fullCompare] If provided and `elements` is already
+ *   known to be sorted by this `fullCompare`, then we should get a memo hit
+ *   rather than a resorting. However, currently, we still enumerate the entire
+ *   array each time.
  *
- * TODO: If doing this reduntantly turns out to be expensive, we
- * could memoize this no-duplicate finding as well, independent
- * of the `fullOrder` use to reach this finding.
- * @param {Checker=} check
+ *   TODO: If doing this reduntantly turns out to be expensive, we could memoize
+ *   this no-duplicate finding as well, independent of the `fullOrder` use to
+ *   reach this finding.
+ * @param {Checker} [check]
  * @returns {boolean}
  */
 const checkNoDuplicates = (
@@ -52,7 +52,7 @@ const checkNoDuplicates = (
 /**
  * @template T
  * @param {T[]} elements
- * @param {FullCompare=} fullCompare
+ * @param {FullCompare} [fullCompare]
  * @returns {void}
  */
 export const assertNoDuplicates = (elements, fullCompare = undefined) => {
@@ -61,7 +61,7 @@ export const assertNoDuplicates = (elements, fullCompare = undefined) => {
 
 /**
  * @param {Passable[]} elements
- * @param {Checker=} check
+ * @param {Checker} [check]
  * @returns {boolean}
  */
 export const checkElements = (elements, check = x => x) => {

@@ -2,9 +2,7 @@
 // @ts-check
 /* eslint no-await-in-loop: ["off"] */
 
-/**
- * @typedef {typeof import('child_process').spawn} Spawn
- */
+/** @typedef {typeof import('child_process').spawn} Spawn */
 
 /**
  * @template T
@@ -44,11 +42,11 @@ function echoCommand(arg) {
  * @typedef {Object} XSnapOptions
  * @property {string} os
  * @property {Spawn} spawn
- * @property {(request:Uint8Array) => Promise<Uint8Array>} [handleCommand]
- * @property {string=} [name]
- * @property {boolean=} [debug]
- * @property {number=} [parserBufferSize] in kB (must be an integer)
- * @property {string=} [snapshot]
+ * @property {(request: Uint8Array) => Promise<Uint8Array>} [handleCommand]
+ * @property {string} [name]
+ * @property {boolean} [debug]
+ * @property {number} [parserBufferSize] In kB (must be an integer)
+ * @property {string} [snapshot]
  * @property {'ignore' | 'inherit'} [stdout]
  * @property {'ignore' | 'inherit'} [stderr]
  * @property {number} [meteringLimit]
@@ -150,12 +148,14 @@ export function xsnap(options) {
    * @template T
    * @typedef {Object} RunResult
    * @property {T} reply
-   * @property {{ meterType: string, allocate: number|null, compute: number|null }} meterUsage
+   * @property {{
+   *   meterType: string;
+   *   allocate: number | null;
+   *   compute: number | null;
+   * }} meterUsage
    */
 
-  /**
-   * @returns {Promise<RunResult<Uint8Array>>}
-   */
+  /** @returns {Promise<RunResult<Uint8Array>>} */
   async function runToIdle() {
     for (;;) {
       const iteration = await messagesFromXsnap.next(undefined);
@@ -239,9 +239,7 @@ export function xsnap(options) {
     return Promise.race([vatCancelled, result]);
   }
 
-  /**
-   * @returns {Promise<void>}
-   */
+  /** @returns {Promise<void>} */
   async function isReady() {
     const result = baton.then(async () => {
       await messagesToXsnap.next(encoder.encode(`R`));
@@ -292,9 +290,7 @@ export function xsnap(options) {
     return Promise.race([vatExit.promise, baton]);
   }
 
-  /**
-   * @returns {Promise<void>}
-   */
+  /** @returns {Promise<void>} */
   async function close() {
     baton = baton.then(async () => {
       await messagesToXsnap.return(undefined);
@@ -304,9 +300,7 @@ export function xsnap(options) {
     return vatExit.promise;
   }
 
-  /**
-   * @returns {Promise<void>}
-   */
+  /** @returns {Promise<void>} */
   async function terminate() {
     xsnapProcess.kill();
     baton = Promise.reject(new Error(`${name} terminated`));

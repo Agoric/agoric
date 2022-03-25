@@ -11,18 +11,18 @@ import { handlePKitWarning } from '../src/handleWarning.js';
 import { makeHandle } from '../src/makeHandle.js';
 import zcfContractBundle from '../bundles/bundle-contractFacet.js';
 
-/** @typedef { import('@agoric/swingset-vat').BundleID} BundleID */
-/** @typedef { import('@agoric/swingset-vat').EndoZipBase64Bundle} EndoZipBase64Bundle */
+/** @typedef {import('@agoric/swingset-vat').BundleID} BundleID */
+/** @typedef {import('@agoric/swingset-vat').EndoZipBase64Bundle} EndoZipBase64Bundle */
 
 // this simulates a bundlecap, which is normally a swingset "device node"
-/** @typedef { import('@agoric/swingset-vat').BundleCap } BundleCap */
+/** @typedef {import('@agoric/swingset-vat').BundleCap} BundleCap */
 /** @type {() => BundleCap} */
 const fakeBundleCap = () => makeHandle('BundleCap');
 export const zcfBundleCap = fakeBundleCap();
 
 /**
- * @param { (...args) => unknown } [testContextSetter]
- * @param { (x: unknown) => unknown } [makeRemote]
+ * @param {(...args) => unknown} [testContextSetter]
+ * @param {(x: unknown) => unknown} [makeRemote]
  */
 function makeFakeVatAdmin(testContextSetter = undefined, makeRemote = x => x) {
   // FakeVatPowers isn't intended to support testing of vat termination, it is

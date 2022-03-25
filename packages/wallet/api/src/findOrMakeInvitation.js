@@ -21,12 +21,12 @@ const assertFirstCapASCII = str => {
 };
 
 /**
+ * @deprecated
  * @param {Amount} invitationPurseBalance
  * @param {Object} query
  * @param {Board} query.board
  * @param {string} query.boardId
  * @returns {Array}
- * @deprecated
  */
 const findByBoardId = async (invitationPurseBalance, { board, boardId }) => {
   assert.typeof(boardId, 'string');

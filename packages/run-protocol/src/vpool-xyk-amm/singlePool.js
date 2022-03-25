@@ -10,8 +10,8 @@ import {
 /**
  * @param {ZCF} zcf
  * @param {XYKPool} pool
- * @param {() => bigint} getProtocolFeeBP - retrieve governed protocol fee value
- * @param {() => bigint} getPoolFeeBP - retrieve governed pool fee value
+ * @param {() => bigint} getProtocolFeeBP - Retrieve governed protocol fee value
+ * @param {() => bigint} getPoolFeeBP - Retrieve governed pool fee value
  * @param {ZCFSeat} feeSeat
  * @param {AddLiquidityActual} addLiquidityActual
  * @returns {VPoolWrapper<SinglePoolInternalFacet>}

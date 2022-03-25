@@ -48,10 +48,10 @@ export function buildRootDeviceNode(tools) {
   /**
    * Load a module and connect to it.
    *
-   * @param {string} mod module with an exported `bootPlugin(state = undefined)`
-   * @param {number} index the module instance index
-   * @param {number} epoch which generation of CapTP instances this is
-   * @returns {Promise<(obj: Record<string, any>) => void>} send a message to the module
+   * @param {string} mod Module with an exported `bootPlugin(state = undefined)`
+   * @param {number} index The module instance index
+   * @param {number} epoch Which generation of CapTP instances this is
+   * @returns {Promise<(obj: Record<string, any>) => void>} Send a message to the module
    */
   async function createConnection(mod, index, epoch) {
     try {
@@ -98,9 +98,9 @@ export function buildRootDeviceNode(tools) {
   /**
    * Load a module and connect to it.
    *
-   * @param {string} mod module with an exported `bootPlugin(state = undefined)`
-   * @param {number} [index=connectedMods.length] the module instance index
-   * @returns {number} the allocated index
+   * @param {string} mod Module with an exported `bootPlugin(state = undefined)`
+   * @param {number} [index=connectedMods.length] The module instance index
+   * @returns {number} The allocated index
    */
   function connect(mod, index = connectedMods.length) {
     const epoch = register(mod, index);

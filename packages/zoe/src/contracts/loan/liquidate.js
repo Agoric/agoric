@@ -56,10 +56,9 @@ export const doLiquidation = async (
 
 /**
  * This function is triggered by the priceAuthority when the value of the
- * collateral is below the mmr. The function performs the
- * liquidation and then shuts down the contract. Note that if a
- * liquidation occurs, the borrower gets nothing and they can take no
- * further action.
+ * collateral is below the mmr. The function performs the liquidation and then
+ * shuts down the contract. Note that if a liquidation occurs, the borrower gets
+ * nothing and they can take no further action.
  *
  * For simplicity, we will sell all collateral.
  *

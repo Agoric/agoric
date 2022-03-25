@@ -5,8 +5,7 @@ import { assert, details as X } from '@agoric/assert';
 import { parse } from '@agoric/swingset-vat/src/vats/network/multiaddr.js';
 
 /**
- * Return a source-prefixed version of the denomination, as specified in
- * ICS20-1.
+ * Return a source-prefixed version of the denomination, as specified in ICS20-1.
  *
  * @param {Address} addr
  * @param {Denom} denom

@@ -11,27 +11,26 @@ import './types.js';
 
 /**
  * @typedef {Object} Router A delimited string router implementation
- * @property {(addr: string) => [string, Protocol][]} getRoutes Return the match and route in order of preference
- * @property {(prefix: string, route: Protocol) => void} register Add a prefix->route to the database
- * @property {(prefix: string, route: Protocol) => void} unregister Remove a prefix->route from the database
+ * @property {(addr: string) => [string, Protocol][]} getRoutes Return the match
+ *   and route in order of preference
+ * @property {(prefix: string, route: Protocol) => void} register Add a
+ *   prefix->route to the database
+ * @property {(prefix: string, route: Protocol) => void} unregister Remove a
+ *   prefix->route from the database
  */
 
 /**
  * Create a slash-delimited router.
  *
- * @returns {Router} a new Router
+ * @returns {Router} A new Router
  */
 export default function makeRouter() {
-  /**
-   * @type {Store<string, any>}
-   */
+  /** @type {Store<string, any>} */
   const prefixToRoute = makeStore('prefix');
   return Far('Router', {
     getRoutes(addr) {
       const parts = addr.split(ENDPOINT_SEPARATOR);
-      /**
-       * @type {[string, Protocol][]}
-       */
+      /** @type {[string, Protocol][]} */
       const ret = [];
       for (let i = parts.length; i > 0; i -= 1) {
         // Try most specific match.

@@ -24,6 +24,7 @@
     "lerna": "^3.20.2",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.5.1",
+    "prettier-plugin-jsdoc": "^0.3.31",
     "typescript": "~4.6.2"
   },
   "engines": {
@@ -34,8 +35,10 @@
   },
   "prettier": {
     "arrowParens": "avoid",
-    "trailingComma": "all",
-    "singleQuote": true
+    "plugins": ["prettier-plugin-jsdoc"],
+    "jsdocAddDefaultToDescription": false,
+    "singleQuote": true,
+    "trailingComma": "all"
   },
   "scripts": {
     "OFF-clean": "yarn workspaces run clean",

@@ -4,16 +4,17 @@ import clsx from 'clsx';
 import { stringifyValue } from '../display/index.js';
 
 /**
- * Return `purses` filtered to just the fungible ones, and optionally just the ones for a
- * supplied brand. The `purses` argument should be provided but may be falsy because UI
- * components represent inital state as null/undefined.
+ * Return `purses` filtered to just the fungible ones, and optionally just the
+ * ones for a supplied brand. The `purses` argument should be provided but may
+ * be falsy because UI components represent inital state as null/undefined.
  *
- * @param {Array<PursesJSONState> | null} purses Unfiltered purses. This may be null to simplify use in UIs.
- * @param {Brand} [optBrand] - optional brand to filter for
+ * @param {PursesJSONState[] | null} purses Unfiltered purses. This may be null
+ *   to simplify use in UIs.
+ * @param {Brand} [optBrand] - Optional brand to filter for
  * @returns {PursesJSONState[] | null}
  *
- * @typedef {{ brand: Brand, displayInfo: any }} PursesJSONState
- * see wallet/api/src/types.js
+ * @typedef {{ brand: Brand; displayInfo: any }} PursesJSONState See
+ *   wallet/api/src/types.js
  */
 export const filterPurses = (purses, optBrand) => {
   if (!purses) {

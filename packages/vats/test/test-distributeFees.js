@@ -21,9 +21,7 @@ async function waitForPromisesToSettle() {
   return pk.promise;
 }
 
-/**
- * @param {Issuer} feeIssuer
- */
+/** @param {Issuer} feeIssuer */
 function makeFakeFeeDepositFacet(feeIssuer) {
   const depositPayments = [];
 

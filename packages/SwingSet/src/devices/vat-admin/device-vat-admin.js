@@ -69,25 +69,28 @@ bundleID before submitting to the kernel), or (temporarily) a full bundle.
 */
 
 /**
- * if you're into types, this might loosely describe devices.vatAdmin
+ * If you're into types, this might loosely describe devices.vatAdmin
  *
- * @typedef { import('../../types-external.js').BundleID } BundleID
+ * @typedef {import('../../types-external.js').BundleID} BundleID
  *
- * @typedef { string } MeterID
- * @typedef { string } VatID
- * @typedef { string } UpgradeID
+ * @typedef {string} MeterID
+ *
+ * @typedef {string} VatID
+ *
+ * @typedef {string} UpgradeID
+ *
  * @typedef {{
- *  createMeter: (remaining: bigint, threshold: bigint) => MeterID
- *  createUnlimitedMeter: () => MeterID
- *  addMeterRemaining: (meterID: MeterID, delta: bigint) => void
- *  setMeterThreshold: (meterID: MeterID, threshold: bigint) => void
- *  getMeter: (meterID: MeterID) => { remaining: bigint, threshold: bigint }
- *  createByBundle: (bundle: Bundle, options: {}) => VatID
- *  createByBundleID: (bundleID: BundleID, options: {}) => VatID
- *  upgradeVat: (bundleID: BundleID, vatParameters: {}) => UpgradeID
- *  terminateWithFailure: (vatID: VatID, reason: {}) => void
- *  getBundleCap: (bundleID: BundleID) => BundleCap
- *  getNamedBundleCap: (name: string) => BundleCap
+ *   createMeter: (remaining: bigint, threshold: bigint) => MeterID;
+ *   createUnlimitedMeter: () => MeterID;
+ *   addMeterRemaining: (meterID: MeterID, delta: bigint) => void;
+ *   setMeterThreshold: (meterID: MeterID, threshold: bigint) => void;
+ *   getMeter: (meterID: MeterID) => { remaining: bigint; threshold: bigint };
+ *   createByBundle: (bundle: Bundle, options: {}) => VatID;
+ *   createByBundleID: (bundleID: BundleID, options: {}) => VatID;
+ *   upgradeVat: (bundleID: BundleID, vatParameters: {}) => UpgradeID;
+ *   terminateWithFailure: (vatID: VatID, reason: {}) => void;
+ *   getBundleCap: (bundleID: BundleID) => BundleCap;
+ *   getNamedBundleCap: (name: string) => BundleCap;
  * }} VatAdminRootDeviceNode
  */
 

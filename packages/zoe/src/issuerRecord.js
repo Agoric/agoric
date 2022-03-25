@@ -1,6 +1,6 @@
 /**
- * Put together information about the issuer in a standard format that
- * is synchronously accessible.
+ * Put together information about the issuer in a standard format that is
+ * synchronously accessible.
  *
  * @param {Brand} brand
  * @param {Issuer} issuer

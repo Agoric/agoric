@@ -21,16 +21,16 @@ function parentLog(first, ...args) {
   // console.error(`--parent: ${first}`, ...args);
 }
 
-/** @typedef { import ('worker_threads').Worker } Worker */
+/** @typedef {import('worker_threads').Worker} Worker */
 
 /**
  * @param {{
- *   makeNodeWorker: () => Worker,
- *   kernelKeeper: KernelKeeper,
- *   kernelSlog: KernelSlog,
- *   testLog: (...args: unknown[]) => void,
+ *   makeNodeWorker: () => Worker;
+ *   kernelKeeper: KernelKeeper;
+ *   kernelSlog: KernelSlog;
+ *   testLog: (...args: unknown[]) => void;
  * }} tools
- * @returns { VatManagerFactory }
+ * @returns {VatManagerFactory}
  */
 export function makeNodeWorkerVatManagerFactory(tools) {
   const { makeNodeWorker, kernelKeeper, kernelSlog, testLog } = tools;

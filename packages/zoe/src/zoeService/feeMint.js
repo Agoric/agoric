@@ -9,10 +9,10 @@ const { details: X } = assert;
  * @param {FeeIssuerConfig} feeIssuerConfig
  * @param {ShutdownWithFailure} shutdownZoeVat
  * @returns {{
- *    feeMintAccess: FeeMintAccess,
- *    getFeeIssuerKit: GetFeeIssuerKit,
- *    feeIssuer: Issuer,
- *    feeBrand: Brand,
+ *   feeMintAccess: FeeMintAccess;
+ *   getFeeIssuerKit: GetFeeIssuerKit;
+ *   feeIssuer: Issuer;
+ *   feeBrand: Brand;
  * }}
  */
 const createFeeMint = (feeIssuerConfig, shutdownZoeVat) => {

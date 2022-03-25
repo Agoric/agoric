@@ -7,10 +7,16 @@ import { Far } from '@endo/marshal';
 import { depositToSeat } from '../../../src/contractSupport/index.js';
 
 /**
- * This is a a broken contact to test that
- * errors in offerHandlers are appropriately handled
+ * This is a a broken contact to test that errors in offerHandlers are
+ * appropriately handled
  *
- * @type {ContractStartFn<undefined, {makeThrowInOfferHandlerInvitation: unknown, makeThrowInDepositToSeatInvitation: unknown}>}
+ * @type {ContractStartFn<
+ *   undefined,
+ *   {
+ *     makeThrowInOfferHandlerInvitation: unknown;
+ *     makeThrowInDepositToSeatInvitation: unknown;
+ *   }
+ * >}
  */
 const start = zcf => {
   const throwInOfferHandler = _seat => {

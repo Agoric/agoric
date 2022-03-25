@@ -3,13 +3,13 @@ import { assert, details as X, quote as q } from '@agoric/assert';
 import { makeVatTranslators } from './vatTranslator.js';
 import { insistVatDeliveryResult } from '../lib/message.js';
 
-/** @param { number } max */
+/** @param {number} max */
 export const makeLRU = max => {
-  /** @type { string[] } */
+  /** @type {string[]} */
   const items = [];
 
   return harden({
-    /** @param { string } item */
+    /** @param {string} item */
     add: item => {
       const pos = items.indexOf(item);
       // already most recently used
@@ -33,7 +33,7 @@ export const makeLRU = max => {
       return items.length;
     },
 
-    /** @param { string } item */
+    /** @param {string} item */
     remove: item => {
       const pos = items.indexOf(item);
       if (pos >= 0) {
@@ -44,18 +44,25 @@ export const makeLRU = max => {
 };
 
 /**
- * @param { KernelKeeper } kernelKeeper
- * @param { ReturnType<typeof import('./vat-loader/vat-loader.js').makeVatLoader> } vatLoader
+ * @param {KernelKeeper} kernelKeeper
+ * @param {ReturnType<
+ *   typeof import('./vat-loader/vat-loader.js').makeVatLoader
+ * >} vatLoader
  * @param {{
- *   maxVatsOnline?: number,
- *   snapshotInitial?: number,
- *   snapshotInterval?: number,
- * }=} policyOptions
+ *   maxVatsOnline?: number;
+ *   snapshotInitial?: number;
+ *   snapshotInterval?: number;
+ * }} [policyOptions]
  *
- * @typedef {(syscall: VatSyscallObject) => ['error', string] | ['ok', null] | ['ok', Capdata]} VatSyscallHandler
- * @typedef {{ body: string, slots: unknown[] }} Capdata
- * @typedef { [unknown, ...unknown[]] } Tagged
- * @typedef { { moduleFormat: string }} Bundle
+ * @typedef {(
+ *   syscall: VatSyscallObject,
+ * ) => ['error', string] | ['ok', null] | ['ok', Capdata]} VatSyscallHandler
+ *
+ * @typedef {{ body: string; slots: unknown[] }} Capdata
+ *
+ * @typedef {[unknown, ...unknown[]]} Tagged
+ *
+ * @typedef {{ moduleFormat: string }} Bundle
  */
 export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
   const {
@@ -73,20 +80,27 @@ export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
 
   /**
    * @typedef {{
-   *   manager: VatManager,
-   *   enablePipelining: boolean,
-   *   options: { name?: string, description?: string, managerType?: ManagerType },
+   *   manager: VatManager;
+   *   enablePipelining: boolean;
+   *   options: {
+   *     name?: string;
+   *     description?: string;
+   *     managerType?: ManagerType;
+   *   };
    * }} VatInfo
-   * @typedef { ReturnType<typeof import('./vatTranslator').makeVatTranslators> } VatTranslators
+   *
+   * @typedef {ReturnType<
+   *   typeof import('./vatTranslator').makeVatTranslators
+   * >} VatTranslators
    */
   const ephemeral = {
-    /** @type {Map<string, VatInfo> } key is vatID */
+    /** @type {Map<string, VatInfo>} key Is vatID */
     vats: new Map(),
   };
 
-  /** @type {Map<string, VatTranslators> } */
+  /** @type {Map<string, VatTranslators>} */
   const xlate = new Map();
-  /** @param { string } vatID */
+  /** @param {string} vatID */
   function provideTranslators(vatID) {
     let translators = xlate.get(vatID);
     if (!translators) {
@@ -101,7 +115,7 @@ export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
   /**
    * @param {string} vatID
    * @param {boolean} recreate
-   * @returns { Promise<VatInfo> }
+   * @returns {Promise<VatInfo>}
    */
   async function ensureVatOnline(vatID, recreate) {
     const info = ephemeral.vats.get(vatID);
@@ -164,7 +178,7 @@ export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
     return ensureVatOnline(vatID, false);
   }
 
-  /** @param { typeof console.log } logStartup */
+  /** @param {typeof console.log} logStartup */
   async function start(logStartup) {
     const recreate = true; // note: PANIC on failure to recreate
 
@@ -186,10 +200,9 @@ export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
   }
 
   /**
-   * @param { string } vatID
-   * @returns {{ enablePipelining?: boolean }
-   *  | undefined // if the vat is dead or never initialized
-   * }
+   * @param {string} vatID
+   * @returns {{ enablePipelining?: boolean } | undefined} Undefined if the vat
+   *   is dead of never initialized
    */
   function lookup(vatID) {
     const liveInfo = ephemeral.vats.get(vatID);
@@ -208,11 +221,10 @@ export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
   const recent = makeLRU(maxVatsOnline);
 
   /**
-   *
-   * does not modify the kernelDB
+   * Does not modify the kernelDB
    *
    * @param {string} vatID
-   * @returns { Promise<unknown> }
+   * @returns {Promise<unknown>}
    */
   async function evict(vatID) {
     assert(lookup(vatID));
@@ -236,9 +248,8 @@ export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
   /**
    * Simple fixed-size LRU cache policy
    *
-   * TODO: policy input: did a vat get a message? how long ago?
-   * "important" vat option?
-   * options: pay $/block to keep in RAM - advisory; not consensus
+   * TODO: policy input: did a vat get a message? how long ago? "important" vat
+   * option? options: pay $/block to keep in RAM - advisory; not consensus
    * creation arg: # of vats to keep in RAM (LRU 10~50~100)
    *
    * @param {string} currentVatID
@@ -255,10 +266,17 @@ export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
     await evict(lru);
   }
 
-  /** @type { string | undefined } */
+  /** @type {string | undefined} */
   let lastVatID;
 
-  /** @type {(vatID: string, kd: KernelDeliveryObject, d: VatDeliveryObject, vs: VatSlog) => Promise<VatDeliveryResult> } */
+  /**
+   * @type {(
+   *   vatID: string,
+   *   kd: KernelDeliveryObject,
+   *   d: VatDeliveryObject,
+   *   vs: VatSlog,
+   * ) => Promise<VatDeliveryResult>}
+   */
   async function deliverToVat(vatID, kd, vd, vs) {
     await applyAvailabilityPolicy(vatID);
     lastVatID = vatID;
@@ -271,7 +289,7 @@ export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
     const vatKeeper = kernelKeeper.provideVatKeeper(vatID);
     const crankNum = kernelKeeper.getCrankNumber();
     const deliveryNum = vatKeeper.nextDeliveryNum(); // increments
-    /** @type { SlogFinishDelivery } */
+    /** @type {SlogFinishDelivery} */
     const slogFinish = vs.delivery(crankNum, deliveryNum, kd, vd);
 
     // make the delivery
@@ -283,10 +301,7 @@ export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
     return deliveryResult;
   }
 
-  /**
-   * Save a snapshot of most recently used vat,
-   * depending on snapshotInterval.
-   */
+  /** Save a snapshot of most recently used vat, depending on snapshotInterval. */
   async function maybeSaveSnapshot() {
     if (!lastVatID || !lookup(lastVatID)) {
       return false;
@@ -319,7 +334,7 @@ export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
   /**
    * @param {string} vatID
    * @param {unknown[]} kd
-   * @returns { VatDeliveryObject }
+   * @returns {VatDeliveryObject}
    */
   function kernelDeliveryToVatDelivery(vatID, kd) {
     const translators = provideTranslators(vatID);
@@ -351,7 +366,7 @@ export function makeVatWarehouse(kernelKeeper, vatLoader, policyOptions) {
 
   /**
    * @param {string} vatID
-   * @returns { Promise<void> }
+   * @returns {Promise<void>}
    */
   async function vatWasTerminated(vatID) {
     try {

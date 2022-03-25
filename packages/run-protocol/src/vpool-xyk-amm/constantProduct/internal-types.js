@@ -8,14 +8,12 @@
 
 /**
  * @typedef {Object} FeePair
- *
  * @property {Amount} poolFee
  * @property {Amount} protocolFee
  */
 
 /**
  * @typedef {Object} PoolAllocation
- *
  * @property {Amount} Central
  * @property {Amount} Secondary
  */
@@ -24,13 +22,12 @@
  * @typedef {Object} NoFeeSwapFnInput
  * @property {Amount} amountGiven
  * @property {Amount} amountWanted
- * @property {Brand=} brand
+ * @property {Brand} [brand]
  * @property {PoolAllocation} poolAllocation
  */
 
 /**
  * @typedef {Object} SwapResult
- *
  * @property {Amount} xIncrement
  * @property {Amount} swapperGives
  * @property {Amount} yDecrement
@@ -50,9 +47,7 @@
  * @returns {ImprovedNoFeeSwapResult}
  */
 
-/**
- * @typedef {FeePair & ImprovedNoFeeSwapResult} FeeEstimate
- */
+/** @typedef {FeePair & ImprovedNoFeeSwapResult} FeeEstimate */
 
 /**
  * @callback CalculateFees
@@ -80,14 +75,14 @@
  * @callback CalcSwapInPrices
  * @param {Amount} amountGiven
  * @param {PoolAllocation} poolAllocation
- * @param {Amount=} amountWanted
+ * @param {Amount} [amountWanted]
  * @param {Ratio} protocolFeeRatio
  * @param {Ratio} poolFeeRatio
  * @returns {SwapResult}
  */
 /**
  * @callback CalcSwapOutPrices
- * @param {Amount=} amountGiven
+ * @param {Amount} [amountGiven]
  * @param {PoolAllocation} poolAllocation
  * @param {Amount} amountWanted
  * @param {Ratio} protocolFeeRatio
@@ -97,9 +92,9 @@
 
 /**
  * @typedef {Object} GetXYParam
- * @property {Amount=} amountGiven
+ * @property {Amount} [amountGiven]
  * @property {PoolAllocation} poolAllocation
- * @property {Amount=} amountWanted
+ * @property {Amount} [amountWanted]
  */
 
 /**
@@ -107,7 +102,7 @@
  * @property {Amount} x
  * @property {Amount} y
  * @property {Amount} deltaX
- * @property {Amount|undefined} deltaY
+ * @property {Amount | undefined} deltaY
  */
 
 /**
@@ -115,12 +110,10 @@
  * @property {Amount} x
  * @property {Amount} y
  * @property {Amount} deltaY
- * @property {Amount|undefined} deltaX
+ * @property {Amount | undefined} deltaX
  */
 
-/**
- * @typedef {GetXYResultDeltaX & GetXYResultDeltaY} GetXYResult
- */
+/** @typedef {GetXYResultDeltaX & GetXYResultDeltaY} GetXYResult */
 
 /**
  * @callback GetXY

@@ -571,8 +571,7 @@ ${chainID} chain does not yet know of address ${clientAddr}${adviseEgress(
 
   /**
    * @typedef {bigint} SeqNum
-   * @type {Array<[SeqNum, any]>}
-   * Ordered by seqnum
+   * @type {[SeqNum, any][]} Ordered By seqnum
    */
   let messagePool = [];
 
@@ -725,9 +724,9 @@ ${chainID} chain does not yet know of address ${clientAddr}${adviseEgress(
    * This function is entered at most the same number of times as the
    * mailboxNotifier announces a new mailbox.
    *
-   * It then delivers the mailbox to inbound.  There are no optimisations.
+   * It then delivers the mailbox to inbound. There are no optimisations.
    *
-   * @param {number=} lastMailboxUpdate
+   * @param {number} [lastMailboxUpdate]
    */
   const recurseEachMailboxUpdate = async (lastMailboxUpdate = undefined) => {
     const { updateCount, value: mailbox } = await mbNotifier.getUpdateSince(
