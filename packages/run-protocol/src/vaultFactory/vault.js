@@ -427,7 +427,7 @@ const helperBehavior = {
    * @param {ZCFSeat} clientSeat
    * @returns {Promise<string>} success message
    */
-  adjustBalancesHook: async ({ state, facets }, clientSeat) => {
+  handleAdjustBalancesOffer: async ({ state, facets }, clientSeat) => {
     const { self, helper } = facets;
     const { vaultSeat, outerUpdater: updaterPre } = state;
     const proposal = clientSeat.getProposal();
@@ -474,7 +474,7 @@ const helperBehavior = {
     });
 
     if (checkRestart(newCollateralPre, maxDebtPre, newCollateral, newDebt)) {
-      return helper.adjustBalancesHook(clientSeat);
+      return helper.handleAdjustBalancesOffer(clientSeat);
     }
 
     stageDelta(clientSeat, vaultSeat, giveColl, wantColl, 'Collateral');
@@ -604,7 +604,7 @@ const selfBehavior = {
     const { helper } = facets;
     helper.assertActive();
     return state.zcf.makeInvitation(
-      helper.adjustBalancesHook,
+      helper.handleAdjustBalancesOffer,
       'AdjustBalances',
     );
   },

@@ -171,7 +171,7 @@ export const start = async (
   /**
    * @param {ZCFSeat} seat
    */
-  const offerHandler = seat => {
+  const handleLoanOffer = seat => {
     const { helper, pot } = makeRunStakeKit(zcf, seat, manager);
 
     return harden({
@@ -181,8 +181,12 @@ export const start = async (
       },
       invitationMakers: Far('invitation makers', {
         AdjustBalances: () =>
-          zcf.makeInvitation(helper.adjustBalancesHook, 'AdjustBalances'),
-        CloseVault: () => zcf.makeInvitation(helper.closeHook, 'CloseVault'),
+          zcf.makeInvitation(
+            helper.handleAdjustBalancesOffer,
+            'AdjustBalances',
+          ),
+        CloseVault: () =>
+          zcf.makeInvitation(helper.handleCloseOffer, 'CloseVault'),
       }),
       vault: Far('RUNstake pot', pot),
     });
@@ -191,7 +195,7 @@ export const start = async (
   const publicFacet = augmentPublicFacet(
     Far('runStake public', {
       makeLoanInvitation: () =>
-        zcf.makeInvitation(offerHandler, 'make RUNstake'),
+        zcf.makeInvitation(handleLoanOffer, 'make RUNstake'),
       makeReturnAttInvitation: att.publicFacet.makeReturnAttInvitation,
     }),
   );

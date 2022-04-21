@@ -74,7 +74,7 @@ const start = async (zcf, privateArgs) => {
   };
 
   // Anyone can deposit collateral to the reserve.
-  const addCollateralHook = async seat => {
+  const handleAddCollateralOffer = async seat => {
     const {
       give: { Collateral: amountIn },
     } = seat.getProposal();
@@ -90,7 +90,7 @@ const start = async (zcf, privateArgs) => {
   };
 
   const makeAddCollateralInvitation = () =>
-    zcf.makeInvitation(addCollateralHook, 'Add Collateal');
+    zcf.makeInvitation(handleAddCollateralOffer, 'Add Collateal');
 
   /** @type {ZCFMint} */
   const runMint = await zcf.registerFeeMint('RUN', feeMintAccess);

@@ -146,7 +146,8 @@ export const start = async (zcf, privateArgs) => {
     }
   };
 
-  const swapHook = seat => {
+  /** @param {ZCFSeat} seat */
+  const handleSwapOffer = seat => {
     assertProposalShape(seat, {
       give: { In: null },
     });
@@ -163,7 +164,7 @@ export const start = async (zcf, privateArgs) => {
     }
     seat.exit();
   };
-  const makeSwapInvitation = () => zcf.makeInvitation(swapHook, 'swap');
+  const makeSwapInvitation = () => zcf.makeInvitation(handleSwapOffer, 'swap');
 
   const publicFacet = Far('Parity Stability Module', {
     getPoolBalance: () => anchorPool.getAmountAllocated('Anchor', anchorBrand),

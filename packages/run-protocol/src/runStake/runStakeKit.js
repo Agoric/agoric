@@ -228,7 +228,7 @@ export const makeRunStakeKit = (zcf, startSeat, manager) => {
      *
      * @param {ZCFSeat} clientSeat
      */
-    adjustBalancesHook: clientSeat => {
+    handleAdjustBalancesOffer: clientSeat => {
       assert(state.open);
 
       const proposal = clientSeat.getProposal();
@@ -303,9 +303,9 @@ export const makeRunStakeKit = (zcf, startSeat, manager) => {
     /**
      * Given sufficient RUN payoff, refund the attestation.
      *
-     * @type {OfferHandler}
+     * @param {ZCFSeat} seat
      */
-    closeHook: seat => {
+    handleCloseOffer: seat => {
       assert(state.open);
       assertProposalShape(seat, {
         give: { [KW.Debt]: null },
@@ -347,11 +347,14 @@ export const makeRunStakeKit = (zcf, startSeat, manager) => {
     getNotifier: () => state.notifier,
     makeAdjustBalancesInvitation: () => {
       assert(state.open);
-      return zcf.makeInvitation(helper.adjustBalancesHook, 'AdjustBalances');
+      return zcf.makeInvitation(
+        helper.handleAdjustBalancesOffer,
+        'AdjustBalances',
+      );
     },
     makeCloseInvitation: () => {
       assert(state.open);
-      return zcf.makeInvitation(helper.closeHook, 'CloseVault');
+      return zcf.makeInvitation(helper.handleCloseOffer, 'CloseVault');
     },
     /**
      * The actual current debt, including accrued interest.
