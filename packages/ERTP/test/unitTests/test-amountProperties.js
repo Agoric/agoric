@@ -2,6 +2,7 @@ import { test } from '@agoric/swingset-vat/tools/prepare-test-env-ava.js';
 import { makeCopyBag } from '@agoric/store';
 import fc from 'fast-check';
 
+import { q } from '@agoric/assert';
 import { AmountMath as m, AssetKind } from '../../src/index.js';
 import { mockBrand } from './mathHelpers/mockBrand.js';
 import { assertionPassed } from '../../../store/test/test-store.js';
@@ -59,6 +60,21 @@ test('isEqual is a (total) equivalence relation', async t => {
   );
 });
 
+test('isGT definition', async t => {
+  await fc.assert(
+    fc.property(fc.record({ x: arbAmount, y: arbAmount }), ({ x, y }) => {
+      const definition = m.isGTE(x, y) && !m.isEqual(x, y);
+      console.log('DEBUG x', x.value);
+      console.log('DEBUG y', y.value);
+      console.log('DEBUG isGTE', m.isGTE(x, y));
+      console.log('DEBUG isEqual', m.isEqual(x, y));
+      console.log('DEBUG definition', definition);
+      console.log('DEBUG actual isGT', m.isGT(x, y));
+      return t.is(m.isGT(x, y), definition);
+    }),
+  );
+});
+
 test('isGTE is a partial order with empty as minimum', async t => {
   const empty = m.makeEmpty(mockBrand, AssetKind.COPY_BAG);
   await fc.assert(
@@ -77,6 +93,30 @@ test('isGTE is a partial order with empty as minimum', async t => {
           () => implies(m.isGTE(x, y) && m.isGTE(y, x), m.isEqual(x, y)),
         )
       );
+    }),
+  );
+});
+
+test('isLT definition', async t => {
+  await fc.assert(
+    fc.property(fc.record({ x: arbAmount, y: arbAmount }), ({ x, y }) => {
+      const definition = !m.isGTE(x, y);
+      return t.is(m.isLT(x, y), definition);
+    }),
+  );
+});
+
+test.only('isLTE definition', async t => {
+  await fc.assert(
+    fc.property(fc.record({ x: arbAmount, y: arbAmount }), ({ x, y }) => {
+      const definition = !m.isGTE(x, y) || m.isEqual(x, y);
+      console.log('DEBUG x', x.value);
+      console.log('DEBUG y', y.value);
+      console.log('DEBUG isGTE', m.isGTE(x, y));
+      console.log('DEBUG isEqual', m.isEqual(x, y));
+      console.log('DEBUG definition', definition);
+      console.log('DEBUG actual isLTE', m.isLTE(x, y));
+      return t.is(m.isLTE(x, y), definition);
     }),
   );
 });

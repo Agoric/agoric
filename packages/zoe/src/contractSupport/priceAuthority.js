@@ -10,26 +10,6 @@ import { makeNotifier } from '@agoric/notifier';
 import '../../exported.js';
 
 /**
- * @callback CompareAmount
- * @param {Amount} amount
- * @param {Amount} amountLimit
- * @returns {boolean}
- */
-
-/** @type {CompareAmount} */
-const isLT = (amountOut, amountLimit) =>
-  !AmountMath.isGTE(amountOut, amountLimit);
-
-/** @type {CompareAmount} */
-const isLTE = (amount, amountLimit) => AmountMath.isGTE(amountLimit, amount);
-
-/** @type {CompareAmount} */
-const isGTE = (amount, amountLimit) => AmountMath.isGTE(amount, amountLimit);
-
-/** @type {CompareAmount} */
-const isGT = (amount, amountLimit) => !AmountMath.isGTE(amountLimit, amount);
-
-/**
  * @typedef {Object} OnewayPriceAuthorityOptions
  * @property {Issuer} quoteIssuer
  * @property {ERef<Notifier<Timestamp>>} notifier
@@ -87,7 +67,7 @@ export function makeOnewayPriceAuthorityKit(opts) {
   /**
    * Create a quoteWhen* function.
    *
-   * @param {CompareAmount} compareAmountsFn
+   * @param {(l: Amount, r: Amount) => boolean} compareAmountsFn
    */
   const makeQuoteWhenOut = compareAmountsFn =>
     /**
@@ -334,14 +314,14 @@ export function makeOnewayPriceAuthorityKit(opts) {
       // Wait until the wakeup passes.
       return quotePK.promise;
     },
-    quoteWhenLT: makeQuoteWhenOut(isLT),
-    quoteWhenLTE: makeQuoteWhenOut(isLTE),
-    quoteWhenGTE: makeQuoteWhenOut(isGTE),
-    quoteWhenGT: makeQuoteWhenOut(isGT),
-    mutableQuoteWhenLT: makeMutableQuote(isLT),
-    mutableQuoteWhenLTE: makeMutableQuote(isLTE),
-    mutableQuoteWhenGT: makeMutableQuote(isGT),
-    mutableQuoteWhenGTE: makeMutableQuote(isGTE),
+    quoteWhenLT: makeQuoteWhenOut(AmountMath.isLT),
+    quoteWhenLTE: makeQuoteWhenOut(AmountMath.isLTE),
+    quoteWhenGTE: makeQuoteWhenOut(AmountMath.isGTE),
+    quoteWhenGT: makeQuoteWhenOut(AmountMath.isGT),
+    mutableQuoteWhenLT: makeMutableQuote(AmountMath.isLT),
+    mutableQuoteWhenLTE: makeMutableQuote(AmountMath.isLTE),
+    mutableQuoteWhenGT: makeMutableQuote(AmountMath.isGT),
+    mutableQuoteWhenGTE: makeMutableQuote(AmountMath.isGTE),
   });
 
   return { priceAuthority, adminFacet: { fireTriggers } };
