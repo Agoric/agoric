@@ -1,5 +1,6 @@
 /* eslint-disable no-await-in-loop */
 // @ts-check
+// @jessie-check
 
 import { E } from '@endo/eventual-send';
 import {

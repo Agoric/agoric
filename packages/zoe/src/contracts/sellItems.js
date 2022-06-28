@@ -1,4 +1,5 @@
 // @ts-check
+// @jessie-check
 
 import { assert, details as X } from '@agoric/assert';
 import { Far } from '@endo/marshal';
@@ -90,7 +91,7 @@ const start = zcf => {
     // Check that the wanted items are still for sale.
     if (!AmountMath.isGTE(currentItemsForSale, wantedItems)) {
       const rejectMsg = `Some of the wanted items were not available for sale`;
-      throw buyerSeat.fail(new Error(rejectMsg));
+      throw buyerSeat.fail(assert.fail(rejectMsg));
     }
 
     // All items are the same price.

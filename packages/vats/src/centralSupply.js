@@ -1,4 +1,5 @@
 // @ts-check
+// @jessie-check
 
 import { AmountMath } from '@agoric/ertp';
 import { E, Far } from '@endo/far';

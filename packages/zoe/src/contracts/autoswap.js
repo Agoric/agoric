@@ -1,8 +1,10 @@
 // @ts-check
+// @jessie-check
 
 import { Far } from '@endo/marshal';
 import { assert } from '@agoric/assert';
 import { AmountMath, isNatValue } from '@agoric/ertp';
+import { makeMap } from 'jessie.js';
 
 // Eventually will be importable from '@agoric/zoe-contract-support'
 import {
@@ -70,7 +72,7 @@ const start = async zcf => {
   const { brands } = zcf.getTerms();
   Object.values(brands).forEach(brand => assertNatAssetKind(zcf, brand));
   /** @type {Map<Brand,Keyword>} */
-  const brandToKeyword = new Map(
+  const brandToKeyword = makeMap(
     Object.entries(brands).map(([keyword, brand]) => [brand, keyword]),
   );
   /**

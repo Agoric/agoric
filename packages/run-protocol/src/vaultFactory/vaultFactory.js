@@ -1,4 +1,5 @@
 // @ts-check
+// @jessie-check
 
 import '@agoric/governance/src/exported.js';
 import '@agoric/zoe/exported.js';

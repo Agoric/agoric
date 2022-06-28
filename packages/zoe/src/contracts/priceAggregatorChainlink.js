@@ -1,4 +1,5 @@
 // @ts-check
+// @jessie-check
 
 import { AmountMath, AssetKind, makeIssuerKit } from '@agoric/ertp';
 import { E } from '@endo/eventual-send';
@@ -7,6 +8,7 @@ import { makeNotifierKit } from '@agoric/notifier';
 import { makeLegacyMap } from '@agoric/store';
 import { Nat, isNat } from '@agoric/nat';
 import { assert, details as X } from '@agoric/assert';
+import { makeSet } from 'jessie.js';
 import {
   calculateMedian,
   natSafeMath,
@@ -294,7 +296,9 @@ const start = async (
     }
 
     const roundTimedOut = timedOut(_roundId, blockTimestamp);
-    if (!roundTimedOut) return;
+    if (!roundTimedOut) {
+      return;
+    }
 
     const prevId = subtract(_roundId, 1);
 
@@ -347,10 +351,13 @@ const start = async (
    * @param {bigint} blockTimestamp
    */
   const oracleInitializeNewRound = (_roundId, _oracle, blockTimestamp) => {
-    if (!newRound(_roundId)) return;
-    const lastStarted = oracleStatuses.get(_oracle).lastStartedRound; // cache storage reads
-    if (_roundId <= add(lastStarted, restartDelay) && lastStarted !== 0n)
+    if (!newRound(_roundId)) {
       return;
+    }
+    const lastStarted = oracleStatuses.get(_oracle).lastStartedRound; // cache storage reads
+    if (_roundId <= add(lastStarted, restartDelay) && lastStarted !== 0n) {
+      return;
+    }
     initializeNewRound(_roundId, blockTimestamp);
 
     oracleStatuses.get(_oracle).lastStartedRound = _roundId;
@@ -413,8 +420,9 @@ const start = async (
     if (
       details.get(_roundId).submissions.length <
       details.get(_roundId).maxSubmissions
-    )
+    ) {
       return;
+    }
     details.delete(_roundId);
   };
 
@@ -465,20 +473,28 @@ const start = async (
       canSupersede = supersedable(subtract(_roundId, 1), blockTimestamp);
     }
 
-    if (startingRound === 0n) return 'not enabled oracle';
-    if (startingRound > _roundId) return 'not yet enabled oracle';
-    if (oracleStatuses.get(_oracle).endingRound < _roundId)
+    if (startingRound === 0n) {
+      return 'not enabled oracle';
+    }
+    if (startingRound > _roundId) {
+      return 'not yet enabled oracle';
+    }
+    if (oracleStatuses.get(_oracle).endingRound < _roundId) {
       return 'no longer allowed oracle';
-    if (oracleStatuses.get(_oracle).lastReportedRound >= _roundId)
+    }
+    if (oracleStatuses.get(_oracle).lastReportedRound >= _roundId) {
       return 'cannot report on previous rounds';
+    }
     if (
       _roundId !== rrId &&
       _roundId !== add(rrId, 1) &&
       !previousAndCurrentUnanswered(_roundId, rrId)
-    )
+    ) {
       return 'invalid round to report';
-    if (_roundId !== 1n && !canSupersede)
+    }
+    if (_roundId !== 1n && !canSupersede) {
       return 'previous round not supersedable';
+    }
     return '';
   };
 
@@ -610,7 +626,7 @@ const start = async (
       if (keyToRecords.has(oracleKey)) {
         records = keyToRecords.get(oracleKey);
       } else {
-        records = new Set();
+        records = makeSet();
         keyToRecords.init(oracleKey, records);
 
         const oracleStatus = makeOracleStatus(

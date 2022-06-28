@@ -1,4 +1,5 @@
 // @ts-check
+// @jessie-check
 
 import '../../../exported.js';
 import './types.js';
