@@ -16,8 +16,6 @@ export {
   observeNotifier,
   observeIterator,
   observeIteration,
-  // deprecated. Consider not reexporting
-  updateFromIterable,
   updateFromNotifier,
   // Consider deprecating or not reexporting
   makeAsyncIterableFromNotifier,

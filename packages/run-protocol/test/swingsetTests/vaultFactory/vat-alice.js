@@ -5,6 +5,8 @@ import { Far } from '@endo/marshal';
 import { assert, details as X, q } from '@agoric/assert';
 import { AmountMath } from '@agoric/ertp';
 
+/** @typedef {import('../../../src/vaultFactory/vaultFactory').VaultFactoryContract} VFC */
+
 /**
  *
  * @param {(msg: any)=> void} log
@@ -18,15 +20,20 @@ const build = async (log, zoe, brands, payments, timer) => {
   const [moolaBrand] = brands;
   const [moolaPayment] = payments;
 
+  /**
+   * @param {VFC['publicFacet']} vaultFactory
+   */
   const oneLoanWithInterest = async vaultFactory => {
     log(`=> alice.oneLoanWithInterest called`);
 
     const runIssuer = await E(vaultFactory).getRunIssuer();
     const runBrand = await E(runIssuer).getBrand();
 
+    const moolaManager = E(vaultFactory).getCollateralManager(moolaBrand);
+
     /** @type {UserSeat<VaultKit>} */
     const loanSeat = await E(zoe).offer(
-      E(vaultFactory).makeVaultInvitation(),
+      E(moolaManager).makeVaultInvitation(),
       harden({
         give: { Collateral: AmountMath.make(moolaBrand, 100n) },
         want: { RUN: AmountMath.make(runBrand, 500000n) },

@@ -93,7 +93,7 @@ export const start = async (zcf, privateArgs) => {
     zcf.getTerms().governedParams,
   );
 
-  const factory = makeVaultDirector(
+  const director = makeVaultDirector(
     zcf,
     vaultDirectorParamManager,
     debtMint,
@@ -102,8 +102,8 @@ export const start = async (zcf, privateArgs) => {
   );
 
   return harden({
-    creatorFacet: factory.creator,
-    publicFacet: factory.public,
+    creatorFacet: director.creator,
+    publicFacet: director.public,
   });
 };
 

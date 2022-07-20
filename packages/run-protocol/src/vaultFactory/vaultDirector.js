@@ -8,7 +8,6 @@ import '@agoric/governance/src/exported.js';
 
 import { fit, keyEQ, M, makeScalarMap } from '@agoric/store';
 import {
-  assertProposalShape,
   getAmountOut,
   getAmountIn,
 } from '@agoric/zoe/src/contractSupport/index.js';
@@ -161,55 +160,7 @@ const initState = (
   };
 };
 
-/**
- * Make a loan in the vaultManager based on the collateral type.
- *
- * @deprecated
- * @param {MethodContext} context
- */
-const makeVaultInvitation = ({ state }) => {
-  const { collateralTypes, zcf } = state;
-
-  /** @param {ZCFSeat} seat */
-  const makeVaultHook = async seat => {
-    assertProposalShape(seat, {
-      give: { Collateral: null },
-      want: { RUN: null },
-    });
-    const {
-      give: { Collateral: collateralAmount },
-      want: { RUN: requestedAmount },
-    } = seat.getProposal();
-    const { brand: brandIn } = collateralAmount;
-    assert(
-      collateralTypes.has(brandIn),
-      X`Not a supported collateral type ${brandIn}`,
-    );
-
-    assert(
-      AmountMath.isGTE(
-        requestedAmount,
-        state.directorParamManager.getMinInitialDebt(),
-      ),
-      X`The request must be for at least ${
-        state.directorParamManager.getMinInitialDebt().value
-      }. ${requestedAmount.value} is too small`,
-    );
-
-    /** @type {VaultManager} */
-    const mgr = collateralTypes.get(brandIn);
-    return mgr.makeVaultKit(seat);
-  };
-  return zcf.makeInvitation(makeVaultHook, 'MakeVault');
-};
-
 // TODO put on machineFacet for use again in publicFacet
-/**
- * Make a loan in the vaultManager based on the collateral type.
- *
- * @deprecated
- * @param {MethodContext} context
- */
 const getCollaterals = async ({ state }) => {
   const { collateralTypes } = state;
   // should be collateralTypes.map((vm, brand) => ({
@@ -473,10 +424,6 @@ const publicBehavior = {
    */
   getMetrics: ({ state }) => state.metricsSubscription,
 
-  /** @deprecated use getCollateralManager and then makeVaultInvitation instead */
-  makeLoanInvitation: makeVaultInvitation,
-  /** @deprecated use getCollateralManager and then makeVaultInvitation instead */
-  makeVaultInvitation,
   getCollaterals,
   /** @param {MethodContext} context */
   getRunIssuer: ({ state }) => state.debtMint.getIssuerRecord().issuer,

@@ -140,16 +140,6 @@ export const observeIteration = (asyncIterableP, iterationObserver) => {
 };
 
 /**
- * @deprecated Use `observeIteration` instead
- * @template T
- * @param {Partial<IterationObserver<T>>} iterationObserver
- * @param {ERef<AsyncIterable<T>>} asyncIterableP
- * @returns {Promise<undefined>}
- */
-export const updateFromIterable = (iterationObserver, asyncIterableP) =>
-  observeIteration(asyncIterableP, iterationObserver);
-
-/**
  * As updates come in from the possibly remote `notifierP`, update
  * the local `updater`. Since the updates come from a notifier, they
  * are lossy, i.e., once a more recent state can be reported, less recent

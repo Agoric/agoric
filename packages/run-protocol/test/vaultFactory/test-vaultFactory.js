@@ -359,8 +359,8 @@ const setupServices = async (
   // @ts-expect-error cast
   const [
     governorInstance,
-    vaultFactory, // creator
-    lender,
+    factoryCreator, // creator
+    factoryPublic,
     aethVaultManager,
     priceAuthority,
   ] = await Promise.all([
@@ -372,8 +372,8 @@ const setupServices = async (
   ]);
   trace(t, 'pa', {
     governorInstance,
-    vaultFactory,
-    lender,
+    factoryCreator,
+    factoryPublic,
     priceAuthority,
   });
 
@@ -384,8 +384,9 @@ const setupServices = async (
       governorCreatorFacet,
     },
     v: {
-      vaultFactory,
-      lender,
+      vaultFactory: factoryCreator,
+      factoryPublic,
+      lender: E(factoryPublic).getCollateralManager(aeth.brand),
       aethVaultManager,
     },
   };
@@ -2195,8 +2196,7 @@ test('loan too small', async t => {
     }),
   );
   await t.throwsAsync(() => E(aliceLoanSeat).getOfferResult(), {
-    message:
-      /The request must be for at least ".50000n.". ".5000n." is too small/,
+    message: /Requested.*".5250n.".*exceeds max.*".1428n.".* for .*".100n/,
   });
 });
 
@@ -2484,25 +2484,25 @@ test('storage keys', async t => {
   );
 
   // Root vault factory
-  const { lender, vaultFactory } = services.vaultFactory;
+  const { factoryPublic, vaultFactory } = services.vaultFactory;
   t.is(
-    await subscriptionKey(E(lender).getMetrics()),
+    await subscriptionKey(E(factoryPublic).getMetrics()),
     'mockChainStorageRoot.vaultFactory.metrics',
   );
   t.is(
-    await subscriptionKey(E(lender).getElectorateSubscription()),
+    await subscriptionKey(E(factoryPublic).getElectorateSubscription()),
     'mockChainStorageRoot.vaultFactory.governance',
   );
 
   // First manager
-  const manager0 = await E(lender).getCollateralManager(aeth.brand);
+  const manager0 = await E(factoryPublic).getCollateralManager(aeth.brand);
   t.is(
     await subscriptionKey(E(manager0).getMetrics()),
     'mockChainStorageRoot.vaultFactory.manager0.metrics',
   );
   t.is(
     await subscriptionKey(
-      E(lender).getSubscription({
+      E(factoryPublic).getSubscription({
         collateralBrand: aeth.brand,
       }),
     ),
@@ -2522,7 +2522,7 @@ test('storage keys', async t => {
   );
   t.is(
     await subscriptionKey(
-      E(lender).getSubscription({
+      E(factoryPublic).getSubscription({
         collateralBrand: chit.brand,
       }),
     ),
@@ -2541,9 +2541,9 @@ test('director notifiers', async t => {
     500n,
   );
 
-  const { lender, vaultFactory } = services.vaultFactory;
+  const { factoryPublic, vaultFactory } = services.vaultFactory;
 
-  const m = await metricsTracker(t, lender);
+  const m = await metricsTracker(t, factoryPublic);
 
   await m.assertInitial({
     collaterals: [aeth.brand],
@@ -2901,9 +2901,9 @@ test('governance publisher', async t => {
     undefined,
     500n,
   );
-  const { lender } = services.vaultFactory;
+  const { factoryPublic } = services.vaultFactory;
   const directorGovNotifier = makeNotifierFromAsyncIterable(
-    E(lender).getElectorateSubscription(),
+    E(factoryPublic).getElectorateSubscription(),
   );
   let {
     value: { current },
@@ -2916,7 +2916,7 @@ test('governance publisher', async t => {
   t.is(current.ShortfallInvitation.type, 'invitation');
 
   const managerGovNotifier = makeNotifierFromAsyncIterable(
-    E(lender).getSubscription({
+    E(factoryPublic).getSubscription({
       collateralBrand: aeth.brand,
     }),
   );

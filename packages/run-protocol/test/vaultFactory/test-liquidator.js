@@ -369,10 +369,15 @@ const makeDriver = async (t, initialPrice, priceBase) => {
   let currentSeat;
   let notification = {};
   let currentOfferResult;
+  /**
+   * @param {Amount} collateral
+   * @param {Amount} debt
+   */
   const makeVaultDriver = async (collateral, debt) => {
+    const collateralManager = E(lender).getCollateralManager(collateral.brand);
     /** @type {UserSeat<VaultKit>} */
     const vaultSeat = await E(zoe).offer(
-      await E(lender).makeVaultInvitation(),
+      await E(collateralManager).makeVaultInvitation(),
       harden({
         give: { Collateral: collateral },
         want: { RUN: debt },
