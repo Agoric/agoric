@@ -6,6 +6,7 @@ import { matches, makeScalarMapStore } from '@agoric/store';
 import '@agoric/store/exported.js';
 
 import { makeScalarBigMapStore } from '@agoric/vat-data';
+import { iterateLatest, makeFollower } from '@agoric/casting';
 import { withGroundState, makeState } from './state.js';
 
 /**
@@ -242,6 +243,65 @@ export const makeChainStorageCoordinator = (storageNode, marshaller) => {
         defaultStateStore,
       );
       return updateStorageNode(storedValue);
+    },
+  });
+  return coord;
+};
+
+/**
+ * Make a cache coordinator backed by a casting node.
+ *
+ * @param {import('@agoric/casting').Leader} leader
+ * @param {import('@agoric/casting').CastingSpec} castingSpec
+ * @param {import('@agoric/casting').FollowerOptions} followerOptions
+ * @param {(...messages: unknown[]) => void} log
+ */
+export const makeCastingClientCoordinator = async (
+  leader,
+  castingSpec,
+  followerOptions,
+  log = _ => null,
+) => {
+  const follower = makeFollower(castingSpec, leader, followerOptions);
+  const iteratorP = E(iterateLatest(follower))[Symbol.asyncIterator]();
+
+  let finished = false;
+  let currentState;
+
+  const updateState = async () => {
+    const { value, done } = await E(iteratorP).next();
+    // eslint-disable-next-line no-await-in-loop, @jessie.js/no-nested-await
+    currentState = value.value;
+    log('new currentState', currentState);
+    finished = !!done;
+  };
+  // ??? would it be better for the coordinator maker to be synchronous? That
+  // would require Coordinator interface to have an async method to initialize.
+  await updateState();
+
+  // XXX Follower using old API
+  const watchState = async () => {
+    while (!finished) {
+      log('watchState awaiting');
+      // Allow nested awaits (in loop) because it's safe for each to run in a turn
+      // eslint-disable-next-line no-await-in-loop, @jessie.js/no-nested-await
+      await updateState();
+    }
+  };
+
+  watchState().catch(console.error);
+
+  /** @type {import('./types').Coordinator} */
+  const coord = Far('store cache coordinator', {
+    getRecentValue: async key => {
+      log('getRecentValue', key, 'from', currentState);
+      return Promise.resolve(currentState[key]);
+    },
+    setCacheValue: async (key, newValue, guardPattern) => {
+      throw Error('not impl');
+    },
+    updateCacheValue: async (key, updater, guardPattern) => {
+      throw Error('not impl');
     },
   });
   return coord;

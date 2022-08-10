@@ -19,6 +19,7 @@
   "author": "Agoric",
   "license": "Apache-2.0",
   "dependencies": {
+    "@agoric/casting": "^0.1.0",
     "@agoric/store": "^0.7.2",
     "@agoric/vat-data": "^0.3.1",
     "@agoric/vats": "^0.10.0",
