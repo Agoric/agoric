@@ -684,7 +684,7 @@ export default function makeKernelKeeper(
       insistVatID(expectedDecider);
     }
     const p = getKernelPromise(kpid);
-    assert(p.state === 'unresolved', X`${kpid} was already resolved`);
+    assert.equal(p.state, 'unresolved', X`${kpid} was already resolved`);
     if (expectedDecider) {
       assert(
         p.decider === expectedDecider,
@@ -928,14 +928,14 @@ export default function makeKernelKeeper(
   function setDecider(kpid, decider) {
     insistVatID(decider);
     const p = getKernelPromise(kpid);
-    assert(p.state === 'unresolved', X`${kpid} was already resolved`);
+    assert.equal(p.state, 'unresolved', X`${kpid} was already resolved`);
     assert(!p.decider, X`${kpid} has decider ${p.decider}, not empty`);
     kvStore.set(`${kpid}.decider`, decider);
   }
 
   function clearDecider(kpid) {
     const p = getKernelPromise(kpid);
-    assert(p.state === 'unresolved', X`${kpid} was already resolved`);
+    assert.equal(p.state, 'unresolved', X`${kpid} was already resolved`);
     assert(p.decider, X`${kpid} does not have a decider`);
     kvStore.set(`${kpid}.decider`, '');
   }

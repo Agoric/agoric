@@ -139,7 +139,7 @@ export function parseVatSlot(vref) {
   let facet;
   let virtual = false;
   if (delim > 0) {
-    assert(type === 'object' && allocatedByVat, X`invalid vref ${vref}`);
+    assert.equal(type, 'object' && allocatedByVat, X`invalid vref ${vref}`);
     virtual = true;
     id = Nat(BigInt(idSuffix.substr(0, delim)));
     subid = Nat(BigInt(idSuffix.slice(delim + 1)));

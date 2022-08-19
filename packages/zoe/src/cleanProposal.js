@@ -109,7 +109,11 @@ export const coerceAmountKeywordRecord = (
  * @param {ExitRule} exit
  */
 const assertExit = exit =>
-  assert(ownKeys(exit).length === 1, X`exit ${exit} should only have one key`);
+  assert.equal(
+    ownKeys(exit).length,
+    1,
+    X`exit ${exit} should only have one key`,
+  );
 
 /**
  * check that keyword is not in both 'want' and 'give'.

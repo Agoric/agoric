@@ -79,10 +79,13 @@ const build = async (log, zoe) => {
             }),
             questionDetails,
           );
-          assert(installations.binaryVoteCounter === voteCounterInstallation);
-          assert(installations.governedContract === governedInstallation);
-          assert(installations.contractGovernor === governorInstallation);
-          assert(installations.committee === electorateInstallation);
+          assert.equal(
+            installations.binaryVoteCounter,
+            voteCounterInstallation,
+          );
+          assert.equal(installations.governedContract, governedInstallation);
+          assert.equal(installations.contractGovernor, governorInstallation);
+          assert.equal(installations.committee, electorateInstallation);
           await assertContractElectorate(
             zoe,
             governorInstance,

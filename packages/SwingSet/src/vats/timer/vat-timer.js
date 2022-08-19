@@ -21,7 +21,11 @@ export function buildRootObject(vatPowers) {
       },
       setWakeup(baseTime, handler) {
         baseTime = TimeMath.toAbs(baseTime);
-        assert(passStyleOf(handler) === 'remotable', 'bad setWakeup() handler');
+        assert.equal(
+          passStyleOf(handler),
+          'remotable',
+          'bad setWakeup() handler',
+        );
         return D(timerNode).setWakeup(baseTime, handler);
       },
       // can be used after setWakeup(h) or schedule(h)

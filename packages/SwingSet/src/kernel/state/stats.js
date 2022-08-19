@@ -76,7 +76,7 @@ export const makeKernelStats = kernelStatsMetrics => {
     );
     const metricType = allStatsKeys[stat];
     if (gauge) {
-      assert(metricType === 'gauge', `Invalid kernel gauge stat ${stat}`);
+      assert.equal(metricType, 'gauge', `Invalid kernel gauge stat ${stat}`);
     } else {
       assert(!!metricType, `Invalid kernel stat ${stat}`);
     }

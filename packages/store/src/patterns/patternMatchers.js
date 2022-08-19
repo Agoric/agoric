@@ -948,7 +948,7 @@ const makePatternKit = () => {
         specB = specimen.slice(0, baseLen);
         specR = specimen.slice(baseLen);
       } else {
-        assert(baseStyle === 'copyRecord');
+        assert.equal(baseStyle, 'copyRecord');
         // Not yet frozen! Mutated in place
         specB = {};
         specR = {};
@@ -1016,7 +1016,7 @@ const makePatternKit = () => {
         specB = specimen.slice(0, baseLen);
         specR = specimen.slice(baseLen);
       } else {
-        assert(baseStyle === 'copyRecord');
+        assert.equal(baseStyle, 'copyRecord');
         // Not yet frozen! Mutated in place
         specB = {};
         specR = {};

@@ -43,7 +43,11 @@ const ratioPropertyNames = ['numerator', 'denominator'];
 export const assertIsRatio = ratio => {
   assertRecord(ratio, 'ratio');
   const keys = Object.keys(ratio);
-  assert(keys.length === 2, X`Ratio ${ratio} must be a record with 2 fields.`);
+  assert.equal(
+    keys.length,
+    2,
+    X`Ratio ${ratio} must be a record with 2 fields.`,
+  );
   for (const name of keys) {
     assert(
       ratioPropertyNames.includes(name),

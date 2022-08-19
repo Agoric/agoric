@@ -295,7 +295,7 @@ const makeParamManagerBuilder = (publisherKit, zoe) => {
 
   const getTypedParam = (type, name) => {
     const param = namesToParams.get(name);
-    assert(type === param.getType(), X`${name} is not ${type}`);
+    assert.equal(type, param.getType(), X`${name} is not ${type}`);
     return param.getValue();
   };
 

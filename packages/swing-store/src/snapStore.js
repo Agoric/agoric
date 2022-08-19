@@ -242,7 +242,7 @@ export function makeSnapStore(
       await filter(hashPath(hash), createGunzip(), raw);
       const actual = await fileHash(raw);
       // console.log('load', { raw, hash });
-      assert(actual === hash, d`actual hash ${actual} !== expected ${hash}`);
+      assert.equal(actual, hash, d`actual hash ${actual} !== expected ${hash}`);
       // be sure to await loadRaw before exiting withTempName
       const result = await loadRaw(raw);
       return result;

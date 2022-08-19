@@ -526,7 +526,7 @@ export function commsVatDriver(t, verbose = false) {
    * @param {number} lag  How much lag the remote will be subjected to.
    */
   function injectLag(who, lag = 1) {
-    assert(typeof lag === 'number' && lag >= 0);
+    assert.equal(typeof lag, 'number' && lag >= 0);
     const remote = remotes.get(who);
     if (lag > remote.lag) {
       remote.delay += lag - remote.lag;

@@ -214,7 +214,7 @@ const mockChain = genesisData => {
          * @param {Brand} brand
          */
         getAccountState: (address, brand) => {
-          assert(brand === stakingBrand, X`unexpected brand: ${brand}`);
+          assert.equal(brand, stakingBrand, X`unexpected brand: ${brand}`);
           assert(bankBalance.has(address), X`no such account: ${address}`);
 
           currentTime += 10n;

@@ -11,7 +11,7 @@ export function buildRootObject(vatPowers) {
   async function checkImport(getCap) {
     const bcap = await getCap();
     const bcap2 = await getCap();
-    assert(bcap === bcap2, 'bundlecaps do not match'); // should be consistent
+    assert.equal(bcap, bcap2, 'bundlecaps do not match'); // should be consistent
     const bundle = D(bcap).getBundle();
     assert.typeof(bundle, 'object');
     const endowments = harden({ big: 'big' });

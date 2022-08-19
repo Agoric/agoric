@@ -31,8 +31,8 @@ const setup = () => {
   const storageNodeState = {};
   const chainStorage = makeChainStorageRoot(
     message => {
-      assert(message.key === 'cache');
-      assert(message.method === 'set');
+      assert.equal(message.key, 'cache');
+      assert.equal(message.method, 'set');
       storageNodeState.cache = message.value;
     },
     'swingset',

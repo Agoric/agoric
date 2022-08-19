@@ -128,7 +128,7 @@ export function makeVatKeeper(
   }
 
   function initializeReapCountdown(count) {
-    assert(count === 'never' || isNat(count), `bad reapCountdown ${count}`);
+    assert.equal(count, 'never' || isNat(count), `bad reapCountdown ${count}`);
     kvStore.set(`${vatID}.reapInterval`, `${count}`);
     kvStore.set(`${vatID}.reapCountdown`, `${count}`);
   }

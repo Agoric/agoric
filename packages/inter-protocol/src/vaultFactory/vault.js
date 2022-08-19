@@ -239,7 +239,7 @@ const helperBehavior = {
 
   assertActive: ({ state }) => {
     const { phase } = state;
-    assert(phase === Phase.ACTIVE);
+    assert.equal(phase, Phase.ACTIVE);
   },
 
   assertCloseable: ({ state }) => {

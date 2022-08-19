@@ -100,7 +100,7 @@ export const makeICS20TransferPacket = async ({
  */
 export const assertICS20TransferPacketAck = async ack => {
   const { result, error } = safeJSONParseObject(ack);
-  assert(error === undefined, X`ICS20 transfer error ${error}`);
+  assert.equal(error, undefined, X`ICS20 transfer error ${error}`);
   assert(result !== undefined, X`ICS20 transfer missing result in ${ack}`);
   if (result !== ICS20_TRANSFER_SUCCESS_RESULT) {
     // We don't want to throw an error here, because we want only to be able to

@@ -405,7 +405,7 @@ export function buildRootObject(vatPowers, _vatParameters, baggage) {
 
     let isCriticalVat = false;
     if (critical) {
-      assert(critical === criticalVatKey, 'invalid criticalVatKey');
+      assert.equal(critical, criticalVatKey, 'invalid criticalVatKey');
       isCriticalVat = true;
     }
 

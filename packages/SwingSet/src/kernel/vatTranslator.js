@@ -35,7 +35,7 @@ function makeTranslateKernelDeliveryToVatDelivery(vatID, kernelKeeper) {
       assert(parseVatSlot(targetSlot).allocatedByVat, 'deliver() to wrong vat');
     } else if (type === 'promise') {
       const p = kernelKeeper.getKernelPromise(target);
-      assert(p.decider === vatID, 'wrong decider');
+      assert.equal(p.decider, vatID, 'wrong decider');
     }
     const inputSlots = msg.methargs.slots.map(slot =>
       mapKernelSlotToVatSlot(slot),
@@ -506,7 +506,7 @@ function makeTranslateVatSyscallToKernelSyscall(vatID, kernelKeeper) {
     insistCapData(args);
     const dev = mapVatSlotToKernelSlot(target);
     const { type } = parseKernelSlot(dev);
-    assert(type === 'device', X`doCallNow must target a device, not ${dev}`);
+    assert.equal(type, 'device', X`doCallNow must target a device, not ${dev}`);
     for (const slot of args.slots) {
       assert(
         parseVatSlot(slot).type !== 'promise',
@@ -685,7 +685,7 @@ function makeTranslateKernelSyscallResultToVatSyscallResult(
         }
       }
       case 'vatstoreGet':
-        assert(successFlag === 'ok', 'unexpected KSR error');
+        assert.equal(successFlag, 'ok', 'unexpected KSR error');
         if (resultData) {
           assert.typeof(resultData, 'string');
           return harden(['ok', resultData]);
@@ -693,7 +693,7 @@ function makeTranslateKernelSyscallResultToVatSyscallResult(
           return harden(['ok', null]);
         }
       case 'vatstoreGetAfter':
-        assert(successFlag === 'ok', 'unexpected KSR error');
+        assert.equal(successFlag, 'ok', 'unexpected KSR error');
         if (resultData) {
           assert(Array.isArray(resultData));
           return harden(['ok', resultData]);
@@ -701,8 +701,8 @@ function makeTranslateKernelSyscallResultToVatSyscallResult(
           return harden(['ok', [undefined, undefined]]);
         }
       default:
-        assert(successFlag === 'ok', 'unexpected KSR error');
-        assert(resultData === null);
+        assert.equal(successFlag, 'ok', 'unexpected KSR error');
+        assert.equal(resultData, null);
         return harden(['ok', null]);
     }
   }

@@ -48,7 +48,7 @@ export function buildCommsDispatch(syscall, _state, _helpers, _vatPowers) {
 
   function doStartVat(vatParametersCapData) {
     insistCapData(vatParametersCapData);
-    assert(vatParametersCapData.slots.length === 0, 'comms got slots');
+    assert.equal(vatParametersCapData.slots.length, 0, 'comms got slots');
     const vatParameters = parse(vatParametersCapData.body) || {};
     const { identifierBase = 0, sendExplicitSeqNums } = vatParameters;
     state.initialize(controller, identifierBase);
@@ -91,7 +91,7 @@ export function buildCommsDispatch(syscall, _state, _helpers, _vatPowers) {
       try {
         const methargsdata = JSON.parse(methargs.body);
         const [method, [message]] = methargsdata;
-        assert(method === 'receive', X`unexpected method ${method}`);
+        assert.equal(method, 'receive', X`unexpected method ${method}`);
         // the vat-tp integrity layer is a regular vat, so when they send the
         // received message to us, it will be embedded in a JSON array
         return messageFromRemote(remoteID, message, result);

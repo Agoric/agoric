@@ -196,7 +196,7 @@ export function makeWatchedPromiseManager(
       const vpid = convertValToSlot(p);
       assert(vpid, 'invalid promise');
       const { type } = parseVatSlot(vpid);
-      assert(type === 'promise', 'watchPromise only watches promises');
+      assert.equal(type, 'promise', 'watchPromise only watches promises');
       if (watchedPromiseTable.has(vpid)) {
         const watches = watchedPromiseTable.get(vpid);
         watchedPromiseTable.set(vpid, harden([...watches, [watcher, ...args]]));

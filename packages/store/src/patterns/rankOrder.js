@@ -227,7 +227,7 @@ export const isRankSorted = (passables, compare) => {
   if (subMemoOfSorted.has(passables)) {
     return true;
   }
-  assert(passStyleOf(passables) === 'copyArray');
+  assert.equal(passStyleOf(passables), 'copyArray');
   for (let i = 1; i < passables.length; i += 1) {
     if (compare(passables[i - 1], passables[i]) >= 1) {
       return false;

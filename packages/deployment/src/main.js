@@ -116,7 +116,7 @@ const main = async (progname, rawArgs, powers) => {
 
   const needReMain = async reArgs => {
     const code = await reMain(reArgs);
-    assert(code === 0, X`Unexpected exit: ${code}`);
+    assert.equal(code, 0, X`Unexpected exit: ${code}`);
   };
 
   const initHint = () => {
@@ -849,7 +849,7 @@ ${chalk.yellow.bold(`ag-setup-solo --netconfig='${dwebHost}/network-config'`)}
             message: `Type "yes" if you are sure you want to reset ${dir} state:`,
           },
         ]);
-        assert(CONFIRM === 'yes', X`Aborting due to user request`);
+        assert.equal(CONFIRM, 'yes', X`Aborting due to user request`);
       }
 
       // We no longer are provisioned or have Cosmos.

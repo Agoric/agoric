@@ -74,7 +74,7 @@ export function makeKernel(state, syscall) {
       return undefined;
     }
     const status = state.getPromiseStatus(lpid);
-    assert(status === 'unresolved', X`result ${lpid} is already resolved`);
+    assert.equal(status, 'unresolved', X`result ${lpid} is already resolved`);
     // TODO: reject somehow rather than crashing weirdly if we are not
     // already the decider, but I'm not sure how we could hit that case.
     state.changeDeciderToKernel(lpid);

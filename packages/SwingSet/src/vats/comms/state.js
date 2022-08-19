@@ -661,7 +661,7 @@ export function makeState(syscall) {
 
   function insistPromiseIsUnresolved(lpid) {
     const status = store.getRequired(`${lpid}.status`);
-    assert(status === 'unresolved', X`${lpid} already resolved`);
+    assert.equal(status, 'unresolved', X`${lpid} already resolved`);
   }
 
   function subscribeRemoteToPromise(lpid, subscriber) {

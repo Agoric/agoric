@@ -62,23 +62,23 @@ export function insistVatDeliveryObject(vdo) {
       break;
     }
     case 'changeVatOptions': {
-      assert(rest.length === 1);
+      assert.equal(rest.length, 1);
       break;
     }
     case 'startVat': {
-      assert(rest.length === 1);
+      assert.equal(rest.length, 1);
       const [vatParameters] = rest;
       insistCapData(vatParameters);
       break;
     }
     case 'stopVat': {
-      assert(rest.length === 1);
+      assert.equal(rest.length, 1);
       const [disconnectObjectCapData] = rest;
       insistCapData(disconnectObjectCapData);
       break;
     }
     case 'bringOutYourDead': {
-      assert(rest.length === 0);
+      assert.equal(rest.length, 0);
       break;
     }
     default:

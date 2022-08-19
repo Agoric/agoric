@@ -227,7 +227,7 @@ const start = async (zcf, privateArgs) => {
 
   /** @param {ClosingRule} closingRule */
   const validateTimer = closingRule => {
-    assert(closingRule.timer === timer, 'closing rule must use my timer');
+    assert.equal(closingRule.timer, timer, 'closing rule must use my timer');
     return true;
   };
 

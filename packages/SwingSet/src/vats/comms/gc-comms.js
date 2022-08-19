@@ -146,7 +146,7 @@ function makeGCKit(state, syscall, transmit) {
     const types = ['dropExport', 'retireExport', 'retireImport'];
     for (const submsg of subMessages) {
       const [name, type, rref] = submsg.split(':');
-      assert(name === 'gc');
+      assert.equal(name, 'gc');
       assert(types.includes(type), `unknown GC message type ${type}`);
       assert.equal(parseRemoteSlot(rref).type, 'object');
       gc[`${type}s`].push(rref);

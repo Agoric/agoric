@@ -11,7 +11,7 @@ export default function setup(syscall, state, _helpers, vatPowers) {
         const argb = JSON.parse(args.body);
         const deviceIndex = argb[1].d1.index;
         deviceRef = args.slots[deviceIndex];
-        assert(deviceRef === 'd-70', X`bad deviceRef ${deviceRef}`);
+        assert.equal(deviceRef, 'd-70', X`bad deviceRef ${deviceRef}`);
       } else if (method === 'step1') {
         testLog(`callNow`);
         const setArgs = harden({ body: JSON.stringify([1, 2]), slots: [] });

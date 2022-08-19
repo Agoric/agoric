@@ -604,7 +604,11 @@ export function makeLoopbackProtocolHandler(
     },
     async onListenRemove(port, localAddr, listenHandler, _protocolHandler) {
       const [lport, lhandler] = listeners.get(localAddr);
-      assert(lport === port, X`Port does not match listener on ${localAddr}`);
+      assert.equal(
+        lport,
+        port,
+        X`Port does not match listener on ${localAddr}`,
+      );
       assert(
         lhandler === listenHandler,
         X`Listen handler does not match listener on ${localAddr}`,

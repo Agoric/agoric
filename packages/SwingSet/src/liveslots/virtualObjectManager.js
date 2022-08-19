@@ -647,7 +647,7 @@ export function makeVirtualObjectManager(
             m,
           );
           for (const [idx, facet] of facetNames.entries()) {
-            assert(facet === facets[idx], m);
+            assert.equal(facet, facets[idx], m);
           }
         } else {
           durableKindDescriptor.facets = facetNames;

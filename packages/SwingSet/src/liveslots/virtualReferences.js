@@ -230,7 +230,7 @@ export function makeVirtualReferenceManager(
   function rememberFacetNames(kindID, facetNames) {
     const kindInfo = kindInfoTable.get(`${kindID}`);
     assert(kindInfo, `no kind info for ${kindID}`);
-    assert(kindInfo.facetNames === undefined);
+    assert.equal(kindInfo.facetNames, undefined);
     kindInfo.facetNames = facetNames;
   }
 
@@ -401,7 +401,7 @@ export function makeVirtualReferenceManager(
   // for testing only
   function getReachableRefCount(vref) {
     const { type, virtual, allocatedByVat, baseRef } = parseVatSlot(vref);
-    assert(type === 'object');
+    assert.equal(type, 'object');
     if (allocatedByVat) {
       if (virtual) {
         return getRefCount(baseRef);

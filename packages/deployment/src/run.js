@@ -104,7 +104,7 @@ export const running = (process, { exec, spawn }) => {
 
     needDoRun: async (cmd, ...opts) => {
       const ret = await it.doRun(cmd, ...opts);
-      assert(ret === 0, X`Aborted with exit code ${ret}`);
+      assert.equal(ret, 0, X`Aborted with exit code ${ret}`);
       return ret;
     },
   });

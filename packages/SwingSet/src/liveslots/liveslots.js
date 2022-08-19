@@ -296,7 +296,7 @@ function build(
       deadBaseRefs.sort();
       for (const baseRef of deadBaseRefs) {
         const { virtual, allocatedByVat, type } = parseVatSlot(baseRef);
-        assert(type === 'object', `unprepared to track ${type}`);
+        assert.equal(type, 'object', `unprepared to track ${type}`);
         if (virtual) {
           // Representative: send nothing, but perform refcount checking
           // eslint-disable-next-line no-use-before-define
@@ -809,7 +809,11 @@ function build(
   function revivePromise(slot) {
     meterControl.assertNotMetered();
     const { type } = parseVatSlot(slot);
-    assert(type === 'promise', X`revivePromise called on non-promise ${slot}`);
+    assert.equal(
+      type,
+      'promise',
+      X`revivePromise called on non-promise ${slot}`,
+    );
     assert(
       !getValForSlot(slot),
       X`revivePromise called on pre-existing ${slot}`,
@@ -1512,7 +1516,7 @@ function build(
    */
   async function stopVat(disconnectObjectCapData) {
     insistCapData(disconnectObjectCapData);
-    assert(disconnectObjectCapData.slots.length === 0);
+    assert.equal(disconnectObjectCapData.slots.length, 0);
     assert(
       !relaxDurabilityRules,
       'stopVat not available when relaxDurabilityRules is true',

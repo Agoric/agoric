@@ -79,7 +79,7 @@ const makeBinaryVoteCounter = (questionSpec, threshold, instance) => {
 
   /** @type {SubmitVote} */
   const submitVote = (voterHandle, chosenPositions, shares = 1n) => {
-    assert(chosenPositions.length === 1, 'only 1 position allowed');
+    assert.equal(chosenPositions.length, 1, 'only 1 position allowed');
     const [position] = chosenPositions;
     assert(
       positionIncluded(positions, position),

@@ -206,7 +206,7 @@ export function makeDeliveryKit(
       const sci = submsg.indexOf(';');
       assert(sci !== -1, X`missing semicolon in resolve ${submsg}`);
       const pieces = submsg.slice(0, sci).split(':');
-      assert(pieces[0] === 'resolve');
+      assert.equal(pieces[0], 'resolve');
       const rejected = pieces[1] === 'reject';
       assert(rejected || pieces[1] === 'fulfill');
       const rpid = pieces[2];
@@ -258,7 +258,7 @@ export function makeDeliveryKit(
       }
     }
 
-    assert(type === 'promise');
+    assert.equal(type, 'promise');
     // the promise might be resolved already
     const status = state.getPromiseStatus(target);
     assert(status);

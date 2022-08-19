@@ -17,7 +17,7 @@ export const zeroPad = (n, size) => {
   assert(nStr.length <= size);
   const str = `00000000000000000000${nStr}`;
   const result = str.substring(str.length - size);
-  assert(result.length === size);
+  assert.equal(result.length, size);
   return result;
 };
 harden(zeroPad);
@@ -212,7 +212,7 @@ const decodeArray = (encoded, decodePassable) => {
       elemChars.push(c);
     }
   }
-  assert(elemChars.length === 0, X`encoding terminated early: ${encoded}`);
+  assert.equal(elemChars.length, 0, X`encoding terminated early: ${encoded}`);
   return harden(elements);
 };
 
@@ -224,7 +224,7 @@ const encodeRecord = (record, encodePassable) => {
 const decodeRecord = (encoded, decodePassable) => {
   assert(encoded.startsWith('('));
   const keysvals = decodeArray(encoded.substring(1), decodePassable);
-  assert(keysvals.length === 2, X`expected keys,values pair: ${encoded}`);
+  assert.equal(keysvals.length, 2, X`expected keys,values pair: ${encoded}`);
   const [keys, vals] = keysvals;
   assert(
     passStyleOf(keys) === 'copyArray' &&
@@ -245,7 +245,7 @@ const encodeTagged = (tagged, encodePassable) =>
 const decodeTagged = (encoded, decodePassable) => {
   assert(encoded.startsWith(':'));
   const tagpayload = decodeArray(encoded.substring(1), decodePassable);
-  assert(tagpayload.length === 2, X`expected tag,payload pair: ${encoded}`);
+  assert.equal(tagpayload.length, 2, X`expected tag,payload pair: ${encoded}`);
   const [tag, payload] = tagpayload;
   assert(
     passStyleOf(tag) === 'string',

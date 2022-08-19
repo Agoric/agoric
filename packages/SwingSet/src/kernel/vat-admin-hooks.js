@@ -120,7 +120,7 @@ export function makeVatAdminHooks(tools) {
 
     changeOptions(argsCapData) {
       // marshal([vatID, options]) -> null
-      assert(argsCapData.slots.length === 0);
+      assert.equal(argsCapData.slots.length, 0);
       const args = JSON.parse(argsCapData.body);
       const [vatID, options] = args;
       insistVatID(vatID);

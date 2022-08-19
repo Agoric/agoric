@@ -245,14 +245,14 @@ function makeTester(htest, out) {
      * @param {string=} message
      */
     true(value, message = 'should be true') {
-      assert(value === true, message);
+      assert.equal(value, true, message);
     },
     /**
      * @param {unknown} value
      * @param {string=} message
      */
     false(value, message = 'should be false') {
-      assert(value === false, message);
+      assert.equal(value, false, message);
     },
     /** @type {(a: unknown, b: unknown, message?: string) => void} */
     is(a, b, message = 'should be identical') {
@@ -265,7 +265,7 @@ function makeTester(htest, out) {
     /** @type {(actual: unknown, expected: unknown, message?: string) => void } */
     deepEqual(actual, expected, message = 'should be deep equal') {
       const delta = deepDifference(actual, expected);
-      assert(delta === null, `${message}: ${JSON.stringify(delta)}`);
+      assert.equal(delta, null, `${message}: ${JSON.stringify(delta)}`);
     },
     /** @type {(a: unknown, b: unknown, message?: string) => void} */
     notDeepEqual(a, b, message = 'should not be deep equal') {

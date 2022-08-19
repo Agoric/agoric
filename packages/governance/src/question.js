@@ -134,7 +134,11 @@ function assertClosingRule(closingRule) {
   );
   Nat(closingRule?.deadline);
   const timer = closingRule?.timer;
-  assert(passStyleOf(timer) === 'remotable', X`Timer must be a timer ${timer}`);
+  assert.equal(
+    passStyleOf(timer),
+    'remotable',
+    X`Timer must be a timer ${timer}`,
+  );
 }
 
 const assertEnumIncludes = (enumeration, value, name) => {

@@ -184,7 +184,7 @@ function makeKRTranslator(deviceID, kernelKeeper) {
 
   function kernelResultToDeviceResult(type, kres) {
     const [successFlag, resultData] = kres;
-    assert(successFlag === 'ok', 'unexpected KSR error');
+    assert.equal(successFlag, 'ok', 'unexpected KSR error');
     switch (type) {
       case 'vatstoreGet': {
         if (resultData) {
@@ -212,7 +212,7 @@ function makeKRTranslator(deviceID, kernelKeeper) {
         return harden(['ok', dresult]);
       }
       default:
-        assert(resultData === null);
+        assert.equal(resultData, null);
         return harden(['ok', null]);
     }
   }

@@ -40,7 +40,7 @@ export const makeMakeSwapInvitation = (zcf, provideVPool) => {
       // `amountIn` is not enough to sell for stopAfter so just sell it all
       prices = pool.getPriceForInput(amountIn, amountOut);
     }
-    assert(amountIn.brand === prices.swapperGives.brand);
+    assert.equal(amountIn.brand, prices.swapperGives.brand);
     return pool.allocateGainsAndLosses(seat, prices);
   };
 

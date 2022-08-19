@@ -234,7 +234,11 @@ const iterUnion = xyi => {
 const iterDisjointUnion = xyi => {
   const result = [];
   for (const [m, xc, yc] of xyi) {
-    assert(xc === 0n || yc === 0n, X`Sets must not have common elements: ${m}`);
+    assert.equal(
+      xc === 0n || yc,
+      0n,
+      X`Sets must not have common elements: ${m}`,
+    );
     if (xc >= 1n) {
       result.push(m);
     } else {
