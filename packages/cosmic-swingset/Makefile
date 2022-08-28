@@ -144,6 +144,11 @@ scenario2-run-chain-economy: t1/decentral-economy-config.json
 		OTEL_EXPORTER_PROMETHEUS_PORT=$(OTEL_EXPORTER_PROMETHEUS_PORT) \
 		$(AGC) --home=t1/n0 start --log_level=warn $(AGC_START_ARGS)
 
+scenario2-run-chain-psm: ../vats/decentral-psm-config.json
+	CHAIN_BOOTSTRAP_VAT_CONFIG="$$PWD/../vats/decentral-psm-config.json" \
+		OTEL_EXPORTER_PROMETHEUS_PORT=$(OTEL_EXPORTER_PROMETHEUS_PORT) \
+		$(AGC) --home=t1/n0 start --log_level=warn $(AGC_START_ARGS)
+
 scenario2-run-chain:
 	OTEL_EXPORTER_PROMETHEUS_PORT=$(OTEL_EXPORTER_PROMETHEUS_PORT) \
 		$(AGC) --home=t1/n0 start --log_level=warn $(AGC_START_ARGS)

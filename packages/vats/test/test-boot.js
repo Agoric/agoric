@@ -1,7 +1,7 @@
 // @ts-check
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { test } from '@agoric/swingset-vat/tools/prepare-test-env-ava.js';
-import { E, Far } from '@endo/far';
+import { E, Far, passStyleOf } from '@endo/far';
 import bundleSource from '@endo/bundle-source';
 import {
   makeFakeVatAdmin,
@@ -11,6 +11,7 @@ import buildManualTimer from '@agoric/zoe/tools/manualTimer.js';
 
 import { makeZoeKit } from '@agoric/zoe';
 import { buildRootObject } from '../src/core/boot.js';
+import { buildRootObject as buildPSMRootObject } from '../src/core/boot-psm.js';
 import { bridgeCoreEval } from '../src/core/chain-behaviors.js';
 import { makePromiseSpace } from '../src/core/utils.js';
 import { buildRootObject as bankRoot } from '../src/vat-bank.js';
@@ -78,6 +79,61 @@ const makeMock = t =>
       }),
     },
   });
+
+const mockSwingsetVats = mock => {
+  const { admin: fakeVatAdmin } = makeFakeVatAdmin(() => {});
+  const fakeBundleCaps = new Map(); // {} -> name
+  const getNamedBundleCap = name => {
+    const bundleCap = harden({});
+    fakeBundleCaps.set(bundleCap, name);
+    return bundleCap;
+  };
+  const getBundleIDByName = name => `b1-${name}`;
+  const getBundleCap = id => devices.vatAdmin.getBundleCap(id);
+
+  const createVat = (bundleCap, options) => {
+    const name = fakeBundleCaps.get(bundleCap);
+    assert(name);
+    switch (name) {
+      case 'zcf':
+        return fakeVatAdmin.createVat(zcfBundleCap, options);
+      default: {
+        const buildRoot = vatRoots[name];
+        if (!buildRoot) {
+          throw Error(`TODO: load vat ${name}`);
+        }
+        const vatParameters = { ...options?.vatParameters };
+        if (name === 'zoe') {
+          // basic-behaviors.js:buildZoe() provides hard-coded zcf BundleName
+          // and vat-zoe.js ignores vatParameters, but this would be the
+          // preferred way to pass the name.
+          vatParameters.zcfBundleName = 'zcf';
+        }
+        return { root: buildRoot({}, vatParameters), admin: {} };
+      }
+    }
+  };
+  const createVatByName = name => {
+    const bundleCap = getNamedBundleCap(name);
+    return createVat(bundleCap);
+  };
+
+  const vats = {
+    ...mock.vats,
+    vatAdmin: /** @type { any } */ ({
+      createVatAdminService: () =>
+        Far('vatAdminSvc', {
+          getNamedBundleCap,
+          createVat,
+          createVatByName,
+          getBundleIDByName,
+          getBundleCap,
+          waitForBundleCap: getBundleCap,
+        }),
+    }),
+  };
+  return vats;
+};
 
 const argvByRole = {
   chain: {
@@ -222,6 +278,43 @@ test('bootstrap provides a way to pass items to CORE_EVAL', async t => {
     // @ts-expect-error Device<T> is a little goofy
     { D: d => d, logger: t.log },
     { argv: argvByRole.chain, governanceActions: false },
+  );
+
+  await E(root).produceItem('swissArmyKnife', [1, 2, 3]);
+  t.deepEqual(await E(root).consumeItem('swissArmyKnife'), [1, 2, 3]);
+  await E(root).resetItem('swissArmyKnife');
+  await E(root).produceItem('swissArmyKnife', 4);
+  t.deepEqual(await E(root).consumeItem('swissArmyKnife'), 4);
+});
+
+const psmParams = {
+  anchorAssets: [{ denom: 'ibc/toyusdc' }],
+  economicCommitteeAddresses: [],
+  argv: { bootMsg: {} },
+};
+
+test(`PSM-only bootstrap`, async t => {
+  const mock = makeMock(t);
+  const root = buildPSMRootObject(
+    // @ts-expect-error Device<T> is a little goofy
+    { D: d => d, logger: t.log },
+    psmParams,
+  );
+
+  const vats = mockSwingsetVats(mock);
+  const actual = await E(root).bootstrap(vats, mock.devices);
+  t.deepEqual(actual, undefined);
+
+  const agoricNames = E(root).consumeItem('agoricNames');
+  const instance = await E(agoricNames).lookup('instance', 'psm');
+  t.is(passStyleOf(instance), 'remotable');
+});
+
+test('PSM-only bootstrap provides a way to pass items to CORE_EVAL', async t => {
+  const root = buildPSMRootObject(
+    // @ts-expect-error Device<T> is a little goofy
+    { D: d => d, logger: t.log },
+    psmParams,
   );
 
   await E(root).produceItem('swissArmyKnife', [1, 2, 3]);

@@ -9,7 +9,7 @@ export * from './sim-behaviors.js';
 // named 'EconomyBootstrapPowers'.
 export * from './startPSM.js';
 
-const ECON_COMMITTEE_MANIFEST = harden({
+export const ECON_COMMITTEE_MANIFEST = harden({
   [econBehaviors.startEconomicCommittee.name]: {
     consume: {
       board: true,

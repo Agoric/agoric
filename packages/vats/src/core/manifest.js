@@ -124,6 +124,25 @@ const SHARED_CHAIN_BOOTSTRAP_MANIFEST = harden({
     installation: { consume: { walletFactory: 'zoe' } },
     home: { produce: { bank: 'bank' } },
   },
+  startWalletFactory: {
+    consume: {
+      agoricNames: true,
+      bankManager: 'bank',
+      board: 'board',
+      bridgeManager: true,
+      chainStorage: 'chainStorage',
+      namesByAddress: true,
+      namesByAddressAdmin: true,
+      zoe: 'zoe',
+    },
+    produce: {
+      client: true, // dummy client in this configuration
+      smartWalletStartResult: true,
+    },
+    installation: {
+      consume: { walletFactory: 'zoe' },
+    },
+  },
   installBootContracts: {
     vatPowers: { D: true },
     devices: { vatAdmin: true },

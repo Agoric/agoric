@@ -317,10 +317,16 @@ export const makeChainStorage = async ({
   chainStorageP.resolve(rootNodeP);
 };
 
-/** @param {BootstrapPowers} powers */
-export const publishAgoricNames = async ({
-  consume: { agoricNamesAdmin, board, chainStorage: rootP },
-}) => {
+/**
+ * @param {BootstrapPowers} powers
+ * @param {{ options?: {agoricNamesOptions?: {
+ *   topLevel?: string[]
+ * }}}} config
+ */
+export const publishAgoricNames = async (
+  { consume: { agoricNamesAdmin, board, chainStorage: rootP } },
+  { options: { agoricNamesOptions } = {} } = {},
+) => {
   const root = await rootP;
   if (!root) {
     console.warn('cannot publish agoricNames without chainStorage');
@@ -330,8 +336,9 @@ export const publishAgoricNames = async ({
   const marshaller = E(board).getPublishingMarshaller();
 
   // brand, issuer, ...
+  const { topLevel = keys(agoricNamesReserved) } = agoricNamesOptions || {};
   await Promise.all(
-    keys(agoricNamesReserved).map(async kind => {
+    topLevel.map(async kind => {
       const kindAdmin = await E(agoricNamesAdmin).lookupAdmin(kind);
 
       const kindNode = await E(nameStorage).makeChildNode(kind);

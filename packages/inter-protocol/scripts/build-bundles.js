@@ -1,6 +1,9 @@
 #! /usr/bin/env node
 import '@endo/init';
-import { extractProposalBundles } from '@agoric/deploy-script-support';
+import {
+  createBundles,
+  extractProposalBundles,
+} from '@agoric/deploy-script-support';
 import url from 'url';
 import process from 'process';
 
@@ -16,5 +19,10 @@ await extractProposalBundles(
     ['.', defaultProposalBuilder],
     ['.', collateralProposalBuilder],
   ],
+  dirname,
+);
+
+await createBundles(
+  [['../src/psm/psm.js', '../bundles/bundle-psm.js']],
   dirname,
 );

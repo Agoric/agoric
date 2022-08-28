@@ -215,6 +215,28 @@ export const makeAnchorAsset = async (
 };
 harden(makeAnchorAsset);
 
+/** @param {BootstrapSpace & { devices: { vatAdmin: any }, vatPowers: { D: DProxy }, }} powers */
+export const installGovAndPSMContracts = async ({
+  consume: { zoe, vatAdminSvc },
+  installation: {
+    produce: { contractGovernor, committee, binaryVoteCounter, psm },
+  },
+}) => {
+  return Promise.all(
+    Object.entries({
+      contractGovernor,
+      committee,
+      binaryVoteCounter,
+      psm,
+    }).map(async ([name, producer]) => {
+      const bundleID = await E(vatAdminSvc).getBundleIDByName(name);
+
+      const installation = E(zoe).installBundleID(bundleID);
+      producer.resolve(installation);
+    }),
+  );
+};
+
 export const PSM_MANIFEST = harden({
   [makeAnchorAsset.name]: {
     consume: { agoricNamesAdmin: true, bankManager: 'bank', zoe: 'zoe' },
@@ -249,6 +271,17 @@ export const PSM_MANIFEST = harden({
     },
     issuer: {
       consume: { AUSD: 'bank' },
+    },
+  },
+  [installGovAndPSMContracts.name]: {
+    consume: { zoe: 'zoe', vatAdminSvc: true },
+    installation: {
+      produce: {
+        contractGovernor: 'zoe',
+        committee: 'zoe',
+        binaryVoteCounter: 'zoe',
+        psm: 'zoe',
+      },
     },
   },
 });

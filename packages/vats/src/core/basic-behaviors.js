@@ -22,7 +22,7 @@ const RESERVE_ADDRESS = 'agoric1ae0lmtzlgrcnla9xjkpaarq5d5dfez63h3nucl';
  * non-exhaustive list of powerFlags
  * REMOTE_WALLET is currently a default.
  */
-const PowerFlags = /** @type {const} */ ({
+export const PowerFlags = /** @type {const} */ ({
   SMART_WALLET: 'SMART_WALLET',
   /** The ag-solo wallet is remote. */
   REMOTE_WALLET: 'REMOTE_WALLET',
@@ -174,6 +174,28 @@ export const makeBoard = async ({
 harden(makeBoard);
 
 /**
+ * @param {NameAdmin} namesByAddressAdmin
+ * @param {string} address
+ */
+export const makeMyAddressNameAdmin = (namesByAddressAdmin, address) => {
+  // Create a name hub for this address.
+  const { nameHub: myAddressNameHub, nameAdmin: rawMyAddressNameAdmin } =
+    makeNameHubKit();
+
+  /** @type {MyAddressNameAdmin} */
+  const myAddressNameAdmin = Far('myAddressNameAdmin', {
+    ...rawMyAddressNameAdmin,
+    getMyAddress: () => address,
+  });
+  // reserve space for deposit facet
+  myAddressNameAdmin.reserve('depositFacet');
+  // Register it with the namesByAddress hub.
+  namesByAddressAdmin.update(address, myAddressNameHub, myAddressNameAdmin);
+
+  return myAddressNameAdmin;
+};
+
+/**
  * Make the agoricNames, namesByAddress name hierarchies.
  *
  * agoricNames are well-known items such as the IST issuer,
@@ -200,19 +222,10 @@ export const makeAddressNameHubs = async ({
   produce.namesByAddressAdmin.resolve(namesByAddressAdmin);
 
   const perAddress = address => {
-    // Create a name hub for this address.
-    const { nameHub: myAddressNameHub, nameAdmin: rawMyAddressNameAdmin } =
-      makeNameHubKit();
-
-    /** @type {MyAddressNameAdmin} */
-    const myAddressNameAdmin = Far('myAddressNameAdmin', {
-      ...rawMyAddressNameAdmin,
-      getMyAddress: () => address,
-    });
-    // reserve space for deposit facet
-    myAddressNameAdmin.reserve('depositFacet');
-    // Register it with the namesByAddress hub.
-    namesByAddressAdmin.update(address, myAddressNameHub, myAddressNameAdmin);
+    const myAddressNameAdmin = makeMyAddressNameAdmin(
+      namesByAddressAdmin,
+      address,
+    );
     return { agoricNames, namesByAddress, myAddressNameAdmin };
   };
 
