@@ -230,6 +230,7 @@ const measureInterval = (start, interval, now) => {
 export const buildRootObject = (vatPowers, _vatParameters, baggage) => {
   const { D } = vatPowers;
 
+  /** @type {import('../../devices/timer/device-timer.js').TimerDevice=} */
   let timerDevice;
   const insistDevice = () => {
     assert(timerDevice, 'TimerService used before createTimerService()');
@@ -928,7 +929,7 @@ export const buildRootObject = (vatPowers, _vatParameters, baggage) => {
    * device, but we don't prohibit it from being called again (to
    * replace the device), just in case that's useful someday
    *
-   * @param {unknown} timerNode
+   * @param {import('../../devices/timer/device-timer.js').TimerDevice} timerNode
    * @returns {Promise<TimerService>}
    */
   const createTimerService = timerNode => {

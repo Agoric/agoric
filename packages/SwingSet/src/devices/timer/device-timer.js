@@ -54,7 +54,7 @@ function copyState(schedState) {
  *
  * @typedef {object} IndexedHandler
  * @property {number} [index]
- * @property {Waker} handler
+ * @property {Waker} waker
  *
  * @typedef {object} Waker
  * @property {(now: bigint) => void} wake
@@ -86,6 +86,7 @@ function makeTimerMap(state = undefined) {
     return copyState(schedule);
   }
 
+  /** @param {bigint} time */
   function eventsFor(time) {
     assert.typeof(time, 'bigint');
     for (let i = 0; i < schedule.length && schedule[i].time <= time; i += 1) {
@@ -101,8 +102,16 @@ function makeTimerMap(state = undefined) {
   // There's some question as to whether it's important to invoke the handlers
   // in the order of their deadlines. If so, we should probably ensure that the
   // recorded deadlines don't have finer granularity than the turns.
+  /**
+   *
+   * @param {bigint} time
+   * @param {IndexedHandler} handler
+   * @param {number} [repeater]
+   * @returns {bigint}
+   */
   function add(time, handler, repeater = undefined) {
     assert.typeof(time, 'bigint');
+    /** @type {IndexedHandler} */
     const handlerRecord =
       typeof repeater === 'number' ? { handler, index: repeater } : { handler };
     const { handlers: records } = eventsFor(time);
@@ -111,7 +120,11 @@ function makeTimerMap(state = undefined) {
     return time;
   }
 
-  // Remove and return all pairs indexed by numbers up to target
+  /**
+   * Remove and return all pairs indexed by numbers up to target
+   *
+   * @param {bigint} target
+   */
   function removeEventsThrough(target) {
     assert.typeof(target, 'bigint');
     const returnValues = [];
@@ -132,13 +145,19 @@ function makeTimerMap(state = undefined) {
   }
 
   // We don't expect this to be called often, so we don't optimize for it.
+  /**
+   *
+   * @param {IndexedHandler} targetHandler
+   * @returns {bigint[]}
+   */
   function remove(targetHandler) {
+    /** @type {bigint[]} */
     const droppedTimes = [];
     let i = 0;
     while (i < schedule.length) {
       const { time, handlers } = schedule[i];
       if (handlers.length === 1) {
-        if (handlers[0].handler === targetHandler) {
+        if (handlers[0] === targetHandler) {
           schedule.splice(i, 1);
           droppedTimes.push(time);
         } else {
@@ -146,7 +165,7 @@ function makeTimerMap(state = undefined) {
         }
       } else {
         // Nothing prevents a particular handler from appearing more than once
-        for (const { handler } of handlers) {
+        for (const handler of handlers) {
           if (handler === targetHandler && handlers.indexOf(handler) !== -1) {
             handlers.splice(handlers.indexOf(handler), 1);
             droppedTimes.push(time);
@@ -276,6 +295,7 @@ export function buildRootDeviceNode(tools) {
       saveState();
       return baseTime;
     },
+    /** @param {IndexedHandler} handler */
     removeWakeup(handler) {
       const times = deadlines.remove(handler);
       saveState();
@@ -303,6 +323,10 @@ export function buildRootDeviceNode(tools) {
       saveState();
       return index;
     },
+    /**
+     * @param {number} index
+     * @param {IndexedHandler} handler
+     */
     schedule(index, handler) {
       const nextTime = nextScheduleTime(index, repeaters, lastPolled);
       deadlines.add(nextTime, handler, index);
@@ -311,6 +335,8 @@ export function buildRootDeviceNode(tools) {
     },
   });
 }
+
+/** @typedef {Device<ReturnType<typeof buildRootDeviceNode>>} TimerDevice */
 
 // exported for testing. Only buildRootDeviceNode is intended for production
 // use.
