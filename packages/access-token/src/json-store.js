@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import Readlines from 'n-readlines';
+import { NonNullish } from '@agoric/assert';
 
 // TODO: Update this when we make a breaking change.
 // const DATA_FILE = 'data.jsonlines';
@@ -290,8 +291,7 @@ export function getAllState(storage) {
   /** @type { Record<string, string> } */
   const stuff = {};
   for (const key of Array.from(storage.getKeys('', ''))) {
-    // @ts-expect-error get(key) of key from getKeys() is not undefined
-    stuff[key] = storage.get(key);
+    stuff[key] = NonNullish(storage.get(key));
   }
   return stuff;
 }

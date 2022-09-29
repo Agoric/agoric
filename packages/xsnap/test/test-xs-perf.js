@@ -1,6 +1,7 @@
 /* global performance */
 // @ts-check
 
+import { NonNullish } from '@agoric/assert';
 import '@endo/init/debug.js';
 
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -310,8 +311,7 @@ test.skip('Array, Map, Set growth is O(log(n))', async t => {
     const {
       meterUsage: { compute },
     } = await vat.evaluate(`dataStructurePerformance(${size})`);
-    // @ts-expect-error pop() may return undefined
-    const r = JSON.parse(opts.messages.pop());
+    const r = JSON.parse(NonNullish(opts.messages.pop()));
     t.log({ compute, r });
     return { compute, r };
   };

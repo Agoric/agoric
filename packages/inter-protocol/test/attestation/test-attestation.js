@@ -1,6 +1,6 @@
 // @ts-check
 
-import { test } from '@agoric/zoe/tools/prepare-test-env-ava.js';
+import { test as unknownTest } from '@agoric/zoe/tools/prepare-test-env-ava.js';
 
 import { makeIssuerKit, AssetKind, AmountMath } from '@agoric/ertp';
 import { E, Far } from '@endo/far';
@@ -9,6 +9,8 @@ import { makeCopyBag } from '@agoric/store';
 import { setupZCFTest } from '@agoric/zoe/test/unitTests/zcf/setupZcfTest.js';
 import { makeAttestationFacets } from '../../src/stakeFactory/attestation.js';
 
+/** @type { import('ava').TestFn<ReturnType<typeof makeContext> >} */
+const test = unknownTest;
 /**
  * @param {Brand<'nat'>} uBrand
  * @param {*} _t for debug logging
@@ -78,7 +80,6 @@ const makeContext = async t => {
 
 test.before(async t => {
   const properties = await makeContext(t);
-  // @ts-expect-error t.context is unknown so could be null
   Object.assign(t.context, properties);
 });
 
@@ -104,8 +105,7 @@ test('refuse to attest to more than liened amount', async t => {
 });
 
 test('attestations can be combined and split', async t => {
-  const { zoe, stakeKit, publicFacet, creatorFacet } =
-    await /** @type { ReturnType<typeof makeContext> } */ (t.context);
+  const { zoe, stakeKit, publicFacet, creatorFacet } = await t.context;
 
   const issuer = await E(publicFacet).getIssuer();
   const brand = await E(publicFacet).getBrand();

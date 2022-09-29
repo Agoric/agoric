@@ -1,6 +1,6 @@
 // @ts-check
 /* eslint-disable jsdoc/require-returns-type */
-import { assert, details as X, q } from '@agoric/assert';
+import { assert, details as X, NonNullish, q } from '@agoric/assert';
 
 /**
  * @typedef { import('./swingStore').KVStore } KVStore
@@ -264,8 +264,7 @@ export function getAllState(swingStore) {
   /** @type { Record<string, string> } */
   const kvStuff = {};
   for (const key of Array.from(kvStore.getKeys('', ''))) {
-    // @ts-expect-error get(key) of key from getKeys() is not undefined
-    kvStuff[key] = kvStore.get(key);
+    kvStuff[key] = NonNullish(kvStore.get(key));
   }
   const streamStuff = new Map();
   const peek = streamPeek.get(streamStore);
