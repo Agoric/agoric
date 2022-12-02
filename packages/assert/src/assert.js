@@ -1,6 +1,7 @@
 /* global globalThis */
 // Copyright (C) 2019 Agoric, under Apache License 2.0
 // @ts-check
+/// <reference types="ses"/>
 
 // This module assumes the existence of a non-standard `assert` host object.
 // SES version 0.11.0 introduces this global object and entangles it
@@ -14,17 +15,9 @@
 // The assertions re-exported here are defined in
 // https://github.com/endojs/endo/blob/master/packages/ses/src/error/assert.js
 
-// At https://github.com/Agoric/agoric-sdk/issues/2774
-// is a record of a failed attempt to remove '.types'.
-// To satisfy CI, not only do we need to keep the file,
-// but we need to import it here as well.
-import './types.js';
-
-/** @typedef {import('@endo/marshal').Checker} Checker */
-
 const { freeze } = Object;
 
-/** @type {Assert} */
+/** @type {import('ses').Assert} */
 const globalAssert = globalThis.assert;
 
 if (globalAssert === undefined) {
@@ -51,13 +44,18 @@ if (missing.length > 0) {
   );
 }
 
-const { details, quote, makeAssert } = globalAssert;
+const { details, quote, makeAssert, Fail } = globalAssert;
 
-export { globalAssert as assert, details, quote };
-
-export { quote as q };
-
-export { makeAssert };
+export {
+  globalAssert as assert,
+  details,
+  quote,
+  makeAssert,
+  Fail,
+  // conventional aliases
+  details as X,
+  quote as q,
+};
 
 /**
  * @template T
@@ -100,7 +98,7 @@ export { an };
  * identity function, but is typed as a `Checker` to indicate its
  * intended use.
  *
- * @type {Checker}
+ * @type {import('@endo/marshal').Checker}
  */
 export const identChecker = (cond, _details) => cond;
 harden(identChecker);
