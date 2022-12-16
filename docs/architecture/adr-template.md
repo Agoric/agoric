@@ -1,6 +1,6 @@
 # ADR [Number]: [Title]
 
-> *This template is derived from [ADR#1](./0001-record-architecture-decisions.md)*
+> _This template is derived from [ADR#1](./0001-record-architecture-decisions.md)_
 
 > These documents have names that are short noun phrases. For example, "ADR 1: Deployment on Ruby on Rails 3.0.10" or "ADR 9: LDAP for Multitenant Integration"
 
@@ -12,9 +12,9 @@
 
 > Note the project to which this ADR applies, including other relevant ADRs.
 > This section describes the forces at play, including technological, political,
-social, and project local. These forces are probably in tension, and should be
-called out as such. The language in this section is value-neutral. It is simply
-describing facts.
+> social, and project local. These forces are probably in tension, and should be
+> called out as such. The language in this section is value-neutral. It is simply
+> describing facts.
 
 ## Decision
 

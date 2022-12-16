@@ -1,6 +1,6 @@
 # The Vat Runtime JS Environment
 
-SwingSet JavaScript *vats* are containers that run code in a confined and resource-limited environment, with orthogonal persistence and eventual-send-based access to external resources.
+SwingSet JavaScript _vats_ are containers that run code in a confined and resource-limited environment, with orthogonal persistence and eventual-send-based access to external resources.
 
 The specific flavor of JavaScript provided by a vat is a frozen SES `Compartment`, with a few additions.
 
@@ -26,7 +26,7 @@ As SES is on the JavaScript standards track, it includes other proposed features
 
 `Compartment` (a [part of SES](https://github.com/Agoric/SES-shim/tree/SES-v0.8.0/packages/ses#compartment)) is a global. Vat code runs inside a `Compartment`, but vat code can create sub-compartments to host other code (with different globals or transforms).
 
-Note that these child compartments get `harden` and `Compartment`, but they won't include other endowments (like `console` or `HandledPromise`) unless you explicitly provide them. If the parent compartment was metered, any child compartments will also be metered (this is inescapable). Child compartments will *not* be frozen by default: see "Frozen globalThis" below for details.
+Note that these child compartments get `harden` and `Compartment`, but they won't include other endowments (like `console` or `HandledPromise`) unless you explicitly provide them. If the parent compartment was metered, any child compartments will also be metered (this is inescapable). Child compartments will _not_ be frozen by default: see "Frozen globalThis" below for details.
 
 ## Removals
 
@@ -34,26 +34,26 @@ Nearly all existing JS code was written to run under Node.js or inside a browser
 
 Most of the Node.js-specific [global objects](https://nodejs.org/dist/latest-v14.x/docs/api/globals.html) are not available within a vat. These include:
 
-* `queueMicrotask`
-* `Buffer` (consider using TypedArray instead, but see below)
-* `setImmediate`/`clearImmediate`: These are not available, but you can generally replace `setImmediate(fn)` with `Promise.resolve().then(_ => fn())` to defer execution of `fn` until some time after the current event/callback has finished processing. But be aware that won't run until after all *other* ready Promise callbacks are executed. There are two queues: the "IO queue" (accessed by `setImmediate`), and the "Promise queue" (accessed by Promise resolution), and SES code is only allowed to add to the Promise queue. Note that the Promise queue is higher-priority than the IO queue, so no IO or timers will be handled until the Promise queue is empty.
-* `setInterval` and `setTimeout` (and `clearInterval`/`clearTimeout`): any notion of time must come from exchanging messages with external timer services (the SwingSet environment provides a `TimerService` object to the bootstrap vat for this purpose, which can share that object with other vats if it chooses)
-* `global` is not defined, use `globalThis` instead (and remember that it is frozen)
-* `process` is not available, e.g. `process.env` for accessing the process's environment variables, or `process.argv` for the argument array
-* `URL`, `URLSearchParams` are not available
-* `WebAssembly` is not available, as neat as that would be
-* `TextEncoder` and `TextDecoder` are not available
+- `queueMicrotask`
+- `Buffer` (consider using TypedArray instead, but see below)
+- `setImmediate`/`clearImmediate`: These are not available, but you can generally replace `setImmediate(fn)` with `Promise.resolve().then(_ => fn())` to defer execution of `fn` until some time after the current event/callback has finished processing. But be aware that won't run until after all _other_ ready Promise callbacks are executed. There are two queues: the "IO queue" (accessed by `setImmediate`), and the "Promise queue" (accessed by Promise resolution), and SES code is only allowed to add to the Promise queue. Note that the Promise queue is higher-priority than the IO queue, so no IO or timers will be handled until the Promise queue is empty.
+- `setInterval` and `setTimeout` (and `clearInterval`/`clearTimeout`): any notion of time must come from exchanging messages with external timer services (the SwingSet environment provides a `TimerService` object to the bootstrap vat for this purpose, which can share that object with other vats if it chooses)
+- `global` is not defined, use `globalThis` instead (and remember that it is frozen)
+- `process` is not available, e.g. `process.env` for accessing the process's environment variables, or `process.argv` for the argument array
+- `URL`, `URLSearchParams` are not available
+- `WebAssembly` is not available, as neat as that would be
+- `TextEncoder` and `TextDecoder` are not available
 
 Some names look like globals, but are really part of the module-defining tools: imports, exports, and metadata. Modules start as files on disk, but are then bundled together into an archive before being loaded into a vat. Several standard functions are used by the bundling tool to locate all the other modules that must be included. These are not a part of SES, but are allowed in module source code, and are translated or removed before execution finally happens. Those names are:
 
-* `import` and `export` syntax are allowed in ESM-style modules (which is preferred over CommonJS). These are not globals per se, but rather top-level syntax which defines the module graph.
-* `require`, `module`, `module.exports`, and `exports` are allowed in CommonJS-style modules, and should work as expected, however new code should be written as ESM modules. They are either consumed by the bundling process, provided (in some form) by the execution environment, or otherwise rewritten to work sensibly
-* `__dirname` and `__filename` are not provided
-* The dynamic import expression (`await import('name')`) is currently prohibited in vat code, but a future SES implementation may allow it.
+- `import` and `export` syntax are allowed in ESM-style modules (which is preferred over CommonJS). These are not globals per se, but rather top-level syntax which defines the module graph.
+- `require`, `module`, `module.exports`, and `exports` are allowed in CommonJS-style modules, and should work as expected, however new code should be written as ESM modules. They are either consumed by the bundling process, provided (in some form) by the execution environment, or otherwise rewritten to work sensibly
+- `__dirname` and `__filename` are not provided
+- The dynamic import expression (`await import('name')`) is currently prohibited in vat code, but a future SES implementation may allow it.
 
 Node.js has a [large collection](https://nodejs.org/dist/latest-v14.x/docs/api/) of "built-in modules", like `http` and `crypto`. Some are clearly platform-specific (like `v8`), while others are not so obvious (`stream`). All of these are accessed by importing a module (`const v8 = require('v8')` in CommonJS modules, or `import v8 from 'v8'` in ESM modules). These modules are built out of native code (C++), not plain JS.
 
-None of these built-in modules are available to vat code. `require` or `import` can be used on modules that contain pure JS, but not on modules that include native code. To allow a vat to exercise authority which comes from a built-in module, you will have to write a *device*, give that device an endowment with the built-in module's functions, then have the vat send messages to the device.
+None of these built-in modules are available to vat code. `require` or `import` can be used on modules that contain pure JS, but not on modules that include native code. To allow a vat to exercise authority which comes from a built-in module, you will have to write a _device_, give that device an endowment with the built-in module's functions, then have the vat send messages to the device.
 
 Browser environments also have a huge list of [other features](https://developer.mozilla.org/en-US/docs/Web/API) which are presented as names in the global scope (some of which were also added to Node.js). None of these are available in a SES environment. The most surprising removals include `atob`, `TextEncoder`, and `URL`.
 
@@ -73,7 +73,7 @@ One active JS feature proposal would add a "dynamic import" expression: `await i
 
 ### Direct Eval Expressions
 
-A *direct eval*, invoked like `eval(code)`, behaves as if `code` were expanded in place. The evaluated code sees the same scope as the `eval` itself sees, so the `code` in:
+A _direct eval_, invoked like `eval(code)`, behaves as if `code` were expanded in place. The evaluated code sees the same scope as the `eval` itself sees, so the `code` in:
 
 ```js
 function foo(code) {
@@ -84,7 +84,7 @@ function foo(code) {
 
 gets to reference `x`. If you perform a direct eval, you cannot hide your internal authorities from the code you're evaluating.
 
-In contrast, an *indirect eval* only gets the global scope, not the local scope. In a safe SES environment, indirect eval is a useful and common tool. The evaluated code can only access global objects, and those are all safe (and frozen). The only bad thing an indirect eval can do is consume unbounded CPU or memory. Once you've evaluated that code, you can invoke it with arguments to give it as many or as few authorities as you like.
+In contrast, an _indirect eval_ only gets the global scope, not the local scope. In a safe SES environment, indirect eval is a useful and common tool. The evaluated code can only access global objects, and those are all safe (and frozen). The only bad thing an indirect eval can do is consume unbounded CPU or memory. Once you've evaluated that code, you can invoke it with arguments to give it as many or as few authorities as you like.
 
 The most common way to invoke an indirect eval is `(1,eval)(code)`.
 
@@ -104,7 +104,7 @@ Vats can create new `Compartment`s, and they get to decide if the new compartmen
 
 ### Frozen Primordials
 
-SES freezes the *primordials*: the built-in JavaScript objects such as `Object`, `Array`, and `RegExp`, as well as their prototype chains. This prevents malicious code from changing the behavior of built-ins in surprising ways (imagine `Array.prototype.push` being changed to deliver a copy of its argument to the attacker, or simply ignore certain values). It also prevents the use of, for example, `Object.heyBuddy` as an ambient communication channel.
+SES freezes the _primordials_: the built-in JavaScript objects such as `Object`, `Array`, and `RegExp`, as well as their prototype chains. This prevents malicious code from changing the behavior of built-ins in surprising ways (imagine `Array.prototype.push` being changed to deliver a copy of its argument to the attacker, or simply ignore certain values). It also prevents the use of, for example, `Object.heyBuddy` as an ambient communication channel.
 
 Both frozen primordials and a frozen `globalThis` will break a few JS libraries that add new features to built-in objects (shims/polyfills). For shims which merely add properties to `globalThis`, it may be possible to load these in a new non-frozen `Compartment`. Shims which modify primordials only work if you build new (mutable) wrappers around the default primordials and allow the shims to modify those wrappers instead.
 

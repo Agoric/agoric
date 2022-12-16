@@ -10,22 +10,22 @@ For convenience, this description will use "v1" to describe the old version of t
 
 Vat upgrade is triggered by an `upgrade()` message to the vat's "adminNode" (the one returned by `E(vatAdminService).createVat()`). This schedules an upgrade event on the kernel run-queue. When this event is processed, the following takes place:
 
-* the vat's current worker (if any) is shut down
-  * outstanding promises are rejected
-  * non-durable exported objects are abandoned
-* any heap snapshot for the vat is deleted
-* the vat's transcript is (effectively) deleted
-* (TODO) the vat's non-durable data is deleted
-* the vat's source record is updated to point at the v2 source bundle
-* a new worker is started, and loads the v2 source bundle
-* the v2 code performs its "upgrade phase"
-  * this is signaled with a call to `buildRootObject()`
-  * the upgrade invocation gets new `vatParameters`
-* the v2 upgrade phase rewires all durable virtual object kinds, and
+- the vat's current worker (if any) is shut down
+  - outstanding promises are rejected
+  - non-durable exported objects are abandoned
+- any heap snapshot for the vat is deleted
+- the vat's transcript is (effectively) deleted
+- (TODO) the vat's non-durable data is deleted
+- the vat's source record is updated to point at the v2 source bundle
+- a new worker is started, and loads the v2 source bundle
+- the v2 code performs its "upgrade phase"
+  - this is signaled with a call to `buildRootObject()`
+  - the upgrade invocation gets new `vatParameters`
+- the v2 upgrade phase rewires all durable virtual object kinds, and
   reassociates objects with all export obligations
-* the v2 upgrade phase completes, telling the kernel the vat is open for
+- the v2 upgrade phase completes, telling the kernel the vat is open for
   business
-* messages from other vats start to arrive at the v2 code
+- messages from other vats start to arrive at the v2 code
 
 The first time the v2 code is invoked is called the "upgrade phase", and represents a limited window of time (a single crank) during which v2 must perform a number of tasks. The v2 code can use Promises to defer work into the (very) near future, however all this work must be complete by the time the promise queue is drained.
 
@@ -45,10 +45,10 @@ Each export represents an obligation. Other vats might send a message to the exp
 
 There are two basic kinds of exports:
 
-* singleton in-RAM objects (created with `Far()` from a standard JavaScript
+- singleton in-RAM objects (created with `Far()` from a standard JavaScript
   `Object`, using the standard objects-as-closures pattern)
 
-* virtual objects (defined with `makeKind()` or `makeDurableKind()`, created
+- virtual objects (defined with `makeKind()` or `makeDurableKind()`, created
   by invoking the function those return, and whose state is kept in the
   database rather than in RAM)
 

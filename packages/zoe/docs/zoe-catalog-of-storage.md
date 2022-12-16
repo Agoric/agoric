@@ -46,7 +46,7 @@ about 10 entries.
 
 A (brand, purse) is added whenever a new issuer is added to Zoe.
 
-**Expected cardinality**: one entry per issuer.  On the testnet with
+**Expected cardinality**: one entry per issuer. On the testnet with
 only the bootstrap and load generation code running, this should be
 about 10 entries.
 
@@ -68,6 +68,7 @@ about 5-10 entries.
 **Dropped?**: Currently, not dropped, but there was a task to drop it.
 It looks like the task was checked, but the problem is not solved.
 https://github.com/Agoric/agoric-sdk/issues/2880
+
 ### zoeSeatAdmins - native Set
 
 A zoeSeatAdmin is added for every userSeat created, so every time a
@@ -112,6 +113,7 @@ accounting, so this is not strictly tied to the number of
 **Dropped?**: Currently, not dropped, but there is a task to drop it: https://github.com/Agoric/agoric-sdk/issues/2880
 
 ## Contract Facet (one per instance)
+
 ### brandToIssuerRecord - WeakStore from `@agoric/store` - uses same code as ZoeService
 
 A (brand, issuerRecord) is added whenever a new issuer is added to
@@ -154,6 +156,7 @@ made.
 **Access patterns**: `init`, `get`, `delete`
 
 **Dropped?**: Yes, when the offer is made and the offerHandler is called.
+
 ### activeZCFSeats - WeakStore from `@agoric/store`
 
 A (zcfSeat, allocation) is created when a user calls `E(zoe).offer` or
@@ -195,4 +198,4 @@ are immediately dropped.
 **Access patterns**: `init`, `set`, `has`, `get`, `keys`
 
 **Dropped?**: Entire Store is dropped when the function
-`assertRightsConserved` ends. 
+`assertRightsConserved` ends.

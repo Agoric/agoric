@@ -2,10 +2,10 @@
 
 The state of a SwingSet environment consists of several pieces:
 
-* the kernel-wide Object and Promise tables
-* the kernel's run-queue
-* each Vat's c-list entries
-* the persistent state of each Vat's runtime code
+- the kernel-wide Object and Promise tables
+- the kernel's run-queue
+- each Vat's c-list entries
+- the persistent state of each Vat's runtime code
 
 The first three items are just tables of data: mappings from strings to other
 strings, or lists of easily-serialized records.
@@ -67,9 +67,9 @@ Cranks are transactional too. If a Crank finishes successfully, all state
 changes it makes must be visible to subsequent Cranks. However a Crank might
 not finish successfully:
 
-* the Vat might trigger a fault: accessing an invalid c-list entry, or
+- the Vat might trigger a fault: accessing an invalid c-list entry, or
   resolving the same promise twice. The Vat is terminated.
-* the Crank might run out of gas, by using more CPU time or memory than the
+- the Crank might run out of gas, by using more CPU time or memory than the
   current Meter allows. The kernel might notice this in between Turns, or the
   engine might interrupt the Vat in the middle of a Turn. A Keeper may be
   invoked to decide what to do. If the Crank is allowed to complete, nothing
@@ -79,9 +79,9 @@ not finish successfully:
   crank, which requires replaying the transcript).
 
 If the Crank does not finish successfully, all state changes from that Crank
-must be discarded. If it *does* finish successfully, the changes must be
+must be discarded. If it _does_ finish successfully, the changes must be
 visible to subsequent Cranks, but must not be written to the persistent disk
-until the host declares the *Block* to be finished (to ensure a reboot
+until the host declares the _Block_ to be finished (to ensure a reboot
 returns the machine to an inter-Block boundary, not merely an inter-Crank
 boundary).
 
@@ -93,49 +93,44 @@ cache. We define **StorageAPI** (typed as **KVStore**) as a set of functions
 string and returns a boolean, `get` returns `undefined` for missing objects).
 `getKeys(start, end)` returns an iterator of sorted keys `start <= key < end`.
 
-We also define a **HostDB** as an object with functions `{ has, getKeys, get,
-applyBatch }`. The batch is a list of `{op: 'set', key, value}` or `{op:
-'delete', key}`, and is used to perform an atomic mutation.
+We also define a **HostDB** as an object with functions `{ has, getKeys, get, applyBatch }`. The batch is a list of `{op: 'set', key, value}` or `{op: 'delete', key}`, and is used to perform an atomic mutation.
 
 Objects with the `StorageAPI` interface exist at multiple points in the
 system. There is a single `HostDB` object, in the host. We trace the
 construction of these objects starting from the host side:
 
-* The host holds a `hostDB` object which represents some sort of on-disk
+- The host holds a `hostDB` object which represents some sort of on-disk
   database with transactional semantics, which we use as a string-to-string
   key-value store. It provides the `HostDB` API.
-* The host calls `buildBlockBuffer(hostDB)` to get back two facets: `{
-  blockBuffer, commitBlock }`. `blockBuffer` provides StorageAPI, and is
+- The host calls `buildBlockBuffer(hostDB)` to get back two facets: `{ blockBuffer, commitBlock }`. `blockBuffer` provides StorageAPI, and is
   given to the controller as `config.hostStorage`. The host invokes
-  `commitBlock()` at the end of each Block (e.g. after it does an `await
-  controller.run()`.
-* The controller gives `hostStorage` (the BlockBuffer) to the kernel as an
+  `commitBlock()` at the end of each Block (e.g. after it does an `await controller.run()`.
+- The controller gives `hostStorage` (the BlockBuffer) to the kernel as an
   endowment (specifically as an argument to `buildKernel()`).
-* The kernel wraps `blockBuffer` with a function named `guard()` to protect
+- The kernel wraps `blockBuffer` with a function named `guard()` to protect
   the Realm boundary with a limited Membrane (which ensures all arguments are
   strings, all return values are strings or booleans or `undefined`, and
   catches exceptions from the host Realm to rewrite them into kernel-realm
   versions). The guarded `blockBuffer` also implements StorageAPI.
-* The guarded `blockBuffer` is fed into `buildCrankBuffer()` to get back
+- The guarded `blockBuffer` is fed into `buildCrankBuffer()` to get back
   three facets: `{ crankBuffer, commitCrank, abortCrank }`. `crankBuffer`
   provides StorageAPI, and is given to the `kernelKeeper`. The kernel invokes
   `commitCrank` at the end of each successful Crank, and `abortCrank` when
   the Crank is abandoned.
-* The `kernelKeeper` wraps the `crankBuffer` with a read cache (which also
+- The `kernelKeeper` wraps the `crankBuffer` with a read cache (which also
   provides StorageAPI, but caches some values internally to reduce the number
   of cross-realm calls and HostDB operations). The cached `crankBuffer` is
-  then wrapped with some helper methods: `{ enumeratePrefixedKeys,
-  getPrefixedValues, deletePrefixedKeys }` to produce the
+  then wrapped with some helper methods: `{ enumeratePrefixedKeys, getPrefixedValues, deletePrefixedKeys }` to produce the
   `enhancedCrankBuffer`, which provides both StorageAPI plus the helper
   methods (typed as **KVStorePlus**).
-* All `kernelKeeper` and `vatKeeper` operations use the
+- All `kernelKeeper` and `vatKeeper` operations use the
   `enhancedCrankBuffer`. They are unaware of Crank or Block boundaries, nor
   can they sense the operation of the read cache.
 
 We can then follow the use of these objects from the kernel-side
 `kernelKeeper` back out:
 
-* All reads from the keepers first look in the read cache, then if that
+- All reads from the keepers first look in the read cache, then if that
   misses they do a `crankBuffer.get` or `.has` (the `.getKeys` operation is
   only used for debugging, so it bypasses the read cache). The results of the
   `get` might be added to the read cache, if it seems likely to be useful.
@@ -143,27 +138,26 @@ We can then follow the use of these objects from the kernel-side
   entry is either added to the read buffer, or the read buffer entry is
   deleted (e.g. vat transcript entries won't be read back during the lifetime
   of the kernel, so they don't ever need to be included in the read cache).
-* Writes from the keepers are fed into `crankBuffer.set` or `.delete`.
-* The CrankBuffer responds to `.set` or `.delete` by adding the operation to
+- Writes from the keepers are fed into `crankBuffer.set` or `.delete`.
+- The CrankBuffer responds to `.set` or `.delete` by adding the operation to
   the Crank-level write-back buffer (a `Map` for additions, and a `Set` of
   deleted keys). Reads will check the shadow table first, then fall back to
   reading from the BlockBuffer (through the cross-realm guard).
-* When `commitCrank` is invoked, it calls `.set` or `.delete` on the guarded
+- When `commitCrank` is invoked, it calls `.set` or `.delete` on the guarded
   BlockBuffer according to the contents of the writeback buffer tables. It
   does not need to inform the BlockBuffer about the end of the Crank: if the
   process is interrupted before the writes are finished, the whole process
   will be terminated, and the next reboot will start from the results of the
   previous Block.
-* When BlockBuffer's `.get`/`.has` is called, it first checks the Block-level
+- When BlockBuffer's `.get`/`.has` is called, it first checks the Block-level
   write-back buffer (again a `Map` for additions and a `Set` of deleted
   keys). If the key is not present in those, it forwards the read to the
   HostDB. Writes are added to the write-back buffers.
-* When `commitBlock` is called, the contents of the write-back buffers are
+- When `commitBlock` is called, the contents of the write-back buffers are
   submitted as an atomic batch to the HostDB. Depending upon the HostDB
   interface, this might be a single invocation of `applyBatch` with a large
   list of operations, or it might be a `startTransaction` followed by many
   small writes/deletes and finished with a `commit` call.
-
 
 ## Future Improvements
 
@@ -172,13 +166,13 @@ atomic unit. Using an `applyBatch` that accepts a list of `set` and `delete`
 calls is simple, but requires an extra copy of the Block-sized state delta to
 exist in RAM:
 
-* Each Crank's state delta is accumulated in RAM (inside the `crankBuffer`)
+- Each Crank's state delta is accumulated in RAM (inside the `crankBuffer`)
   until the end of the Crank. The Crank Buffer is then drained into the Block
   Buffer.
-* If the HostDB uses `applyBatch`, the Block's changes are accumulated in RAM
+- If the HostDB uses `applyBatch`, the Block's changes are accumulated in RAM
   inside the Block Buffer until the end of the Block. The Block Buffer is
   then drained into the HostDB.
-* If the HostDB provided a `startTransaction`/`commit` API instead, each
+- If the HostDB provided a `startTransaction`/`commit` API instead, each
   Crank's changes could be flushed to disk (but not actually committed to
   yet), reducing the RAM footprint.
 

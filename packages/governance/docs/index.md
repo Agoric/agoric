@@ -1,4 +1,5 @@
 # Governance Diagrams
+
 ## ./contractGovernance.png
 
 [![./contractGovernance.png](./contractGovernance.png)](./contractGovernance.png)
@@ -10,4 +11,3 @@
 ## ./governanceExample.png
 
 [![./governanceExample.png](./governanceExample.png)](./governanceExample.png)
-

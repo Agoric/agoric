@@ -4,11 +4,6 @@ Kernel holds a promise table:
 
 | kernel promise number | decider vat ID | state | subscribing vats |
 
-
-
-
-
-
 ## Actually
 
 Promises created locally in a Vat can only be resolved by that vat: the
@@ -25,7 +20,7 @@ target of a dispatch.fulfill/reject. Resolvers are only used in special
 calls, so they can't be cited in slots.
 
 send({type: import, id}, "foo", JSON([{@qclass: slot, index: 0}]),
-     [{type: promise, id: 4}])
+[{type: promise, id: 4}])
 
 For each vat, the kernel maps importIDs to (vat,exportID). It also maps
 promiseIDs (which are basically imports) to a row in the Kernel Promise Table
@@ -48,7 +43,7 @@ use `dispatch.queue` instead of `dispatch.deliver` to make it clear. We'll
 need to do this with the comms vat, which might get `dispatch.deliver` for
 inbound network messages and `dispatch.queue` for everything from other vats.
 
-* syscall.send(exportID, methodName, argsString, slots) -> resultPromiseID
+- syscall.send(exportID, methodName, argsString, slots) -> resultPromiseID
 
   "hey kernel, please send a message to this target (one of your local
   pass-by-presence). I'm going to create a local promise to manage the
@@ -56,18 +51,17 @@ inbound network messages and `dispatch.queue` for everything from other vats.
   result (citing resultPromiseID in the target of a syscall.send), or share
   the promise with someone else (cite resultPromiseID in the slots)
 
-* syscall.subscribe(promiseID)
+- syscall.subscribe(promiseID)
 
   "hey kernel, I care about one of your promises, so please call my
-  dispatch.notify* when it changes state"
+  dispatch.notify\* when it changes state"
 
-* syscall.createPromise() -> { promiseID, resolverID }
+- syscall.createPromise() -> { promiseID, resolverID }
 
   "hey kernel, I want to share one of my local promises, so please create a
   kernel-promise that I can cite."
 
-  
-* dispatch.deliver(target, methodName, argsString, slots, resolverID)
+- dispatch.deliver(target, methodName, argsString, slots, resolverID)
   target is {type: export, id} or {type: resolver, id}
 
   "hey vat, I'm sending a message to one of your exports, or to be queued for
@@ -75,62 +69,60 @@ inbound network messages and `dispatch.queue` for everything from other vats.
   promise to track its result, and associate it with resolverID in case we
   need to talk about it in the future"
 
-* syscall.notifyRedirect(resolverID, newPromiseID)
-* syscall.notifyFulfillToTarget(resolverID, slot)
-* syscall.notifyFulfillToData(resolverID, resultString, slots)
-* syscall.notifyReject(resolverID, resultString, slots)
+- syscall.notifyRedirect(resolverID, newPromiseID)
+- syscall.notifyFulfillToTarget(resolverID, slot)
+- syscall.notifyFulfillToData(resolverID, resultString, slots)
+- syscall.notifyReject(resolverID, resultString, slots)
 
   "hey kernel, remember that promise you cared about with dispatch.subscribe?
   The state has changed. I resolved it to:
-  
-  * redirect: one of your other promises
-  * fulfillToTarget(slot={type: export, id}): one of my pass-by-presence
+
+  - redirect: one of your other promises
+  - fulfillToTarget(slot={type: export, id}): one of my pass-by-presence
     objects
-  * fulfillToTarget(slot={type: import, id}): one of my imports (somebody
+  - fulfillToTarget(slot={type: import, id}): one of my imports (somebody
     else's exported pass-by-presence object)
-  * fulfillToData: some non-callable data (which might contain imports,
+  - fulfillToData: some non-callable data (which might contain imports,
     exports, or promises)
-  * reject: some arbitrary data, but with reject() instead of resolve()
-  
+  - reject: some arbitrary data, but with reject() instead of resolve()
+
   I'm done with it, so I'm going to forget this resolverID now"
 
-* dispatch.notifyFulfillToTarget(promiseID, slot)
-* dispatch.notifyFulfillToData(promiseID, resultString, slots)
-* dispatch.notifyReject(promiseID, resultString, slots)
+- dispatch.notifyFulfillToTarget(promiseID, slot)
+- dispatch.notifyFulfillToData(promiseID, resultString, slots)
+- dispatch.notifyReject(promiseID, resultString, slots)
 
   "hey vat, remember that promise you cared about with syscall.subscribe?
   It's settled, here's the result. I'm going to forget about promiseID now."
 
 In the future, we might add:
 
-* syscall.release(promiseID)
+- syscall.release(promiseID)
 
   "hey kernel, ... ???"
 
-* dispatch.release(resolverID)
+- dispatch.release(resolverID)
 
   "hey vat, remember that promise? nobody is subscribed anymore, and nobody
   will ever be subscribed again in the future, so you can forget about it"
   ???
 
-* dispatch.subscribe(resolverID)
+- dispatch.subscribe(resolverID)
 
   "hey vat, remember that promise you created with dispatch.deliver or
   syscall.createPromise? Specifically the resolverID. Someone now cares about
   the result, and you are the only one who can provide it. Please call
-  syscall.notify* with the given resolverID when it changes state."
-
-
+  syscall.notify\* with the given resolverID when it changes state."
 
 ## No Longer Accurate, Probably
 
-* syscall.registerPromise(exportID)
-* syscall.noticeSettled(exportID, serializedResolution, slots)
-* syscall.noticeRedirect(exportID, importOrExportID)
-*
-* syscall.subscribe/whenMoreResolved(importID)
-* dispatch.noticeSettled(importID, serializedResolution, slots)
-* there is no dispatch.noticeRedirect
+- syscall.registerPromise(exportID)
+- syscall.noticeSettled(exportID, serializedResolution, slots)
+- syscall.noticeRedirect(exportID, importOrExportID)
+-
+- syscall.subscribe/whenMoreResolved(importID)
+- dispatch.noticeSettled(importID, serializedResolution, slots)
+- there is no dispatch.noticeRedirect
 
 When a Vat creates a new local Promise and sends it (as a method argument, or
 in a return value), its comms layer notices that this is the first time that
@@ -202,10 +194,10 @@ This would be implemented by having the deciding Vat call
 `syscall.noticeRedirect` when the redirection happens. The details are still
 fuzzy, but I think there are three cases:
 
-* redirect to another local promise: look up the exportID (or allocate a new
+- redirect to another local promise: look up the exportID (or allocate a new
   one)
-* redirect to an imported value: look up the importID
-* redirect to a settled value: call `syscall.noticeSettled` instead
+- redirect to an imported value: look up the importID
+- redirect to a settled value: call `syscall.noticeSettled` instead
 
 The kernel table would be updated to have a redirect pointer to some other
 row of the kernel table. There's no need to tell subscribing vats about the
@@ -221,15 +213,15 @@ shorten the paths. As a result, there's no need for a
 
 ## Or...
 
-* syscall.send(targetImportID, methodName, argsString, slots) -> resultImportID
-* syscall.registerPromise(exportID) -> resolverImportID
-* dispatch.deliver(facetExportID, methodName, argsString, slots, resolverImportID)
-* syscall.notifyRedirect(resolverImportID, targetImport/ExportID)
-* syscall.notifyFulfill(resolverImportID, resultString, slots)
-* syscall.notifyReject(resolverImportID, resultString, slots)
-* syscall.subscribe(promiseImportID)
-* dispatch.notifyFulfill(resultImportID, resultString, slots)
-* dispatch.notifyReject(resultImportID, resultString, slots)
+- syscall.send(targetImportID, methodName, argsString, slots) -> resultImportID
+- syscall.registerPromise(exportID) -> resolverImportID
+- dispatch.deliver(facetExportID, methodName, argsString, slots, resolverImportID)
+- syscall.notifyRedirect(resolverImportID, targetImport/ExportID)
+- syscall.notifyFulfill(resolverImportID, resultString, slots)
+- syscall.notifyReject(resolverImportID, resultString, slots)
+- syscall.subscribe(promiseImportID)
+- dispatch.notifyFulfill(resultImportID, resultString, slots)
+- dispatch.notifyReject(resultImportID, resultString, slots)
 
 The recipient of a method isn't really exporting a promise, they're
 importing a resolver, which they're expected to call (redirect or fulfill or

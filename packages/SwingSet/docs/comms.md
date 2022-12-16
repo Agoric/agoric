@@ -16,11 +16,11 @@ in Machine B about an object that lives on `a`.
 
 The same object on vat `a` has the following representations:
 
-* in vat `a`: `o+1` (vat export number 1)
-* in the commsVat on Machine A: `o-2` (import number 2)
-* over the wire to B: `ro-3` (remote object ingress number 3)
-* in the commsVat on Machine B: `o+4` (vat export number 4)
-* in vat `b`: `o-5` (vat import number 5)
+- in vat `a`: `o+1` (vat export number 1)
+- in the commsVat on Machine A: `o-2` (import number 2)
+- over the wire to B: `ro-3` (remote object ingress number 3)
+- in the commsVat on Machine B: `o+4` (vat export number 4)
+- in vat `b`: `o-5` (vat import number 5)
 
 (The identifiers are allocated on demand, so the numbers will vary. These
 values were chosen to indicate that all the ids are unrelated to each other.)
@@ -28,11 +28,11 @@ values were chosen to indicate that all the ids are unrelated to each other.)
 Note that when Machine B sends this same object back, the wire identifier
 type will be different (`ro+NN` instead of `ro-NN`):
 
-* in vat `b`: `o-5` (vat import number 5)
-* in the commsVat on Machine B: `o+4` (vat export number 4)
-* over the wire to A: `ro+3` (remote object egress number 3)
-* in the commsVat on Machine A: `o-2` (import number 2)
-* in vat `a`: `o+1` (vat export number 1)
+- in vat `b`: `o-5` (vat import number 5)
+- in the commsVat on Machine B: `o+4` (vat export number 4)
+- over the wire to A: `ro+3` (remote object egress number 3)
+- in the commsVat on Machine A: `o-2` (import number 2)
+- in vat `a`: `o+1` (vat export number 1)
 
 Similar identifiers are used for Promises: `p+1`, `rp-3`, `p-5`, etc.
 
@@ -57,10 +57,11 @@ resolve:reject:${target}:${slots..};${resolution.data.body}
 ## Over the Wire Slot Types
 
 The possible types are:
-* remote object ingress: arrives as `ro-NN`
-* remote object egress: arrives as `ro+NN`
-* remote promise ingress: arrives as `rp-NN`
-* remote promise egress: arrives as `rp+NN`
+
+- remote object ingress: arrives as `ro-NN`
+- remote object egress: arrives as `ro+NN`
+- remote promise ingress: arrives as `rp-NN`
+- remote promise egress: arrives as `rp+NN`
 
 The comms protocol is exceedingly polite, and always emits object/promise
 references in the format that the receiving machine can understand, i.e. from
@@ -76,15 +77,15 @@ upon the message direction (syscall into the kernel, or dispatch into a vat).
 
 Like kernel promises, the `rp+NN`/`rp-NN` references used in inter-machine
 messages have two different properties. The sign character indicates which
-side (receiver '+', or sender '-') *allocated* the number. The promise also
-has a specific *Decider*, which changes as the promise is used as the result
+side (receiver '+', or sender '-') _allocated_ the number. The promise also
+has a specific _Decider_, which changes as the promise is used as the result
 of a delivery. The rules about transferring decision-making authority match
 those between vats in the kernel. The sign character says nothing about which
 side is the Decider.
 
-Like kernel *objects*, the `ro+NN`/`ro-NN` references have a clear owner: if
+Like kernel _objects_, the `ro+NN`/`ro-NN` references have a clear owner: if
 machine A receives a message that cites `ro+NN`, the object being referenced
-is owned by machine A, and any mesasges *sent* to this object must be sent to
+is owned by machine A, and any mesasges _sent_ to this object must be sent to
 machine A. If it receives `ro-NN` from machine B, that refers to an object
 owned by B.
 
@@ -95,7 +96,7 @@ things on my machine or your machine (or a third machine!).
 ## Delivery
 
 `remoteTargetSlot` will be `ro+NN` or `rp+NN`: it is a target to which a
-message is being delivered, and thus will always be an *egress* (export) of
+message is being delivered, and thus will always be an _egress_ (export) of
 the machine which receives the message (if it were an ingress, the message
 was sent to the wrong place).
 
@@ -105,12 +106,12 @@ was sent to the wrong place).
 can be `ro+NN`, `ro-NN`, `rp+NN`, or `rp-NN`.
 
 `methargs.body` is the JSON-encoded method+argument message body (using our
-`marshal` library).  The value that `methargs` encodes is always a pair (which
+`marshal` library). The value that `methargs` encodes is always a pair (which
 is to say, a two-element array) consisting of the method name and the arguments
-list.  The latter is itself always an array, though it can be an empty array if
-there are no arguments.  As far as the comms encoding is concerned, the method
+list. The latter is itself always an array, though it can be an empty array if
+there are no arguments. As far as the comms encoding is concerned, the method
 "name" can be any serialized value, though it actually is limited by use to
-being a string, a symbol, or `undefined`.  As JSON, the methargs body can
+being a string, a symbol, or `undefined`. As JSON, the methargs body can
 contain arbitrary characters except for a newline. The comms message always ends
 with a newline.
 
@@ -257,7 +258,6 @@ We anticipate adding `resolve:forward` in the future, which will replace one
 promise with another. The message format for this will probably be
 `resolve:forward:${target}:${resolutionRef};`, where `resolutionRef` is a
 promise identifier.
-
 
 ## Comparison to the E version of CapTP:
 

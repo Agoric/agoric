@@ -14,6 +14,7 @@ public
 *.html
 *.json
 *.md
+!**/docs/**/*.md
 
 # selectively include instead of all .json because
 # - many (such as jsconfig.json) allow trailing commas want to preserve but Prettier will remove per JSON

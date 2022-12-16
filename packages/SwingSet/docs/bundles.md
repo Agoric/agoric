@@ -32,17 +32,17 @@ A "bundlecap" is an object (specifically a swingset "device node") which identif
 
 The swingset kernel maintains a "bundle table" in the kernel database. Bundles can be installed here, indexed by their bundle ID, and retrieved for various purposes:
 
-* all swingset vats, both static and dynamic, start from a bundle
-  * in these bundles, the entry point module exports a function named `buildRootObject`
-* through `vatAdminService~.getBundleCap()`, vat code can exchange a bundle ID for a bundlecap
-* the bundlecap can be used with `vatAdminService~.createVat()` to make a new dynamic vat
-* userspace can use `D(bundleCap).getBundle()` to fetch the bundle itself, for use with an `importBundle()` that does not create an entire new vat
-  * the Zoe "ZCF" facet uses this to load contract code within an existing vat
-  * this could also be used as part of an in-vat upgrade process, to load new behavior
-* each vat also has a "liveslots" layer, defined by a bundle
-  * the liveslots bundle ID is recorded separately for each vat, so liveslots can be upgraded (for new vats) without affecting the behavior of existing ones
-* swingset devices are defined by bundles that are stored in the bundle table
-* the kernel source code itself is stored in a bundle, to make it easier to switch from one version of the kernel to another at a pre-determined time
+- all swingset vats, both static and dynamic, start from a bundle
+  - in these bundles, the entry point module exports a function named `buildRootObject`
+- through `vatAdminService~.getBundleCap()`, vat code can exchange a bundle ID for a bundlecap
+- the bundlecap can be used with `vatAdminService~.createVat()` to make a new dynamic vat
+- userspace can use `D(bundleCap).getBundle()` to fetch the bundle itself, for use with an `importBundle()` that does not create an entire new vat
+  - the Zoe "ZCF" facet uses this to load contract code within an existing vat
+  - this could also be used as part of an in-vat upgrade process, to load new behavior
+- each vat also has a "liveslots" layer, defined by a bundle
+  - the liveslots bundle ID is recorded separately for each vat, so liveslots can be upgraded (for new vats) without affecting the behavior of existing ones
+- swingset devices are defined by bundles that are stored in the bundle table
+- the kernel source code itself is stored in a bundle, to make it easier to switch from one version of the kernel to another at a pre-determined time
 
 ## Bundle Installation Through Config
 
@@ -68,18 +68,18 @@ Userspace works with bundlecaps, which can be passed through eventual-sends from
 
 Bundlecaps can be obtained from several methods of `vatAdminService`, which (as a vat) always returns a Promise.
 
-* `E(vatAdminService).getBundleCap(bundleID) -> Promise<BundleCap>` (rejects if not installed yet)
-* `E(vatAdminService).waitForBundleCap(bundleID) -> Promise<BundleCap>` (waits until installed)
-* `E(vatAdminService).getNamedBundleCap(name) -> Promise<BundleCap>` (rejects if not registered)
-* `E(vatAdminService).getBundleIDByName(name) -> Promise<string>` (rejects if not registered)
+- `E(vatAdminService).getBundleCap(bundleID) -> Promise<BundleCap>` (rejects if not installed yet)
+- `E(vatAdminService).waitForBundleCap(bundleID) -> Promise<BundleCap>` (waits until installed)
+- `E(vatAdminService).getNamedBundleCap(name) -> Promise<BundleCap>` (rejects if not registered)
+- `E(vatAdminService).getBundleIDByName(name) -> Promise<string>` (rejects if not registered)
 
 Note that the `waitForBundleCap()` method will wait (possibly forever) for the bundle ID to be installed before resolving its Promise, so the Promise will never resolve to `undefined`.
 
 Once you have a bundlecap, the full set of things you can do with it are:
 
-* `D(bundleCap).getBundleID() -> string`: to get the bundle ID
-* `D(bundleCap).getBundle() -> bundle object`: if you really need the full bundle, i.e. for `importBundle()`
-* `E(vatAdminService).createVat(bundleCap)`: create a new dynamic vat from the bundle
+- `D(bundleCap).getBundleID() -> string`: to get the bundle ID
+- `D(bundleCap).getBundle() -> bundle object`: if you really need the full bundle, i.e. for `importBundle()`
+- `E(vatAdminService).createVat(bundleCap)`: create a new dynamic vat from the bundle
 
 ## Kernel Internals
 

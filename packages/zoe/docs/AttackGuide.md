@@ -7,14 +7,13 @@ correspond pretty closely to the set of assurances that Zoe aims to support.
 
 The main focus of most threats would be a breach of one of Zoe's core invariants
 
- * reallocations ordered by contracts must not violate
-   * offer safety
-   * exit rules, or
-   * rights conservation
- * invitations are needed in order to exercise offers
- * each instance of a contract is isolated from others and can only communicate through
-    capabilities that have been explicitly shared
-
+- reallocations ordered by contracts must not violate
+  - offer safety
+  - exit rules, or
+  - rights conservation
+- invitations are needed in order to exercise offers
+- each instance of a contract is isolated from others and can only communicate through
+  capabilities that have been explicitly shared
 
 ## Reallocation
 
@@ -34,7 +33,6 @@ every seat, then updates them one at a time (replaceAllocations in
 reallocate any seat would cause the vat to be terminated. Are there any failures of an
 individual reallocation that would violate the consistency rules for the overall
 reallocation?
-
 
 ## Asynchrony
 
@@ -67,8 +65,7 @@ surprise clients.
 
 ## Zoe Helpers
 
-do the zoe helpers use undocumented APIs? 
-
+do the zoe helpers use undocumented APIs?
 
 ## Bundle Source
 
@@ -76,11 +73,9 @@ Someone should look at bundle-source. This is the place where user-supplied code
 evaluated. Can you break things by importing stuff you shouldn't? Can you get access to
 objects you shouldn't be able to?
 
-
 ## Empty Seats
 
 Can anything be tickled because emptySeats don't have a serious proposal?
-
 
 ## createZcfVat
 
@@ -89,11 +84,12 @@ can be breached, vatAdminSvc could be mis-used.
 
 ## startInstance
 
-startInstance is complex.  does it successfully
- * isolate seats and their assets from one another?
- * ensure exit can only be called by the seat holder?
- * update allocations?
- * protect handleOfferObj from zcfZygote through startInstance.  How about the resulting exitObj and offerResult
+startInstance is complex. does it successfully
+
+- isolate seats and their assets from one another?
+- ensure exit can only be called by the seat holder?
+- update allocations?
+- protect handleOfferObj from zcfZygote through startInstance. How about the resulting exitObj and offerResult
 
 ## The "Fred" Problem
 
@@ -121,22 +117,19 @@ as it ought to be?
 
 `zoeStorageManager.js`, likewise.
 
-
 ## Use of platform tools
 
 Is anything not FAR or hardened that should be?
 
-Do we leak any info inappropriately with assertions that don't use X``, or over-broad use
-of `q()` in messages?
+Do we leak any info inappropriately with assertions that don't use X``, or over-broad use of `q()` in messages?
 
 ## ZcfZygote
 
-SwingSet doesn't support zygotes yet.  (This is planned to be a mechanism that would allow
+SwingSet doesn't support zygotes yet. (This is planned to be a mechanism that would allow
 rapid startup of new vats by storing the partially initialized state to reduce work when
 making a new instance. Zoe has code that is intended to eventually take advantage of that support.
 
 Does it leave any openings for an attack?
-
 
 The following is what an attacker's guide might say when zygotes are in use:
 
@@ -148,4 +141,3 @@ time a new instance is started.
  * could `start()` be constructed in a way that makes its behavior different in different
     instances?
 ```
-	

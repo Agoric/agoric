@@ -36,7 +36,7 @@ However, they cannot be the target of a `syscall.send`. Instead, a special
 syscall.callNow(device, argsbytes, slots) -> { bytes, slots }
 ```
 
-This `callNow` runs *synchronously*, unlike `syscall.send()`. The device
+This `callNow` runs _synchronously_, unlike `syscall.send()`. The device
 driver returns the results with the same format as the arguments are sent: a
 serialized object, plus some number of slots that it can reference. All
 interactions with the device are through syscalls and data values. This
@@ -56,7 +56,7 @@ retval = D(devicenode).method(args)
 
 Devices can send messages to vats. In particular, they can perform
 `syscall.sendOnly()`, which pushes a message onto the kernel run-queue.
-Unlike `syscall.send`, `sendOnly` does *not* support a result promise, so the
+Unlike `syscall.send`, `sendOnly` does _not_ support a result promise, so the
 device does not get to hear about the results of delivering the message.
 `sendOnly` does not return anything.
 
@@ -138,7 +138,6 @@ provide endowments to each device through the `deviceEndowments` argument.
 This object uses the same device names as keys, and each value is provide to
 the corresponding device in the `endowments` parameter.
 
-
 ```js
 function startApplication() {
  ..
@@ -183,12 +182,12 @@ export function buildRootDeviceNode(tools) {
 This sort of device code gets an environment similar to the one liveslots
 provides to regular vat code, except:
 
-* It does not provide the `E()` wrapper, since devices cannot manage promises
+- It does not provide the `E()` wrapper, since devices cannot manage promises
   or perform result-bearing eventual-sends
-* Instead, it provides an `SO()` wrapper, which exposes `syscall.sendOnly`.
-* All pass-by-presence objects returned by device methods are passed as
+- Instead, it provides an `SO()` wrapper, which exposes `syscall.sendOnly`.
+- All pass-by-presence objects returned by device methods are passed as
   new device nodes, not objects
-* The return value of `buildRootDeviceNode` is exposed as the root device
+- The return value of `buildRootDeviceNode` is exposed as the root device
   node to the bootstrap function (e.g. `devices.myDevice`)
 
 ### State Management
@@ -204,7 +203,7 @@ TODO: examples of safe usage
 
 Vats get one API to interact with devices:
 
-* `syscall.callNow(deviceSlot, method, argsCapdata) -> resultsCapdata`
+- `syscall.callNow(deviceSlot, method, argsCapdata) -> resultsCapdata`
 
 The `liveSlots` helper for constructing vats provides both an `E()` wrapper
 (for constructing `syscall.send()` messages to Presences) and a `D()` wrapper
@@ -237,12 +236,12 @@ This will push a delivery onto the kernel run-queue.
 
 ```js
 // vat does
-  const callbackObj = Far('cb', {
-    hello(arg) {
-      console.log('they called me!', arg);
-    },
-  });
-  E(devices.hello).callMe(callbackObj);
+const callbackObj = Far('cb', {
+  hello(arg) {
+    console.log('they called me!', arg);
+  },
+});
+E(devices.hello).callMe(callbackObj);
 // and in some upcoming crank, we'll see
 //   'they called me! there'
 ```
@@ -251,8 +250,7 @@ This is most useful when prompted by external input, through a callback
 established via an endowment. See the timer and mailbox devices for examples.
 
 The low-level device API uses `dispatch` and `syscall` just like with vats.
-However the inbound message pathway uses `dispatch.invoke(deviceNodeID,
-method, argsCapdata) -> resultCapdata`, and the outbound pathway uses
+However the inbound message pathway uses `dispatch.invoke(deviceNodeID, method, argsCapdata) -> resultCapdata`, and the outbound pathway uses
 `syscall.sendOnly`.
 
 ## Raw Devices
@@ -271,9 +269,9 @@ table of JavaScript `Object` instances for every export.
 Raw devices have access to a per-device string/string key-value store whose
 API matches the `vatStore` available to vats:
 
-* `syscall.vatstoreGet(key)` -> `string`
-* `syscall.vatstoreSet(key, value)`
-* `syscall.vatstoreDelete(key)`
+- `syscall.vatstoreGet(key)` -> `string`
+- `syscall.vatstoreSet(key, value)`
+- `syscall.vatstoreDelete(key)`
 
 The mode is enabled by exporting a function named `buildDevice` instead of
 `buildRootDeviceNode`.
@@ -305,7 +303,7 @@ of the return results without manual JSON hacking.
 The kernel automatically configures devices for internal use. Most are paired
 with vats to expose the functionality for user vats.
 
-* `vats.vatAdmin` works with `devices.vatAdmin` to allow the creation of new
+- `vats.vatAdmin` works with `devices.vatAdmin` to allow the creation of new
   "dynamic vats" at runtime.
 
 ### Device Access to Kernel Hooks
@@ -341,13 +339,13 @@ some form of GC within devices).
 
 The Swingset source tree includes source code for several useful devices.
 
-* Timer Device: this gives vats the ability to set one-shot and repeating
+- Timer Device: this gives vats the ability to set one-shot and repeating
   timers, and to ask about the current time. Host applications must configure
   and endow a timer device, and connect it to a wrapper vat. User vats talk
   to the wrapper vat for access.
-* Mailbox: this enables the Comms/VatTP vats to exchange messages with other
+- Mailbox: this enables the Comms/VatTP vats to exchange messages with other
   kernels, through a host-application provided delivery channel.
-* Command: this facilitates an HTTP or WebSocket -exposed channel into and
+- Command: this facilitates an HTTP or WebSocket -exposed channel into and
   out of user vats.
 
 Using these devices requires adding the device (and associated wrapper vat)
@@ -359,8 +357,7 @@ to be notified when a particular time has been reached.
 
 Most off-machine communication takes place through a "mailbox". This is a
 special portion of the kernel state vector into which the VatTP layer can
-write message bodies destined for other machines, using the `add(recipient,
-msgnum, body)` method of the outbox device. The host loop is expected to
+write message bodies destined for other machines, using the `add(recipient, msgnum, body)` method of the outbox device. The host loop is expected to
 allow the kernel to quiesce, then examine this mailbox for new outbound
 messages. At that point it should attempt to deliver them to the other
 machine, using TCP/TLS (perhaps with `libp2p`) or other means. By deferring

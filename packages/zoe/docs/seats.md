@@ -4,21 +4,19 @@ Note: These are internal documentation notes. For how to use Zoe and
 how to develop smart contracts, please see
 https://agoric.com/documentation/
 
-
-__UserSeat.tryExit() Flow:__
+**UserSeat.tryExit() Flow:**
 
 ![UserSeat Exit Flow](./user-seat-exit-flow.png)
 
-__ZCFSeat.exit() Flow:__
+**ZCFSeat.exit() Flow:**
 
 ![ZCFSeat Exit Flow](./zcf-seat-exit-flow.png)
 
-__ZCF.reallocate() Flow:__
+**ZCF.reallocate() Flow:**
 
 ![ZCF Reallocate Flow](./zcf-reallocate-flow.png)
 
-
-## UserSeat 
+## UserSeat
 
 The `UserSeat` is what is returned when a user calls
 `E(zoe).offer(invitation, proposal, payments, offerArgs, feePurse)`. It has the following
@@ -55,6 +53,7 @@ const buyItems = buyerSeat => {
   const moneyGiven = buyerSeat.getAmountAllocated('Money', moneyBrand);
   ...
 ```
+
 The type of the ZCFSeat is:
 
 ```js
@@ -74,7 +73,7 @@ The type of the ZCFSeat is:
  * @property {(amountKeywordRecord: AmountKeywordRecord) => AmountKeywordRecord} decrementBy
  * @property {() => void} clear
  */
- ```
+```
 
 ## ZoeSeatAdmin
 
@@ -95,4 +94,4 @@ The type of the `ZoeSeatAdmin` is:
  * @property {ShutdownWithFailure} fail called with the reason
  * for calling fail on this seat, where reason is normally an instanceof Error.
  */
- ```
+```

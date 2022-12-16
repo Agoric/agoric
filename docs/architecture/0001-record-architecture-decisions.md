@@ -1,7 +1,7 @@
 # ADR 1: Record architecture decisions
 
-*Taken almost verbatim from [Michael Nygard's article on the
-subject](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions)*
+_Taken almost verbatim from [Michael Nygard's article on the
+subject](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions)_
 
 ## Status
 
@@ -45,16 +45,16 @@ We will use a format with just a few parts, so each document is easy to digest. 
 
 **Title** These documents have names that are short noun phrases. For example, "ADR 1: Deployment on Ruby on Rails 3.0.10" or "ADR 9: LDAP for Multitenant Integration"
 
-**Status**   We will start with a date (in [ISO 8601 extended
+**Status** We will start with a date (in [ISO 8601 extended
 format](https://en.wikipedia.org/wiki/ISO_8601#Calendar_dates)) of when the
 status changed, but other metadata will only be captured in the source
-repository history.  A decision may be "proposed" if the project stakeholders
+repository history. A decision may be "proposed" if the project stakeholders
 haven't agreed with it yet, or "accepted" once it is agreed. If a later ADR
 changes or reverses a decision, it may be marked as "deprecated" or "superseded"
 with a reference to its replacement.
 
 **Context** Note the project to which this ADR applies, including other
-relevant ADRs.  This section describes the forces at play, including
+relevant ADRs. This section describes the forces at play, including
 technological, political, social, and project local. These forces are probably
 in tension, and should be called out as such. The language in this section is
 value-neutral. It is simply describing facts.
@@ -76,5 +76,5 @@ Developers and project stakeholders can see the ADRs, even as the team compositi
 The motivation behind previous decisions is visible for everyone, present and future. Nobody is left scratching their heads to understand, "What were they thinking?" and the time to change old decisions will be clear from changes in the project's context.
 
 Every requirement of the ADR format comes at the cost of more friction, so
-starting with a simple structure is prudent.  Refinements can be added in future
+starting with a simple structure is prudent. Refinements can be added in future
 ADRs as agreed on by the team.

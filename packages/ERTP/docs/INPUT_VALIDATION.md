@@ -17,6 +17,7 @@ The malicious behavior we would like to prevent is:
 ## Entry points in ERTP
 
 There are three entry points in ERTP:
+
 1. packages/ERTP/src/amountMath.js
 2. packages/ERTP/src/issuerKit.js
 3. packages/ERTP/src/typeGuards.js
@@ -45,7 +46,7 @@ Remotable and do not call any of these methods (we would have to call
 them asynchronously in order to check them, since the `brand` might be
 a remote object, so we do not check them.)
 
-The value is either a bigint Nat in the case of AssetKind.NAT (we formerly allowed numbers for backwards compatibility, but now only bigints are allowed) or an array of Structures in the case of AssetKind.SET. The array of Structures might include any combination of other Structures, “undefined”, “null”, booleans, symbols, strings, pass-by-copy records, pass-by-copy arrays, numbers, bigints,  Remotables, and errors. Importantly, a Structure cannot contain promises.
+The value is either a bigint Nat in the case of AssetKind.NAT (we formerly allowed numbers for backwards compatibility, but now only bigints are allowed) or an array of Structures in the case of AssetKind.SET. The array of Structures might include any combination of other Structures, “undefined”, “null”, booleans, symbols, strings, pass-by-copy records, pass-by-copy arrays, numbers, bigints, Remotables, and errors. Importantly, a Structure cannot contain promises.
 
 ## Invalid Amounts
 
@@ -53,11 +54,11 @@ There are a number of ways in which amounts can be invalid:
 
 ### Not an object
 
-* **The danger**: we’ll get unexpected failures later on in our use of the amount rather than failing fast at the start as intended.
+- **The danger**: we’ll get unexpected failures later on in our use of the amount rather than failing fast at the start as intended.
 
 ### Not a CopyRecord
 
-* **The danger**: an object that isn’t a `copyRecord` can have
+- **The danger**: an object that isn’t a `copyRecord` can have
   `getters` that return different values at different times, so
   checking the value would be no guarantee that the value will be the
   same when accessed later. For example:
@@ -66,16 +67,17 @@ There are a number of ways in which amounts can be invalid:
 const object1 = {};
 let checked = false;
 Object.defineProperty(object1, 'value', {
- get() {
-   if (checked) {
-     return 1000000n;
-   } else {
-     checked = true;
-     return 1n;
-   }
- },
+  get() {
+    if (checked) {
+      return 1000000n;
+    } else {
+      checked = true;
+      return 1n;
+    }
+  },
 });
 ```
+
 ```sh
 > object1.value
 1n
@@ -92,15 +94,15 @@ change happens, `passStyleOf` would not throw in that case.)
 
 ### Is a CopyRecord and is a proxy
 
-* **The dangers**:
-  1) A proxy can throw on any property access. Any time it does *not* throw, it *must* return the same
+- **The dangers**:
+  1. A proxy can throw on any property access. Any time it does _not_ throw, it _must_ return the same
      value as before.
-  2) A proxy can mount a reentrancy attack. When the property is
+  2. A proxy can mount a reentrancy attack. When the property is
      accessed, the proxy handler is called, and the handler can
      reenter the code while the original is still waiting for that
      property access to return.
 
-We *assume* we will address proxy-based reentrancy by other, lower-level means.
+We _assume_ we will address proxy-based reentrancy by other, lower-level means.
 Specifically, `passStyleOf(x) === 'copyRecord'` or
 `passStyleOf(x) === 'copyArray'` would guarantee that `x` is not a proxy, protecting
 against dangers #1 and #2. We should note that proxy-based reentrancy
@@ -110,6 +112,7 @@ access.
 ## Invalid brands
 
 A brand can be "wrong" if:
+
 1. It's not a Remotable
 2. Its methods don’t adhere to the expected Brand API
 3. It misbehaves (i.e. answering isMyIssuer with different responses)
@@ -118,6 +121,7 @@ In determining whether a brand is "valid", we only check that the brand is a rem
 that passes our input validation could still have the wrong API or misbehave.
 
 ## Who hardens?
+
 It is the responsibility of the sender/client (the creator of an
 issuerKit or user of ERTP) to harden. AmountMath does not harden
 inputs.
@@ -125,19 +129,20 @@ inputs.
 ## The implementation
 
 In `AmountMath.coerce(brand, allegedAmount)`, we do the following:
+
 1. assert that the `brand` is a remotable
 2. assert that the `allegedAmount` is a `copyRecord`
 3. destructure the `allegedAmount` into `allegedBrand` and
    `allegedValue`
 4. Assert that the `brand` is identical to the `allegedBrand`
 5. Call `AmountMath.make(brand, allegedValue)`, which:
-    * Asserts that the `brand` is a remotable, again.
-    * Asserts that the `allegedValue` is a `copyArray` or a `bigint`
-    * Gets the appropriate MathHelpers
-    * Calls `helpers.doCoerce(allegedValue)`, which either asserts
-      that the value is a `Nat bigint` or that the value is a
-      `copyArray` `structure` with no duplicate elements
-11. Return a new `amount`
+   - Asserts that the `brand` is a remotable, again.
+   - Asserts that the `allegedValue` is a `copyArray` or a `bigint`
+   - Gets the appropriate MathHelpers
+   - Calls `helpers.doCoerce(allegedValue)`, which either asserts
+     that the value is a `Nat bigint` or that the value is a
+     `copyArray` `structure` with no duplicate elements
+6. Return a new `amount`
 
 Thus, we ensure that the `brand` is valid by checking that it is a
 remotable. We ensure that the `allegedAmount` is a copyRecord with

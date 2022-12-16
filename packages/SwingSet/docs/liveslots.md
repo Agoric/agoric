@@ -46,7 +46,7 @@ This function returns the "root object". A remote reference to it will be made a
 import { E } from '@endo/eventual-send';
 
 const p = E(target).foo('arg1');
-p.then(obj2 => E(obj2).bar('arg2'))
+p.then(obj2 => E(obj2).bar('arg2'));
 ```
 
 The method name being invoked can be any string, or the special `Symbol.asyncIterator`. All other Symbol-named methods are currently rejected, but see #2612 for plans to accept anything that JavaScript will accept.
@@ -55,28 +55,28 @@ The method name being invoked can be any string, or the special `Symbol.asyncIte
 
 For safety, all objects should hardened before they are allowed to escape the scope of their construction (so that an adversarial counterparty cannot change their contents in surprising ways). However both method arguments and return values are currently automatically hardened for you.
 
-* Data Objects: when an object's enumerable properties are all non-functions, and the object inherits from either `Object`, `Array`, or `null`, the object is passed by copy: the receiving end gets an object with all the same enumerable properties and their values. The new object inherits from `Object`. These objects are "selfless": they do not retain object identity, so sending the same pass-by-copy object multiple times will result in values that are not `===` to each other.
-* Pass-by-Presence objects: when an object is marked with the special `Far` function (which requires that all its enumerable properties *are* functions), the object is passed by presence. The receiving end gets a special Presence object, which can be wrapped by `E(presence)` to make asynchronous remote method calls on the original object.
-* plain data: anything that JSON can handle will be serialized as plain data, plus numbers (including -0, `NaN`, `Infinity`, `-Infinity`, and BigInts), some Symbols, and `undefined`.
-* Promises: these are recognized as special, and delivered as pass-by-reference. The recipient gets their own Promise whose behavior is linked to the original. When the original Promise is resolved, the downstream version will eventually be resolved too.
+- Data Objects: when an object's enumerable properties are all non-functions, and the object inherits from either `Object`, `Array`, or `null`, the object is passed by copy: the receiving end gets an object with all the same enumerable properties and their values. The new object inherits from `Object`. These objects are "selfless": they do not retain object identity, so sending the same pass-by-copy object multiple times will result in values that are not `===` to each other.
+- Pass-by-Presence objects: when an object is marked with the special `Far` function (which requires that all its enumerable properties _are_ functions), the object is passed by presence. The receiving end gets a special Presence object, which can be wrapped by `E(presence)` to make asynchronous remote method calls on the original object.
+- plain data: anything that JSON can handle will be serialized as plain data, plus numbers (including -0, `NaN`, `Infinity`, `-Infinity`, and BigInts), some Symbols, and `undefined`.
+- Promises: these are recognized as special, and delivered as pass-by-reference. The recipient gets their own Promise whose behavior is linked to the original. When the original Promise is resolved, the downstream version will eventually be resolved too.
 
 Some useful things cannot be serialized: they will trigger an error.
 
-* Functions: this may be fixed, but for now only entire objects are pass-by-presence, and bare functions cause an error. This includes resolvers for Promises.
-* Mixed objects: objects with both function properties and non-function properties. We aren't really sure how to combine pass-by-presence and pass-by-copy, however look at issue #2069 ("auxiliary data") for some plans.
-* Non-frozen objects: since the receiving end would not automatically get updated with changes to a non-frozen object's properties, it seems safer to require that all values be frozen before transmission
+- Functions: this may be fixed, but for now only entire objects are pass-by-presence, and bare functions cause an error. This includes resolvers for Promises.
+- Mixed objects: objects with both function properties and non-function properties. We aren't really sure how to combine pass-by-presence and pass-by-copy, however look at issue #2069 ("auxiliary data") for some plans.
+- Non-frozen objects: since the receiving end would not automatically get updated with changes to a non-frozen object's properties, it seems safer to require that all values be frozen before transmission
 
 Uncertain:
 
-* Maps: This might actually serialize as pass-by-presence, since it has no non-function properties (in fact it has no own properties at all, they all live on `Map.prototype`, whose properties are all functions). The receiving side gets a Presence, not a Map, but invoking e.g. `E(p).get(123)` will return a promise that will be fulfilled with the results of `m.get(123)` on the sending side.
-* WeakMaps: same, except the values being passed into `get()` would be coming from the deserializer, and so they might not be that useful.
+- Maps: This might actually serialize as pass-by-presence, since it has no non-function properties (in fact it has no own properties at all, they all live on `Map.prototype`, whose properties are all functions). The receiving side gets a Presence, not a Map, but invoking e.g. `E(p).get(123)` will return a promise that will be fulfilled with the results of `m.get(123)` on the sending side.
+- WeakMaps: same, except the values being passed into `get()` would be coming from the deserializer, and so they might not be that useful.
 
 ## How things get serialized
 
-* pass-by-presence objects: `{@qclass: "slot", index: slotIndex}`
-* local Promises: passed as a promise
-* promise returned by `E(p).foo()`: passes as a promise, with pipelining enabled
-* Function: rejected (todo: wrap)
+- pass-by-presence objects: `{@qclass: "slot", index: slotIndex}`
+- local Promises: passed as a promise
+- promise returned by `E(p).foo()`: passes as a promise, with pipelining enabled
+- Function: rejected (todo: wrap)
 
 ## Garbage Collection vs Metering
 
@@ -88,17 +88,17 @@ We rely upon the engine to only invoke finalizer callback at explicitly-determin
 
 We cannot allow metering results to diverge between validators, because:
 
-* 1: it might make the difference between the crank completing successfully, and the vat being terminated for a per-crank metering fault
-* 2: it will change the large-scale Meter value, which is reported to userspace
-* 3: it might cause the runPolicy to finish the block earlier on one validator than on others
+- 1: it might make the difference between the crank completing successfully, and the vat being terminated for a per-crank metering fault
+- 2: it will change the large-scale Meter value, which is reported to userspace
+- 3: it might cause the runPolicy to finish the block earlier on one validator than on others
 
 all of which would cause a consensus failure.
 
 To prevent this, we run most of the "inbound" side of liveslots without metering. This includes the first turn of all `dispatch.*` methods, which runs entirely within liveslots:
 
-* `dispatch.deliver` performs argument deserialization in the first turn, then executes user code in the second and subsequent turns
-* `dispatch.notify` does the same
-* the GC deliveries (`dispatch.dropExport`, etc) only use one turn
+- `dispatch.deliver` performs argument deserialization in the first turn, then executes user code in the second and subsequent turns
+- `dispatch.notify` does the same
+- the GC deliveries (`dispatch.dropExport`, etc) only use one turn
 
 We also disable metering when deserializing the return value from a (synchronous) device call, and when retiring a promise ID (which touches `slotToVal`).
 

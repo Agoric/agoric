@@ -8,13 +8,13 @@ The kernel moves from one "Crank" to the next by pulling an action off the run-q
 
 When the run-queue action is `send`, the action will contain a "target" and a message to be sent. This `target` will either be an object reference or a promise reference. For object references, the kernel object table is consulted to determine which vat owns that object. For promise references, the promise table says what state that promise is in:
 
-* if the promise is resolved to an object, the object table is used, just as if the message were sent to the object directly
-* if the promise is resolved to data or rejected, an error result is generated and a new notification action is pushed onto the end of the run-queue (to reject the message's result promise)
-* if the promise has been forwarded to another promise, the lookup process recurses with that other promise
-* if the promise is unresolved:
-  * if decision making authority is currently held by the kernel, the message is queued within the target promise, for execution if/when the promise resolves
-  * if decision making authority is held by a vat, but that vat does not have pipelining enabled, the message is queued within the target promise
-  * if the decider is a pipelining-enabled vat, the message is delivered to the vat, just as if the message target was an object in that vat
+- if the promise is resolved to an object, the object table is used, just as if the message were sent to the object directly
+- if the promise is resolved to data or rejected, an error result is generated and a new notification action is pushed onto the end of the run-queue (to reject the message's result promise)
+- if the promise has been forwarded to another promise, the lookup process recurses with that other promise
+- if the promise is unresolved:
+  - if decision making authority is currently held by the kernel, the message is queued within the target promise, for execution if/when the promise resolves
+  - if decision making authority is held by a vat, but that vat does not have pipelining enabled, the message is queued within the target promise
+  - if the decider is a pipelining-enabled vat, the message is delivered to the vat, just as if the message target was an object in that vat
 
 In both `send` cases, if a message needs to be delivered to a vat, the kernel will construct a `send` Delivery object.
 
@@ -22,9 +22,9 @@ If instead, the run-queue action is `notify`, the action will name a promise (wh
 
 The `Delivery` object is a hardened Array of data (Objects, Arrays, and Strings, all of which can be serialized as JSON), whose first element is a type. It will take one of the following shapes:
 
-* `['message', targetSlot, msg]`
-* `['notify', resolutions]`
-* `['dropExports', vrefs]`
+- `['message', targetSlot, msg]`
+- `['notify', resolutions]`
+- `['dropExports', vrefs]`
 
 In the `message` form, `targetSlot` is a object/promise reference (a string like `o+13` or `p-24`), which identifies the object or promise to which the message is being sent. This target can be a promise if the message is being pipelined to the result of some earlier message.
 
@@ -32,11 +32,11 @@ The `msg` field is an object shaped like `{ method, args, result }`, where `meth
 
 In the `notify` form, `resolutions` is an array of one or more resolution descriptors, each of which is an array of the form:
 
-* `[vpid, promiseDescriptor]`
+- `[vpid, promiseDescriptor]`
 
 `vpid` is a promise reference that names the promise being resolved. `promiseDescriptor` is a record that describes the resolution, in the form:
 
-* `{ rejected, data }`
+- `{ rejected, data }`
 
 `rejected` is a boolean value, where `true` indicates that the promise is being fulfilled and `false` indicates that `data` is a capdata structure that describes the value the promise is being fulfilled to or rejected as.
 
@@ -50,30 +50,30 @@ The kernel then invokes the target vat's `VatManager`'s `.deliver()` method with
 
 The VatManager is given access to a `VatSyscallHandler` function. This takes a `VatSyscall` object, which is a hardened array, in which the first element is always a type string. It takes one of the following forms:
 
-* `['send', target, msg]`
-* `['callNow', target, method, args]`
-* `['subscribe', vpid]`
-* `['resolve', resolutions]`
-* `['vatstoreGet', key]`
-* `['vatstoreSet', key, data]`
-* `['vatstoreDelete', key]`
-* `['dropImports', slots]`
+- `['send', target, msg]`
+- `['callNow', target, method, args]`
+- `['subscribe', vpid]`
+- `['resolve', resolutions]`
+- `['vatstoreGet', key]`
+- `['vatstoreSet', key, data]`
+- `['vatstoreDelete', key]`
+- `['dropImports', slots]`
 
 As with deliveries (but in reverse), the translator converts this from vat-centric identifiers into kernel-centric ones, and emits a `KernelSyscall` object, with one of these forms:
 
-* `['send', target, msg]`
-* `['invoke', target, method, args]`
-* `['subscribe', vatid, kpid]`
-* `['resolve', vatid, resolutions]`
-* `['vatstoreGet', vatid, key]`
-* `['vatstoreSet', vatid, key, data]`
-* `['vatstoreDelete', vatid, key]`
+- `['send', target, msg]`
+- `['invoke', target, method, args]`
+- `['subscribe', vatid, kpid]`
+- `['resolve', vatid, resolutions]`
+- `['vatstoreGet', vatid, key]`
+- `['vatstoreSet', vatid, key, data]`
+- `['vatstoreDelete', vatid, key]`
 
 The `KernelSyscallHandler` accepts one of these objects and executes the syscall. Most syscalls modify kernel state (by appending an item to the run-queue, or modifying promise- and object- tables) and then return an empty result. `invoke` is special in that it will synchronously invoke some device and then return a result that contains arbitrary data. In any event, the KernelSyscallHandler returns a `KernelSyscallResult` object, which has one of the following forms:
 
-* `['ok', null]`
-* `['ok', capdata]`
-* (we can imagine a `['error', reason]` form, but errors in device invocations or within the kernel are delivered by throwing exceptions, which will terminate the kernel, and thus does not need a way to express an error in-band)
+- `['ok', null]`
+- `['ok', capdata]`
+- (we can imagine a `['error', reason]` form, but errors in device invocations or within the kernel are delivered by throwing exceptions, which will terminate the kernel, and thus does not need a way to express an error in-band)
 
 The `KernelSyscallResult` is passed to the translator, which converts it into a `VatSyscallResult` object, with the same forms. This result is passed to the VatManager as the return value of the syscall invocation.
 
@@ -85,11 +85,11 @@ The entire sequence looks like:
 
 "Devices" were originally intended to be just like vats, except with access to external endowments, allowing them to influence (and be influenced by) the outside world, unmediated by the kernel. Devices are the only way for a swingset to do any IO. Consequences of this model became quickly apparent:
 
-* deterministic operation cannot be guaranteed in the face of endowments
-* therefore orthogonal persistence was removed, along with the transcript
-* Promises are harder to reason about without orthogonal persistence, so they were removed
-* we have use cases that require synchronous invocation of device code
-* that requires a new vat syscall, and a new device delivery
+- deterministic operation cannot be guaranteed in the face of endowments
+- therefore orthogonal persistence was removed, along with the transcript
+- Promises are harder to reason about without orthogonal persistence, so they were removed
+- we have use cases that require synchronous invocation of device code
+- that requires a new vat syscall, and a new device delivery
 
 The resulting Device design gives vats the ability to do `syscall.callNow()`, which looks a lot like `syscall.send` except that it does not accept a `result` promise identifier, it blocks waiting for the device operation, and it returns a capdata value. On the device side, we add a `dispatch.invoke()`, which is like the existing `dispatch.deliver()` except that it does not include a `result` argument, and it expects a capdata return value.
 
@@ -99,29 +99,28 @@ The `KernelSyscallHandler` function that implements `syscall.callNow()` will tak
 
 At its deepest point, the call stack will basically look like:
 
-* (top) device code implementing `dispatch.invoke`
-* kernel handler for `callNow`
-* vat calling (blocking for result of) `syscall.callNow`
-* (bottom) kernel delivery to that vat
+- (top) device code implementing `dispatch.invoke`
+- kernel handler for `callNow`
+- vat calling (blocking for result of) `syscall.callNow`
+- (bottom) kernel delivery to that vat
 
 Devices can invoke `syscall.callNow` while they run, so the call stack could be one layer deeper:
 
-* (top) kernel handler for `sendOnly` (pushes item on the run-queue)
-* device code implementing `dispatch.invoke`
-* kernel handler for `callNow`
-* vat calling (blocking for result of) `syscall.callNow`
-* (bottom) kernel delivery to that vat
+- (top) kernel handler for `sendOnly` (pushes item on the run-queue)
+- device code implementing `dispatch.invoke`
+- kernel handler for `callNow`
+- vat calling (blocking for result of) `syscall.callNow`
+- (bottom) kernel delivery to that vat
 
 Devices can also be invoked externally, e.g. in response to inbound IO messages, or a timer expiring. We still need to build a mechanism for safe interleaving (see [#720](https://github.com/Agoric/agoric-sdk/issues/720)), so this can't happen in the middle of some other crank, but at suitably safe times, some function within the device will be invoked by a caller outside the kernel. Within this function, the device might call `syscall.sendOnly`, and we need to safely append that item to the run-queue (and inform the caller that they ought to run the kernel now, because it has work to do). The device might also use `setDeviceState()` to update its internal state. All of the state-vector changes made by these calls need to be committed to, just as if a vat had successfully finished a crank.
 
 When invoked externally, the call stack might look like:
 
-* (top) kernel handler for `sendOnly` (pushes item on the run-queue)
-* device code implementing externally-visible function
-* kernel event-interleaving handler
-* external caller invoking device function
-* (bottom) IO or timer event which provoked that external caller
-
+- (top) kernel handler for `sendOnly` (pushes item on the run-queue)
+- device code implementing externally-visible function
+- kernel event-interleaving handler
+- external caller invoking device function
+- (bottom) IO or timer event which provoked that external caller
 
 ## VatWorker
 

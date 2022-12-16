@@ -1,14 +1,14 @@
 # Dynamic Vats
 
-A SwingSet machine has two sets of vats. The first are the *Static Vats*, which are defined in the configuration object, and created at startup time. The root objects of these vats are made available to the `bootstrap()` method, which can wire them together as it sees fit.
+A SwingSet machine has two sets of vats. The first are the _Static Vats_, which are defined in the configuration object, and created at startup time. The root objects of these vats are made available to the `bootstrap()` method, which can wire them together as it sees fit.
 
-The second set are the *Dynamic Vats*. These are created after startup, with source code bundles that were not known at boot time. Typically these bundles arrive over the network from external providers. In the Agoric system, contracts are installed as dynamic vats (each spawned instance goes into a separate vat).
+The second set are the _Dynamic Vats_. These are created after startup, with source code bundles that were not known at boot time. Typically these bundles arrive over the network from external providers. In the Agoric system, contracts are installed as dynamic vats (each spawned instance goes into a separate vat).
 
 Dynamic vats are metered by default: each message delivered gets a limited amount of resources (CPU cycles, memory, stack frames). If it exceeds this budget, the vat is terminated. All outstanding messages will be rejected, any future messages will be rejected, and it will never get CPU time again.
 
 ## Creating a Dynamic Vat
 
-Vats are created by sending a `createVat()` message to the *Vat Admin Service* object, containing the source bundle which defines your new vat. Dynamic vats can only be created by other vats on the same SwingSet, so ultimately one of the static vats must cooperate.
+Vats are created by sending a `createVat()` message to the _Vat Admin Service_ object, containing the source bundle which defines your new vat. Dynamic vats can only be created by other vats on the same SwingSet, so ultimately one of the static vats must cooperate.
 
 The ability to create new vats is not ambient: it requires access to the Vat Admin Service object, which is initially only made available to the bootstrap call. The bootstrap call usually shares it with the vat that installs contracts.
 
@@ -23,7 +23,7 @@ export function buildRootObject() {
   let counter = 0;
   const root = {
     increment() {
-      return counter += 1;
+      return (counter += 1);
     },
     read() {
       return counter;
@@ -55,7 +55,6 @@ const bundlecap = D(devices.bundle).getBundleCap(bundleID);
 
 The `vatAdminService` accepts the bundlecap.
 
-
 ### Invoking createVat()
 
 Once the bundle object is present within a vat that has access to the Vat Admin Service, you create the vat with a `createVat` call:
@@ -68,17 +67,17 @@ const control = await E(vatAdminService).createVat(bundlecap, options);
 
 `createVat()` recognizes the following options:
 
-* `name` (string): used in debug messages and the `ps`-visible worker argments, to name the vat
-* `meter` (`Meter` object, default none): a Meter object to impose upon the vat. If provided, the Meter will be deducted for each computron spent executing, and the vat will be terminated if the Meter runs out. See docs/metering.md for details.
-* `managerType` (`'local'` or `'xs-worker'` or `'nodeWorker'` or `'node-subprocess'`): the type of worker that will host the vat. `xs-worker` is the only sensible choice. Defaults to a value set by `config.defaultManagerType`, or `xs-worker` if that is not set
-* `vatParameters` (JSON-serializable object): data passed to `buildRootObject` in the `vatParameters` argument
-* `enableSetup` (boolean, default `false`): only used for specialized vats like comms, bypasses `buildRootObject` and the liveslots layer
-* `enablePipelining` (boolean, default `false`): only used for specialized vats like comms, pipelines all messages into the vat instead of queueing them in the kernel until the target promise resolves
-* `enableVatstore` (boolean, default `true`): enables `vatPowers.vatstore` methods for DB-backed state management
-* `virtualObjectCacheSize` (integer): performance tuning parameter
-* `useTranscript` (boolean, default `true`): only used for specialized vats like comms
-* `reapInterval` (integer): performance tuning parameter
-* `critical` (special object): mark the vat as "critical", if it terminates then panic the kernel
+- `name` (string): used in debug messages and the `ps`-visible worker argments, to name the vat
+- `meter` (`Meter` object, default none): a Meter object to impose upon the vat. If provided, the Meter will be deducted for each computron spent executing, and the vat will be terminated if the Meter runs out. See docs/metering.md for details.
+- `managerType` (`'local'` or `'xs-worker'` or `'nodeWorker'` or `'node-subprocess'`): the type of worker that will host the vat. `xs-worker` is the only sensible choice. Defaults to a value set by `config.defaultManagerType`, or `xs-worker` if that is not set
+- `vatParameters` (JSON-serializable object): data passed to `buildRootObject` in the `vatParameters` argument
+- `enableSetup` (boolean, default `false`): only used for specialized vats like comms, bypasses `buildRootObject` and the liveslots layer
+- `enablePipelining` (boolean, default `false`): only used for specialized vats like comms, pipelines all messages into the vat instead of queueing them in the kernel until the target promise resolves
+- `enableVatstore` (boolean, default `true`): enables `vatPowers.vatstore` methods for DB-backed state management
+- `virtualObjectCacheSize` (integer): performance tuning parameter
+- `useTranscript` (boolean, default `true`): only used for specialized vats like comms
+- `reapInterval` (integer): performance tuning parameter
+- `critical` (special object): mark the vat as "critical", if it terminates then panic the kernel
 
 Note that any vat which can reach `createVat()` can create a new unmetered vat, even if the caller was metered themselves. So do not share an unattenuated Vat Admin object with an unmetered vat if you wish them to remain confined to metered operation.
 
@@ -86,7 +85,7 @@ Note that any vat which can reach `createVat()` can create a new unmetered vat, 
 
 The `critical` option can be used for certain vats which are so important that the system should halt rather than proceed without them. It causes the same behavior as the `critical: true` flag on static vats (e.g.`config.vats.NAME.creationOptions.critical = true`): if a critical vat is terminated for any reason (metering failure, illegal syscall), the kernel panics, which causes `controller.run()` to reject, which should prevent the host application from committing the state vector that includes the vat being terminated.
 
-However we cannot grant the ability to halt the entire kernel to just any user of `createVat()`. To prevent that, the dynamic `critical:` option requires a special object named `criticalVatKey`. This can only be obtained from the vat-admin *root object* (which is distinct from the `vatAdminService`).
+However we cannot grant the ability to halt the entire kernel to just any user of `createVat()`. To prevent that, the dynamic `critical:` option requires a special object named `criticalVatKey`. This can only be obtained from the vat-admin _root object_ (which is distinct from the `vatAdminService`).
 
 Bootstrap methods usually look like the following:
 
@@ -115,8 +114,7 @@ function bootstrap(vats, devices) {
 
 ## Root Object and Admin Node
 
-The result of `createVat` gives you access to two things. One is a *Presence* through which you can send messages to the root object of the new vat (whatever `buildRootObject()` returned):
-
+The result of `createVat` gives you access to two things. One is a _Presence_ through which you can send messages to the root object of the new vat (whatever `buildRootObject()` returned):
 
 ```js
 const { root, adminNode } = await E(vatAdminService).createVat(bundlecap);
@@ -132,18 +130,13 @@ The other is the `adminNode`. This gives the creator of the vat control over the
 
 ### Vat Stats
 
-The current stats include the number of objects, promises, and devices in the vat's *C-List*, which tracks what this vat can reach on other vats.
+The current stats include the number of objects, promises, and devices in the vat's _C-List_, which tracks what this vat can reach on other vats.
 
-It also contains the count of entries in the vat's *transcript*. When the SwingSet restarts and needs to restore the vat to its previously-stored state, the kernel will replay the transcript: it re-submits each entry to the vat, allowing the vat to perform the same actions it did the previous time around. Each message delivery goes into a separate transcript entry, as does each promise-resolution notification. The `transcriptCount` thus gives a rough measure of how many messages the vat has executed.
+It also contains the count of entries in the vat's _transcript_. When the SwingSet restarts and needs to restore the vat to its previously-stored state, the kernel will replay the transcript: it re-submits each entry to the vat, allowing the vat to perform the same actions it did the previous time around. Each message delivery goes into a separate transcript entry, as does each promise-resolution notification. The `transcriptCount` thus gives a rough measure of how many messages the vat has executed.
 
 ```js
 const data = E(adminNode).adminData();
-const {
-  objectCount,
-  promiseCount,
-  deviceCount,
-  transcriptCount,
-} = data;
+const { objectCount, promiseCount, deviceCount, transcriptCount } = data;
 ```
 
 ### Waiting for Vat Termination

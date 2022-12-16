@@ -1,8 +1,8 @@
 # Static Vats
 
-A SwingSet machine has two sets of vats. The first are the *Static Vats*, which are defined in the configuration object, and created at startup time. The root objects of these vats are made available to the `bootstrap()` method, which can wire them together as it sees fit.
+A SwingSet machine has two sets of vats. The first are the _Static Vats_, which are defined in the configuration object, and created at startup time. The root objects of these vats are made available to the `bootstrap()` method, which can wire them together as it sees fit.
 
-The second set are the *Dynamic Vats*. These are created after startup, with source code bundles that were not known at boot time. Typically these bundles arrive over the network from external providers. In the Agoric system, contracts are installed as dynamic vats (each spawned instance goes into a separate vat).
+The second set are the _Dynamic Vats_. These are created after startup, with source code bundles that were not known at boot time. Typically these bundles arrive over the network from external providers. In the Agoric system, contracts are installed as dynamic vats (each spawned instance goes into a separate vat).
 
 This document describes how you define and configure the static vats.
 
@@ -25,12 +25,12 @@ export function buildRootObject(vatPowers) {
     },
     read() {
       return counter;
-    }
+    },
   });
 }
 ```
 
-Each vat has a name. A *Presence* for this vat's root object will be made available to the bootstrap function, in its `vats` argument. For example, if this vat is named `counter`, then the bootstrap function could do:
+Each vat has a name. A _Presence_ for this vat's root object will be made available to the bootstrap function, in its `vats` argument. For example, if this vat is named `counter`, then the bootstrap function could do:
 
 ```js
 function bootstrap(argv, vats, devices) {
@@ -38,7 +38,7 @@ function bootstrap(argv, vats, devices) {
 }
 ```
 
-The *bootstrap function* is the method named `bootstrap` on a special *bootstrap vat*. This is a static vat defined in a separate section of the config object, currently named `config.bootstrapIndexJS`. This vat is given access to the root objects of all other vats, as well as access to all devices, plus a set of arguments passed into `buildVatController`, all delivered in the bootstrap message. This message is synthesized by the kernel and sent automatically at machine startup. Since no other messages exist at startup time, and only connectivity begets connectivity (as befits an object-capability system), the bootstrap function is entirely responsible for establishing the inter-vat connections necessary for subsequent activity.
+The _bootstrap function_ is the method named `bootstrap` on a special _bootstrap vat_. This is a static vat defined in a separate section of the config object, currently named `config.bootstrapIndexJS`. This vat is given access to the root objects of all other vats, as well as access to all devices, plus a set of arguments passed into `buildVatController`, all delivered in the bootstrap message. This message is synthesized by the kernel and sent automatically at machine startup. Since no other messages exist at startup time, and only connectivity begets connectivity (as befits an object-capability system), the bootstrap function is entirely responsible for establishing the inter-vat connections necessary for subsequent activity.
 
 ### Legacy setup() Function
 
@@ -48,14 +48,17 @@ Most vats use "liveslots", a layer which provides an object-capability environme
 
 ```js
 export default function setup(syscall, state, helpers, vatPowers0) {
-  return helpers.makeLiveSlots(syscall, state,
-                               (E, D, vatPowers) => buildRootObject(vatPowers),
-                               helpers.vatID,
-                               vatPowers0);
+  return helpers.makeLiveSlots(
+    syscall,
+    state,
+    (E, D, vatPowers) => buildRootObject(vatPowers),
+    helpers.vatID,
+    vatPowers0,
+  );
 }
 ```
 
-These vats are still supported, for now. Any vat source file which exports `buildRootObject()` will automatically use liveslots. If the file does *not* export `buildRootObject()`, it is expected to export a `default` function that behaves like the `setup()` described above.
+These vats are still supported, for now. Any vat source file which exports `buildRootObject()` will automatically use liveslots. If the file does _not_ export `buildRootObject()`, it is expected to export a `default` function that behaves like the `setup()` described above.
 
 A few vats do not use liveslots. The main one is the "comms vat", which performs low-level mapping of kernel-sourced messages into strings that are sent off-machine to other swingsets. This mapping would be rather inefficient if it went through the serialization/deserialization layers that liveslots provides to normal vats. The comms vat will eventually be loaded with some special configuration flag to mark it as non-liveslots, rather than retaining the `default`/`setup()` fallback.
 
@@ -63,13 +66,13 @@ A few vats do not use liveslots. The main one is the "comms vat", which performs
 
 Static vats currently receive the following objects in their `buildRootObject()`'s sole `vatPowers` argument:
 
-* `exitVat`
-* `exitVatWithFailure`
-* `disavow`, but only if `creationOptions.enableDisavow` was truthy
+- `exitVat`
+- `exitVatWithFailure`
+- `disavow`, but only if `creationOptions.enableDisavow` was truthy
 
 ### vat termination: `exitVat` and `exitVatWithFailure`
 
-A vat may signal to the kernel that it should be terminated at the end of its current crank.  Two powers are provided to do this: `exitVat(completion)` and `exitVatWithFailure(reason)`.  These powers will work in any vat but are primarily useful in dynamic vats.  The two differ in how the circumstances of termination are signalled to holders of the vat's `done` promise: `exitVat` fulfills that promise with the value provided in the `completion` parameter, whereas `exitVatWithFailure` rejects the promise with the value provided in the `reason` parameter.  Conventionally, `completion` will be a string and `reason` will be an `Error`, but any serializable object may be used for either.  After the crank in which either of these powers is invoked, no further messages will be delivered to the vat; instead, any such messages will be rejected with a `'vat terminated'` error.  Any outstanding promises for which the vat was the decider will also be rejected in the same way.  The vat and any resources it holds will become eligible for garbage collection.  However, the crank itself will end normally, meaning that any actions taken by the vat during the crank in which either exit power was invoked will become part of the persisted state of the swingset, including messages that were sent from the vat during that crank (including, notably, actions taken _after_ the exit power was invoked but before the crank finished).
+A vat may signal to the kernel that it should be terminated at the end of its current crank. Two powers are provided to do this: `exitVat(completion)` and `exitVatWithFailure(reason)`. These powers will work in any vat but are primarily useful in dynamic vats. The two differ in how the circumstances of termination are signalled to holders of the vat's `done` promise: `exitVat` fulfills that promise with the value provided in the `completion` parameter, whereas `exitVatWithFailure` rejects the promise with the value provided in the `reason` parameter. Conventionally, `completion` will be a string and `reason` will be an `Error`, but any serializable object may be used for either. After the crank in which either of these powers is invoked, no further messages will be delivered to the vat; instead, any such messages will be rejected with a `'vat terminated'` error. Any outstanding promises for which the vat was the decider will also be rejected in the same way. The vat and any resources it holds will become eligible for garbage collection. However, the crank itself will end normally, meaning that any actions taken by the vat during the crank in which either exit power was invoked will become part of the persisted state of the swingset, including messages that were sent from the vat during that crank (including, notably, actions taken _after_ the exit power was invoked but before the crank finished).
 
 ### explicitly dropping imported Presences: `disavow`
 

@@ -2,9 +2,9 @@
 
 SwingSet vats are carefully designed to behave deterministically: all syscalls they make are a deterministic function of three things:
 
-* the initial code bundle
-* the series of deliveries that begin each crank (messages or Promise resolution notifications)
-* the return values of data-bearing syscalls like `vatstoreGet` and `invoke`
+- the initial code bundle
+- the series of deliveries that begin each crank (messages or Promise resolution notifications)
+- the return values of data-bearing syscalls like `vatstoreGet` and `invoke`
 
 As a result, we can replay a transcript of the vat's actions, and we should get back the original vat state and behavior. We generally perform this replay each time a SwingSet host application starts up, to bring all vats back up to their previous state (so they can accept new deliveries). To support this, the "KernelDB" includes a copy of each vat's transcript.
 
@@ -14,9 +14,9 @@ The `bin/` directory contains tools to extract a transcript from either a Kernel
 
 By modifying the replay tool, you can control how the replay is performed:
 
-* pause the replay at a certain transcript entry, e.g. to attach a debugger or set a breakpoint
-* run the vat under a different worker than the original, e.g. under Node.js instead of XS
-* modify the transcript and see how it affects the resulting vat behavior
+- pause the replay at a certain transcript entry, e.g. to attach a debugger or set a breakpoint
+- run the vat under a different worker than the original, e.g. under Node.js instead of XS
+- modify the transcript and see how it affects the resulting vat behavior
 
 ## Example
 

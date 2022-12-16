@@ -9,15 +9,14 @@ support.
 
 I see three main kinds of threats here:
 
- * bugs or oversights in the infrastructure
- * attacks on voters
- * mistakes that might arise in governed contracts 
+- bugs or oversights in the infrastructure
+- attacks on voters
+- mistakes that might arise in governed contracts
 
 The first two can be mitigated by validation functions that cross-check linkages.
 
 I'm not as sure how to address the third, except better documentation, and
 support for custom validation functions.
-
 
 ## Get a voter facet you shouldn't have
 
@@ -76,7 +75,7 @@ from hidden parameters or to ignore some of the terms, voters will be misled.
 
 Everyone involved relies on the timers used to close voting being platform
 timers, but timers aren't self-revealing. Participants should compare the
-timers to known platform-provided timers before relying on them. 
+timers to known platform-provided timers before relying on them.
 [A related bug has been filed](https://github.com/Agoric/agoric-sdk/issues/3748)
 
 ## Electorate allow unauthorized parties to cast votes

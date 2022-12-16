@@ -16,9 +16,9 @@ The kernel maintains two queues. The highest priority queue contains "GC Actions
 
 If the GC Action queue is entirely empty, the kernel will look for regular work to do. This consists of the following event types:
 
-* message deliveries to vats (provoked by `syscall.send`, delivered as `dispatch.deliver`)
-* promise resolution notifications (provoked by `syscall.resolve`, delivered as `dispatch.notify`)
-* vat creation
+- message deliveries to vats (provoked by `syscall.send`, delivered as `dispatch.deliver`)
+- promise resolution notifications (provoked by `syscall.resolve`, delivered as `dispatch.notify`)
+- vat creation
 
 Each message delivery and resolution notification causes (at most) one vat to execute one "crank" (it might not execute any crank, e.g. when a message is delivered to an unresolved promise, it just gets added to the promise's queue). This crank gives the vat some amount of time to process the delivery, during which it may invoke any number of syscalls. The crank might cause the vat to be terminated, either because of an error, or because it took too much CPU and exceeded its Meter's allowance. Each crank yields a "delivery results object", which indicates the success or failure of the delivery.
 
@@ -30,10 +30,10 @@ Vat creation also gives a single vat (the brand new one) time to run the top-lev
 
 The kernel will invoke the following methods on the policy object (so all must exist, even if they're empty):
 
-* `policy.vatCreated()`
-* `policy.crankComplete({ computrons })`
-* `policy.crankFailed()`
-* `policy.emptyCrank()`
+- `policy.vatCreated()`
+- `policy.crankComplete({ computrons })`
+- `policy.crankFailed()`
+- `policy.emptyCrank()`
 
 All methods should return `true` if the kernel should keep running, or `false` if it should stop.
 
@@ -44,12 +44,13 @@ The `computrons` argument may be `undefined` (e.g. if the crank was delivered to
 `emptyCrank` indicates the kernel processed a queued messages which didn't result in a delivery.
 
 More arguments may be added in the future, such as:
-* `vatCreated:` the size of the source bundle
-* `crankComplete`: the number of syscalls that were made
-* `crankComplete`: the aggregate size of the delivery/notification arguments
-  * (the first message delivered to each ZCF contract vat contains a very large contract source bundle, and takes considerable time to execute, and this would let the policy treat these cranks accordingly)
-* `crankFailed`: the number of computrons consumed before the failure
-* `crankFailed`: the nature of the failure (we might be able to distinguish between 1: per-crank metering limit exceeded, 2: allocation limit exceed, 3: fatal syscall, 4: Meter exhausted)
+
+- `vatCreated:` the size of the source bundle
+- `crankComplete`: the number of syscalls that were made
+- `crankComplete`: the aggregate size of the delivery/notification arguments
+  - (the first message delivered to each ZCF contract vat contains a very large contract source bundle, and takes considerable time to execute, and this would let the policy treat these cranks accordingly)
+- `crankFailed`: the number of computrons consumed before the failure
+- `crankFailed`: the nature of the failure (we might be able to distinguish between 1: per-crank metering limit exceeded, 2: allocation limit exceed, 3: fatal syscall, 4: Meter exhausted)
 
 The run policy should be provided as the first argument to `controller.run()`. If omitted, the kernel defaults to `forever`, a policy that runs until the queue is empty.
 
@@ -64,15 +65,15 @@ function make100CrankPolicy() {
   const policy = harden({
     vatCreated() {
       vats += 1;
-      return (vats < 2);
+      return vats < 2;
     },
     crankComplete(details) {
       cranks += 1;
-      return (cranks < 100);
+      return cranks < 100;
     },
     crankFailed() {
       cranks += 1;
-      return (cranks < 100);
+      return cranks < 100;
     },
     emptyCrank() {
       return true;
@@ -84,7 +85,7 @@ function make100CrankPolicy() {
 and would be supplied like:
 
 ```js
-while(1) {
+while (1) {
   processInboundIO();
   const policy = make100CrankPolicy();
   await controller.run(policy);
@@ -97,27 +98,26 @@ Note that a new policy object should be provided for each call to `run()`.
 
 A more sophisticated one would count computrons. Suppose that experiments suggest that one million computrons take about 5 seconds to execute. The policy would look like:
 
-
 ```js
 function makeComputronCounterPolicy(limit) {
   let total = 0;
   const policy = harden({
     vatCreated() {
       total += 100000; // pretend vat creation takes 100k computrons
-      return (total < limit);
+      return total < limit;
     },
     crankComplete(details) {
       const { computrons } = details;
       total += computrons;
-      return (total < limit);
+      return total < limit;
     },
     crankFailed() {
       total += 1000000; // who knows, 1M is as good as anything
-      return (total < limit);
+      return total < limit;
     },
     emptyCrank() {
       return true;
-    }
+    },
   });
 }
 ```
@@ -130,7 +130,7 @@ If the SwingSet kernel is not being operated in consensus mode, then it is safe 
 
 ```js
 function makeWallclockPolicy(seconds) {
-  let timeout = Date.now() + 1000*seconds;
+  let timeout = Date.now() + 1000 * seconds;
   const policy = harden({
     vatCreated: () => Date.now() < timeout,
     crankComplete: () => Date.now() < timeout,

@@ -8,29 +8,29 @@ The second limit spans multiple cranks and is managed by the "Meter": a variable
 
 ## The Computron
 
-SwingSet measures computation with a unit named the "computron": the smallest unit of indivisible computation. The number of computrons used by a given piece of code depends upon its inputs, the state it can access, and the history of its previous activity, but it does *not* depend upon the activity of other vats, other processes on the same host computer, wall-clock time, or type of CPU being used (32-bit vs 64-bit, Intel vs ARM). The metering usage is meant to be consistent across any SwingSet using the same version of the kernel and vat code, which receives the same sequence of vat inputs (the transcript), making it safe to use in a consensus machine.
+SwingSet measures computation with a unit named the "computron": the smallest unit of indivisible computation. The number of computrons used by a given piece of code depends upon its inputs, the state it can access, and the history of its previous activity, but it does _not_ depend upon the activity of other vats, other processes on the same host computer, wall-clock time, or type of CPU being used (32-bit vs 64-bit, Intel vs ARM). The metering usage is meant to be consistent across any SwingSet using the same version of the kernel and vat code, which receives the same sequence of vat inputs (the transcript), making it safe to use in a consensus machine.
 
 Metering is provided by low-level code in the JavaScript engine, which is counting basic operations like "read a property from an object" and "add two numbers". This is larger than a CPU cycle. The exact mapping depends upon intricate details of the engine, and is likely to change if/when the JS engine is upgraded. SwingSet kernels that participate in a consensus machine must be careful to synchronize upgrades to prevent divergence of metering results.
 
 To gain some intuition on how "big" a computron is, here are some examples:
 
-* An empty function: 36560 computrons. This is the base overhead for each message delivery (dispatch.deliver)
-* Adding `async` to a function (which creates a return Promise): 98
-* `let i = 1`: 3
-* `i += 2`: 4
-* `let sum; for (let i=0; i<100; i++) { sum += i; }`: 1412
-  * same, but adding to 1000: 14012
-* defining a `harden()`ed add/read "counter" object: 1475
-  * invoking `add()`: 19
-* `console.log('')`: 1011 computrons
-* ERTP `getBrand()`: 49300
-* ERTP `getCurrentAmount()`: 54240
-* ERTP `getUpdateSince()`: 59084
-* ERTP `deposit()`: 124775
-* ERTP `withdraw()`: 111141
-* Zoe `install()`: 62901
-* ZCF `executeContract()` of the Multi-Pool Autoswap contract: 12.9M
-* ZCF `executeContract()` (importBundle) of the Treasury contract: 13.5M
+- An empty function: 36560 computrons. This is the base overhead for each message delivery (dispatch.deliver)
+- Adding `async` to a function (which creates a return Promise): 98
+- `let i = 1`: 3
+- `i += 2`: 4
+- `let sum; for (let i=0; i<100; i++) { sum += i; }`: 1412
+  - same, but adding to 1000: 14012
+- defining a `harden()`ed add/read "counter" object: 1475
+  - invoking `add()`: 19
+- `console.log('')`: 1011 computrons
+- ERTP `getBrand()`: 49300
+- ERTP `getCurrentAmount()`: 54240
+- ERTP `getUpdateSince()`: 59084
+- ERTP `deposit()`: 124775
+- ERTP `withdraw()`: 111141
+- Zoe `install()`: 62901
+- ZCF `executeContract()` of the Multi-Pool Autoswap contract: 12.9M
+- ZCF `executeContract()` (importBundle) of the Treasury contract: 13.5M
 
 Computrons have a loose relationship to wallclock time, but are generally correlated, so tracking the cumulative computrons spent during SwingSet cranks can provide a rough measure of how much time is being spent, which can be useful to e.g. limit blocks to a reasonable amount of execution time.
 
@@ -42,8 +42,8 @@ The kernel manages `Meter` objects. Each one has a `remaining` capacity and a no
 
 Vats can create a Meter object by invoking the `createMeter` method on the `vatAdmin` object. This is the same object used to create new dynamic vats. `createMeter` takes two arguments, both denominated in computrons:
 
-* `remaining`: sets the initial capacity of the Meter
-* `threshold`: set the notification threshold
+- `remaining`: sets the initial capacity of the Meter
+- `threshold`: set the notification threshold
 
 If you want to impose a per-crank limit, but not a cumulative limit, you can use `createUnlimitedMeter` to make a Meter that never deducts (`remaining` is always the special string `'unlimited'`) and never notifies.
 
@@ -56,10 +56,10 @@ const umeter = await E(vatAdmin).createUnlimitedMeter();
 
 The holder of a Meter object can manipulate the meter with the following API:
 
-* `meter.addRemaining(delta)`: increment the capacity by some amount
-* `meter.setThreshold(threshold)`: replace the notification threshold
-* `meter.get() -> { remaining, threshold }`: read the remaining capacity and current notification threshold
-* `meter.getNotifier() -> Notifier`: access the Notifier object
+- `meter.addRemaining(delta)`: increment the capacity by some amount
+- `meter.setThreshold(threshold)`: replace the notification threshold
+- `meter.get() -> { remaining, threshold }`: read the remaining capacity and current notification threshold
+- `meter.getNotifier() -> Notifier`: access the Notifier object
 
 ```js
 await E(meter).get(); // -> { remaining: 100_000_000n, threshold: 20_000_000n }

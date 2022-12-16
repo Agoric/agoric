@@ -2,7 +2,7 @@
 
 The ocap community has explored a variety of persistence mechanisms, each with a variety of benefits and limitations.
 
-E (and arguably SmallTalk) provided "orthogonal persistence", in which programmers could pretend their objects lived forever. The runtime engine was responsible for finding a way to serialize those objects such that the hosting process could be shut down and resumed later from disk without the Vat code being aware of the interruption. Live references were severed upon resumption, but was indistinguishable from a network problem (it was as if the TCP connection got severed for some reason), which *was* observable to Vat code (`reactToLostClient` in one direction, a broken Promise in the other), which was expected to restart from a `SturdyRef`.
+E (and arguably SmallTalk) provided "orthogonal persistence", in which programmers could pretend their objects lived forever. The runtime engine was responsible for finding a way to serialize those objects such that the hosting process could be shut down and resumed later from disk without the Vat code being aware of the interruption. Live references were severed upon resumption, but was indistinguishable from a network problem (it was as if the TCP connection got severed for some reason), which _was_ observable to Vat code (`reactToLostClient` in one direction, a broken Promise in the other), which was expected to restart from a `SturdyRef`.
 
 In Javascript, this requires support from the JS engine, as regular code has no way to follow closed-over values, or serialize non-function code objects such as closures and Promises. One approach (explored in NodeKen) is to have an engine like V8 store all its heap state in a memory-mapped file. This file can then be preserved after the engine shuts down, and used again when it starts back up in the future. A similar approach would be compile a smaller engine like XS into WASM, and then preserve the linear memory space of the WASM instance. By drawing the boundary of the JS engine carefully, the various "exits" from the JS object graph can be re-attached upon resumption.
 
@@ -16,11 +16,11 @@ One compromise is to use a checkpoint if/when available, and then a partial tran
 
 This leads to each Vat being defined by the following data:
 
-* root object (i.e. the code evaluated in `setup()` at Vat initialization time) (fuzzy)
+- root object (i.e. the code evaluated in `setup()` at Vat initialization time) (fuzzy)
   (we do not store the root object; changing it constitutes migration)
-* the most recent checkpoint (empty at init, possibly still empty)
-* the transcript of delivered messages since the last checkpoint
-* the return values of each syscall made by the Vat
+- the most recent checkpoint (empty at init, possibly still empty)
+- the transcript of delivered messages since the last checkpoint
+- the return values of each syscall made by the Vat
 
 Each invocation of the Vat's `dispatch` function can make zero or more syscalls. We must record at least the return values of these syscalls, as they influence the vat's behavior just as much as the messages we've delivered.
 
@@ -32,25 +32,25 @@ When we want to restore a Vat, we start by unpacking the checkpoint and instanti
 
 The SwingSet kernel contains some number of Vats and the tables that connect them together. The kernel state contains:
 
-* the state of each Vat
-* the runQueue: a list of pending `dispatch` calls to make to each Vat. The main ones are `deliver` calls (which correspond to method invocations on some target object), which include the target VatID, the facet ID, the arguments, and the answer ResponseID. Other ones include notifyFulfillToData, notifyFulfillToTarget, and notifyReject.
-* the import table: a list of which Vats have access to which exports of the other Vats, or to kernel-side Promises
-* the promise table: a list of which kernel-side Promises are defined, their current state (unresolved, fulfilled/rejected in various ways), the "decider" Vat for unresolved ones, and the list of Vats currently subscribed to head about state changes
+- the state of each Vat
+- the runQueue: a list of pending `dispatch` calls to make to each Vat. The main ones are `deliver` calls (which correspond to method invocations on some target object), which include the target VatID, the facet ID, the arguments, and the answer ResponseID. Other ones include notifyFulfillToData, notifyFulfillToTarget, and notifyReject.
+- the import table: a list of which Vats have access to which exports of the other Vats, or to kernel-side Promises
+- the promise table: a list of which kernel-side Promises are defined, their current state (unresolved, fulfilled/rejected in various ways), the "decider" Vat for unresolved ones, and the list of Vats currently subscribed to head about state changes
 
 To restore an entire kernel, we must:
 
-* restore the promise, import, and run-queue tables
-* for each Vat:
-  * restore the Vat's checkpoint and transcript
-  * configure a syscall object to check the syscalls without actually executing them
-  * create the Vat (with the current version of the root object)
-  * execute the Vat's setup() function with the check-only syscall
-  * replay the transcript, checking syscalls as we go
-  * reconfigure the syscall object to record and execute
+- restore the promise, import, and run-queue tables
+- for each Vat:
+  - restore the Vat's checkpoint and transcript
+  - configure a syscall object to check the syscalls without actually executing them
+  - create the Vat (with the current version of the root object)
+  - execute the Vat's setup() function with the check-only syscall
+  - replay the transcript, checking syscalls as we go
+  - reconfigure the syscall object to record and execute
 
 Now the kernel should be back in the same state it had before. Every entry in the kernel's import/promise tables should match a Presence or Promise inside the corresponding Vat.
 
-We can execute each Vat's transcript independently: the Vat's state will not depend upon what's happening in the other Vats, and the kernel's state won't depend upon what happens in this particular Vat (since we ignore syscalls during the replay, and check to make sure it emits the same syscalls that *were* executed last time).
+We can execute each Vat's transcript independently: the Vat's state will not depend upon what's happening in the other Vats, and the kernel's state won't depend upon what happens in this particular Vat (since we ignore syscalls during the replay, and check to make sure it emits the same syscalls that _were_ executed last time).
 
 Since syscalls can return values (e.g. a `send` returns a PromiseID for the answer), our Vat transcript must record these, so the same values can be returned during playback mode.
 
@@ -60,7 +60,7 @@ To enable experimentation with other persistence mechanisms, the kernel provides
 
 Initially, the `state` object will have a single get/set(string) pair of methods. Later, as it gets more sophisticated, it will support a Merkle tree (of arbitrary arity) in which each child edge is named (or numbered) and either points to another node or a string (of JSON) (see IPFS for details). These nodes will provide an API with `has_child(index)`, `get_or_create_child_node(index)`, `delete_child(index)`, `set_child_data(index, data)`, `get_child_data(index)`. The vat gets access to a per-vat root node. By keeping track of which edges are followed by the vat, the kernel learns which data affects the computation, so it can construct an efficient proof for validators (i.e. the contents of every node that was visited, since the nodes contain the hashes of all their children (nodes or data). The only way to modify the tree is through the various set/delete APIs, so the kernel also learns which subset of the new tree data must be included in the proof.
 
-In this mode, Vat userspace is responsible for only depending upon state that comes from this persistence object, and for updating the persistence object with all state changes. 
+In this mode, Vat userspace is responsible for only depending upon state that comes from this persistence object, and for updating the persistence object with all state changes.
 
 ## ORM-Style Schemas
 
@@ -70,7 +70,7 @@ In a conventional identity-based system, each Purse might have a list of owner I
 
 In the ocap style, access to a Purse is managed by access to a Purse object. Anyone who has a reference can freely give it to anyone else, without identities or an administrator. The typical data structure for this is a Map or WeakMap from Purse object to balance.
 
-Persisting the Purse object may be annoying, especially when the *balance* is what we actually care about, and the methods on it are just a convenience. Another approach would be to persist zero-method object references, and provide a collection of unbound/static *functions* (not methods) that accept these references.
+Persisting the Purse object may be annoying, especially when the _balance_ is what we actually care about, and the methods on it are just a convenience. Another approach would be to persist zero-method object references, and provide a collection of unbound/static _functions_ (not methods) that accept these references.
 
 This may result in an "ORM"-style (Object-relational mapping) approach, where the programmer is obligated to describe a schema for their data that can be used to construct objects for each row of the serialized state. The functions are invoked with these objects, and any state changes are made by telling the objects what their new data ought to be. In this approach, clients have closely-held access to a row of the table, and can pass this object into functions, but the server is not obligated to serialize general-purpose data (nor closures, promises, and other difficult-to-serialize things). The pre-specified schema also makes upgrade much easier, as all data is in a well-organized shape at all times.
 

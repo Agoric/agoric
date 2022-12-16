@@ -1,7 +1,7 @@
 # Agoric SDK Environment Variables
 
 ```js
-process.env.DOCUMENTATION // for power users
+process.env.DOCUMENTATION; // for power users
 ```
 
 This file describes environment variables that influence the execution of the
@@ -62,13 +62,13 @@ If not set, then default (`console.info` and above) logging is enabled.
 (`console.log` and `console.debug` logging is disabled.)
 
 If set to an empty string, or running in `ag-chain-cosmos start` mode, don't
-print any logs.  This is part of "consensus mode."
+print any logs. This is part of "consensus mode."
 
 If set to a value that contains the substring `agoric`, then print all console
 messages for the entire SDK.
 
 Otherwise, set to a comma-separated list of prefixes, where each prefix is the
-context given to `makeConsole`.  For example:
+context given to `makeConsole`. For example:
 
 - `DEBUG=SwingSet:ls` enable all console messages for liveslots, regardless of vat.
 - `DEBUG=SwingSet:ls:v13` enable for liveslots in vat 13.
@@ -195,7 +195,7 @@ Affects: cosmic-swingset
 Purpose: intercept the SwingSet LOG file in realtime
 
 Description: when nonempty, use the value as a list of module specifiers
-separated by commas `,`.  The modules will be loaded by
+separated by commas `,`. The modules will be loaded by
 `@agoric/telemetry/src/make-slog-sender.js`, via `import(moduleSpec)`, and
 their exported `makeSlogSender` function called to create an aggregate
 `slogSender`. Every time a SLOG object is written by SwingSet, each module's
