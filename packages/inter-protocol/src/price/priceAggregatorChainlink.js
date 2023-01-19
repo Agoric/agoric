@@ -41,9 +41,9 @@ const priceDescriptionFromQuote = quote => quote.quoteAmount.value[0];
  * @property {number} maxSubmissionCount
  * @property {number} minSubmissionCount
  * @property {RelativeTime} restartDelay the number of rounds an Oracle has to wait before they can initiate a round
- * @property {number} minSubmissionValue an immutable check for a lower bound of what
+ * @property {bigint} minSubmissionValue an immutable check for a lower bound of what
  * submission values are accepted from an oracle
- * @property {number} maxSubmissionValue an immutable check for an upper bound of what
+ * @property {bigint} maxSubmissionValue an immutable check for an upper bound of what
  * submission values are accepted from an oracle
  * @property {number} timeout the number of seconds after the previous round that
  * allowed to lapse before allowing an oracle to skip an unfinished round

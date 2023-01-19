@@ -7,7 +7,7 @@ import bundleSource from '@endo/bundle-source';
 
 import { E } from '@endo/eventual-send';
 import { Far } from '@endo/marshal';
-import { makeIssuerKit, AssetKind } from '@agoric/ertp';
+import { makeIssuerKit, AssetKind, AmountMath } from '@agoric/ertp';
 
 import {
   eventLoopIteration,
@@ -30,11 +30,18 @@ const aggregatorPath = `${dirname}/../src/price/priceAggregatorChainlink.js`;
 const defaultConfig = {
   maxSubmissionCount: 1000,
   minSubmissionCount: 2,
-  restartDelay: 5,
+  restartDelay: 5n,
   timeout: 10,
-  minSubmissionValue: 100,
-  maxSubmissionValue: 10000,
+  minSubmissionValue: 100n,
+  maxSubmissionValue: 10000n,
 };
+
+const link = makeIssuerKit(
+  '$LINK',
+  AssetKind.NAT,
+  harden({ decimalPlaces: 6 }),
+);
+const usd = makeIssuerKit('$USD', AssetKind.NAT, harden({ decimalPlaces: 2 }));
 
 /**
  *
@@ -64,9 +71,7 @@ const makeContext = async () => {
   /** @type {Installation<import('../src/price/priceAggregatorChainlink.js').start>} */
   const aggregatorInstallation = await E(zoe).installBundleID('b1-aggregator');
 
-  const link = makeIssuerKit('$LINK', AssetKind.NAT);
-  const usd = makeIssuerKit('$USD', AssetKind.NAT);
-
+  /** @param {typeof defaultConfig} config */
   async function makeChainlinkAggregator(config) {
     const {
       maxSubmissionCount,
@@ -106,7 +111,7 @@ const makeContext = async () => {
     return { ...aggregator, mockStorageRoot };
   }
 
-  return { makeChainlinkAggregator, zoe };
+  return { link, makeChainlinkAggregator, usd, zoe };
 };
 
 test.before('setup aggregator and oracles', async t => {
@@ -180,7 +185,7 @@ test('timeout', async t => {
 
   const aggregator = await t.context.makeChainlinkAggregator({
     ...defaultConfig,
-    restartDelay: 2,
+    restartDelay: 2n,
     timeout: 5,
   });
   /** @type {{ timer: ManualTimer }} */
@@ -236,7 +241,7 @@ test('issue check', async t => {
 
   const aggregator = await t.context.makeChainlinkAggregator({
     ...defaultConfig,
-    restartDelay: 2,
+    restartDelay: 2n,
   });
   /** @type {{ timer: ManualTimer }} */
   // @ts-expect-error cast
@@ -287,7 +292,7 @@ test('supersede', async t => {
 
   const aggregator = await t.context.makeChainlinkAggregator({
     ...defaultConfig,
-    restartDelay: 1,
+    restartDelay: 1n,
   });
   /** @type {{ timer: ManualTimer }} */
   // @ts-expect-error cast
@@ -348,7 +353,7 @@ test('interleaved', async t => {
     ...defaultConfig,
     maxSubmissionCount: 3,
     minSubmissionCount: 3, // requires ALL the oracles for consensus in this case
-    restartDelay: 1,
+    restartDelay: 1n,
     timeout: 5,
   });
   /** @type {{ timer: ManualTimer }} */
@@ -490,7 +495,7 @@ test('larger', async t => {
   const aggregator = await t.context.makeChainlinkAggregator({
     ...defaultConfig,
     minSubmissionCount: 3,
-    restartDelay: 1,
+    restartDelay: 1n,
     timeout: 5,
   });
   /** @type {{ timer: ManualTimer }} */
@@ -571,7 +576,7 @@ test('suggest', async t => {
   const aggregator = await t.context.makeChainlinkAggregator({
     ...defaultConfig,
     minSubmissionCount: 3,
-    restartDelay: 1,
+    restartDelay: 1n,
     timeout: 5,
   });
   /** @type {{ timer: ManualTimer }} */
@@ -667,13 +672,83 @@ test('suggest', async t => {
   t.is(round3Attempt1.answer, 200n);
 });
 
+test('decimals', async t => {
+  const { zoe } = t.context;
+
+  // unitAmountIn defaults to 1n of the brandIn, link
+  const aggregator = await t.context.makeChainlinkAggregator({
+    ...defaultConfig,
+    minSubmissionCount: 1,
+    minSubmissionValue: 1n,
+    restartDelay: 0n, // let the one oracle run each round
+  });
+  /** @type {{ timer: ManualTimer }} */
+  // @ts-expect-error cast
+  const { timer: oracleTimer } = await E(zoe).getTerms(aggregator.instance);
+  // ensure non-zero block time
+  await oracleTimer.tick();
+
+  const priceAuthority = await E(aggregator.publicFacet).getPriceAuthority();
+
+  const oracle = await E(aggregator.creatorFacet).initOracle(
+    'agorice1priceOracleA',
+  );
+
+  const priceSubscriber = await E(aggregator.publicFacet).getSubscriber();
+  const eachPrice = subscribeEach(priceSubscriber)[Symbol.asyncIterator]();
+
+  {
+    await E(oracle).pushPrice({ roundId: 1, unitPrice: 1n });
+    await oracleTimer.tick();
+    t.like((await eachPrice.next()).value, {
+      amountIn: { brand: link.brand, value: 1n },
+      amountOut: { brand: usd.brand, value: 1n },
+    });
+
+    const quote = await E(priceAuthority).quoteGiven(
+      // link has 6 decimals places but unitAmountIn was 1n,
+      // so this is a quote for 0.000123 link
+      AmountMath.make(link.brand, 123n),
+      usd.brand,
+    );
+    t.deepEqual(
+      quote.quoteAmount.value[0].amountOut,
+      // unit price was 1n so the same for USD.
+      // since `usd` has 2 places, this is $1.23
+      AmountMath.make(usd.brand, 123n),
+    );
+  }
+
+  const round1Attempt1 = await E(aggregator.creatorFacet).getRoundData(1);
+  t.is(round1Attempt1.answer, 1n);
+
+  {
+    await E(oracle).pushPrice({ roundId: 2, unitPrice: 100n });
+    t.like((await eachPrice.next()).value, {
+      amountIn: { brand: link.brand, value: 1n },
+      amountOut: { brand: usd.brand, value: 100n },
+    });
+    const quote = await E(priceAuthority).quoteGiven(
+      // link has 6 decimals places but unitAmountIn was 1n,
+      // so this is a quote for 0.000123 link
+      AmountMath.make(link.brand, 123n),
+      usd.brand,
+    );
+    t.deepEqual(
+      quote.quoteAmount.value[0].amountOut,
+      // since `usd` has 2 places, this is $123.00
+      AmountMath.make(usd.brand, 12300n),
+    );
+  }
+});
+
 test('notifications', async t => {
   const { zoe } = t.context;
 
   const aggregator = await t.context.makeChainlinkAggregator({
     ...defaultConfig,
     maxSubmissionCount: 1000,
-    restartDelay: 1, // have to alternate to start rounds
+    restartDelay: 1n, // have to alternate to start rounds
   });
   /** @type {{ timer: ManualTimer }} */
   // @ts-expect-error cast

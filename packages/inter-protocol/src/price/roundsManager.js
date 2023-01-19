@@ -274,7 +274,7 @@ export const makeRoundsManagerKit = defineDurableFarClassKit(
         const { helper } = this.facets;
         if (!helper.isNextRound(roundId)) return undefined;
         const { restartDelay } = this.state;
-        const lastStarted = status.lastStartedRound; // cache storage reads
+        const lastStarted = status.lastStartedRound;
         if (roundId <= add(lastStarted, restartDelay) && lastStarted !== 0n)
           return undefined;
         helper.initializeNewRound(roundId, blockTimestamp);
@@ -313,6 +313,7 @@ export const makeRoundsManagerKit = defineDurableFarClassKit(
       /**
        * @param {bigint} roundId
        * @param {Timestamp} blockTimestamp
+       * @returns {boolean} whether another round can yet follow the given round
        */
       supersedable(roundId, blockTimestamp) {
         const { rounds } = this.state;
