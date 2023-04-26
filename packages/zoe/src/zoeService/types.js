@@ -47,7 +47,7 @@
 
 /**
  * @callback GetInvitationIssuer
- * @returns {Promise<Issuer<'set'>>}
+ * @returns {Promise<Issuer<'copyBag'>>}
  */
 
 /**

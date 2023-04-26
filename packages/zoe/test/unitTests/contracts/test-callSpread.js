@@ -4,6 +4,7 @@ import { test } from '@agoric/zoe/tools/prepare-test-env-ava.js';
 import path from 'path';
 
 import { E } from '@endo/eventual-send';
+import { getCopyBagEntries } from '@agoric/store';
 import buildManualTimer from '../../../tools/manualTimer.js';
 import { eventLoopIteration } from '../../../tools/eventLoopIteration.js';
 
@@ -719,7 +720,7 @@ test('pricedCallSpread, mid-strike', async t => {
   const longAmount = await E(invitationIssuer).getAmountOf(longInvitation);
   const shortAmount = await E(invitationIssuer).getAmountOf(shortInvitation);
 
-  const longOptionValue = longAmount.value[0];
+  const longOptionValue = getCopyBagEntries(longAmount.value)[0][0];
   t.is('long', longOptionValue.customDetails?.position);
   const longOption = longOptionValue.customDetails?.option;
 
@@ -743,7 +744,7 @@ test('pricedCallSpread, mid-strike', async t => {
     bucks(225n),
   );
 
-  const shortOptionValue = shortAmount.value[0];
+  const shortOptionValue = getCopyBagEntries(shortAmount.value)[0][0];
   t.is('short', shortOptionValue.customDetails?.position);
   const shortOption = shortOptionValue.customDetails?.option;
 

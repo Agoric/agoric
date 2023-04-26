@@ -13,7 +13,7 @@ const ZOE_INVITATION_KIT = 'ZoeInvitationKit';
  * @param {ShutdownWithFailure | undefined} shutdownZoeVat
  */
 export const prepareInvitationKit = (baggage, shutdownZoeVat = undefined) => {
-  /** @type {IssuerKit<'set'> | undefined} */
+  /** @type {IssuerKit<'copyBag'> | undefined} */
   let invitationKit;
 
   const invitationKitBaggage = provideDurableMapStore(
@@ -24,7 +24,7 @@ export const prepareInvitationKit = (baggage, shutdownZoeVat = undefined) => {
     invitationKit = makeDurableIssuerKit(
       invitationKitBaggage,
       'Zoe Invitation',
-      AssetKind.SET,
+      AssetKind.COPY_BAG,
       undefined,
       shutdownZoeVat,
       { elementShape: InvitationElementShape },

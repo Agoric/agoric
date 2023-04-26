@@ -16,7 +16,7 @@ const { Fail } = assert;
 
 /**
  * @param {VatPowers & { testJigSetter: TestJigSetter }} powers
- * @param {{contractBundleCap: BundleCap, zoeService: ZoeService, invitationIssuer: Issuer<'set'>, privateArgs?: any}} vatParameters
+ * @param {{contractBundleCap: BundleCap, zoeService: ZoeService, invitationIssuer: Issuer<'copyBag'>, privateArgs?: any}} vatParameters
  * @param {import('@agoric/vat-data').Baggage} baggage
  */
 export async function buildRootObject(powers, vatParameters, baggage) {

@@ -7,6 +7,7 @@ import {
   provideDurableSetStore,
 } from '@agoric/vat-data';
 
+import { makeCopyBag } from '@agoric/store';
 import { provideIssuerStorage } from '../issuerStorage.js';
 import { makeInstanceRecordStorage } from '../instanceRecordStorage.js';
 import { makeIssuerRecord } from '../issuerRecord.js';
@@ -271,15 +272,18 @@ export const makeZoeStorageManager = (
               : harden({});
           const invitationAmount = AmountMath.make(
             invitationKit.brand,
-            harden([
-              {
-                ...extraProperties,
-                description: desc,
-                handle,
-                instance: state.instanceState.getInstanceRecord().instance,
-                installation:
-                  state.instanceState.getInstanceRecord().installation,
-              },
+            makeCopyBag([
+              [
+                {
+                  ...extraProperties,
+                  description: desc,
+                  handle,
+                  instance: state.instanceState.getInstanceRecord().instance,
+                  installation:
+                    state.instanceState.getInstanceRecord().installation,
+                },
+                1n,
+              ],
             ]),
           );
           if (proposalShape !== undefined) {

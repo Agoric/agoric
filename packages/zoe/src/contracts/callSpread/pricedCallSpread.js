@@ -4,6 +4,7 @@ import { makePromiseKit } from '@endo/promise-kit';
 import { E } from '@endo/eventual-send';
 import { Far } from '@endo/marshal';
 import { AmountMath } from '@agoric/ertp';
+import { getCopyBagEntries } from '@agoric/store';
 import {
   assertProposalShape,
   depositToSeat,
@@ -12,6 +13,7 @@ import {
   ceilMultiplyBy,
   atomicRearrange,
 } from '../../contractSupport/index.js';
+import { getInvitationAmountDetails } from '../../zoeService/invitationQueries.js';
 import { makePayoffHandler } from './payoffHandler.js';
 import { Position } from './position.js';
 
@@ -71,11 +73,8 @@ const start = zcf => {
   assertNatAssetKind(zcf, brands.Collateral);
   assertNatAssetKind(zcf, brands.Strike);
   // notice that we don't assert that the Underlying is fungible.
-
-  assert(
-    AmountMath.isGTE(strikePrice2, strikePrice1),
-    'strikePrice2 must be greater than strikePrice1',
-  );
+  AmountMath.isGTE(strikePrice2, strikePrice1) ||
+    Fail`strikePrice2 must be greater than strikePrice1`;
 
   zcf.saveIssuer(zcf.getInvitationIssuer(), 'Options');
 
@@ -126,11 +125,9 @@ const start = zcf => {
         Fail`Collateral required: ${deposit.value}`;
 
       // assert that the requested option was the right one.
-      assert(
-        spreadAmount.Option.value[0].instance ===
-          desiredOption.value[0].instance,
-        'wanted option not a match',
-      );
+      getCopyBagEntries(spreadAmount.Option.value)[0][0].instance ===
+        getInvitationAmountDetails(desiredOption).instance ||
+        Fail`wanted option not a match`;
 
       atomicRearrange(
         zcf,

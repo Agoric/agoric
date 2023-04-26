@@ -2,7 +2,7 @@
 
 /** @typedef {import('@endo/marshal').Passable} Passable */
 /** @typedef {import('@endo/marshal').PassStyle} PassStyle */
-/** @typedef {import('@endo/marshal').CopyTagged} CopyTagged */
+/* BUGGY! @typedef {import('@endo/marshal').CopyTagged} CopyTagged */
 /** @template T @typedef {import('@endo/marshal').CopyRecord<T>} CopyRecord */
 /** @template T @typedef {import('@endo/marshal').CopyArray<T>} CopyArray */
 /** @typedef {import('@endo/marshal').Checker} Checker */
@@ -11,6 +11,14 @@
 
 // /////////////////////////////////////////////////////////////////////////////
 // Placeholder redundant types, to be imported from `@endo/patterns` instead.
+
+/**
+ * @template [P=unknown]
+ * @typedef {{
+ *   payload: P,
+ *   [Symbol.toStringTag]: string
+ * }} CopyTagged
+ */
 
 /**
  * @typedef {Passable} Key

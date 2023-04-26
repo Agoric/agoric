@@ -500,7 +500,9 @@ test('zoe - coveredCall with swap for invitation', async t => {
   // optionAmounts (basically, the description of the option)
 
   const {
-    value: [{ instance: swapInstance, installation: daveSwapInstallId }],
+    value: {
+      payload: [[{ instance: swapInstance, installation: daveSwapInstallId }]],
+    },
   } = await E(invitationIssuer).getAmountOf(daveSwapInvitationP);
 
   const daveSwapIssuers = await E(zoe).getIssuers(swapInstance);

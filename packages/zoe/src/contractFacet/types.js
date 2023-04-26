@@ -36,7 +36,7 @@
  * @property {(completion: Completion) => void} shutdown
  * @property {ShutdownWithFailure} shutdownWithFailure
  * @property {() => ERef<ZoeService>} getZoeService
- * @property {() => Issuer<'set'>} getInvitationIssuer
+ * @property {() => Issuer<'copyBag'>} getInvitationIssuer
  * @property {() => StandardTerms & CT} getTerms
  * @property {<K extends AssetKind>(issuer: Issuer<K>) => Brand<K>} getBrandForIssuer
  * @property {<K extends AssetKind>(brand: Brand<K>) => Issuer<K>} getIssuerForBrand

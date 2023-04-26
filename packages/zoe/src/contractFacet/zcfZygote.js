@@ -41,7 +41,7 @@ const { Fail } = assert;
  *
  * @param {VatPowers} powers
  * @param {ERef<ZoeService>} zoeService
- * @param {Issuer<'set'>} invitationIssuer
+ * @param {Issuer<'copyBag'>} invitationIssuer
  * @param {TestJigSetter} testJigSetter
  * @param {BundleCap} contractBundleCap
  * @param {import('@agoric/vat-data').Baggage} zcfBaggage

@@ -49,7 +49,9 @@ test('zoe - mint payments', async t => {
         );
 
         const {
-          value: [invitationValue],
+          value: {
+            payload: [[invitationValue]],
+          },
         } = await E(invitationIssuer).getAmountOf(invitation);
 
         t.is(
@@ -131,7 +133,9 @@ test('zoe - mint payments with unrelated give and want', async t => {
         );
 
         const {
-          value: [invitationValue],
+          value: {
+            payload: [[invitationValue]],
+          },
         } = await E(invitationIssuer).getAmountOf(invitation);
 
         t.is(

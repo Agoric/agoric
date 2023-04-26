@@ -199,7 +199,9 @@ test(`mint and sell opera tickets`, async t => {
   const aliceBuysTicket1 = async (invitation, moola100Payment) => {
     const invitationIssuer = E(zoe).getInvitationIssuer();
     const {
-      value: [{ instance }],
+      value: {
+        payload: [[{ instance }]],
+      },
     } = await E(invitationIssuer).getAmountOf(invitation);
     const ticketSalesPublicFacet = await E(zoe).getPublicFacet(instance);
     const terms = await E(zoe).getTerms(instance);
@@ -289,7 +291,9 @@ test(`mint and sell opera tickets`, async t => {
       untrustedInvitation,
     );
     const {
-      value: [{ instance: ticketSalesInstance }],
+      value: {
+        payload: [[{ instance: ticketSalesInstance }]],
+      },
     } = await E(invitationIssuer).getAmountOf(invitation);
     const ticketSalesPublicFacet = await E(zoe).getPublicFacet(
       ticketSalesInstance,
@@ -365,7 +369,9 @@ test(`mint and sell opera tickets`, async t => {
       untrustedInvitation,
     );
     const {
-      value: [{ instance: ticketSalesInstance }],
+      value: {
+        payload: [[{ instance: ticketSalesInstance }]],
+      },
     } = await E(invitationIssuer).getAmountOf(invitation);
     const ticketSalesPublicFacet = await E(zoe).getPublicFacet(
       ticketSalesInstance,
@@ -435,7 +441,9 @@ test(`mint and sell opera tickets`, async t => {
       untrustedInvitation,
     );
     const {
-      value: [{ instance: ticketSalesInstance }],
+      value: {
+        payload: [[{ instance: ticketSalesInstance }]],
+      },
     } = await E(invitationIssuer).getAmountOf(invitation);
     const ticketSalesPublicFacet = await E(zoe).getPublicFacet(
       ticketSalesInstance,
