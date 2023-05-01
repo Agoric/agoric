@@ -24,6 +24,7 @@ const insistMissing = (ref, isCollection = false) => {
 export const buildRootObject = () => {
   let vatAdmin;
   let ulrikRoot;
+  /** @type {import('@agoric/swingset-vat').VatAdminFacet} */
   let ulrikAdmin;
   const marker = Far('marker', {});
   // for debugging, this array starts with a dummy element so
@@ -86,7 +87,7 @@ export const buildRootObject = () => {
       const bcap = await E(vatAdmin).getNamedBundleCap('ulrik2');
       const vatParameters = { youAre: 'v2', marker };
       const upgradeMessage = 'test upgrade';
-      const upgradeResult = await E(ulrikAdmin).upgrade(bcap, {
+      const upgradeResult = await E(ulrikAdmin).restartVat(bcap, {
         vatParameters,
         upgradeMessage,
       });
@@ -166,7 +167,7 @@ export const buildRootObject = () => {
     upgradeV2Simple: async mode => {
       const bcap = await E(vatAdmin).getNamedBundleCap('ulrik2');
       const vatParameters = { youAre: 'v2', marker, mode };
-      await E(ulrikAdmin).upgrade(bcap, { vatParameters });
+      await E(ulrikAdmin).restartVat(bcap, { vatParameters });
       return [];
     },
 
@@ -177,7 +178,7 @@ export const buildRootObject = () => {
       await E(ulrikRoot).pingback(handler); // pushes 'ping 2' on events
       const vatParameters = { youAre: 'v2', marker, handler };
       // vp.handler causes v2 to handler~.ping(), but that gets unwound
-      const p = E(ulrikAdmin).upgrade(bcap, { vatParameters }); // throws
+      const p = E(ulrikAdmin).restartVat(bcap, { vatParameters }); // throws
       await p.catch(e => events.push(e)); // pushes upgrade Error on events
       await E(ulrikRoot).pingback(handler); // v1 pushes 'ping 3' on events
       return events;
@@ -217,7 +218,7 @@ export const buildRootObject = () => {
     upgradeV2KindModeTest: async v2mode => {
       const bcap = await E(vatAdmin).getNamedBundleCap('ulrik2');
       const vatParameters = { youAre: 'v2', marker, v2mode };
-      await E(ulrikAdmin).upgrade(bcap, { vatParameters });
+      await E(ulrikAdmin).restartVat(bcap, { vatParameters });
       return [];
     },
 
@@ -228,7 +229,7 @@ export const buildRootObject = () => {
       const explode = 'kaboom';
       const vatParameters = { youAre: 'v2', marker, handler, explode };
       // vp.handler causes v2 to handler~.ping(), but that gets unwound
-      const p = E(ulrikAdmin).upgrade(bcap, { vatParameters }); // throws
+      const p = E(ulrikAdmin).restartVat(bcap, { vatParameters }); // throws
       await p.catch(e => {
         events.push(e);
         events.push(e instanceof Error);
@@ -249,7 +250,7 @@ export const buildRootObject = () => {
         vatParameters: { youAre: 'v2', marker },
         bad: 'unknown option',
       };
-      await E(ulrikAdmin).upgrade(bcap2, options2); // throws
+      await E(ulrikAdmin).restartVat(bcap2, options2); // throws
     },
 
     doUpgradeWithoutVatParameters: async () => {
@@ -260,7 +261,7 @@ export const buildRootObject = () => {
       const paramA = await E(root).getParameters();
 
       const bcap2 = await E(vatAdmin).getNamedBundleCap('ulrik2');
-      await E(ulrikAdmin).upgrade(bcap2); // no options
+      await E(ulrikAdmin).restartVat(bcap2); // no options
       const paramB = await E(root).getParameters();
 
       return [paramA, paramB];

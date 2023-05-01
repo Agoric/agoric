@@ -793,7 +793,7 @@ test('failed upgrade - lost kind', async t => {
 
   // The v2 vat starts with a 'ping from v2' (which will be unwound).
   // Then v2 finishes startVat without reattaching all kinds, so v2 is
-  // unwound.  Then the `E(ulrikAdmin).upgrade()` promise rejects,
+  // unwound.  Then the `E(ulrikAdmin).restartVat()` promise rejects,
   // pushing the error onto 'events'
 
   const e = events[1];

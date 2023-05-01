@@ -3,6 +3,7 @@ import { Far, E } from '@endo/far';
 export function buildRootObject() {
   let vatAdmin;
   let uptonRoot;
+  /** @type {import('@agoric/swingset-vat').VatAdminFacet} */
   let uptonAdmin;
 
   return Far('root', {
@@ -25,7 +26,7 @@ export function buildRootObject() {
       // upgrade Upton to version 2
       const bcap = await E(vatAdmin).getNamedBundleCap('upton');
       const vatParameters = { version: 'v2' };
-      await E(uptonAdmin).upgrade(bcap, { vatParameters });
+      await E(uptonAdmin).restartVat(bcap, { vatParameters });
       return E(uptonRoot).phase2();
     },
 

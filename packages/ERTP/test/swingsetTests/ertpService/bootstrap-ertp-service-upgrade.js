@@ -8,8 +8,10 @@ const mintInto = (kit, purse, value) =>
     .then(p => E(purse).deposit(p));
 
 export const buildRootObject = () => {
+  /** @type {import('@agoric/swingset-vat').VatAdminSvc} */
   let vatAdmin;
   let ertpRoot;
+  /** @type {import('@agoric/swingset-vat').VatAdminFacet} */
   let ertpAdmin;
   let issuerKitA;
   let issuerKitB;
@@ -64,7 +66,7 @@ export const buildRootObject = () => {
 
     upgradeV2: async () => {
       const bcap = await E(vatAdmin).getNamedBundleCap('ertpService');
-      await E(ertpAdmin).upgrade(bcap);
+      await E(ertpAdmin).restartVat(bcap);
 
       // exercise purses
       const purseA2Balance = await E(purseA2).getCurrentAmount();

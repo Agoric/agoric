@@ -50,12 +50,13 @@ export const buildRootObject = () => {
     },
 
     upgradeVat: async ({ name, bundleCapName, vatParameters = {} }) => {
+      /** @type {{ adminNode: import('@agoric/swingset-vat').VatAdminFacet, result: import('../src/types-external.js').VatRestartResults }} */
       const vat = vatData.get(name) || Fail`unknown vat name: ${q(name)}`;
       const bcap = await E(vatAdmin).getNamedBundleCap(bundleCapName);
       const options = { vatParameters };
-      const incarnationNumber = await E(vat.adminNode).upgrade(bcap, options);
-      vat.incarnationNumber = incarnationNumber;
-      return incarnationNumber;
+      const result = await E(vat.adminNode).restartVat(bcap, options);
+      vat.result = result;
+      return result;
     },
 
     /**

@@ -3,6 +3,7 @@ import { Far, E } from '@endo/far';
 export const buildRootObject = () => {
   let vatAdmin;
   let zcfRoot;
+  /** @type {import('@agoric/swingset-vat').VatAdminFacet} */
   let zcfAdmin;
 
   return Far('root', {
@@ -33,7 +34,7 @@ export const buildRootObject = () => {
       const v2bcap = await E(vatAdmin).getNamedBundleCap('contractV2');
       const vatParameters = { contractBundleCap: v2bcap };
       const options = { vatParameters };
-      await E(zcfAdmin).upgrade(zcfbcap, options);
+      await E(zcfAdmin).restartVat(zcfbcap, options);
       return true;
     },
   });

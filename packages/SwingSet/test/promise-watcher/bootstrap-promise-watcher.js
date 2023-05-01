@@ -4,6 +4,7 @@ import { makePromiseKit } from '@endo/promise-kit';
 export function buildRootObject() {
   let vatAdmin;
   let uptonRoot;
+  /** @type {import('@agoric/swingset-vat').VatAdminFacet} */
   let uptonAdmin;
   const pk1 = makePromiseKit();
   const pk2 = makePromiseKit();
@@ -53,7 +54,7 @@ export function buildRootObject() {
     async upgradeV2() {
       const bcap = await E(vatAdmin).getNamedBundleCap('upton');
       const vatParameters = { version: 'v2' };
-      await E(uptonAdmin).upgrade(bcap, {
+      await E(uptonAdmin).restartVat(bcap, {
         vatParameters,
         upgradeMessage: 'test upgrade',
       });

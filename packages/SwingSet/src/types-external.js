@@ -324,8 +324,8 @@ export {};
  * @typedef { { enableDisavow?: boolean } } OptEnableDisavow
  * @typedef { BaseVatOptions & OptManagerType & OptEnableDisavow } StaticVatOptions
  *
- * @typedef { { vatParameters?: object, upgradeMessage?: string } } VatUpgradeOptions
- * @typedef { { incarnationNumber: number } } VatUpgradeResults
+ * @typedef { { vatParameters?: object, upgradeMessage?: string } } VatRestartOptions
+ * @typedef { { incarnationNumber: number } } VatRestartResults
  *
  * @callback ShutdownWithFailure
  * Called to shut something down because something went wrong, where the reason
@@ -350,7 +350,7 @@ export {};
  * promise will fulfill to the completion value.
  * @property {ShutdownWithFailure} terminateWithFailure
  * Terminate the vat with a failure reason.
- * @property {(bundlecap: BundleCap, options?: VatUpgradeOptions) => Promise<VatUpgradeResults>} upgrade
+ * @property {(bundlecap: BundleCap, options?: VatRestartOptions) => Promise<VatRestartResults>} restartVat
  * Restart the vat with the specified bundle and options. This is a "baggage-style" upgrade,
  * in which the JS memory space is abandoned. The new image is launched with access to 'baggage'
  * and any durable storage reachable from it, and must fulfill all the obligations of the previous

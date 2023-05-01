@@ -2,6 +2,7 @@ import { E, Far } from '@endo/far';
 
 export const buildRootObject = harden(() => {
   let vas;
+  /** @type {{ adminNode: import('@agoric/swingset-vat').VatAdminFacet }} */
   let control;
   return Far('root', {
     bootstrap: async (vats, devices) => {
@@ -15,7 +16,7 @@ export const buildRootObject = harden(() => {
     },
     upgrade: async () => {
       const bcap = await E(vas).getNamedBundleCap('bootstrap');
-      await E(control.adminNode).upgrade(bcap);
+      await E(control.adminNode).restartVat(bcap);
     },
   });
 });

@@ -4,6 +4,7 @@ import { makePromiseKit } from '@endo/promise-kit';
 export function buildRootObject() {
   let vatAdmin;
   let testVatRoot;
+  /** @type {import('@agoric/swingset-vat').VatAdminFacet} */
   let testVatAdmin;
   let doneP;
   let testLog;
@@ -42,7 +43,7 @@ export function buildRootObject() {
 
     async upgradeV2(vatParameters) {
       const bcap = await E(vatAdmin).getNamedBundleCap('testVat');
-      await E(testVatAdmin).upgrade(bcap, { vatParameters });
+      await E(testVatAdmin).restartVat(bcap, { vatParameters });
       await runTests('after');
       return testLog;
     },
