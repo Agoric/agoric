@@ -86,10 +86,4 @@ bin/agops oracle pushPriceRound --price 25.0 --roundId 3 --oracleAdminAcceptOffe
 agoric wallet send --offer "$PROPOSAL_OFFER" --from gov2 --keyring-backend="test"
 
 # leave round unspecified for contract to suggest ($21.2)
-PROPOSAL_OFFER=$(mktemp -t agops.XXX)
-bin/agops oracle pushPriceRound --price 21.0 --oracleAdminAcceptOfferId "$ORACLE2_OFFER_ID" >|"$PROPOSAL_OFFER"
-agoric wallet send --offer "$PROPOSAL_OFFER" --from gov2 --keyring-backend="test"
-# alternate
-PROPOSAL_OFFER=$(mktemp -t agops.XXX)
-bin/agops oracle pushPriceRound --price 21.4 --oracleAdminAcceptOfferId "$ORACLE_OFFER_ID" >|"$PROPOSAL_OFFER"
-agoric wallet send --offer "$PROPOSAL_OFFER" --from gov1 --keyring-backend="test"
+bin/agops oracle setPrice --price 21.2

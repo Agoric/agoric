@@ -49,7 +49,6 @@ for i in "${oracles[@]}"; do
     agops oracle accept --offerId "$OFFER_ID" >|"$ORACLE_OFFER"
     agoric wallet print --file "$ORACLE_OFFER"
     agops perf satisfaction --from "$i" --executeOffer "$ORACLE_OFFER" --keyring-backend=test
-    echo "${i}_ORACLE=$OFFER_ID" >>"$HOME/.agoric/envs"
 done
 
 echo ACTIONS Sourcing environment
@@ -100,7 +99,7 @@ sleep 65
 echo ACTIONS ensure params were changed
 test_val "$(agoric follow -l -F :published.vaultFactory.managers.manager0.governance -o jsonlines | jq -r .current.DebtLimit.value.value)" "123000000000000"
 
-pushPrice 12.01
+agops setPrice --price 12.01
 
 ## vaults
 # attempt to open vaults under the minimum amount
