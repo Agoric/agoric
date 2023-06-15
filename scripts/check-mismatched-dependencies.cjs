@@ -1,9 +1,11 @@
 #! /usr/bin/env node
 
 const { spawnSync } = require('child_process');
-console.log(`running 'yarn workspaces info' to check for mismatched dependencies`);
+console.log(
+  `running 'yarn workspaces info' to check for mismatched dependencies`,
+);
 const s = spawnSync('yarn', ['--silent', 'workspaces', 'info'], {
-  stdio: ['ignore', 'pipe', 'inherit']
+  stdio: ['ignore', 'pipe', 'inherit'],
 });
 if (s.status !== 0) {
   console.log(`error running 'yarn workspaces info':`);
@@ -30,4 +32,3 @@ if (good) {
 } else {
   process.exit(1);
 }
-

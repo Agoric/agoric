@@ -12,7 +12,7 @@ import { HttpClient, Tendermint34Client } from '@cosmjs/tendermint-rpc';
  * @param {import('@cosmjs/tendermint-rpc').Tendermint34Client} rpcClient
  * @returns {Promise<import('@agoric/cosmic-proto/swingset/query.js').QueryParamsResponse>}
  */
-const querySwingsetParams = async (rpcClient) => {
+const querySwingsetParams = async rpcClient => {
   const base = QueryClient.withExtensions(rpcClient);
   const rpc = createProtobufRpcClient(base);
   const queryService = new QueryClientImpl(rpc);
@@ -30,4 +30,4 @@ const testMain = async () => {
   console.log(JSON.stringify(params, null, 2));
 };
 
-testMain().catch((err) => console.error(err));
+testMain().catch(err => console.error(err));

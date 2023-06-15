@@ -4,7 +4,8 @@ const fs = require('fs');
 const path = require('path');
 
 try {
-  const script = process.argv[2] || `${process.env.HOME || '/usr/local'}/bin/agoric`;
+  const script =
+    process.argv[2] || `${process.env.HOME || '/usr/local'}/bin/agoric`;
   const cli = path.resolve(__dirname, '../packages/agoric-cli/bin/agoric');
 
   const bindir = path.dirname(script);
@@ -22,7 +23,9 @@ try {
       } else {
         advice = `export PATH=$PATH${sep}${bindir}`;
       }
-      console.log(`(You may want to \`${advice}' to add it to your PATH environment variable)`);
+      console.log(
+        `(You may want to \`${advice}' to add it to your PATH environment variable)`,
+      );
     }
   }
 
@@ -39,7 +42,9 @@ exec ${cli} \$opts \${1+"\$@"}
 
   console.log(`creating ${script}`);
   if (fs.existsSync(script)) {
-    throw Error(`${script} must not already exist; you should use a fresh path.`);
+    throw Error(
+      `${script} must not already exist; you should use a fresh path.`,
+    );
   }
   try {
     // Unlink the old version in case it's a symlink.

@@ -1,0 +1,28 @@
+{
+  "prettier": {
+    "arrowParens": "avoid",
+    "trailingComma": "all",
+    "singleQuote": true
+  },
+  "includes": [
+    "**/*.{ts,tsx,js,jsx,cjs,mjs}"
+  ],
+  "excludes": [
+    "**/node_modules",
+    "**/*-lock.json",
+    ".yarn",
+    "bundles",
+    "compiled",
+    "dist",
+    "moddable",
+    "public",
+    // subrepos
+    "/packages/xsnap/moddable",
+    "/packages/xsnap/xsnap-native"
+  ],
+  "plugins": [
+    "https://plugins.dprint.dev/toml-0.5.4.wasm",
+    "https://plugins.dprint.dev/dockerfile-0.3.0.wasm",
+    "https://plugins.dprint.dev/prettier-0.23.0.json@b5733385b8a5d7ef0121d5031d21d3e0d60e2405a13ffa93278a404e10209a4f"
+  ]
+}
