@@ -46,6 +46,7 @@
     "@endo/far": "^0.2.18",
     "@endo/marshal": "^0.8.5",
     "@endo/nat": "^4.1.27",
+    "@endo/promise-kit": "^0.2.56",
     "jessie.js": "^0.3.2"
   },
   "devDependencies": {

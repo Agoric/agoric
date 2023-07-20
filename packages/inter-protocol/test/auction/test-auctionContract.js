@@ -315,7 +315,11 @@ const makeAuctionDriver = async (t, params = defaultParams) => {
         subscriptionTracker(t, subscribeEach(subscription)),
       );
     },
-    getBookDataTracker,
+    getBookDataTracker(brand) {
+      return E.when(E(publicFacet).getBookDataUpdates(brand), subscription =>
+        subscriptionTracker(t, subscribeEach(subscription)),
+      );
+    },
     getReserveBalance(keyword) {
       const reserveCF = E.get(reserveKit).creatorFacet;
       return E.get(E(reserveCF).getAllocations())[keyword];
@@ -919,10 +923,14 @@ test.serial('onDeadline exit, with chainStorage RPC snapshot', async t => {
 
   /** @type {BookDataTracker} */
   const bookTracker = await driver.getBookDataTracker(collateral.brand);
-
-  await bookTracker.assertChange({
-    collateralAvailable: { value: 100n },
-    startCollateral: { value: 100n },
+  await bookTracker.assertInitial({
+    collateralAvailable: collateral.make(100n),
+    currentPriceLevel: null,
+    proceedsRaised: undefined,
+    remainingProceedsGoal: null,
+    startCollateral: collateral.make(100n),
+    startPrice: null,
+    startProceedsGoal: null,
   });
 
   await driver.updatePriceAuthority(
@@ -955,6 +963,22 @@ test.serial('onDeadline exit, with chainStorage RPC snapshot', async t => {
   t.is(await E(exitingSeat).getOfferResult(), 'Your bid has been accepted');
   t.false(await E(exitingSeat).hasExited());
 
+  await driver.bidForCollateralSeat(
+    bid.make(200n),
+    collateral.make(250n),
+    undefined,
+  );
+  driver.bidForCollateralSeat(
+    bid.make(20n),
+    collateral.make(200n),
+    makeRatioFromAmounts(bid.make(50n), bid.make(100n)),
+  );
+  driver.bidForCollateralSeat(
+    bid.make(40n),
+    collateral.make(2000n),
+    makeRatioFromAmounts(bid.make(80n), bid.make(100n)),
+  );
+
   await bookTracker.assertChange({
     startPrice: makeRatioFromAmounts(
       bid.make(1_100_000_000n),
@@ -963,6 +987,7 @@ test.serial('onDeadline exit, with chainStorage RPC snapshot', async t => {
   });
 
   await driver.advanceTo(170n, 'wait');
+  await bookTracker.assertChange({});
   await bookTracker.assertChange({});
 
   await bookTracker.assertChange({
@@ -980,6 +1005,8 @@ test.serial('onDeadline exit, with chainStorage RPC snapshot', async t => {
   await scheduleTracker.assertChange({
     nextDescendingStepTime: { absValue: 180n },
   });
+  await bookTracker.assertChange({});
+  await bookTracker.assertChange({});
   await bookTracker.assertChange({
     currentPriceLevel: { numerator: { value: 9_350_000_000_000n } },
   });
@@ -1058,9 +1085,14 @@ test.serial('add assets to open auction', async t => {
   );
 
   const bookTracker = await driver.getBookDataTracker(collateral.brand);
-  await bookTracker.assertChange({
-    collateralAvailable: { value: 1000n },
-    startCollateral: { value: 1000n },
+  await bookTracker.assertInitial({
+    collateralAvailable: collateral.make(1000n),
+    currentPriceLevel: null,
+    proceedsRaised: undefined,
+    remainingProceedsGoal: null,
+    startCollateral: collateral.make(1000n),
+    startPrice: null,
+    startProceedsGoal: null,
   });
   const scheduleTracker = await driver.getScheduleTracker();
   await scheduleTracker.assertInitial({
@@ -1189,34 +1221,39 @@ test.serial('multiple collaterals', async t => {
   );
 
   // offers 290 for up to 300 at 1.1 * .875, so will trigger at the first discount
+  const price = makeRatioFromAmounts(bid.make(950n), collateral.make(1000n));
   const bidderSeat1C = await driver.bidForCollateralSeat(
     bid.make(265n),
     collateral.make(300n),
-    makeRatioFromAmounts(bid.make(950n), collateral.make(1000n)),
+    price,
   );
   t.is(await E(bidderSeat1C).getOfferResult(), 'Your bid has been accepted');
+  driver.getTimerService().getCurrentTimestamp();
 
   // offers up to 500 for 2000 at 1.1 * 75%, so will trigger at second discount step
+  const scale2C = makeRatioFromAmounts(bid.make(75n), bid.make(100n));
   const bidderSeat2C = await driver.bidForCollateralSeat(
     bid.make(500n),
     collateral.make(2000n),
-    makeRatioFromAmounts(bid.make(75n), bid.make(100n)),
+    scale2C,
   );
   t.is(await E(bidderSeat2C).getOfferResult(), 'Your bid has been accepted');
 
   // offers 50 for 200 at .25 * 50% discount, so triggered at third step
+  const scale1A = makeRatioFromAmounts(bid.make(50n), bid.make(100n));
   const bidderSeat1A = await driver.bidForCollateralSeat(
     bid.make(23n),
     asset.make(200n),
-    makeRatioFromAmounts(bid.make(50n), bid.make(100n)),
+    scale1A,
   );
   t.is(await E(bidderSeat1A).getOfferResult(), 'Your bid has been accepted');
 
   // offers 100 for 300 at .25 * 33%, so triggered at fourth step
+  const price2A = makeRatioFromAmounts(bid.make(100n), asset.make(1000n));
   const bidderSeat2A = await driver.bidForCollateralSeat(
     bid.make(19n),
     asset.make(300n),
-    makeRatioFromAmounts(bid.make(100n), asset.make(1000n)),
+    price2A,
   );
   t.is(await E(bidderSeat2A).getOfferResult(), 'Your bid has been accepted');
 

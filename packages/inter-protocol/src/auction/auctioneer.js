@@ -624,11 +624,12 @@ export const start = async (zcf, privateArgs, baggage) => {
          * @param {ZCFSeat} zcfSeat
          * @param {import('./auctionBook.js').OfferSpec} offerSpec
          */
-        const newBidHandler = (zcfSeat, offerSpec) => {
+        const newBidHandler = async (zcfSeat, offerSpec) => {
           // xxx consider having Zoe guard the offerArgs with a provided shape
           mustMatch(offerSpec, offerSpecShape);
           const auctionBook = books.get(collateralBrand);
-          auctionBook.addOffer(offerSpec, zcfSeat, isActive());
+          const timestamp = await E(timer).getCurrentTimestamp();
+          auctionBook.addOffer(offerSpec, zcfSeat, isActive(), timestamp);
           return 'Your bid has been accepted';
         };
 
@@ -689,13 +690,19 @@ export const start = async (zcf, privateArgs, baggage) => {
 
         const bookId = `book${bookCounter}`;
         bookCounter += 1;
-        const bNode = await E(privateArgs.storageNode).makeChildNode(bookId);
+
+        const bookNodeP = E(privateArgs.storageNode).makeChildNode(bookId);
+        const [scheduleNode, bidsNode] = await Promise.all([
+          bookNodeP,
+          E(bookNodeP).makeChildNode('schedule'),
+          E(bookNodeP).makeChildNode('bids'),
+        ]);
 
         const newBook = await makeAuctionBook(
           brands.Bid,
           brand,
           priceAuthority,
-          bNode,
+          [scheduleNode, bidsNode],
         );
 
         // These three store.init() calls succeed or fail atomically

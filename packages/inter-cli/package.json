@@ -1,0 +1,47 @@
+{
+  "name": "inter-cli",
+  "version": "0.1.0",
+  "description": "TODO",
+  "type": "module",
+  "scripts": {
+    "build": "exit 0",
+    "test": "ava",
+    "test:c8": "c8 $C8_OPTIONS ava --config=ava-nesm.config.js",
+    "lint-fix": "yarn lint:eslint --fix",
+    "lint": "run-s --continue-on-error lint:*",
+    "lint:types": "tsc -p jsconfig.json",
+    "lint:eslint": "eslint ."
+  },
+  "bin": {
+    "inter-tool": "src/inter-tool.js"
+  },
+  "author": "Agoric",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@agoric/casting": "^0.4.2",
+    "@agoric/cosmic-proto": "^0.3.0",
+    "@agoric/ertp": "^0.16.2",
+    "@agoric/internal": "^0.3.2",
+    "@cosmjs/encoding": "^0.30.1",
+    "@cosmjs/stargate": "^0.30.1",
+    "@cosmjs/tendermint-rpc": "^0.30.1",
+    "@endo/far": "^0.2.18",
+    "@endo/init": "^0.5.56",
+    "@endo/marshal": "^0.8.5",
+    "@endo/nat": "^4.1.27",
+    "@endo/patterns": "^0.2.2",
+    "anylogger": "^0.21.0",
+    "commander": "^10.0.0",
+    "jessie.js": "^0.3.2"
+  },
+  "devDependencies": {
+    "@fast-check/ava": "^1.1.5"
+  },
+  "ava": {
+    "files": [
+      "test/**/test-*.js"
+    ],
+    "timeout": "20m",
+    "workerThreads": false
+  }
+}

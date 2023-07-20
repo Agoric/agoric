@@ -14,8 +14,8 @@ import { makeOffer } from '@agoric/zoe/test/unitTests/makeOffer.js';
 import { setup } from '@agoric/zoe/test/unitTests/setupBasicMints.js';
 import { setupZCFTest } from '@agoric/zoe/test/unitTests/zcf/setupZcfTest.js';
 import { makeManualPriceAuthority } from '@agoric/zoe/tools/manualPriceAuthority.js';
-import { makeMockChainStorageRoot } from '../supports.js';
 
+import { makeMockChainStorageRoot } from '../supports.js';
 import { prepareAuctionBook } from '../../src/auction/auctionBook.js';
 
 const buildManualPriceAuthority = initialPrice =>
@@ -69,12 +69,10 @@ const assembleAuctionBook = async basics => {
   const makeAuctionBook = prepareAuctionBook(baggage, zcf, makeRecorderKit);
   const mockChainStorage = makeMockChainStorageRoot();
 
-  const book = await makeAuctionBook(
-    moolaKit.brand,
-    simoleanKit.brand,
-    pa,
-    mockChainStorage.makeChildNode('thisBook'),
-  );
+  const book = await makeAuctionBook(moolaKit.brand, simoleanKit.brand, pa, [
+    mockChainStorage.makeChildNode('schedule'),
+    mockChainStorage.makeChildNode('bids'),
+  ]);
   return { pa, book };
 };
 
@@ -132,13 +130,15 @@ test('simple addOffer', async t => {
   book.captureOraclePriceForRound();
   book.setStartingRate(makeRatio(50n, moolaKit.brand, 100n));
 
+  const tenFor100 = makeRatioFromAmounts(moola(10n), simoleans(100n));
   book.addOffer(
     harden({
-      offerPrice: makeRatioFromAmounts(moola(10n), simoleans(100n)),
+      offerPrice: tenFor100,
       maxBuy: simoleans(50n),
     }),
     zcfSeat,
     true,
+    0n,
   );
 
   t.true(book.hasOrders());
@@ -174,13 +174,15 @@ test('getOffers to a price limit', async t => {
   book.captureOraclePriceForRound();
   book.setStartingRate(makeRatio(50n, moolaKit.brand, 100n));
 
+  const tenPercent = makeRatioFromAmounts(moola(10n), moola(100n));
   book.addOffer(
     harden({
-      offerBidScaling: makeRatioFromAmounts(moola(10n), moola(100n)),
+      offerBidScaling: tenPercent,
       maxBuy: simoleans(50n),
     }),
     zcfSeat,
     true,
+    0n,
   );
 
   t.true(book.hasOrders());
@@ -226,6 +228,7 @@ test('Bad keyword', async t => {
         }),
         zcfSeat,
         true,
+        0n,
       ),
     { message: /give must include "Bid".*/ },
   );
@@ -259,13 +262,15 @@ test('getOffers w/discount', async t => {
     moolaKit,
   );
 
+  const tenPercent = makeRatioFromAmounts(moola(10n), moola(100n));
   book.addOffer(
     harden({
-      offerBidScaling: makeRatioFromAmounts(moola(10n), moola(100n)),
+      offerBidScaling: tenPercent,
       maxBuy: simoleans(50n),
     }),
     zcfSeat,
     true,
+    0n,
   );
 
   t.true(book.hasOrders());
