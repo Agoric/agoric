@@ -1,0 +1,25 @@
+syntax = "proto3";
+package agoric.vstorage;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/Agoric/agoric-sdk/golang/cosmos/x/vstorage/types";
+
+// The initial or exported state.
+message GenesisState {
+    option (gogoproto.equal) = false;
+
+    repeated DataEntry data = 1 [
+        (gogoproto.jsontag)    = "data",
+        (gogoproto.moretags)   = "yaml:\"data\""
+    ];
+}
+
+// A vstorage entry.  The only necessary entries are those with data, as the
+// ancestor nodes are reconstructed on import.
+message DataEntry {
+    // A "."-separated path with individual path elements matching
+    // `[-_A-Za-z0-9]+`
+    string path = 1;
+    string value = 2;
+}

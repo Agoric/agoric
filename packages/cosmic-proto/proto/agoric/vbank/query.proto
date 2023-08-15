@@ -1,0 +1,39 @@
+syntax = "proto3";
+package agoric.vbank;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "agoric/vbank/vbank.proto";
+
+option go_package = "github.com/Agoric/agoric-sdk/golang/cosmos/x/vbank/types";
+
+// Query defines the gRPC querier service for vbank module.
+service Query {
+  // Params queries params of the vbank module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/agoric/vbank/params";
+  }
+
+  // State queries current state of the vbank module.
+  rpc State(QueryStateRequest) returns (QueryStateResponse) {
+    option (google.api.http).get = "/agoric/vbank/state";
+  }
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params defines the parameters of the module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryStateRequest is the request type for the Query/State RPC method.
+message QueryStateRequest {}
+
+// QueryStateResponse is the response type for the Query/State RPC method.
+message QueryStateResponse {
+  // state defines the parameters of the module.
+  State state = 1 [(gogoproto.nullable) = false];
+}

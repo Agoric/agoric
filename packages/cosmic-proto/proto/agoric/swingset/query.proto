@@ -1,0 +1,66 @@
+syntax = "proto3";
+package agoric.swingset;
+
+import "gogoproto/gogo.proto";
+import "agoric/swingset/swingset.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/types";
+
+// Query provides defines the gRPC querier service
+service Query {
+  // Params queries params of the swingset module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/agoric/swingset/params";
+  }
+
+  // Egress queries a provisioned egress.
+  rpc Egress(QueryEgressRequest) returns (QueryEgressResponse) {
+    option (google.api.http).get = "/agoric/swingset/egress/{peer}";
+  }
+
+  // Return the contents of a peer's outbound mailbox.
+  rpc Mailbox(QueryMailboxRequest) returns (QueryMailboxResponse) {
+    option (google.api.http).get = "/agoric/swingset/mailbox/{peer}";
+  }
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params defines the parameters of the module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryEgressRequest is the request type for the Query/Egress RPC method
+message QueryEgressRequest {
+  bytes peer = 1 [
+    (gogoproto.casttype)   = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+    (gogoproto.jsontag)    = "peer",
+    (gogoproto.moretags)   = "yaml:\"peer\""
+  ];
+}
+
+// QueryEgressResponse is the egress response.
+message QueryEgressResponse {
+  agoric.swingset.Egress egress = 1;
+}
+
+// QueryMailboxRequest is the mailbox query.
+message QueryMailboxRequest {
+  bytes peer = 1 [
+    (gogoproto.casttype)   = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+    (gogoproto.jsontag)    = "peer",
+    (gogoproto.moretags)   = "yaml:\"peer\""
+  ];
+}
+
+// QueryMailboxResponse is the mailbox response.
+message QueryMailboxResponse {
+  string value = 1 [
+    (gogoproto.jsontag)    = "value",
+    (gogoproto.moretags)   = "yaml:\"value\""
+  ];
+}

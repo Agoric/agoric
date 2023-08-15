@@ -1,0 +1,4 @@
+packages:
+  - "golang/cosmos"
+  - 'packages/**'
+  - "packages/wallet/api"

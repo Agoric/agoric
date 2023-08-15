@@ -1,0 +1,18 @@
+syntax = "proto3";
+package agoric.vbank;
+
+import "gogoproto/gogo.proto";
+import "agoric/vbank/vbank.proto";
+
+option go_package = "github.com/Agoric/agoric-sdk/golang/cosmos/x/vbank/types";
+
+// The initial and exported module state.
+message GenesisState {
+    option (gogoproto.equal) = false;
+
+    // parms defines all the parameters of the module.
+    Params params = 1 [(gogoproto.nullable) = false];
+
+    // state is the current operation state.
+    State state = 2 [(gogoproto.nullable) = false];
+}

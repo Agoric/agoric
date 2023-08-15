@@ -1,0 +1,27 @@
+syntax = "proto3";
+package agoric.vstorage;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/Agoric/agoric-sdk/golang/cosmos/x/vstorage/types";
+
+// Data is the vstorage node data.
+message Data {
+    option (gogoproto.equal) = false;
+
+    string value = 1 [
+        (gogoproto.jsontag)    = "value",
+        (gogoproto.moretags)   = "yaml:\"value\""
+    ];
+}
+
+// Children are the immediate names (just one level deep) of subnodes leading to
+// more data from a given vstorage node.
+message Children {
+    option (gogoproto.equal) = false;
+
+    repeated string children = 1 [
+        (gogoproto.jsontag)    = "children",
+        (gogoproto.moretags)   = "yaml:\"children\""
+    ];
+}

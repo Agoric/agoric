@@ -1,0 +1,32 @@
+syntax = "proto3";
+package agoric.vibc;
+
+import "gogoproto/gogo.proto";
+import "ibc/core/channel/v1/channel.proto";
+
+option go_package = "github.com/Agoric/agoric-sdk/golang/cosmos/x/vibc/types";
+
+// The module transactions.
+service Msg {
+  // Force sending an arbitrary packet on a channel.
+  rpc SendPacket(MsgSendPacket) returns (MsgSendPacketResponse);
+}
+
+// MsgSendPacket is an SDK message for sending an outgoing IBC packet
+message MsgSendPacket {
+    option (gogoproto.equal) = false;
+
+    ibc.core.channel.v1.Packet packet = 1 [
+        (gogoproto.nullable)   = false,
+        (gogoproto.jsontag)    = "packet",
+        (gogoproto.moretags)   = "yaml:\"packet\""
+    ];
+    bytes sender = 2 [
+        (gogoproto.casttype)   = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.jsontag)    = "submitter",
+        (gogoproto.moretags)   = "yaml:\"submitter\""
+    ];
+}
+
+// Empty response for SendPacket.
+message MsgSendPacketResponse {}

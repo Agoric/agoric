@@ -1,14 +1,15 @@
-diff --git a/node_modules/depd/index.js b/node_modules/depd/index.js
-index 1bf2fcf..a7d65f6 100644
---- a/node_modules/depd/index.js
-+++ b/node_modules/depd/index.js
-@@ -1,538 +1 @@
+diff --git a/index.js b/index.js
+index 1bf2fcfdeffc984e5ad792eec08744c29d4a4590..82d6a47505e4b29bef148b36f2465a6f85ba7da4 100644
+--- a/index.js
++++ b/index.js
+@@ -1,538 +1,2 @@
 -/*!
 - * depd
 - * Copyright(c) 2014-2018 Douglas Christopher Wilson
 - * MIT Licensed
 - */
--
++module.exports = require('./lib/browser/index.js');
+ 
 -/**
 - * Module dependencies.
 - */
@@ -541,4 +542,3 @@ index 1bf2fcf..a7d65f6 100644
 -
 -  return error
 -}
-+module.exports = require('./lib/browser/index.js');

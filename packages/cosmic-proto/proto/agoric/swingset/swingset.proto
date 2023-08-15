@@ -1,0 +1,168 @@
+syntax = "proto3";
+package agoric.swingset;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/types";
+
+// CoreEvalProposal is a gov Content type for evaluating code in the SwingSet
+// core.
+// See `agoric-sdk/packages/vats/src/core/eval.js`.
+message CoreEvalProposal {
+  option (gogoproto.goproto_getters) = false;
+
+  string            title       = 1;
+  string            description = 2;
+
+  // Although evals are sequential, they may run concurrently, since they each
+  // can return a Promise.
+  repeated CoreEval evals       = 3 [(gogoproto.nullable) = false];
+}
+
+// CoreEval defines an individual SwingSet core evaluation, for use in
+// CoreEvalProposal.
+message CoreEval {
+  // Grant these JSON-stringified core bootstrap permits to the jsCode, as the
+  // `powers` endowment.
+  string json_permits = 1 [(gogoproto.moretags) = "yaml:\"json_permits\""];
+
+  // Evaluate this JavaScript code in a Compartment endowed with `powers` as
+  // well as some powerless helpers.
+  string js_code      = 2 [(gogoproto.moretags) = "yaml:\"js_code\""];
+}
+
+// Params are the swingset configuration/governance parameters.
+message Params {
+    option (gogoproto.equal) = true;
+    option (gogoproto.goproto_stringer) = false;
+
+    // Map from unit name to a value in SwingSet "beans".
+    // Must not be negative.
+    //
+    // These values are used by SwingSet to normalize named per-resource charges
+    // (maybe rent) in a single Nat usage unit, the "bean".
+    //
+    // There is no required order to this list of entries, but all the chain
+    // nodes must all serialize and deserialize the existing order without
+    // permuting it.
+    repeated StringBeans beans_per_unit = 1 [
+      (gogoproto.nullable) = false
+    ];
+
+    // The price in Coins per the unit named "fee".  This value is used by
+    // cosmic-swingset JS code to decide how many tokens to charge.
+    //
+    // cost = beans_used * fee_unit_price / beans_per_unit["fee"]
+    repeated cosmos.base.v1beta1.Coin fee_unit_price = 2 [
+      (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+      (gogoproto.nullable) = false
+    ];
+
+    // The SwingSet bootstrap vat configuration file.  Not usefully modifiable
+    // via governance as it is only referenced by the chain's initial
+    // construction.
+    string bootstrap_vat_config = 3;
+
+    // If the provision submitter doesn't hold a provisionpass, their requested
+    // power flags are looked up in this fee menu (first match wins) and the sum
+    // is charged.  If any power flag is not found in this menu, the request is
+    // rejected.
+    repeated PowerFlagFee power_flag_fees = 4 [
+      (gogoproto.nullable) = false
+    ];
+
+    // Maximum sizes for queues.
+    // These values are used by SwingSet to compute how many messages should be
+    // accepted in a block.
+    //
+    // There is no required order to this list of entries, but all the chain
+    // nodes must all serialize and deserialize the existing order without
+    // permuting it.
+    repeated QueueSize queue_max = 5 [
+      (gogoproto.nullable) = false
+    ];
+}
+
+// The current state of the module.
+message State {
+  // The allowed number of items to add to queues, as determined by SwingSet.
+  // Transactions which attempt to enqueue more should be rejected.
+  repeated QueueSize queue_allowed = 1 [
+    (gogoproto.nullable) = false
+  ];
+}
+
+// Map element of a string key to a Nat bean count.
+message StringBeans {
+  option (gogoproto.equal) = true;
+
+  // What the beans are for.
+  string key = 1;
+
+  // The actual bean value.
+  string beans = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Uint",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// Map a provisioning power flag to its corresponding fee.
+message PowerFlagFee {
+  option (gogoproto.equal) = true;
+
+  string power_flag = 1;
+  repeated cosmos.base.v1beta1.Coin fee = 2 [
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// Map element of a string key to a size.
+message QueueSize {
+  option (gogoproto.equal) = true;
+
+  // What the size is for.
+  string key = 1;
+
+  // The actual size value.
+  int32 size = 2;
+}
+
+// Egress is the format for a swingset egress.
+message Egress {
+    option (gogoproto.equal) = false;
+
+    string nickname = 1 [
+        (gogoproto.jsontag)    = "nickname",
+        (gogoproto.moretags)   = "yaml:\"nickname\""
+    ];
+    bytes peer = 2 [
+        (gogoproto.casttype)   = "github.com/cosmos/cosmos-sdk/types.AccAddress",
+        (gogoproto.jsontag)    = "peer",
+        (gogoproto.moretags)   = "yaml:\"peer\""
+    ];
+    // TODO: Remove these power flags as they are deprecated and have no effect.
+    repeated string power_flags = 3 [
+        (gogoproto.customname) = "PowerFlags",
+        (gogoproto.jsontag)    = "powerFlags",
+        (gogoproto.moretags)   = "yaml:\"powerFlags\""
+    ];
+}
+
+// SwingStoreArtifact encodes an artifact of a swing-store export.
+// Artifacts may be stored or transmitted in any order. Most handlers do
+// maintain the artifact order from their original source as an effect of how
+// they handle the artifacts.
+message SwingStoreArtifact {
+    option (gogoproto.equal) = false;
+    string name = 1 [
+        (gogoproto.jsontag)    = "name",
+        (gogoproto.moretags)   = "yaml:\"name\""
+    ];
+
+    bytes data = 2 [
+        (gogoproto.jsontag)    = "data",
+        (gogoproto.moretags)   = "yaml:\"data\""
+    ];
+}

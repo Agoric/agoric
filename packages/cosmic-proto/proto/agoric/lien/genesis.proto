@@ -1,0 +1,25 @@
+syntax = "proto3";
+package agoric.lien;
+
+import "gogoproto/gogo.proto";
+import "agoric/lien/lien.proto";
+
+option go_package = "github.com/Agoric/agoric-sdk/golang/cosmos/x/lien/types";
+
+// The initial or exported state.
+message GenesisState {
+    option (gogoproto.equal) = false;
+
+    repeated AccountLien liens = 1 [
+        (gogoproto.nullable) = false
+    ];
+}
+
+// The lien on a particular account
+message AccountLien {
+    // Account address, bech32-encoded.
+    string address = 1;
+
+    // The liened amount. Should be nonzero.
+    Lien lien = 2;
+}

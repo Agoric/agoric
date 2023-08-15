@@ -1,0 +1,25 @@
+syntax = "proto3";
+package agoric.lien;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/Agoric/agoric-sdk/golang/cosmos/x/lien/types";
+
+// Lien contains the lien state of a particular account.
+message Lien {
+    // coins holds the amount liened
+    repeated cosmos.base.v1beta1.Coin coins = 1 [
+        (gogoproto.nullable) = false,
+        (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+        (gogoproto.moretags)     = "yaml:\"coins\""
+    ];
+    // delegated tracks the net amount delegated for non-vesting accounts,
+    // or zero coins for vesting accounts.
+    // (Vesting accounts have their own fields to track delegation.)
+    repeated cosmos.base.v1beta1.Coin delegated = 2 [
+        (gogoproto.nullable)     = false,
+        (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+        (gogoproto.moretags)     = "yaml:\"delegated\""
+    ];
+}

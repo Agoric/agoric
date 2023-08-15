@@ -1,12 +1,6 @@
 {
   "name": "@agoric/sdk",
   "private": true,
-  "useWorkspaces": true,
-  "workspaces": [
-    "golang/cosmos",
-    "packages/*",
-    "packages/wallet/api"
-  ],
   "type": "module",
   "packageManager": "yarn@1.22.19",
   "devDependencies": {
@@ -59,6 +53,7 @@
     "singleQuote": true
   },
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "clean": "yarn lerna run --no-bail clean",
     "check-dependencies": "node ./scripts/check-mismatched-dependencies.cjs",
     "lerna": "lerna",
@@ -84,5 +79,13 @@
   },
   "dependencies": {
     "patch-package": "^6.5.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@endo/bundle-source": "https://gitpkg.now.sh/endojs/endo/packages/bundle-source?master"
+    },
+    "patchedDependencies": {
+      "depd@2.0.0": "patches/depd@2.0.0.patch"
+    }
   }
 }

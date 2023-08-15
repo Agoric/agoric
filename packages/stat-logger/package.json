@@ -15,18 +15,10 @@
     "lint:eslint": "eslint ."
   },
   "peerDependencies": {
-    "canvas": "^2.6.1",
-    "vega": "^5.22.1",
-    "vega-canvas": "^1.2.1"
+    "vega": "^5.22.1"
   },
   "peerDependenciesMeta": {
-    "canvas": {
-      "optional": true
-    },
     "vega": {
-      "optional": true
-    },
-    "vega-canvas": {
       "optional": true
     }
   },

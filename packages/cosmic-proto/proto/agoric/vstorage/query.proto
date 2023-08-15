@@ -1,0 +1,110 @@
+syntax = "proto3";
+package agoric.vstorage;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/Agoric/agoric-sdk/golang/cosmos/x/vstorage/types";
+
+// Query defines the gRPC querier service
+service Query {
+  // Return the raw string value of an arbitrary vstorage datum.
+  rpc Data(QueryDataRequest) returns (QueryDataResponse) {
+    option (google.api.http).get = "/agoric/vstorage/data/{path}";
+  }
+
+  // Return a formatted representation of a vstorage datum that must be
+  // a valid StreamCell with CapData values, or standalone CapData.
+  rpc CapData(QueryCapDataRequest)
+    returns (QueryCapDataResponse) {
+      option (google.api.http).get = "/agoric/vstorage/capdata/{path}";
+  }
+
+  // Return the children of a given vstorage path.
+  rpc Children(QueryChildrenRequest)
+    returns (QueryChildrenResponse) {
+      option (google.api.http).get = "/agoric/vstorage/children/{path}";
+  }
+}
+
+// QueryDataRequest is the vstorage path data query.
+message QueryDataRequest {
+  string path = 1 [
+    (gogoproto.jsontag)    = "path",
+    (gogoproto.moretags)   = "yaml:\"path\""
+  ];
+}
+
+// QueryDataResponse is the vstorage path data response.
+message QueryDataResponse {
+  string value = 1 [
+    (gogoproto.jsontag)    = "value",
+    (gogoproto.moretags)   = "yaml:\"value\""
+  ];
+}
+
+// QueryCapDataRequest contains a path and formatting configuration.
+message QueryCapDataRequest {
+  string path = 1 [
+    (gogoproto.jsontag)    = "path",
+    (gogoproto.moretags)   = "yaml:\"path\""
+  ];
+  // mediaType must be an actual media type in the registry at
+  // https://www.iana.org/assignments/media-types/media-types.xhtml
+  // or a special value that does not conflict with the media type syntax.
+  // The only valid value is "JSON Lines", which is also the default.
+  string media_type = 2 [
+    (gogoproto.jsontag)    = "mediaType",
+    (gogoproto.moretags)   = "yaml:\"mediaType\""
+  ];
+  // itemFormat, if present, must be the special value "flat" to indicate that
+  // the deep structure of each item should be flattened into a single level
+  // with kebab-case keys (e.g., `{ "metrics": { "min": 0, "max": 88 } }` as
+  // `{ "metrics-min": 0, "metrics-max": 88 }`).
+  string item_format = 3 [
+    (gogoproto.jsontag)    = "itemFormat",
+    (gogoproto.moretags)   = "yaml:\"itemFormat\""
+  ];
+  // remotableValueFormat indicates how to transform references to opaque but
+  // distinguishable Remotables into readable embedded representations.
+  // * "object" represents each Remotable as an `{ id, allegedName }` object, e.g. `{ "id": "board007", "allegedName": "IST brand" }`.
+  // * "string" represents each Remotable as a string with bracket-wrapped contents including its alleged name and id, e.g. "[Alleged: IST brand <board007>]".
+  string remotable_value_format = 10 [
+    (gogoproto.jsontag)    = "remotableValueFormat",
+    (gogoproto.moretags)   = "yaml:\"remotableValueFormat\""
+  ];
+}
+
+// QueryCapDataResponse represents the result with the requested formatting,
+// reserving space for future metadata such as media type.
+message QueryCapDataResponse {
+  string block_height = 1 [
+    (gogoproto.jsontag)    = "blockHeight",
+    (gogoproto.moretags)   = "yaml:\"blockHeight\""
+  ];
+  string value = 10 [
+    (gogoproto.jsontag)    = "value",
+    (gogoproto.moretags)   = "yaml:\"value\""
+  ];
+}
+
+// QueryChildrenRequest is the vstorage path children query.
+message QueryChildrenRequest {
+  string path = 1 [
+    (gogoproto.jsontag)    = "path",
+    (gogoproto.moretags)   = "yaml:\"path\""
+  ];
+
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+}
+
+// QueryChildrenResponse is the vstorage path children response.
+message QueryChildrenResponse {
+  repeated string children = 1 [
+    (gogoproto.jsontag)    = "children",
+    (gogoproto.moretags)   = "yaml:\"children\""
+  ];
+
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
