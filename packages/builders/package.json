@@ -37,6 +37,7 @@
     "@endo/eventual-send": "^0.17.3",
     "@endo/init": "^0.5.57",
     "@endo/far": "^0.2.19",
+    "@endo/patterns": "^0.2.3",
     "@endo/promise-kit": "^0.2.57",
     "@endo/stream": "^0.3.26",
     "import-meta-resolve": "^2.2.1"

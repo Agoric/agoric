@@ -119,12 +119,7 @@ export const makeInstallCache = async (
     makeCopyMap([]),
   );
   // ISSUE: getCopyMapEntries of CopyMap<K, V> loses K, V.
-  /**
-   * @type {Map<
-   *   string,
-   *   { installation: Installation; boardId: string; path?: string }
-   * >}
-   */
+  /** @type {Map<string, { installation: Installation }>} */
   const working = new Map(getCopyMapEntries(initial));
 
   const saveCache = async () => {
@@ -137,6 +132,15 @@ export const makeInstallCache = async (
     });
   };
 
+  /**
+   * @template {(
+   *   mPath: string,
+   *   bPath: string,
+   *   opts: object,
+   * ) => Promise<Installation<T>>} T
+   * @param {T} install
+   * @returns {T}
+   */
   const wrapInstall = install => async (mPath, bPath, opts) => {
     const bundle = await loadBundle(bPath).then(m => m.default);
     assert(
@@ -145,13 +149,14 @@ export const makeInstallCache = async (
     );
     const { endoZipBase64Sha512: sha512 } = bundle;
     const detail = await provideWhen(working, sha512, () =>
+      // @ts-expect-error FIXME one of these is wrong: install, provideWhen, working
       install(mPath, bPath, opts).then(installation => ({
         installation,
         sha512,
         path: bPath,
       })),
     );
-    return detail.installation;
+    return /** @type {Installation<T>} */ (detail.installation);
   };
 
   return { wrapInstall, saveCache };

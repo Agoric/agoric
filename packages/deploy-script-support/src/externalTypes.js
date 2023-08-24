@@ -28,7 +28,7 @@ export {};
 /**
  * @callback InstallBundle
  * @param {string} srcSpec
- * @param {string} bundlePath
+ * @param {string} [bundlePath]
  * @param {any} [opts]
  * @returns {Promise<ManifestBundleRef>}
  */

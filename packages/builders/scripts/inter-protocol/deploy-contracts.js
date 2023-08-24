@@ -4,6 +4,10 @@ import { makeHelpers } from '@agoric/deploy-script-support';
 import { E } from '@endo/eventual-send';
 import { getCopyMapEntries, makeCopyMap } from '@agoric/store';
 
+// Ambient types. Needed only for dev but this does a runtime import.
+// https://github.com/Agoric/agoric-sdk/issues/6512
+import '@agoric/zoe/exported.js';
+
 // TODO: CLI options to choose contracts
 const contractRefs = [
   '../../governance/bundles/bundle-contractGovernor.js',
@@ -44,7 +48,7 @@ export default async (homeP, endowments) => {
 
   console.log('getting installCache...');
   /**
-   * @type {CopyMap<
+   * @type {import('@endo/patterns').CopyMap<
    *   string,
    *   { installation: Installation; boardId: string; path?: string }
    * >}
