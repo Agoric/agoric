@@ -23,6 +23,7 @@ concurrency:
 jobs:
   deployment-test:
     runs-on: ubuntu-22.04 # jammy (LTS)
+    if: ${{ !contains( github.event.pull_request.labels.*.name, 'bypass:integration') }}
     steps:
       - uses: actions/checkout@v3
         with:

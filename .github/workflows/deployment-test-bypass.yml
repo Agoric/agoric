@@ -1,0 +1,20 @@
+# must match name in deployment-test.yml per,
+# https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/troubleshooting-required-status-checks#handling-skipped-but-required-checks
+name: Chain deployment test
+
+on:
+  pull_request:
+    types: ['labeled']
+  merge_group:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # stop the real test if this executes
+  cancel-in-progress: true
+
+jobs:
+  deployment-test:
+    runs-on: ubuntu-22.04 # jammy (LTS)
+    if: ${{ contains( github.event.pull_request.labels.*.name, 'bypass:integration') }}
+    steps:
+      - run: 'echo "Chain deployment test bypassed with bypass:integration label"'
