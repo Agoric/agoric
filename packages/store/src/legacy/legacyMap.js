@@ -1,6 +1,6 @@
 import { q, Fail } from '@agoric/assert';
 
-import '../types.js';
+import '../types-ambient.js';
 
 /**
  * This module and its fraternal sibling legacyWeakMap exist only to ease a

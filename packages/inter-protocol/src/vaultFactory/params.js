@@ -1,6 +1,6 @@
 // @jessie-check
 
-import './types.js';
+import './types-ambient.js';
 
 import {
   CONTRACT_ELECTORATE,

@@ -41,7 +41,7 @@ export const buildRootObject = async () => {
 
   let minted;
 
-  /** @type {PsmPublicFacet} */
+  /** @type {import('../../../src/psm/psm.js').PsmPublicFacet} */
   let psmPublicFacet;
 
   /**

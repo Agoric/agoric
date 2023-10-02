@@ -16,7 +16,7 @@ import {
   PaymentShape,
   ProposalShape,
 } from './borrow-guards.js';
-import '../src/types.js';
+import '../src/types-ambient.js';
 
 const gcAndFinalize = makeGcAndFinalize(engineGC);
 

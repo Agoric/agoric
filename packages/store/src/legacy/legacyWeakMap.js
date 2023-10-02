@@ -1,5 +1,5 @@
 import { q, Fail } from '@agoric/assert';
-import '../types.js';
+import '../types-ambient.js';
 
 /**
  * See doccomment in the closely related `legacyMap.js` module.

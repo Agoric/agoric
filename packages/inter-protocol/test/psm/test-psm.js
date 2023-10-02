@@ -1,7 +1,7 @@
 import { test as anyTest } from '@agoric/zoe/tools/prepare-test-env-ava.js';
 
 import '@agoric/zoe/exported.js';
-import '../../src/vaultFactory/types.js';
+import '../../src/vaultFactory/types-ambient.js';
 
 import { AmountMath, makeIssuerKit } from '@agoric/ertp';
 import { split } from '@agoric/ertp/src/legacy-payment-helpers.js';
@@ -868,7 +868,7 @@ test('restore PSM: startPSM with previous metrics, params', async t => {
       'instance',
       'psm-IST-USDC_axl',
     );
-    /** @type {ERef<PsmPublicFacet>} */
+    /** @type {ERef<import('../../src/psm/psm.js').PsmPublicFacet>} */
     const pf0 = E(zoe).getPublicFacet(instance0);
 
     const { value: contractMetrics } = await E(
@@ -891,7 +891,7 @@ test('restore PSM: startPSM with previous metrics, params', async t => {
       'instance',
       'psm-IST-USDT_axl',
     );
-    /** @type {ERef<PsmPublicFacet>} */
+    /** @type {ERef<import('../../src/psm/psm.js').PsmPublicFacet>} */
     const pf1 = E(zoe).getPublicFacet(instance1);
 
     const { value: contractMetrics } = await E(

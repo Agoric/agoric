@@ -6,7 +6,7 @@ import { whileTrue } from '@agoric/internal';
 import { toBytes } from './bytes.js';
 
 import '@agoric/store/exported.js';
-import './types.js';
+import './types-ambient.js';
 
 /**
  * Compatibility note: this must match what our peers use, so don't change it

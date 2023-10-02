@@ -7,7 +7,7 @@ import { setTimeout } from 'timers';
 import { makeScalarMapStore } from '../src/stores/scalarMapStore.js';
 import { makeAtomicProvider } from '../src/stores/store-utils.js';
 
-import '../src/types.js';
+import '../src/types-ambient.js';
 
 test('race', async t => {
   const store = makeScalarMapStore('foo');

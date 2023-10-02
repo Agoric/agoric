@@ -10,7 +10,7 @@ import { makeScalarSetStore } from '../src/stores/scalarSetStore.js';
 import { makeScalarWeakMapStore } from '../src/stores/scalarWeakMapStore.js';
 import { provideLazy } from '../src/stores/store-utils.js';
 
-import '../src/types.js';
+import '../src/types-ambient.js';
 
 function check(t, mode, objMaker) {
   // Check the full API, and make sure object identity isn't a problem by
