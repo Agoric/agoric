@@ -20,9 +20,9 @@
     "lint:types": "tsc"
   },
   "dependencies": {
-    "@endo/errors": "^1.2.9",
     "@agoric/base-zone": "^0.1.0",
     "@endo/common": "^1.2.9",
+    "@endo/errors": "^1.2.9",
     "@endo/far": "^1.1.10",
     "@endo/init": "^1.1.8",
     "@endo/marshal": "^1.6.3",

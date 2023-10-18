@@ -9,9 +9,7 @@
     "tools"
   ],
   "main": "src/main.js",
-  "bin": {
-    "fast-usdc": "./src/cli/bin.js"
-  },
+  "bin": "./src/cli/bin.js",
   "scripts": {
     "build": "exit 0",
     "test": "ava",

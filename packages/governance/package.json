@@ -31,7 +31,6 @@
   },
   "homepage": "https://github.com/Agoric/agoric-sdk#readme",
   "dependencies": {
-    "@endo/errors": "^1.2.9",
     "@agoric/ertp": "^0.16.2",
     "@agoric/internal": "^0.3.2",
     "@agoric/notifier": "^0.6.2",
@@ -41,6 +40,7 @@
     "@agoric/zoe": "^0.26.2",
     "@endo/bundle-source": "^3.5.1",
     "@endo/captp": "^4.4.4",
+    "@endo/errors": "^1.2.9",
     "@endo/eventual-send": "^1.3.0",
     "@endo/far": "^1.1.10",
     "@endo/marshal": "^1.6.3",

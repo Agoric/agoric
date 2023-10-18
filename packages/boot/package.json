@@ -20,7 +20,6 @@
   "author": "Agoric",
   "license": "Apache-2.0",
   "dependencies": {
-    "@endo/errors": "^1.2.9",
     "@agoric/builders": "^0.1.0",
     "@agoric/client-utils": "^0.1.0",
     "@agoric/cosmic-proto": "^0.4.0",
@@ -45,6 +44,7 @@
     "@agoric/zone": "^0.2.2",
     "@endo/bundle-source": "^3.5.1",
     "@endo/captp": "^4.4.4",
+    "@endo/errors": "^1.2.9",
     "@endo/eventual-send": "^1.3.0",
     "@endo/far": "^1.1.10",
     "@endo/init": "^1.1.8",

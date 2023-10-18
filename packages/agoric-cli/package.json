@@ -5,8 +5,8 @@
   "type": "module",
   "main": "src/main.js",
   "bin": {
-    "agoric": "src/entrypoint.js",
-    "agops": "src/bin-agops.js"
+    "agops": "src/bin-agops.js",
+    "agoric": "src/entrypoint.js"
   },
   "exports": {
     "./src/entrypoint.js": "./src/entrypoint.js",
@@ -37,7 +37,6 @@
   },
   "dependencies": {
     "@agoric/access-token": "^0.4.21",
-    "@endo/errors": "^1.2.9",
     "@agoric/cache": "^0.3.2",
     "@agoric/casting": "^0.4.2",
     "@agoric/client-utils": "^0.1.0",
@@ -63,6 +62,7 @@
     "@endo/captp": "^4.4.4",
     "@endo/compartment-mapper": "^1.5.0",
     "@endo/env-options": "^1.1.8",
+    "@endo/errors": "^1.2.9",
     "@endo/far": "^1.1.10",
     "@endo/init": "^1.1.8",
     "@endo/marshal": "^1.6.3",

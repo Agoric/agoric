@@ -18,16 +18,16 @@
   "author": "Agoric",
   "license": "Apache-2.0",
   "dependencies": {
-    "@endo/errors": "^1.2.9",
     "@agoric/base-zone": "^0.1.0",
     "@agoric/store": "^0.9.2",
     "@agoric/swingset-liveslots": "^0.10.2",
+    "@endo/errors": "^1.2.9",
     "@endo/exo": "^1.5.8",
     "@endo/patterns": "^1.4.8"
   },
   "devDependencies": {
-    "@endo/init": "^1.1.8",
     "@endo/far": "^1.1.10",
+    "@endo/init": "^1.1.8",
     "@endo/ses-ava": "^1.2.9",
     "ava": "^5.3.0",
     "tsd": "^0.31.1"

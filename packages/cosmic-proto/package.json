@@ -181,10 +181,6 @@
     "bech32": "^2.0.0",
     "query-string": "^9.1.1"
   },
-  "resolutions": {
-    "**/axios": "^1.6.7",
-    "**/protobufjs": "^7.2.4"
-  },
   "ava": {
     "typescript": {
       "rewritePaths": {

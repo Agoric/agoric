@@ -8,7 +8,7 @@
     "packages/wallet/api"
   ],
   "type": "module",
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "yarn@4.6.0",
   "devDependencies": {
     "@endo/eslint-plugin": "^2.3.0",
     "@google-cloud/monitoring": "^4.1.0",
@@ -39,11 +39,6 @@
     "typescript": "~5.8.1-rc",
     "typescript-eslint": "^8.22.0"
   },
-  "resolutions": {
-    "**/protobufjs": "^7.2.6",
-    "**/@types/estree": "^1.0.0",
-    "@endo/eslint-plugin/typescript-eslint": "^8.22.0"
-  },
   "engines": {
     "node": "^18.12 || ^20.9"
   },
@@ -64,8 +59,8 @@
     "lint": "run-s --continue-on-error lint:*",
     "lint:packages": "yarn lerna run --no-bail lint",
     "test": "yarn lerna run --no-bail test",
-    "test:xs": "yarn workspaces run test:xs",
-    "build": "yarn workspaces run build && scripts/agd-builder.sh stamp yarn-built",
+    "test:xs": "yarn workspaces foreach --all run test:xs",
+    "build": "yarn workspaces foreach --all run build && scripts/agd-builder.sh stamp yarn-built",
     "postinstall": "patch-package && scripts/agd-builder.sh stamp yarn-installed",
     "build-ts": "tsc --build tsconfig.build.json",
     "build-xs-worker": "cd packages/xs-vat-worker && yarn build:xs-lin"

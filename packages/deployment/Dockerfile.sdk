@@ -36,7 +36,7 @@ RUN set -eux; \
 ###############################
 # @agoric/cosmos package
 FROM node:18-bullseye AS cosmos-package
-ENV YARN_CACHE_FOLDER=/root/.yarn
+ENV YARN_GLOBAL_FOLDER=/root/.yarn
 
 WORKDIR /usr/src/agoric-sdk/golang/cosmos
 COPY --from=cosmos-go --link /usr/src/agoric-sdk/golang/cosmos .
@@ -60,7 +60,7 @@ RUN mkdir golang/tmp && \
 ###############################
 # @agoric/xsnap package
 FROM node:18-bullseye AS xsnap-package
-ENV YARN_CACHE_FOLDER=/root/.yarn
+ENV YARN_GLOBAL_FOLDER=/root/.yarn
 
 # When changing/adding entries here, make sure to search the whole project for
 # `@@AGORIC_DOCKER_SUBMODULES@@`
@@ -91,12 +91,12 @@ RUN rm -rf packages/xsnap/moddable packages/xsnap/xsnap-native/build/tmp
 ###############################
 # The js build container
 FROM node:18-bullseye AS build-js
-ENV YARN_CACHE_FOLDER=/root/.yarn
+ENV YARN_GLOBAL_FOLDER=/root/.yarn
 
 WORKDIR /usr/src/agoric-sdk
 
 # Minimal to build SDK (exclude docs, a3p-integration, etc)
-COPY --link lerna.json package.json repoconfig.sh tsconfig.json yarn.lock ./
+COPY --link .yarnrc.yml lerna.json package.json repoconfig.sh tsconfig.json yarn.lock ./
 COPY --link bin bin
 COPY --link packages packages
 COPY --link patches patches
@@ -105,9 +105,9 @@ COPY --from=cosmos-package --link /usr/src/agoric-sdk/golang golang
 COPY --from=xsnap-package --link /usr/src/agoric-sdk/packages/xsnap packages/xsnap
 
 # XXX until https://github.com/Agoric/agoric-sdk/issues/9043, then just:
-# RUN --mount=type=cache,target=$YARN_CACHE_FOLDER yarn install --frozen-lockfile
-RUN --mount=type=cache,target=$YARN_CACHE_FOLDER bash -c \
-  "for i in {1..3}; do yarn install --frozen-lockfile --network-timeout 1000000 && exit 0 || (echo retrying; sleep 15;) done; exit 1"
+# RUN --mount=type=cache,target=$YARN_GLOBAL_FOLDER yarn install --immutable
+RUN --mount=type=cache,target=$YARN_GLOBAL_FOLDER bash -c \
+  "for i in {1..3}; do yarn install --immutable --network-timeout 1000000 && exit 0 || (echo retrying; sleep 15;) done; exit 1"
 
 # build everything except xsnap, built above. 'cosmos' was also built above but
 # it's safe to include here because its package "build" script is "exit 0".

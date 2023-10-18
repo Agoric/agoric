@@ -3,9 +3,7 @@
   "version": "0.1.0",
   "description": "Create an Agoric Javascript smart contract application",
   "type": "module",
-  "bin": {
-    "create-dapp": "src/create-dapp.js"
-  },
+  "bin": "src/create-dapp.js",
   "files": [
     "src"
   ],

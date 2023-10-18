@@ -21,11 +21,11 @@
   "author": "Agoric",
   "license": "Apache-2.0",
   "dependencies": {
-    "@endo/errors": "^1.2.9",
     "@agoric/internal": "^0.3.2",
     "@agoric/store": "^0.9.2",
     "@agoric/vat-data": "^0.5.2",
     "@endo/base64": "^1.0.9",
+    "@endo/errors": "^1.2.9",
     "@endo/far": "^1.1.10",
     "@endo/pass-style": "^1.4.8",
     "@endo/patterns": "^1.4.8",
