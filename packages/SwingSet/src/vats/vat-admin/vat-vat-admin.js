@@ -32,8 +32,10 @@ export function buildRootObject(vatPowers, _vatParameters, baggage) {
   const { D } = vatPowers;
   const pendingVatCreations = new Map(); // vatID -> { resolve, reject } for promise
   const pendingBundles = new Map(); // bundleID -> Promise<BundleCap>
+  /** @type {Map<string, Omit<import('@endo/promise-kit').PromiseKit<import('../../types-external.js').VatUpgradeResults>, 'promise'>>} */
   const pendingUpgrades = new Map(); // upgradeID -> Promise<UpgradeResults>
 
+  /** @see device-vat-admin.js */
   let vatAdminDev;
 
   const runningVats = new Map(); // vatID -> [doneP, { resolve, reject }]
@@ -207,6 +209,11 @@ export function buildRootObject(vatPowers, _vatParameters, baggage) {
     }
   }
 
+  /**
+   * @param {string} vatID
+   * @param {string} bundleID
+   * @param {{ vatParameters?: never, upgradeMessage?: string}} [options]
+   */
   async function upgradeVat(vatID, bundleID, options = {}) {
     assert(vatAdminDev, 'vatAdmin device not configured');
     const { vatParameters, upgradeMessage = 'vat upgraded', ...rest } = options;
@@ -219,6 +226,7 @@ export function buildRootObject(vatPowers, _vatParameters, baggage) {
     const upgradeID = D(vatAdminDev).upgradeVat(
       vatID,
       bundleID,
+      // XXX this is passed to upgradeVat in device-vat-admin but ignored
       vatParameters,
       upgradeMessage,
     );
@@ -227,6 +235,12 @@ export function buildRootObject(vatPowers, _vatParameters, baggage) {
     return upgradeCompleteP;
   }
 
+  /**
+   * @param {string} vatID
+   * @param {Pick<VatAdminVat, 'pauseService' | 'resumeService'>} pauseTarget
+   * @param {string} bundleID
+   * @param {{} | undefined} [options]
+   */
   async function upgradeStaticVat(vatID, pauseTarget, bundleID, options) {
     await null;
     if (pauseTarget) {
@@ -597,3 +611,5 @@ export function buildRootObject(vatPowers, _vatParameters, baggage) {
     upgradeStaticVat,
   });
 }
+
+/** @typedef {ReturnType<typeof buildRootObject>} VatAdminVat */

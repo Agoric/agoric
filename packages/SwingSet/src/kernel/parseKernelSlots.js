@@ -17,7 +17,7 @@ import { assert, Fail } from '@agoric/assert';
  *      id: Nat
  *   }
  *
- * @param {unknown} s  The string to be parsed, as described above.
+ * @param {string} s  The string to be parsed, as described above.
  *
  * @returns {{type: 'object' | 'device' | 'promise', id: bigint}} a kernel slot object corresponding to the parameter.
  *

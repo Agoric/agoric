@@ -51,9 +51,7 @@ type VattpVat = ERef<
 >;
 
 type VatAdminVat = ERef<
-  ReturnType<
-    typeof import('@agoric/swingset-vat/src/vats/vat-admin/vat-vat-admin.js').buildRootObject
-  >
+  import('@agoric/swingset-vat/src/vats/vat-admin/vat-vat-admin.js').VatAdminVat
 >;
 
 /** @see deliverToController in packages/SwingSet/src/vats/comms/controller.js */

@@ -94,30 +94,9 @@ test.before(async t => {
 test.after.always(t => t.context.shutdown?.());
 
 test('run restart-vats proposal', async t => {
-  const { controller, buildProposal, zoeDriver } = t.context;
+  const { controller, buildAndExecuteProposal, zoeDriver } = t.context;
   const { EV } = t.context.runUtils;
 
-  const buildAndExecuteProposal = async packageSpec => {
-    const proposal = await buildProposal(packageSpec);
-
-    for await (const bundle of proposal.bundles) {
-      await controller.validateAndInstallBundle(bundle);
-    }
-
-    t.log('installed', proposal.bundles.length, 'bundles');
-
-    t.log('launching proposal');
-    const bridgeMessage = {
-      type: 'CORE_EVAL',
-      evals: proposal.evals,
-    };
-
-    t.log({ bridgeMessage });
-    const coreEvalBridgeHandler: ERef<BridgeHandler> = await EV.vat(
-      'bootstrap',
-    ).consumeItem('coreEvalBridgeHandler');
-    await EV(coreEvalBridgeHandler).fromBridge(bridgeMessage);
-  };
   const source = `${dirname}/${ZCF_PROBE_SRC}`;
   const zcfProbeBundle = await bundleSource(source);
   await controller.validateAndInstallBundle(zcfProbeBundle);

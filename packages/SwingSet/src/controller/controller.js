@@ -412,6 +412,14 @@ export async function makeSwingsetController(
       return kpid;
     },
 
+    /**
+     *
+     * @param {string} vatName
+     * @param {boolean} shouldPauseFirst
+     * @param {string} bundleID
+     * @param {{upgradeMessage?: string}} options
+     * @returns {string | undefined}
+     */
     upgradeStaticVat(vatName, shouldPauseFirst, bundleID, options = {}) {
       const vatID = kernel.vatNameToID(vatName);
       let pauseTarget = null;

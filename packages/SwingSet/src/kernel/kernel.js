@@ -195,18 +195,21 @@ export default function buildKernel(
     testLog,
   });
 
+  /** @type {(name: string) => string} */
   function vatNameToID(name) {
     const vatID = kernelKeeper.getVatIDForName(name);
     insistVatID(vatID);
     return vatID;
   }
 
+  /** @type {(name: string) => string} */
   function deviceNameToID(name) {
     const deviceID = kernelKeeper.getDeviceIDForName(name);
     insistDeviceID(deviceID);
     return deviceID;
   }
 
+  /** @type {(forVatID: string, what: string) => string} */
   function addImport(forVatID, what) {
     if (!started) {
       throw Error('must do kernel.start() before addImport()');

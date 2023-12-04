@@ -51,7 +51,7 @@ export function makeVatID(index) {
  * @throws {Error} if, upon inspection, the parameter is not a string or is not a
  *    well-formed device ID as described above.
  *
- * @returns {void}
+ * @returns {asserts s is string}
  */
 export function insistDeviceID(s) {
   try {

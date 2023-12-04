@@ -26,6 +26,7 @@ import {
 import type { ExecutionContext as AvaT } from 'ava';
 
 import { makeRunUtils } from '@agoric/swingset-vat/tools/run-utils.js';
+import { BridgeHandler } from '@agoric/vats';
 
 const trace = makeTracer('BSTSupport', false);
 
@@ -415,9 +416,33 @@ export const makeSwingsetTestKit = async (
 
   const getCrankNumber = () => Number(kernelStorage.kvStore.get('crankNumber'));
 
+  const buildAndExecuteProposal = async packageSpec => {
+    const proposal = await buildProposal(packageSpec);
+
+    for await (const bundle of proposal.bundles) {
+      await controller.validateAndInstallBundle(bundle);
+    }
+
+    log('installed', proposal.bundles.length, 'bundles');
+
+    log('launching proposal');
+    const bridgeMessage = {
+      type: 'CORE_EVAL',
+      evals: proposal.evals,
+    };
+
+    const { EV } = runUtils;
+    log({ bridgeMessage });
+    const coreEvalBridgeHandler: ERef<BridgeHandler> = await EV.vat(
+      'bootstrap',
+    ).consumeItem('coreEvalBridgeHandler');
+    await EV(coreEvalBridgeHandler).fromBridge(bridgeMessage);
+  };
+
   return {
     advanceTimeBy,
     advanceTimeTo,
+    buildAndExecuteProposal,
     buildProposal,
     controller,
     getCrankNumber,

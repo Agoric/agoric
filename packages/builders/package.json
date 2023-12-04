@@ -10,7 +10,6 @@
     "build:add-STARS-proposal": "echo This command has been deprecated. Please run this instead: agoric run scripts/inter-protocol/add-STARS.js",
     "build:restart-vats-proposal": "echo echo This command has been deprecated. Please run this instead: agoric run scripts/vats/restart-vats.js",
     "build:zcf-proposal": "echo This command has been deprecated. Please run this instead: agoric run scripts/vats/replace-zoe.js",
-    "build:null-upgrade-zoe-proposal": "echo This command has been deprecated. Please run this instead: agoric run scripts/vats/replace-zoe.js",
     "prepack": "tsc --build tsconfig.build.json",
     "postpack": "git clean -f '*.d.ts*'",
     "test": "ava",

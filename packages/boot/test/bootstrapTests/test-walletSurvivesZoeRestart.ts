@@ -2,16 +2,15 @@
 import { test as anyTest } from '@agoric/zoe/tools/prepare-test-env-ava.js';
 
 import { NonNullish } from '@agoric/assert';
-import process from 'process';
-import type { ExecutionContext, TestFn } from 'ava';
 import type { ScheduleNotification } from '@agoric/inter-protocol/src/auction/scheduler.js';
-import { BridgeHandler } from '@agoric/vats';
+import type { ExecutionContext, TestFn } from 'ava';
+import process from 'process';
 import {
+  LiquidationSetup,
   LiquidationTestContext,
   likePayouts,
   makeLiquidationTestContext,
   scale6,
-  LiquidationSetup,
 } from './liquidation.ts';
 
 const test = anyTest as TestFn<LiquidationTestContext>;
@@ -152,25 +151,7 @@ const checkFlow1 = async (
     controller,
     buildProposal,
   } = t.context;
-  const { EV } = t.context.runUtils;
-
-  const buildAndExecuteProposal = async packageSpec => {
-    const proposal = await buildProposal(packageSpec);
-
-    for await (const bundle of proposal.bundles) {
-      await controller.validateAndInstallBundle(bundle);
-    }
-
-    const bridgeMessage = {
-      type: 'CORE_EVAL',
-      evals: proposal.evals,
-    };
-
-    const coreEvalBridgeHandler: ERef<BridgeHandler> = await EV.vat(
-      'bootstrap',
-    ).consumeItem('coreEvalBridgeHandler');
-    await EV(coreEvalBridgeHandler).fromBridge(bridgeMessage);
-  };
+  const { buildAndExecuteProposal } = t.context;
 
   const metricsPath = `published.vaultFactory.managers.manager${managerIndex}.metrics`;
 
@@ -288,16 +269,18 @@ const checkFlow1 = async (
     // restart Zoe
     // /////// Upgrading ////////////////////////////////
     await buildAndExecuteProposal(
-      '@agoric/builders/scripts/vats/null-upgrade-zoe-proposal.js',
+      '@agoric/builders/scripts/vats/restart-zoe.js',
     );
 
-    await buyer.tryExitOffer(`${collateralBrandKey}-bid3`);
-    t.like(readLatest('published.wallet.agoric1buyer'), {
-      status: {
-        id: `${collateralBrandKey}-bid3`,
-        payouts: likePayouts(outcome.bids[2].payouts),
-      },
+    // UNTIL https://github.com/Agoric/agoric-sdk/pull/8453
+    await t.throwsAsync(buyer.tryExitOffer(`${collateralBrandKey}-bid3`), {
+      message: 'Cannot exit; seat has already exited',
     });
+
+    // restart vat-admin
+    await buildAndExecuteProposal(
+      '@agoric/builders/scripts/vats/restart-vat-admin.js',
+    );
 
     // TODO express spec up top in a way it can be passed in here
     //   check.vaultNotification(managerIndex, 0, {
@@ -327,7 +310,7 @@ const checkFlow1 = async (
   // });
 };
 
-test.serial.failing(
+test.serial(
   'wallet survives zoe null upgrade',
   checkFlow1,
   { collateralBrandKey: 'ATOM', managerIndex: 0 },
