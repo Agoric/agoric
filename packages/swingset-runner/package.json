@@ -14,8 +14,8 @@
     "test:c8": "c8 --all $C8_OPTIONS ava",
     "test:xs": "exit 0",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint": "run-s --continue-on-error 'lint:*'",
-    "lint:eslint": "eslint .",
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
+    "lint:eslint": "yarn run -T eslint .",
     "ci:autobench": "./autobench.js"
   },
   "dependencies": {

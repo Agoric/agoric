@@ -10,14 +10,14 @@
     "build:add-STARS-proposal": "echo This command has been deprecated. Please run this instead: agoric run scripts/inter-protocol/add-STARS.js",
     "build:restart-vats-proposal": "echo This command has been deprecated. Please run this instead: agoric run scripts/vats/restart-vats.js",
     "build:zcf-proposal": "echo This command has been deprecated. Please run this instead: agoric run scripts/vats/replace-zoe.js",
-    "prepack": "tsc --build tsconfig.build.json",
+    "prepack": "yarn run -T tsc --build tsconfig.build.json",
     "postpack": "git clean -f '*.d.ts*' '*.tsbuildinfo'",
     "test": "ava",
     "test:xs": "exit 0",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint": "run-s --continue-on-error 'lint:*'",
-    "lint:types": "tsc",
-    "lint:eslint": "eslint ."
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
+    "lint:types": "yarn run -T tsc",
+    "lint:eslint": "yarn run -T eslint ."
   },
   "keywords": [],
   "author": "Agoric",

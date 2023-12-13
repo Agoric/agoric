@@ -13,9 +13,9 @@
     "test": "ava",
     "test:c8": "c8 --all $C8_OPTIONS ava",
     "test:xs": "exit 0",
-    "lint": "run-s --continue-on-error 'lint:*'",
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint:eslint": "eslint ."
+    "lint:eslint": "yarn run -T eslint ."
   },
   "repository": {
     "type": "git",

@@ -7,14 +7,14 @@
   "scripts": {
     "build": "yarn build:bundles",
     "build:bundles": "node ./scripts/build-bundles.js",
-    "prepack": "tsc --build tsconfig.build.json",
+    "prepack": "yarn run -T tsc --build tsconfig.build.json",
     "postpack": "git clean -f '*.d.ts*' '*.tsbuildinfo'",
     "test": "ava",
     "test:xs": "exit 0",
-    "lint": "run-s --continue-on-error 'lint:*'",
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint:types": "tsc",
-    "lint:eslint": "eslint ."
+    "lint:types": "yarn run -T tsc",
+    "lint:eslint": "yarn run -T eslint ."
   },
   "devDependencies": {
     "@agoric/casting": "^0.4.2",

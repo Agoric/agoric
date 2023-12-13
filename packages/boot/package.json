@@ -11,9 +11,9 @@
     "test": "ava",
     "test:xs": "SWINGSET_WORKER_TYPE=xs-worker ava test/bootstrapTests test/upgrading",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint": "run-s --continue-on-error 'lint:*'",
-    "lint:types": "tsc",
-    "lint:eslint": "eslint ."
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
+    "lint:types": "yarn run -T tsc",
+    "lint:eslint": "yarn run -T eslint ."
   },
   "$scripts-note": "fast-usdc skipped in test:xs pending #10847",
   "keywords": [],

@@ -8,10 +8,10 @@
     "build:bundles": "node scripts/build-bundles.js",
     "test": "ava",
     "test:xs": "exit 0",
-    "lint": "run-s --continue-on-error 'lint:*'",
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint:types": "tsc",
-    "lint:eslint": "eslint ."
+    "lint:types": "yarn run -T tsc",
+    "lint:eslint": "yarn run -T eslint ."
   },
   "devDependencies": {
     "@agoric/vats": "^0.15.1",

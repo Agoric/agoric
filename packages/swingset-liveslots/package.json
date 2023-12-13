@@ -12,10 +12,10 @@
     "test": "ava",
     "test:xs": "exit 0",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint": "run-s --continue-on-error 'lint:*'",
-    "lint:types": "tsc",
-    "lint:eslint": "eslint .",
-    "prepack": "tsc --build tsconfig.build.json",
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
+    "lint:types": "yarn run -T tsc",
+    "lint:eslint": "yarn run -T eslint .",
+    "prepack": "yarn run -T tsc --build tsconfig.build.json",
     "postpack": "git clean -f ':!src/types-index.d.ts' '*.d.ts*' '*.tsbuildinfo'"
   },
   "dependencies": {
