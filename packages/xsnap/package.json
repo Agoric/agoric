@@ -19,7 +19,7 @@
     "check-version": "xsnap_version=$(./scripts/get_xsnap_version.sh); if test \"${npm_package_version}\" != \"${xsnap_version}\"; then echo \"xsnap version mismatch; expected '${npm_package_version}', got '${xsnap_version}'\"; exit 1; fi",
     "postinstall": "npm run build:from-env",
     "clean": "rm -rf xsnap-native/xsnap/build",
-    "lint": "run-s --continue-on-error lint:*",
+    "lint": "run-s --continue-on-error 'lint:*'",
     "lint:js": "eslint 'src/**/*.js' 'test/**/*.js' api.js",
     "lint:types": "tsc",
     "lint-fix": "eslint --fix 'src/**/*.js' 'test/**/*.js' api.js",

@@ -8,7 +8,7 @@
     "build:bundles": "node scripts/build-bundles.js",
     "test": "ava",
     "test:xs": "exit 0",
-    "lint": "run-s --continue-on-error lint:*",
+    "lint": "run-s --continue-on-error 'lint:*'",
     "lint-fix": "yarn lint:eslint --fix",
     "lint:types": "tsc",
     "lint:eslint": "eslint ."

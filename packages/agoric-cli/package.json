@@ -25,7 +25,7 @@
     "test:xs": "exit 0",
     "integration-test": "ava --config .ava-integration-test.config.js",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint": "run-s --continue-on-error lint:*",
+    "lint": "run-s --continue-on-error 'lint:*'",
     "lint:types": "tsc",
     "lint:eslint": "eslint ."
   },

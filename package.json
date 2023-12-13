@@ -56,7 +56,7 @@
     "format": "yarn prettier --write .github golang packages scripts a3p-integration multichain-testing eslint.config.mjs",
     "lint:format": "yarn prettier --check .github golang packages scripts a3p-integration multichain-testing eslint.config.mjs",
     "lint-fix": "yarn lerna run --no-bail lint-fix",
-    "lint": "run-s --continue-on-error lint:*",
+    "lint": "run-s --continue-on-error 'lint:*'",
     "lint:packages": "yarn lerna run --no-bail lint",
     "test": "yarn lerna run --no-bail test",
     "test:xs": "yarn workspaces foreach --all run test:xs",

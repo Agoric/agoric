@@ -21,7 +21,7 @@
     "test:xs-worker": "SWINGSET_WORKER_TYPE=xs-worker ava -c 2 'test/swingsetTests'",
     "build-zcfBundle": "yarn build:bundles",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint": "run-s --continue-on-error lint:*",
+    "lint": "run-s --continue-on-error 'lint:*'",
     "lint:eslint": "eslint .",
     "lint:types": "tsc"
   },
