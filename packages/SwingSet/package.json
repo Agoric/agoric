@@ -24,7 +24,8 @@
     "@types/better-sqlite3": "^7.6.9",
     "@types/microtime": "^2.1.0",
     "@types/tmp": "^0.2.0",
-    "@types/yargs-parser": "^21.0.0"
+    "@types/yargs-parser": "^21.0.0",
+    "ava": "^5.3.0"
   },
   "dependencies": {
     "@agoric/internal": "^0.3.2",

@@ -954,6 +954,7 @@ __metadata:
     "@types/yargs-parser": "npm:^21.0.0"
     ansi-styles: "npm:^6.2.1"
     anylogger: "npm:^0.21.0"
+    ava: "npm:^5.3.0"
     better-sqlite3: "npm:^9.1.1"
     import-meta-resolve: "npm:^4.1.0"
     microtime: "npm:^3.1.0"
