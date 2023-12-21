@@ -11,7 +11,7 @@ export const DeliverProposalShape = M.splitRecord({
 
 export const JobReportProposalShape = M.splitRecord({
   give: {},
-  want: {},
+  want: M.splitRecord({}, { Fee: AmountShape }, {}),
   exit: { onDemand: null },
 });
 
@@ -29,7 +29,7 @@ export const makeStampAmount = (oracleBrand, issueURL) =>
 
 export const makeWorkAgreementProposalShape = stampAmount =>
   M.splitRecord({
-    give: { Acceptance: AmountShape },
+    give: M.splitRecord({ Acceptance: AmountShape }, { Fee: AmountShape }, {}),
     want: {
       Stamp: stampAmount,
     },

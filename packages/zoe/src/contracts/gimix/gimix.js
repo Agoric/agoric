@@ -52,15 +52,23 @@ export const prepare = async (zcf, _privateArgs, baggage) => {
     baggage,
     'DeliverHandler',
     OfferHandlerI,
-    (requestorSeat, acceptanceAmount, report) => ({
+    (requestorSeat, acceptanceAmount, reporterSeat, optFeeAmount, report) => ({
       requestorSeat,
       acceptanceAmount,
+      reporterSeat,
+      optFeeAmount,
       report,
     }),
     {
       handle(responderSeat) {
         const {
-          state: { requestorSeat, acceptanceAmount, report },
+          state: {
+            requestorSeat,
+            acceptanceAmount,
+            reporterSeat,
+            optFeeAmount,
+            report,
+          },
         } = this;
         const { jobID, issueURL } = report;
 
@@ -92,27 +100,41 @@ export const prepare = async (zcf, _privateArgs, baggage) => {
         });
         // eslint-disable-next-line no-use-before-define
         const stampSeat = gimixOracleMint.mintGains(stampAmounts);
-        zcf.atomicRearrange(
-          harden([
-            [stampSeat, requestorSeat, stampAmounts],
-            [
-              requestorSeat,
-              responderSeat,
-              {
-                Acceptance: acceptanceAmount,
-              },
-            ],
-          ]),
-        );
+        /** @type {TransferPart[]} */
+        const transfers = [
+          [stampSeat, requestorSeat, stampAmounts],
+          [
+            requestorSeat,
+            responderSeat,
+            {
+              Acceptance: acceptanceAmount,
+            },
+          ],
+        ];
+        if (optFeeAmount) {
+          transfers.push([
+            requestorSeat,
+            reporterSeat,
+            {
+              Fee: optFeeAmount,
+            },
+          ]);
+        }
+        zcf.atomicRearrange(harden(transfers));
         stampSeat.exit('done');
         responderSeat.exit('paid');
         requestorSeat.exit('mission accomplished');
+        if (!reporterSeat.hasExited()) {
+          reporterSeat.exit('thanks');
+        }
       },
     },
     harden({
       stateShape: {
         requestorSeat: M.remotable('ZCFSeat'),
         acceptanceAmount: AmountShape,
+        reporterSeat: M.remotable('ZCFSeat'),
+        optFeeAmount: M.opt(AmountShape),
         report: ReportShape,
       },
     }),
@@ -122,11 +144,11 @@ export const prepare = async (zcf, _privateArgs, baggage) => {
     baggage,
     'JobReportHandler',
     OfferHandlerI,
-    report => ({ report }),
+    (report, optFeeAmount = undefined) => ({ report, optFeeAmount }),
     {
-      handle(_seat) {
+      handle(reporterSeat) {
         const {
-          state: { report },
+          state: { report, optFeeAmount },
         } = this;
         const { deliverDepositAddr, jobID, issueURL } = report;
 
@@ -145,7 +167,13 @@ export const prepare = async (zcf, _privateArgs, baggage) => {
             expectedIssueURL,
           )} not ${q(issueURL)}`;
         const deliverInvitationP = zcf.makeInvitation(
-          makeDeliverHandler(requestorSeat, acceptanceAmount, report),
+          makeDeliverHandler(
+            requestorSeat,
+            acceptanceAmount,
+            reporterSeat,
+            optFeeAmount,
+            report,
+          ),
           'gimix delivery',
           {
             acceptanceAmount,
@@ -159,6 +187,7 @@ export const prepare = async (zcf, _privateArgs, baggage) => {
     harden({
       stateShape: {
         report: ReportShape,
+        optFeeAmount: M.opt(AmountShape),
       },
     }),
   );
@@ -170,9 +199,9 @@ export const prepare = async (zcf, _privateArgs, baggage) => {
     () => ({}),
     {
       invitationMakers: {
-        JobReport(report) {
+        JobReport(report, optFeeAmount) {
           return zcf.makeInvitation(
-            makeJobReportHandler(report),
+            makeJobReportHandler(report, optFeeAmount),
             'gimix job report',
             report,
             JobReportProposalShape,
@@ -192,7 +221,8 @@ export const prepare = async (zcf, _privateArgs, baggage) => {
     OfferHandlerI,
     () => ({}),
     {
-      handle(_seat) {
+      handle(oracleStartSeat) {
+        oracleStartSeat.exit('started');
         return makeJobReportContinuing();
       },
     },
