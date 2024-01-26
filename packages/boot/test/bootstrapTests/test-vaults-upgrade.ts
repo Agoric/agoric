@@ -13,10 +13,10 @@ import { Far, makeMarshal } from '@endo/marshal';
 import { SECONDS_PER_YEAR } from '@agoric/inter-protocol/src/interest.js';
 import { makeAgoricNamesRemotesFromFakeStorage } from '@agoric/vats/tools/board-utils.js';
 import { ExecutionContext, TestFn } from 'ava';
-import { FakeStorageKit } from '@agoric/internal/src/storage-test-utils.js';
-import { EconomyBootstrapSpace } from '@agoric/inter-protocol/src/proposals/econ-behaviors.js';
-import { makeSwingsetTestKit } from '../../tools/supports.ts';
-import { makeWalletFactoryDriver } from '../../tools/drivers.ts';
+import { type FakeStorageKit } from '@agoric/internal/src/storage-test-utils.js';
+import { type EconomyBootstrapSpace } from '@agoric/inter-protocol/src/proposals/econ-behaviors.js';
+import { makeSwingsetTestKit } from '../../tools/supports.js';
+import { makeWalletFactoryDriver } from '../../tools/drivers.js';
 
 // presently all these tests use one collateral manager
 const collateralBrandKey = 'ATOM';

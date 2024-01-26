@@ -3,7 +3,7 @@ import { test as anyTest } from '@agoric/zoe/tools/prepare-test-env-ava.js';
 import { PowerFlags } from '@agoric/vats/src/walletFlags.js';
 
 import type { TestFn } from 'ava';
-import { makeSwingsetTestKit, keyArrayEqual } from '../../tools/supports.ts';
+import { makeSwingsetTestKit, keyArrayEqual } from '../../tools/supports.js';
 
 const { keys } = Object;
 

@@ -9,15 +9,14 @@
 import { test as anyTest } from '@agoric/zoe/tools/prepare-test-env-ava.js';
 
 import { NonNullish } from '@agoric/assert';
-import { Offers } from '@agoric/inter-protocol/src/clientSupport.js';
 import type { TestFn } from 'ava';
-import { ScheduleNotification } from '@agoric/inter-protocol/src/auction/scheduler.js';
+import { type ScheduleNotification } from '@agoric/inter-protocol/src/auction/scheduler.js';
 import {
   LiquidationSetup,
   LiquidationTestContext,
   makeLiquidationTestContext,
   scale6,
-} from '../../tools/liquidation.ts';
+} from '../../tools/liquidation.js';
 
 const test = anyTest as TestFn<LiquidationTestContext>;
 

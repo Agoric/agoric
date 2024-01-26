@@ -13,8 +13,8 @@ import type { EconomyBootstrapSpace } from '@agoric/inter-protocol/src/proposals
 import {
   makeProposalExtractor,
   makeSwingsetTestKit,
-} from '../../tools/supports.ts';
-import { makeWalletFactoryDriver } from '../../tools/drivers.ts';
+} from '../../tools/supports.js';
+import { makeWalletFactoryDriver } from '../../tools/drivers.js';
 
 const { Fail } = assert;
 

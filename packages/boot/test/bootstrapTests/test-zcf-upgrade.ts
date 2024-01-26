@@ -15,8 +15,8 @@ import {
   matchAmount,
   makeProposalExtractor,
   makeSwingsetTestKit,
-} from '../../tools/supports.ts';
-import { makeZoeDriver } from '../../tools/drivers.ts';
+} from '../../tools/supports.js';
+import { makeZoeDriver } from '../../tools/drivers.js';
 
 const filename = new URL(import.meta.url).pathname;
 const dirname = path.dirname(filename);

@@ -15,7 +15,7 @@ import {
   ensureVaultCollateral,
   makeLiquidationTestContext,
   scale6,
-} from '../../tools/liquidation.ts';
+} from '../../tools/liquidation.js';
 
 const test = anyTest as TestFn<LiquidationTestContext>;
 

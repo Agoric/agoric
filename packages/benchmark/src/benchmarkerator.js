@@ -13,12 +13,12 @@ import '@agoric/cosmic-swingset/src/launch-chain.js';
 import { Fail } from '@agoric/assert';
 import { eventLoopIteration } from '@agoric/internal/src/testing-utils.js';
 import { makeAgoricNamesRemotesFromFakeStorage } from '@agoric/vats/tools/board-utils.js';
-import { makeSwingsetTestKit } from '@agoric/boot/tools/supports.ts';
+import { makeSwingsetTestKit } from '@agoric/boot/tools/supports.js';
 import {
   makeWalletFactoryDriver,
   makeGovernanceDriver,
-} from '@agoric/boot/tools/drivers.ts';
-import { makeLiquidationTestKit } from '@agoric/boot/tools/liquidation.ts';
+} from '@agoric/boot/tools/drivers.js';
+import { makeLiquidationTestKit } from '@agoric/boot/tools/liquidation.js';
 
 // When I was a child my family took a lot of roadtrips around California to go
 // camping and backpacking and so on.  It was not uncommon in those days (nor is
@@ -48,7 +48,7 @@ import { makeLiquidationTestKit } from '@agoric/boot/tools/liquidation.ts';
  * @typedef {{
  *    options: Record<string, string>,
  *    argv: string[],
- *    actors: Record<string, import('@agoric/boot/tools/drivers.ts').SmartWalletDriver>,
+ *    actors: Record<string, import('@agoric/boot/tools/drivers.js').SmartWalletDriver>,
  *    tools: Record<string, unknown>,
  *    title?: string,
  *    rounds?: number,

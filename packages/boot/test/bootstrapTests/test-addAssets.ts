@@ -6,8 +6,8 @@ import { TimeMath } from '@agoric/time';
 import {
   LiquidationTestContext,
   makeLiquidationTestContext,
-} from '../../tools/liquidation.ts';
-import { makeProposalExtractor } from '../../tools/supports.ts';
+} from '../../tools/liquidation.js';
+import { makeProposalExtractor } from '../../tools/supports.js';
 
 const test = anyTest as TestFn<
   LiquidationTestContext & {

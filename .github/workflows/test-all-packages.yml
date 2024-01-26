@@ -75,6 +75,8 @@ jobs:
       # build the API docs to verify it works
       - name: build API docs
         run: yarn docs
+      - name: build root tsconfig
+        run: yarn build-ts
 
   lint-rest:
     timeout-minutes: 15

@@ -1,4 +1,5 @@
 /* eslint-disable no-use-before-define */
+// eslint-disable-next-line import/no-extraneous-dependencies -- thinks this is non-test code
 import { expectType } from 'tsd';
 import type {
   KindFacets,
@@ -6,7 +7,7 @@ import type {
   KindFacet,
   FunctionsPlusContext,
 } from '@agoric/swingset-liveslots';
-import { VirtualObjectManager } from '@agoric/swingset-liveslots/src/virtualObjectManager.js';
+import { type VirtualObjectManager } from '@agoric/swingset-liveslots/src/virtualObjectManager.js';
 import {
   defineKind,
   defineKindMulti,

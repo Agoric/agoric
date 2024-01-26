@@ -5,7 +5,7 @@ import { BridgeId } from '@agoric/internal';
 import { buildVatController } from '@agoric/swingset-vat';
 import { makeRunUtils } from '@agoric/swingset-vat/tools/run-utils.js';
 import { resolve as importMetaResolve } from 'import-meta-resolve';
-import { matchAmount, matchIter, matchRef } from '../../tools/supports.ts';
+import { matchAmount, matchIter, matchRef } from '../../tools/supports.js';
 
 /**
  * @type {import('ava').TestFn<{}>}

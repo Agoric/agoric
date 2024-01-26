@@ -70,7 +70,11 @@ module.exports = {
     'jsdoc/check-param-names': 'error',
     'jsdoc/check-syntax': 'error',
 
-    'import/extensions': ['warn', 'ignorePackages'],
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      { js: 'always', ts: 'never' },
+    ],
     'import/no-extraneous-dependencies': [
       'error',
       {

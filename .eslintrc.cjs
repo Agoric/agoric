@@ -80,6 +80,10 @@ module.exports = {
     jsdoc: {
       mode: 'typescript',
     },
+    'import/resolver': {
+      typescript: true,
+      node: true,
+    },
   },
   ignorePatterns: [
     'coverage/**',
