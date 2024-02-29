@@ -1,0 +1,21 @@
+{
+  "type": "module",
+  "devDependencies": {},
+  "dependencies": {
+    "ava": "^5.3.1",
+    "better-sqlite3": "^8.5.1",
+    "execa": "^7.2.0"
+  },
+  "scripts": {
+    "agops": "yarn --cwd /usr/src/agoric-sdk/ --silent agops",
+    "upgrade-tests": "ava --serial agoric-upgrade*/**/pre.test.js agoric-upgrade*/**/actions.test.js agoric-upgrade*/**/post.test.js"
+  },
+  "ava": {
+    "files": [
+      "*/**/pre.test.js",
+      "*/**/actions.test.js",
+      "*/**/post.test.js"
+    ],
+    "timeout": "30m"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name": "chain-upgrade-test",
+  "version": "0.1.0",
+  "description": "Tools to test chain upgrades",
+  "engines": {
+    "node": ">=14.15.0"
+  },
+  "author": "Agoric",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Agoric/agoric-sdk/issues"
+  },
+  "homepage": "https://github.com/Agoric/agoric-sdk/tree/HEAD/golang/cosmos",
+  "private": true,
+  "devDependencies": {
+    "commander": "^11.0.0"
+  }
+}
