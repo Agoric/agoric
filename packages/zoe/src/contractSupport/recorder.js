@@ -101,9 +101,8 @@ export const prepareRecorder = (baggage, marshaller) => {
         const { closed, publisher, storageNode, valueShape } = this.state;
         !closed || Fail`cannot write to closed recorder`;
         mustMatch(value, valueShape);
-        const encoded = await E(marshaller).toCapData(value);
-        const serialized = JSON.stringify(encoded);
-        await E(storageNode).setValue(serialized);
+        const serializedP = await E(marshaller).serializeAndStringify(value);
+        await E(storageNode).setValue(serializedP);
 
         // below here differs from writeFinal()
         return publisher.publish(value);
@@ -118,9 +117,8 @@ export const prepareRecorder = (baggage, marshaller) => {
         const { closed, publisher, storageNode, valueShape } = this.state;
         !closed || Fail`cannot write to closed recorder`;
         mustMatch(value, valueShape);
-        const encoded = await E(marshaller).toCapData(value);
-        const serialized = JSON.stringify(encoded);
-        await E(storageNode).setValue(serialized);
+        const serializedP = await E(marshaller).serializeAndStringify(value);
+        await E(storageNode).setValue(serializedP);
 
         // below here differs from write()
         this.state.closed = true;

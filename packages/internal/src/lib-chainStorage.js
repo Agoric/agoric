@@ -44,7 +44,7 @@ const { Fail } = assert;
  */
 
 const ChainStorageNodeI = M.interface('StorageNode', {
-  setValue: M.callWhen(M.string()).returns(),
+  setValue: M.callWhen(M.await(M.string())).returns(),
   getPath: M.call().returns(M.string()),
   getStoreKey: M.callWhen().returns(M.record()),
   makeChildNode: M.call(M.string())
@@ -262,13 +262,14 @@ harden(makeStorageNodeChild);
 // TODO find a better module for this
 /**
  * @param {import('@endo/far').ERef<StorageNode>} storageNode
- * @param {import('@endo/far').ERef<Marshaller>} marshaller
+ * @param {import('@endo/far').ERef<Marshaller & {
+ *   serializeAndStringify: (value: unknown) => string
+ * }>} marshaller
  * @returns {(value: unknown) => Promise<void>}
  */
 export const makeSerializeToStorage = (storageNode, marshaller) => {
   return async value => {
-    const marshalled = await E(marshaller).toCapData(value);
-    const serialized = JSON.stringify(marshalled);
+    const serialized = await E(marshaller).serializeAndStringify(value);
     return E(storageNode).setValue(serialized);
   };
 };
