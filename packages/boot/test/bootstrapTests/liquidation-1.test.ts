@@ -140,6 +140,8 @@ const checkFlow1 = async (
     t.fail(error.message);
   });
 
+  await ensureVaultCollateral(collateralBrandKey, t);
+
   const {
     advanceTimeBy,
     advanceTimeTo,
@@ -273,14 +275,12 @@ const checkFlow1 = async (
 
     // TODO express spec up top in a way it can be passed in here
     check.vaultNotification(managerIndex, 0, {
-      debt: undefined,
       vaultState: 'liquidated',
       locked: {
         value: scale6(outcome.vaultsActual[0].locked),
       },
     });
     check.vaultNotification(managerIndex, 1, {
-      debt: undefined,
       vaultState: 'liquidated',
       locked: {
         value: scale6(outcome.vaultsActual[1].locked),
@@ -305,11 +305,6 @@ test.serial(
   { collateralBrandKey: 'ATOM', managerIndex: 0 },
   {},
 );
-
-test.serial('add STARS collateral', async t => {
-  await ensureVaultCollateral('STARS', t);
-  t.pass(); // reached here without throws
-});
 
 test.serial(
   'liquidate STARS',
