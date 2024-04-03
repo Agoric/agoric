@@ -1822,13 +1822,6 @@
     "@eslint/core" "^0.10.0"
     levn "^0.4.1"
 
-"@fast-check/ava@^1.1.5":
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/@fast-check/ava/-/ava-1.1.5.tgz#b471ce5252a3d62eb9bc316f1b7b0a79a7c8341f"
-  integrity sha512-OopAjw8v6r3sEqR02O61r2yGoE4B1nWDRXAkB4tuK/v7qemkf86Fz+GRgBgAkSFql85VAeUq+wlx0F3Y7wJzzA==
-  dependencies:
-    fast-check "^3.0.0"
-
 "@fast-check/ava@^2.0.1":
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@fast-check/ava/-/ava-2.0.1.tgz#442756588bdd2bb4d5bfbf869860ad785194ad7d"

@@ -57,7 +57,7 @@
     "@endo/bundle-source": "^3.5.1",
     "@endo/init": "^1.1.8",
     "@endo/promise-kit": "^1.1.9",
-    "@fast-check/ava": "^1.1.5",
+    "@fast-check/ava": "^2.0.1",
     "ava": "^6.2.0",
     "c8": "^10.1.2",
     "deep-object-diff": "^1.1.9",
