@@ -47,7 +47,7 @@
     "@endo/promise-kit": "^1.1.9"
   },
   "devDependencies": {
-    "ava": "^5.3.0",
+    "ava": "^6.2.0",
     "c8": "^10.1.2",
     "import-meta-resolve": "^2.2.1",
     "@agoric/vat-data": "^0.5.2"

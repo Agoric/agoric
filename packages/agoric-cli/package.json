@@ -32,7 +32,7 @@
   "devDependencies": {
     "@agoric/cosmic-swingset": "^0.41.3",
     "@agoric/deploy-script-support": "^0.10.3",
-    "ava": "^5.3.0",
+    "ava": "^6.2.0",
     "c8": "^10.1.2"
   },
   "dependencies": {

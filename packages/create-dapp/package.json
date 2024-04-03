@@ -20,7 +20,7 @@
     "lint:eslint": "eslint ."
   },
   "devDependencies": {
-    "ava": "^5.3.0",
+    "ava": "^6.2.0",
     "c8": "^10.1.2"
   },
   "dependencies": {

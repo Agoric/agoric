@@ -26,7 +26,7 @@
     "@endo/errors": "^1.2.9"
   },
   "devDependencies": {
-    "ava": "^5.3.0"
+    "ava": "^6.2.0"
   },
   "publishConfig": {
     "access": "public"

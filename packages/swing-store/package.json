@@ -32,7 +32,7 @@
   "devDependencies": {
     "@endo/init": "^1.1.8",
     "@types/better-sqlite3": "^7.6.9",
-    "ava": "^5.3.0",
+    "ava": "^6.2.0",
     "c8": "^10.1.2",
     "tmp": "^0.2.1"
   },

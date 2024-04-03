@@ -60,7 +60,7 @@
     "@agoric/swingset-liveslots": "^0.10.2",
     "@endo/base64": "^1.0.9",
     "@endo/patterns": "^1.4.8",
-    "ava": "^5.3.0",
+    "ava": "^6.2.0",
     "c8": "^10.1.2",
     "ts-blank-space": "^0.4.4"
   },
