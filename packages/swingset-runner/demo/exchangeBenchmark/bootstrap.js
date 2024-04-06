@@ -2,7 +2,6 @@ import { makeIssuerKit, AmountMath } from '@agoric/ertp';
 import { E } from '@endo/eventual-send';
 import { Far } from '@endo/marshal';
 
-/* eslint-disable-next-line import/no-unresolved */
 import exchangeBundle from './bundle-simpleExchange.js';
 
 export function buildRootObject(_vatPowers, vatParameters) {

@@ -51,8 +51,9 @@ module.exports = {
 
     'github/array-foreach': 'warn',
 
-    // Work around https://github.com/import-js/eslint-plugin-import/issues/1810
-    'import/no-unresolved': ['error', { ignore: ['ava'] }],
+    // it doesn't support exports maps https://github.com/import-js/eslint-plugin-import/issues/1810
+    // and most of our code is covered by tsc which does
+    'import/no-unresolved': 'off',
     'import/prefer-default-export': 'off',
 
     'jsdoc/no-multi-asterisks': ['warn', { allowWhitespace: true }],

@@ -7,13 +7,6 @@ const { Fail, bare } = assert;
 
 /**
  * @typedef {{
- *   '@type': string;
- *   [x: string]: unknown;
- * }} Proto3Jsonable
- */
-
-/**
- * @typedef {{
  *   system: import('./types.js').ScopedBridgeManager;
  *   bankManager: import('./vat-bank.js').BankManager;
  * }} LocalChainPowers
@@ -75,11 +68,13 @@ const prepareLocalChainAccount = zone =>
         return E(allegedPurse).deposit(payment);
       },
       /**
-       * @param {Proto3Jsonable[]} messages
-       * @returns {Promise<Proto3Jsonable[]>}
+       * @param {import('@agoric/cosmic-proto').TypedJson<unknown>[]} messages
+       * @returns {Promise<import('@agoric/cosmic-proto').TypedJson[]>}
        */
       async executeTx(messages) {
         const { address, powers } = this.state;
+        messages.length > 0 || Fail`need at least one message to execute`;
+
         const obj = {
           type: 'VLOCALCHAIN_EXECUTE_TX',
           // This address is the only one that `VLOCALCHAIN_EXECUTE_TX` will
@@ -169,8 +164,8 @@ const prepareLocalChain = (zone, createAccount) =>
          * the query fails. Otherwise, return the response as a JSON-compatible
          * object.
          *
-         * @param {Proto3Jsonable} request
-         * @returns {Promise<Proto3Jsonable>}
+         * @param {import('@agoric/cosmic-proto').TypedJson} request
+         * @returns {Promise<import('@agoric/cosmic-proto').TypedJson>}
          */
         async query(request) {
           const requests = harden([request]);
@@ -188,8 +183,13 @@ const prepareLocalChain = (zone, createAccount) =>
          * system error, will return all results to indicate their success or
          * failure.
          *
-         * @param {Proto3Jsonable[]} requests
-         * @returns {Promise<{ error?: string; reply: Proto3Jsonable }[]>}
+         * @param {import('@agoric/cosmic-proto').TypedJson[]} requests
+         * @returns {Promise<
+         *   {
+         *     error?: string;
+         *     reply: import('@agoric/cosmic-proto').TypedJson;
+         *   }[]
+         * >}
          */
         async queryMany(requests) {
           const { powers } = this.state;

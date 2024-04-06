@@ -31,6 +31,7 @@
   "dependencies": {
     "@agoric/assert": "^0.6.0",
     "@agoric/ertp": "^0.16.2",
+    "@agoric/cosmic-proto": "^0.4.0",
     "@agoric/internal": "^0.3.2",
     "@agoric/network": "^0.1.0",
     "@agoric/notifier": "^0.6.2",

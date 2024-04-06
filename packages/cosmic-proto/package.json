@@ -16,10 +16,22 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/codegen/index.d.ts",
-      "default": "./dist/codegen/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./vatsafe": {
+      "types": "./dist/vatsafe.d.ts",
+      "default": "./dist/vatsafe.js"
     },
     "./package.json": "./package.json",
+    "./cosmos": {
+      "types": "./dist/codegen/cosmos/bundle.d.ts",
+      "default": "./dist/codegen/cosmos/bundle.js"
+    },
+    "./cosmos/staking/v1beta1/tx": {
+      "types": "./dist/codegen/cosmos/staking/v1beta1/tx.d.ts",
+      "default": "./dist/codegen/cosmos/staking/v1beta1/tx.js"
+    },
     "./swingset/msgs.js": {
       "types": "./dist/codegen/agoric/swingset/msgs.d.ts",
       "default": "./dist/codegen/agoric/swingset/msgs.js"
@@ -65,7 +77,7 @@
   "devDependencies": {
     "@agoric/cosmos": "^0.34.1",
     "@ava/typescript": "^4.1.0",
-    "@cosmology/telescope": "^1.5.1",
+    "@cosmology/telescope": "^1.5.3",
     "ava": "^5.3.1",
     "rimraf": "^5.0.0",
     "tsimp": "^2.0.11",
@@ -73,9 +85,11 @@
   },
   "dependencies": {
     "@cosmjs/amino": "^0.32.3",
+    "@cosmjs/math": "^0.32.3",
     "@cosmjs/proto-signing": "^0.32.3",
     "@cosmjs/stargate": "^0.32.3",
     "@cosmjs/tendermint-rpc": "^0.32.3",
+    "@endo/base64": "^1.0.3",
     "@endo/init": "^1.1.1"
   },
   "resolutions": {

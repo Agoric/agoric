@@ -23,6 +23,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@agoric/assert": "^0.6.0",
+    "@agoric/cosmic-proto": "^0.4.0",
     "@agoric/ertp": "^0.16.2",
     "@agoric/governance": "^0.10.3",
     "@agoric/internal": "^0.3.2",

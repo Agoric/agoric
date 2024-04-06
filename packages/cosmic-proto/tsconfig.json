@@ -1,16 +1,7 @@
 {
     "extends": "../../tsconfig.json",
-    "compilerOptions": {
-        "baseUrl": ".",
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "moduleResolution": "node",
-        "resolveJsonModule": true
-    },
     "include": [
-        "src/**/*"
-    ],
-    "exclude": [
-        "node_modules"
+        "src",
+        "test"
     ]
 }

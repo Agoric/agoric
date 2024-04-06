@@ -10,7 +10,8 @@
         "emitDeclarationOnly": false,
         "declaration": true,
         "target": "es2022",
-        "module": "es2022",
+        "module": "NodeNext",
+        "moduleResolution": "NodeNext",
         "lib": [
             "es2022",
             "DOM"
@@ -18,5 +19,8 @@
         "sourceMap": true,
         "isolatedModules": true,
         "downlevelIteration": true,
-    }
+    },
+    "exclude": [
+        "test",
+    ]
 }

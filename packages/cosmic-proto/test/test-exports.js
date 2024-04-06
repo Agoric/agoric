@@ -1,6 +1,5 @@
+// @ts-check
 /* eslint-disable import/no-extraneous-dependencies -- requiring the package itself to check exports map */
-/* eslint-disable import/no-unresolved -- not detecting the "exports" map */
-// @ts-nocheck tsc also not finding the "exports" map until https://github.com/Agoric/agoric-sdk/issues/9005
 import test from 'ava';
 
 import '@endo/init';

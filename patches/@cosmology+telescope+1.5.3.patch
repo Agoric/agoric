@@ -1,0 +1,415 @@
+diff --git a/node_modules/@cosmology/telescope/main/helpers/internal-for-bigint.js b/node_modules/@cosmology/telescope/main/helpers/internal-for-bigint.js
+index 950827a..dc6a250 100644
+--- a/node_modules/@cosmology/telescope/main/helpers/internal-for-bigint.js
++++ b/node_modules/@cosmology/telescope/main/helpers/internal-for-bigint.js
+@@ -5,41 +5,11 @@ const getHelperForBigint = (options) => {
+     return `${options.aminoEncoding?.customTypes?.useCosmosSDKDec ? `import { Dec } from "@keplr-wallet/unit";
+ 
+   ` : ""}
+-declare var self: any | undefined;
+-declare var window: any | undefined;
+-declare var global: any | undefined;
+-var globalThis: any = (() => {
+-  if (typeof globalThis !== 'undefined') return globalThis;
+-  if (typeof self !== 'undefined') return self;
+-  if (typeof window !== 'undefined') return window;
+-  if (typeof global !== 'undefined') return global;
+-  throw 'Unable to locate global object';
+-})();
+-
+-const atob: (b64: string) => string =
+-  globalThis.atob ||
+-  ((b64) => globalThis.Buffer.from(b64, 'base64').toString('binary'));
+-
+-export function bytesFromBase64(b64: string): Uint8Array {
+-  const bin = atob(b64);
+-  const arr = new Uint8Array(bin.length);
+-  for (let i = 0; i < bin.length; ++i) {
+-    arr[i] = bin.charCodeAt(i);
+-  }
+-  return arr;
+-}
++import { encodeBase64, decodeBase64 } from '@endo/base64';
+ 
+-const btoa: (bin: string) => string =
+-  globalThis.btoa ||
+-  ((bin) => globalThis.Buffer.from(bin, 'binary').toString('base64'));
+-
+-export function base64FromBytes(arr: Uint8Array): string {
+-  const bin: string[] = [];
+-  arr.forEach((byte) => {
+-    bin.push(String.fromCharCode(byte));
+-  });
+-  return btoa(bin.join(''));
+-}
++// use Endo for broader compatibility
++export const bytesFromBase64: (input: string) => Uint8Array = decodeBase64;
++export const base64FromBytes: (input: Uint8Array) => string = encodeBase64;
+   
+ export interface AminoHeight {
+   readonly revision_number?: string;
+diff --git a/node_modules/@cosmology/telescope/main/helpers/internal.js b/node_modules/@cosmology/telescope/main/helpers/internal.js
+index b27664f..fa4d5f7 100644
+--- a/node_modules/@cosmology/telescope/main/helpers/internal.js
++++ b/node_modules/@cosmology/telescope/main/helpers/internal.js
+@@ -5,6 +5,8 @@ const getHelper = (options) => {
+     return `import * as _m0 from "protobufjs/minimal";
+ import Long from 'long';${options.aminoEncoding?.customTypes?.useCosmosSDKDec ? `
+ import { Dec } from "@keplr-wallet/unit";
++import { encodeBase64, decodeBase64 } from '@endo/base64';
++
+ ` : ""}
+ 
+ // @ts-ignore
+@@ -16,39 +18,9 @@ if (_m0.util.Long !== Long) {
+ 
+ export { Long };
+ 
+-declare var self: any | undefined;
+-declare var window: any | undefined;
+-declare var global: any | undefined;
+-var globalThis: any = (() => {
+-    if (typeof globalThis !== 'undefined') return globalThis;
+-    if (typeof self !== 'undefined') return self;
+-    if (typeof window !== 'undefined') return window;
+-    if (typeof global !== 'undefined') return global;
+-    throw 'Unable to locate global object';
+-})();
+-
+-const atob: (b64: string) => string =
+-    globalThis.atob || ((b64) => globalThis.Buffer.from(b64, 'base64').toString('binary'));
+-
+-export function bytesFromBase64(b64: string): Uint8Array {
+-    const bin = atob(b64);
+-    const arr = new Uint8Array(bin.length);
+-    for (let i = 0; i < bin.length; ++i) {
+-        arr[i] = bin.charCodeAt(i);
+-    }
+-    return arr;
+-}
+-
+-const btoa: (bin: string) => string =
+-    globalThis.btoa || ((bin) => globalThis.Buffer.from(bin, 'binary').toString('base64'));
+-
+-export function base64FromBytes(arr: Uint8Array): string {
+-    const bin: string[] = [];
+-    arr.forEach((byte) => {
+-        bin.push(String.fromCharCode(byte));
+-    });
+-    return btoa(bin.join(''));
+-}
++// use Endo for broader compatibility
++export const bytesFromBase64: (input: string) => Uint8Array = decodeBase64;
++export const base64FromBytes: (input: Uint8Array) => string = encodeBase64;
+ 
+ export interface AminoHeight {
+     readonly revision_number?: string;
+diff --git a/node_modules/@cosmology/telescope/main/helpers/internalForBigInt.js b/node_modules/@cosmology/telescope/main/helpers/internalForBigInt.js
+index 07b6e47..c71ce0f 100644
+--- a/node_modules/@cosmology/telescope/main/helpers/internalForBigInt.js
++++ b/node_modules/@cosmology/telescope/main/helpers/internalForBigInt.js
+@@ -2,41 +2,11 @@
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.internalForBigInt = void 0;
+ exports.internalForBigInt = `
+-declare var self: any | undefined;
+-declare var window: any | undefined;
+-declare var global: any | undefined;
+-var globalThis: any = (() => {
+-  if (typeof globalThis !== 'undefined') return globalThis;
+-  if (typeof self !== 'undefined') return self;
+-  if (typeof window !== 'undefined') return window;
+-  if (typeof global !== 'undefined') return global;
+-  throw 'Unable to locate global object';
+-})();
+-
+-const atob: (b64: string) => string =
+-  globalThis.atob ||
+-  ((b64) => globalThis.Buffer.from(b64, 'base64').toString('binary'));
+-
+-export function bytesFromBase64(b64: string): Uint8Array {
+-  const bin = atob(b64);
+-  const arr = new Uint8Array(bin.length);
+-  for (let i = 0; i < bin.length; ++i) {
+-    arr[i] = bin.charCodeAt(i);
+-  }
+-  return arr;
+-}
++import { encodeBase64, decodeBase64 } from '@endo/base64';
+ 
+-const btoa: (bin: string) => string =
+-  globalThis.btoa ||
+-  ((bin) => globalThis.Buffer.from(bin, 'binary').toString('base64'));
+-
+-export function base64FromBytes(arr: Uint8Array): string {
+-  const bin: string[] = [];
+-  arr.forEach((byte) => {
+-    bin.push(String.fromCharCode(byte));
+-  });
+-  return btoa(bin.join(''));
+-}
++// use Endo for broader compatibility
++export const bytesFromBase64: (input: string) => Uint8Array = decodeBase64;
++export const base64FromBytes: (input: Uint8Array) => string = encodeBase64;
+ 
+ export interface AminoHeight {
+   readonly revision_number?: string;
+diff --git a/node_modules/@cosmology/telescope/module/helpers/internal-for-bigint.js b/node_modules/@cosmology/telescope/module/helpers/internal-for-bigint.js
+index 1d19b1c..5122824 100644
+--- a/node_modules/@cosmology/telescope/module/helpers/internal-for-bigint.js
++++ b/node_modules/@cosmology/telescope/module/helpers/internal-for-bigint.js
+@@ -2,41 +2,11 @@ export const getHelperForBigint = (options) => {
+     return `${options.aminoEncoding?.customTypes?.useCosmosSDKDec ? `import { Dec } from "@keplr-wallet/unit";
+ 
+   ` : ""}
+-declare var self: any | undefined;
+-declare var window: any | undefined;
+-declare var global: any | undefined;
+-var globalThis: any = (() => {
+-  if (typeof globalThis !== 'undefined') return globalThis;
+-  if (typeof self !== 'undefined') return self;
+-  if (typeof window !== 'undefined') return window;
+-  if (typeof global !== 'undefined') return global;
+-  throw 'Unable to locate global object';
+-})();
+-
+-const atob: (b64: string) => string =
+-  globalThis.atob ||
+-  ((b64) => globalThis.Buffer.from(b64, 'base64').toString('binary'));
+-
+-export function bytesFromBase64(b64: string): Uint8Array {
+-  const bin = atob(b64);
+-  const arr = new Uint8Array(bin.length);
+-  for (let i = 0; i < bin.length; ++i) {
+-    arr[i] = bin.charCodeAt(i);
+-  }
+-  return arr;
+-}
++import { encodeBase64, decodeBase64 } from '@endo/base64';
+ 
+-const btoa: (bin: string) => string =
+-  globalThis.btoa ||
+-  ((bin) => globalThis.Buffer.from(bin, 'binary').toString('base64'));
+-
+-export function base64FromBytes(arr: Uint8Array): string {
+-  const bin: string[] = [];
+-  arr.forEach((byte) => {
+-    bin.push(String.fromCharCode(byte));
+-  });
+-  return btoa(bin.join(''));
+-}
++// use Endo for broader compatibility
++export const bytesFromBase64: (input: string) => Uint8Array = decodeBase64;
++export const base64FromBytes: (input: Uint8Array) => string = encodeBase64;
+   
+ export interface AminoHeight {
+   readonly revision_number?: string;
+diff --git a/node_modules/@cosmology/telescope/module/helpers/internal.js b/node_modules/@cosmology/telescope/module/helpers/internal.js
+index 28e50cf..222ffdd 100644
+--- a/node_modules/@cosmology/telescope/module/helpers/internal.js
++++ b/node_modules/@cosmology/telescope/module/helpers/internal.js
+@@ -2,6 +2,7 @@ export const getHelper = (options) => {
+     return `import * as _m0 from "protobufjs/minimal";
+ import Long from 'long';${options.aminoEncoding?.customTypes?.useCosmosSDKDec ? `
+ import { Dec } from "@keplr-wallet/unit";
++import { encodeBase64, decodeBase64 } from '@endo/base64';
+ ` : ""}
+ 
+ // @ts-ignore
+@@ -13,39 +14,9 @@ if (_m0.util.Long !== Long) {
+ 
+ export { Long };
+ 
+-declare var self: any | undefined;
+-declare var window: any | undefined;
+-declare var global: any | undefined;
+-var globalThis: any = (() => {
+-    if (typeof globalThis !== 'undefined') return globalThis;
+-    if (typeof self !== 'undefined') return self;
+-    if (typeof window !== 'undefined') return window;
+-    if (typeof global !== 'undefined') return global;
+-    throw 'Unable to locate global object';
+-})();
+-
+-const atob: (b64: string) => string =
+-    globalThis.atob || ((b64) => globalThis.Buffer.from(b64, 'base64').toString('binary'));
+-
+-export function bytesFromBase64(b64: string): Uint8Array {
+-    const bin = atob(b64);
+-    const arr = new Uint8Array(bin.length);
+-    for (let i = 0; i < bin.length; ++i) {
+-        arr[i] = bin.charCodeAt(i);
+-    }
+-    return arr;
+-}
+-
+-const btoa: (bin: string) => string =
+-    globalThis.btoa || ((bin) => globalThis.Buffer.from(bin, 'binary').toString('base64'));
+-
+-export function base64FromBytes(arr: Uint8Array): string {
+-    const bin: string[] = [];
+-    arr.forEach((byte) => {
+-        bin.push(String.fromCharCode(byte));
+-    });
+-    return btoa(bin.join(''));
+-}
++// use Endo for broader compatibility
++export const bytesFromBase64: (input: string) => Uint8Array = decodeBase64;
++export const base64FromBytes: (input: Uint8Array) => string = encodeBase64;
+ 
+ export interface AminoHeight {
+     readonly revision_number?: string;
+diff --git a/node_modules/@cosmology/telescope/module/helpers/internalForBigInt.js b/node_modules/@cosmology/telescope/module/helpers/internalForBigInt.js
+index ecb2e3e..0b404db 100644
+--- a/node_modules/@cosmology/telescope/module/helpers/internalForBigInt.js
++++ b/node_modules/@cosmology/telescope/module/helpers/internalForBigInt.js
+@@ -1,39 +1,9 @@
+ export const internalForBigInt = `
+-declare var self: any | undefined;
+-declare var window: any | undefined;
+-declare var global: any | undefined;
+-var globalThis: any = (() => {
+-  if (typeof globalThis !== 'undefined') return globalThis;
+-  if (typeof self !== 'undefined') return self;
+-  if (typeof window !== 'undefined') return window;
+-  if (typeof global !== 'undefined') return global;
+-  throw 'Unable to locate global object';
+-})();
+-
+-const atob: (b64: string) => string =
+-  globalThis.atob ||
+-  ((b64) => globalThis.Buffer.from(b64, 'base64').toString('binary'));
+-
+-export function bytesFromBase64(b64: string): Uint8Array {
+-  const bin = atob(b64);
+-  const arr = new Uint8Array(bin.length);
+-  for (let i = 0; i < bin.length; ++i) {
+-    arr[i] = bin.charCodeAt(i);
+-  }
+-  return arr;
+-}
++import { encodeBase64, decodeBase64 } from '@endo/base64';
+ 
+-const btoa: (bin: string) => string =
+-  globalThis.btoa ||
+-  ((bin) => globalThis.Buffer.from(bin, 'binary').toString('base64'));
+-
+-export function base64FromBytes(arr: Uint8Array): string {
+-  const bin: string[] = [];
+-  arr.forEach((byte) => {
+-    bin.push(String.fromCharCode(byte));
+-  });
+-  return btoa(bin.join(''));
+-}
++// use Endo for broader compatibility
++export const bytesFromBase64: (input: string) => Uint8Array = decodeBase64;
++export const base64FromBytes: (input: Uint8Array) => string = encodeBase64;
+ 
+ export interface AminoHeight {
+   readonly revision_number?: string;
+diff --git a/node_modules/@cosmology/telescope/src/helpers/internal-for-bigint.ts b/node_modules/@cosmology/telescope/src/helpers/internal-for-bigint.ts
+index f7daa3d..641538d 100644
+--- a/node_modules/@cosmology/telescope/src/helpers/internal-for-bigint.ts
++++ b/node_modules/@cosmology/telescope/src/helpers/internal-for-bigint.ts
+@@ -4,41 +4,11 @@ export const getHelperForBigint = (options: TelescopeOptions) => {
+   return `${options.aminoEncoding?.customTypes?.useCosmosSDKDec ? `import { Dec } from "@keplr-wallet/unit";
+ 
+   `: ""}
+-declare var self: any | undefined;
+-declare var window: any | undefined;
+-declare var global: any | undefined;
+-var globalThis: any = (() => {
+-  if (typeof globalThis !== 'undefined') return globalThis;
+-  if (typeof self !== 'undefined') return self;
+-  if (typeof window !== 'undefined') return window;
+-  if (typeof global !== 'undefined') return global;
+-  throw 'Unable to locate global object';
+-})();
+-
+-const atob: (b64: string) => string =
+-  globalThis.atob ||
+-  ((b64) => globalThis.Buffer.from(b64, 'base64').toString('binary'));
+-
+-export function bytesFromBase64(b64: string): Uint8Array {
+-  const bin = atob(b64);
+-  const arr = new Uint8Array(bin.length);
+-  for (let i = 0; i < bin.length; ++i) {
+-    arr[i] = bin.charCodeAt(i);
+-  }
+-  return arr;
+-}
++import { encodeBase64, decodeBase64 } from '@endo/base64';
+ 
+-const btoa: (bin: string) => string =
+-  globalThis.btoa ||
+-  ((bin) => globalThis.Buffer.from(bin, 'binary').toString('base64'));
+-
+-export function base64FromBytes(arr: Uint8Array): string {
+-  const bin: string[] = [];
+-  arr.forEach((byte) => {
+-    bin.push(String.fromCharCode(byte));
+-  });
+-  return btoa(bin.join(''));
+-}
++// use Endo for broader compatibility
++export const bytesFromBase64: (input: string) => Uint8Array = decodeBase64;
++export const base64FromBytes: (input: Uint8Array) => string = encodeBase64;
+   
+ export interface AminoHeight {
+   readonly revision_number?: string;
+diff --git a/node_modules/@cosmology/telescope/src/helpers/internal.ts b/node_modules/@cosmology/telescope/src/helpers/internal.ts
+index fc58715..d8f9ff0 100644
+--- a/node_modules/@cosmology/telescope/src/helpers/internal.ts
++++ b/node_modules/@cosmology/telescope/src/helpers/internal.ts
+@@ -4,6 +4,8 @@ export const getHelper = (options: TelescopeOptions) => {
+   return `import * as _m0 from "protobufjs/minimal";
+ import Long from 'long';${options.aminoEncoding?.customTypes?.useCosmosSDKDec ? `
+ import { Dec } from "@keplr-wallet/unit";
++import { encodeBase64, decodeBase64 } from '@endo/base64';
++
+ `: ""}
+ 
+ // @ts-ignore
+@@ -15,39 +17,9 @@ if (_m0.util.Long !== Long) {
+ 
+ export { Long };
+ 
+-declare var self: any | undefined;
+-declare var window: any | undefined;
+-declare var global: any | undefined;
+-var globalThis: any = (() => {
+-    if (typeof globalThis !== 'undefined') return globalThis;
+-    if (typeof self !== 'undefined') return self;
+-    if (typeof window !== 'undefined') return window;
+-    if (typeof global !== 'undefined') return global;
+-    throw 'Unable to locate global object';
+-})();
+-
+-const atob: (b64: string) => string =
+-    globalThis.atob || ((b64) => globalThis.Buffer.from(b64, 'base64').toString('binary'));
+-
+-export function bytesFromBase64(b64: string): Uint8Array {
+-    const bin = atob(b64);
+-    const arr = new Uint8Array(bin.length);
+-    for (let i = 0; i < bin.length; ++i) {
+-        arr[i] = bin.charCodeAt(i);
+-    }
+-    return arr;
+-}
+-
+-const btoa: (bin: string) => string =
+-    globalThis.btoa || ((bin) => globalThis.Buffer.from(bin, 'binary').toString('base64'));
+-
+-export function base64FromBytes(arr: Uint8Array): string {
+-    const bin: string[] = [];
+-    arr.forEach((byte) => {
+-        bin.push(String.fromCharCode(byte));
+-    });
+-    return btoa(bin.join(''));
+-}
++// use Endo for broader compatibility
++export const bytesFromBase64: (input: string) => Uint8Array = decodeBase64;
++export const base64FromBytes: (input: Uint8Array) => string = encodeBase64;
+ 
+ export interface AminoHeight {
+     readonly revision_number?: string;

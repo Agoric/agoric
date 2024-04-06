@@ -1,0 +1,40 @@
+diff --git a/node_modules/bn.js/lib/bn.js b/node_modules/bn.js/lib/bn.js
+index c9773da..46f3dcd 100644
+--- a/node_modules/bn.js/lib/bn.js
++++ b/node_modules/bn.js/lib/bn.js
+@@ -2632,7 +2632,7 @@
+       for (var i = 0, im = 1; (x.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
+       if (i > 0) {
+         x.iushrn(i);
+-        while (i-- > 0) {
++        while (i--, i > 0) {
+           if (A.isOdd() || B.isOdd()) {
+             A.iadd(yp);
+             B.isub(xp);
+@@ -2646,7 +2646,7 @@
+       for (var j = 0, jm = 1; (y.words[0] & jm) === 0 && j < 26; ++j, jm <<= 1);
+       if (j > 0) {
+         y.iushrn(j);
+-        while (j-- > 0) {
++        while (j--, j > 0) {
+           if (C.isOdd() || D.isOdd()) {
+             C.iadd(yp);
+             D.isub(xp);
+@@ -2700,7 +2700,7 @@
+       for (var i = 0, im = 1; (a.words[0] & im) === 0 && i < 26; ++i, im <<= 1);
+       if (i > 0) {
+         a.iushrn(i);
+-        while (i-- > 0) {
++        while (i--, i > 0) {
+           if (x1.isOdd()) {
+             x1.iadd(delta);
+           }
+@@ -2712,7 +2712,7 @@
+       for (var j = 0, jm = 1; (b.words[0] & jm) === 0 && j < 26; ++j, jm <<= 1);
+       if (j > 0) {
+         b.iushrn(j);
+-        while (j-- > 0) {
++        while (j--, j > 0) {
+           if (x2.isOdd()) {
+             x2.iadd(delta);
+           }
