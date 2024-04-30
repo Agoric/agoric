@@ -12,6 +12,10 @@ import { multiplyBy } from './ratio.js';
 import { mintQuote } from './priceAuthorityTransform.js';
 
 /**
+ * @import {PriceAuthority, PriceQuote, PriceDescription} from '@agoric/zoe';
+ */
+
+/**
  * Override `makeQuoteNotifier`, `quoteGiven` to provide an initial price
  * in case one is not yet available from the source.
  *

@@ -11,6 +11,7 @@ import { makeParamManagerFromTerms } from './contractGovernance/typedParamManage
 import { GovernorFacetShape } from './typeGuards.js';
 
 /**
+ * @import {Handle, Installation, Instance, Keyword, IssuerKeywordRecord, Invitation, ZCF} from '@agoric/zoe';
  * @import {VoteCounterCreatorFacet, VoteCounterPublicFacet, QuestionSpec, OutcomeRecord, AddQuestion, AddQuestionReturn, GovernanceSubscriptionState, GovernanceTerms, GovernedApis, GovernedCreatorFacet, GovernedPublicFacet} from './types.js';
  */
 

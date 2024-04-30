@@ -1,6 +1,6 @@
 // @ts-check
 
-/** @import {PromiseVow, Remote} from '@agoric/vow' */
+/** @import {PromiseVow, Remote} from '@agoric/vow'; */
 
 /**
  * @template {import('@endo/exo').Methods} M

@@ -1,5 +1,9 @@
 import { E, Far } from '@endo/far';
 
+/**
+ * @import {ERef} from '@endo/far';
+ */
+
 export { subscribeEach, subscribeLatest } from '@agoric/notifier/subscribe.js';
 
 /**

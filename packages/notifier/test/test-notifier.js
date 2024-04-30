@@ -1,6 +1,11 @@
 import { test } from './prepare-test-env-ava.js';
 import { makeNotifierKit } from '../src/index.js';
-import '../src/types-ambient.js';
+
+/**
+ * @import {ERef} from '@endo/far';
+ * @import {IterationObserver, LatestTopic, Notifier, NotifierRecord, PublicationRecord, Publisher, PublishKit, StoredPublishKit, StoredSubscription, StoredSubscriber, Subscriber, Subscription, UpdateRecord} from '../src/types.js';
+ * @import {Marshaller, StorageNode, Unserializer} from '@agoric/internal/src/lib-chainStorage.js';
+ */
 
 test('notifier - initial state', async t => {
   /** @type {NotifierRecord<1>} */

@@ -1,10 +1,12 @@
-type CopyRecord<T> = import('@endo/pass-style').CopyRecord<T>;
-type IssuerOptionsRecord = import('@agoric/ertp').IssuerOptionsRecord;
+/* eslint-disable import/named -- doesn't understand TS */
+
+import { StandardTerms } from '../types.js';
+
 /**
  * Any passable non-thenable. Often an explanatory string.
  */
-type Completion = any;
-type ZCFMakeEmptySeatKit = (exit?: ExitRule | undefined) => ZcfSeatKit;
+export type Completion = any;
+export type ZCFMakeEmptySeatKit = (exit?: ExitRule | undefined) => ZcfSeatKit;
 
 /**
  * Zoe Contract Facet
@@ -15,7 +17,7 @@ type ZCFMakeEmptySeatKit = (exit?: ExitRule | undefined) => ZcfSeatKit;
  * synchronously from within the contract, and usually is referred to
  * in code as zcf.
  */
-type ZCF<CT extends unknown = Record<string, unknown>> = {
+export type ZCF<CT extends unknown = Record<string, unknown>> = {
   /**
    * - atomically reallocate amounts among seats.
    */
@@ -102,19 +104,19 @@ type ZCF<CT extends unknown = Record<string, unknown>> = {
  * overall rights will be unchanged, and a reallocation can only
  * effect offer safety for seats whose allocations change.
  */
-type Reallocate = (
+export type Reallocate = (
   seat1: ZCFSeat,
   seat2: ZCFSeat,
   ...seatRest: Array<ZCFSeat>
 ) => void;
-type TransferPart = [
+export type TransferPart = [
   fromSeat?: ZCFSeat,
   toSeat?: ZCFSeat,
   fromAmounts?: AmountKeywordRecord,
   toAmounts?: AmountKeywordRecord,
 ];
 
-type ZCFRegisterFeeMint = (
+export type ZCFRegisterFeeMint = (
   keyword: Keyword,
   allegedFeeMintAccess: FeeMintAccess,
 ) => Promise<ZCFMint<'nat'>>;
@@ -132,8 +134,8 @@ type ZCFRegisterFeeMint = (
  * will be appended to the returned jig object (overriding any
  * provided by the `testFn`).
  */
-type SetTestJig = (testFn: () => Record<string, unknown>) => void;
-type ZCFMint<K extends AssetKind = AssetKind> = {
+export type SetTestJig = (testFn: () => Record<string, unknown>) => void;
+export type ZCFMint<K extends AssetKind = AssetKind> = {
   getIssuerRecord: () => IssuerRecord<K>;
   /**
    * All the amounts in gains must be of this ZCFMint's brand.
@@ -162,7 +164,7 @@ type ZCFMint<K extends AssetKind = AssetKind> = {
  * normally an instanceof Error.
  */
 type ZCFSeatFail = (reason: unknown) => Error;
-type ZCFSeat = {
+export type ZCFSeat = {
   exit: (completion?: Completion) => void;
   fail: ZCFSeatFail;
   getSubscriber: () => Promise<Subscriber<Allocation>>;
@@ -208,12 +210,12 @@ type ZcfSeatKit = {
   userSeat: ERef<UserSeat>;
 };
 type HandleOffer<OR extends unknown, OA> = (seat: ZCFSeat, offerArgs: OA) => OR;
-type OfferHandler<OR extends unknown = unknown, OA = never> =
+export type OfferHandler<OR extends unknown = unknown, OA = never> =
   | HandleOffer<OR, OA>
   | {
       handle: HandleOffer<OR, OA>;
     };
-type ContractMeta = {
+export type ContractMeta = {
   customTermsShape?: CopyRecord<any> | undefined;
   privateArgsShape?: CopyRecord<any> | undefined;
   upgradability?: 'none' | 'canBeUpgraded' | 'canUpgrade' | undefined;
@@ -223,7 +225,7 @@ type ContractMeta = {
  *
  * CAVEAT: assumes synchronous
  */
-type ContractStartFn<
+export type ContractStartFn<
   PF extends unknown = any,
   CF extends unknown = any,
   CT extends unknown = any,
@@ -238,13 +240,13 @@ type ContractStartFnResult<PF, CF> = {
   creatorFacet?: CF;
   creatorInvitation?: Promise<Invitation<R, A>> | undefined;
 };
-type ContractOf<S> = import('../zoeService/utils').ContractOf<S>;
-type AdminFacet = import('../zoeService/utils').AdminFacet<any>;
 
 declare const OfferReturn: unique symbol;
 declare const OfferArgs: unique symbol;
-type Invitation<R = unknown, A = undefined> = Payment<'set'> & {
+export type Invitation<R = unknown, A = undefined> = Payment<'set'> & {
   // because TS is structural, without this the generic is ignored
   [OfferReturn]?: R;
   [OfferArgs]?: A;
 };
+
+export { AdminFacet, ContractOf, Installation } from '../zoeService/utils.js';

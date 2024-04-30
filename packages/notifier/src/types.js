@@ -1,5 +1,8 @@
 // @jessie-check
 
+// Ensure this is a module.
+export {};
+
 /** @import { ERef } from '@endo/far' */
 
 /**

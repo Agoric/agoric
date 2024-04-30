@@ -10,7 +10,9 @@ import { TimeMath } from '@agoric/time';
 
 import { natSafeMath } from '../src/contractSupport/index.js';
 
-import './types-ambient.js';
+/**
+ * @import {PriceAuthority, PriceQuote, PriceDescription, PriceQuoteValue, PriceQuery} from './types.js';
+ */
 
 const { Fail } = assert;
 const { coerceRelativeTimeRecord } = TimeMath;

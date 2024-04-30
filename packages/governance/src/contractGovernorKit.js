@@ -17,6 +17,7 @@ import {
 import { ClosingRuleShape, ParamChangesSpecShape } from './typeGuards.js';
 
 /**
+ * @import {ContractMeta, Handle, Installation, Instance, Keyword, IssuerKeywordRecord, Invitation, StandardTerms, ZCF, ZoeService} from '@agoric/zoe';
  * @import {VoteCounterCreatorFacet, VoteCounterPublicFacet, QuestionSpec, OutcomeRecord, AddQuestion, AddQuestionReturn, ClosingRule, GovernableStartFn, LimitedCF, PoserFacet, VoteOnApiInvocation, VoteOnOfferFilter, VoteOnParamChanges} from './types.js';
  */
 

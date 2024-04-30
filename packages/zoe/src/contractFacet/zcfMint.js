@@ -10,7 +10,7 @@ import { addToAllocation, subtractFromAllocation } from './allocationMath.js';
 import '../internal-types.js';
 import { ZcfMintI } from '../typeGuards.js';
 import './internal-types.js';
-import './types-ambient.js';
+import './types.js';
 
 const { Fail } = assert;
 

@@ -10,6 +10,7 @@ import {
 } from '../question.js';
 
 /**
+ * @import {ContractMeta, Handle, Installation, Instance, Keyword, IssuerKeywordRecord, Invitation, StandardTerms, ZCF, ZoeService} from '@agoric/zoe';
  * @import {Position, ApiGovernor, ApiInvocationIssue, PoserFacet, VoteOnApiInvocation} from '../types.js';
  */
 

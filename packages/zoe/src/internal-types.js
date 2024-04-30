@@ -1,6 +1,10 @@
 // @jessie-check
 
 /**
+ * @import {BrandKeywordRecord, IssuerKeywordRecord} from './types.js';
+ */
+
+/**
  * @typedef {object} SeatData
  * @property {ProposalRecord} proposal
  * @property {Allocation} initialAllocation

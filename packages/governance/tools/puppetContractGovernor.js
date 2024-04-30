@@ -7,6 +7,7 @@ import { CONTRACT_ELECTORATE } from '../src/contractGovernance/governParam.js';
 import { makeApiInvocationPositions } from '../src/contractGovernance/governApi.js';
 
 /**
+ * @import {Installation, IssuerKeywordRecord, ZCF} from '@agoric/zoe';
  * @import {GovernableStartFn, ParamChangesSpec} from '../src/types.js';
  */
 
@@ -51,7 +52,8 @@ export const start = async (zcf, privateArgs) => {
   } = await E(zoe).startInstance(
     governedContractInstallation,
     governedIssuerKeywordRecord,
-    // @ts-expect-error xxx governance types https://github.com/Agoric/agoric-sdk/issues/7178
+    // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error -- failed only when not built
+    // @ts-ignore xxx governance types https://github.com/Agoric/agoric-sdk/issues/7178
     augmentedTerms,
     privateArgs.governed,
   );

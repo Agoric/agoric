@@ -68,7 +68,9 @@ const publishRevivableWalletState = async (
  *           import('@agoric/inter-protocol/src/econCommitteeCharter.js')['start']
  *         >
  *       >['creatorFacet'];
- *       adminFacet: AdminFacet;
+ *       adminFacet: AdminFacet<
+ *         import('@agoric/inter-protocol/src/econCommitteeCharter.js')['start']
+ *       >;
  *     };
  *     walletBridgeManager: import('../types.js').ScopedBridgeManager;
  *     provisionWalletBridgeManager: import('../types.js').ScopedBridgeManager;

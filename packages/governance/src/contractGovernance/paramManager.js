@@ -19,6 +19,8 @@ import {
 import { CONTRACT_ELECTORATE } from './governParam.js';
 
 /**
+ * @import {Keyword, Installation, Instance, Invitation, ZoeService} from '@agoric/zoe';
+ * @import {Ratio} from '@agoric/zoe/src/contractSupport/types.js';
  * @import {AnyParamManager, GovernanceSubscriptionState, ParamManagerBase, ParamStateRecord, ParamValueTyped, UpdateParams} from '../types.js';
  */
 

@@ -5,6 +5,10 @@ import { makeDurableZoeKit } from '../src/zoeService/zoe.js';
 import fakeVatAdmin, { makeFakeVatAdmin } from './fakeVatAdmin.js';
 
 /**
+ * @import {FeeIssuerConfig} from '@agoric/zoe';
+ */
+
+/**
  * @param {VatAdminSvc} [vatAdminSvc]
  */
 export const makeZoeKitForTest = (vatAdminSvc = fakeVatAdmin) => {

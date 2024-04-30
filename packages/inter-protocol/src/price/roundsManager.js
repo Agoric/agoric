@@ -18,6 +18,7 @@ const { add, subtract, multiply, floorDivide, ceilDivide, isGTE } = natSafeMath;
 /**
  * @import {Timestamp} from '@agoric/time'
  * @import {TimerService} from '@agoric/time'
+ * @import {PriceQuery, PriceQuoteValue} from '@agoric/zoe';
  */
 
 /** @type {string} */

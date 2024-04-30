@@ -4,6 +4,11 @@ import { E, getInterfaceOf } from '@endo/far';
 const { toAscii } = encodingStar;
 
 /**
+ * @import {ERef} from '@endo/far';
+ * @import {VStorageKey} from '@agoric/notifier';
+ */
+
+/**
  * @param {string} storagePath
  * @returns {import('./types.js').CastingSpec}
  */

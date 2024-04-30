@@ -6,6 +6,7 @@ import { EmptyProposalShape } from '@agoric/zoe/src/typeGuards.js';
 import { ElectoratePublicI, ElectorateCreatorI } from './typeGuards.js';
 
 /**
+ * @import {Handle, ContractStartFn, Instance, Keyword, IssuerKeywordRecord, Invitation, ZCF} from '@agoric/zoe';
  * @import {ElectoratePublic, ElectorateCreatorFacet} from './types.js';
  */
 

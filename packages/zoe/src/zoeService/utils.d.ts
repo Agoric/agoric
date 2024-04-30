@@ -3,6 +3,7 @@ import type { VatUpgradeResults } from '@agoric/swingset-vat';
 import type { Baggage } from '@agoric/swingset-liveslots';
 
 import type { IssuerKeywordRecord, Payment } from './types.js';
+import type { Handle } from '../types.js';
 
 // XXX https://github.com/Agoric/agoric-sdk/issues/4565
 type SourceBundle = Record<string, any>;
@@ -15,21 +16,22 @@ type ContractFacet<T extends {} = {}> = {
  * Installation of a contract, typed by its start function.
  */
 declare const StartFunction: unique symbol;
-export type Installation<SF> = {
+export type Installation<SF = any> = {
   getBundle: () => SourceBundle;
   getBundleLabel: () => string;
   // because TS is structural, without this the generic is ignored
-  [StartFunction]: SF;
+  readonly [StartFunction]?: SF;
 };
-export type Instance<SF> = Handle<'Instance'> & {
-  // because TS is structural, without this the generic is ignored
-  [StartFunction]: SF;
-};
+export type Instance<SF extends ContractStartFunction = any> =
+  Handle<'Instance'> & {
+    // because TS is structural, without this the generic is ignored
+    readonly [StartFunction]?: SF;
+  };
 
 export type InstallationStart<I> =
   I extends Installation<infer SF> ? SF : never;
 
-type ContractStartFunction = (
+export type ContractStartFunction = (
   zcf?: ZCF,
   privateArgs?: {},
   baggage?: Baggage,
@@ -49,16 +51,17 @@ export type AdminFacet<SF extends ContractStartFunction> = {
     : (newPrivateArgs: Parameters<SF>[1]) => Promise<VatUpgradeResults>;
 };
 
-type StartParams<SF> = SF extends ContractStartFunction
-  ? Parameters<SF>[1] extends undefined
-    ? {
-        terms: ReturnType<Parameters<SF>[0]['getTerms']>;
-      }
-    : {
-        terms: ReturnType<Parameters<SF>[0]['getTerms']>;
-        privateArgs: Parameters<SF>[1];
-      }
-  : never;
+type StartParams<SF extends ContractStartFunction> =
+  Parameters<SF>[0] extends ZCF<infer CT>
+    ? Parameters<SF>[1] extends undefined
+      ? {
+          terms: StandardTerms & CT;
+        }
+      : {
+          terms: StandardTerms & CT;
+          privateArgs: Parameters<SF>[1];
+        }
+    : { terms: StandardTerms & Record<string, any> };
 
 type StartResult<S> = S extends (...args: any) => Promise<infer U>
   ? U
@@ -124,10 +127,6 @@ export type GetPublicFacet = <SF>(
   instance: Instance<SF> | PromiseLike<Instance<SF>>,
 ) => Promise<StartResult<SF>['publicFacet']>;
 
-export type GetTerms = <SF>(instance: Instance<SF>) => Promise<
-  // only type if 'terms' info is available
-  StartParams<SF>['terms'] extends {}
-    ? StartParams<SF>['terms']
-    : // XXX returning `any` in this case
-      any
->;
+export type GetTerms = <SF>(
+  instance: Instance<SF>,
+) => Promise<StartParams<SF>['terms']>;

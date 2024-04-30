@@ -2,6 +2,19 @@
 
 /// <reference types="ses"/>
 
+// Ensure this is a module
+export {};
+
+/**
+ * @import {ERef} from '@endo/far';
+ * @import {BundleCap, BundleID} from '@agoric/swingset-vat';
+ * @import {AssetKind, Amount, DisplayInfo, NatValue, Payment} from '@agoric/ertp/src/types.js';
+ * @import {Subscriber} from '@agoric/notifier';
+ * @import {Allocation, Handle, InvitationHandle, Keyword} from '../types.js';
+ * @import {StartInstance, GetPublicFacet, Instance, Installation, InstallationStart} from './utils.js';
+ * @import {Completion, Invitation} from '../contractFacet/types.js';
+ */
+
 /**
  * @typedef {object} ZoeService
  *
@@ -28,9 +41,9 @@
  *
  * @property {InstallBundle} install
  * @property {InstallBundleID} installBundleID
- * @property {import('./utils.js').StartInstance} startInstance
+ * @property {StartInstance} startInstance
  * @property {Offer} offer
- * @property {import('./utils.js').GetPublicFacet} getPublicFacet
+ * @property {GetPublicFacet} getPublicFacet
  * @property {GetIssuers} getIssuers
  * @property {GetBrands} getBrands
  * @property {import('./utils.js').GetTerms} getTerms
@@ -66,19 +79,19 @@
 
 /**
  * @callback GetIssuers
- * @param {import('./utils.js').Instance<any>} instance
+ * @param {Instance<any>} instance
  * @returns {Promise<IssuerKeywordRecord>}
  */
 
 /**
  * @callback GetBrands
- * @param {import('./utils.js').Instance<any>} instance
+ * @param {Instance<any>} instance
  * @returns {Promise<BrandKeywordRecord>}
  */
 
 /**
  * @callback GetOfferFilter
- * @param {import('./utils.js').Instance<any>} instance
+ * @param {Instance<any>} instance
  * @returns {string[]}
  */
 
@@ -90,14 +103,14 @@
 
 /**
  * @callback GetInstallationForInstance
- * @param {import('./utils.js').Instance<any>} instance
+ * @param {Instance<any>} instance
  * @returns {Promise<Installation>}
  */
 
 /**
  * @callback GetInstance
  * @param {ERef<Invitation>} invitation
- * @returns {Promise<import('./utils.js').Instance<any>>}
+ * @returns {Promise<Instance<any>>}
  */
 
 /**
@@ -122,7 +135,7 @@
  *
  * @param {Bundle | SourceBundle} bundle
  * @param {string} [bundleLabel]
- * @returns {Promise<Installation>}
+ * @returns {Promise<Installation<any>>}
  */
 
 // TODO consolidate installBundleID into install.
@@ -271,20 +284,7 @@
  */
 
 /**
- * @typedef {import('./utils.js').Instance<any>} Instance
- */
-
-/**
- * @import {VatAdminSvc} from '@agoric/swingset-vat'
- */
-
-/**
- * @typedef {{bundleCap: import('@agoric/swingset-vat').BundleCap } | {name: string} | {id: BundleID}} ZCFSpec
- */
-
-/**
- * @typedef {Record<string, any>} SourceBundle
- * Opaque type for a JSONable source bundle
+ * @typedef {{bundleCap: BundleCap } | {name: string} | {id: BundleID}} ZCFSpec
  */
 
 /**
@@ -294,21 +294,11 @@
 
 /**
  * @typedef {object} InvitationDetails
- * @property {Installation} installation
- * @property {import('./utils.js').Instance<any>} instance
+ * @property {Installation<any>} installation
+ * @property {Instance<any>} instance
  * @property {InvitationHandle} handle
  * @property {string} description
  * @property {Record<string, any>} [customDetails]
- */
-
-/**
- * @template [SF=any] contract start function
- * @typedef {import('./utils.js').Installation<SF>} Installation
- */
-
-/**
- * @template {Installation} I
- * @typedef {import('./utils.js').InstallationStart<I>} InstallationStart
  */
 
 /**

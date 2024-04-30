@@ -3,6 +3,10 @@ import { E } from '@endo/eventual-send';
 import { Far } from '@endo/marshal';
 
 /**
+ * @import {Installation, ZoeService} from '@agoric/zoe';
+ */
+
+/**
  * Start an instance of an Oracle that follows a script. The Oracle has access
  * to a timer, and looks in the script for events indexed by the current time.
  * It responds to onQuery() by reporting any current event. This is intended to

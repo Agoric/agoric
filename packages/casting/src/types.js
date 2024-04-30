@@ -1,11 +1,12 @@
 // @jessie-check
 
-// Make this a module.
-import '@agoric/notifier';
-
+// Ensure this is a module.
 export {};
 
-/** @import { ERef } from '@endo/far' */
+/**
+ * @import {ERef} from '@endo/far';
+ * @import {Notifier, Subscription} from '@agoric/notifier';
+ */
 
 /**
  * @typedef {object} LeaderOptions

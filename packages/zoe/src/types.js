@@ -2,6 +2,15 @@
 
 /// <reference types="ses"/>
 
+// Ensure this is a module
+export {};
+
+/**
+ * @import {ERef} from '@endo/far';
+ * @import {AssetKind, Brand, DisplayInfo, Issuer} from '@agoric/ertp/src/types.js';
+ * @import {AmountKeywordRecord} from './zoeService/types.js';
+ */
+
 /**
  * @template {string} H - the name of the handle
  * @typedef {H & import("@endo/marshal").Remotable} Handle A type constructor for an opaque type
@@ -28,7 +37,7 @@
  * @typedef {StandardTerms & Record<string, any>} AnyTerms
  *
  * @typedef {object} InstanceRecord
- * @property {Installation} installation
+ * @property {import('./zoeService/utils.js').Installation} installation
  * @property {import("./zoeService/utils.js").Instance<any>} instance
  * @property {AnyTerms} terms - contract parameters
  */

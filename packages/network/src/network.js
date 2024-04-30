@@ -8,6 +8,9 @@ import { Shape } from './shapes.js';
 
 import '@agoric/store/exported.js';
 /// <reference path="./types.js" />
+/**
+ * @import {VowTools} from '@agoric/vow';
+ */
 
 /**
  * Compatibility note: this must match what our peers use, so don't change it
@@ -58,7 +61,7 @@ export function getPrefixes(addr) {
 
 /**
  * @param {import('@agoric/base-zone').Zone} zone
- * @param {ReturnType<import('@agoric/vow').prepareVowTools>} powers
+ * @param {VowTools} powers
  */
 const prepareHalfConnection = (zone, { watch }) => {
   const makeHalfConnectionKit = zone.exoClassKit(
@@ -215,7 +218,7 @@ export const crossoverConnection = (
 /**
  * @param {import('@agoric/zone').Zone} zone
  * @param {(opts: ConnectionOpts) => Connection} makeConnection
- * @param {ReturnType<import('@agoric/vow').prepareVowTools>} powers
+ * @param {VowTools} powers
  */
 const prepareInboundAttempt = (zone, makeConnection, { watch }) => {
   const makeInboundAttemptKit = zone.exoClassKit(
@@ -380,7 +383,7 @@ const RevokeState = /** @type {const} */ ({
 
 /**
  * @param {import('@agoric/zone').Zone} zone
- * @param {ReturnType<import('@agoric/vow').prepareVowTools>} powers
+ * @param {VowTools} powers
  */
 const preparePort = (zone, powers) => {
   const makeIncapable = zone.exoClass('Incapable', undefined, () => ({}), {});
@@ -630,7 +633,7 @@ const preparePort = (zone, powers) => {
 
 /**
  * @param {import('@agoric/base-zone').Zone} zone
- * @param {ReturnType<import('@agoric/vow').prepareVowTools>} powers
+ * @param {VowTools} powers
  */
 const prepareBinder = (zone, powers) => {
   const makeConnection = prepareHalfConnection(zone, powers);
@@ -1149,7 +1152,7 @@ const prepareBinder = (zone, powers) => {
 
 /**
  * @param {import('@agoric/base-zone').Zone} zone
- * @param {ReturnType<import('@agoric/vow').prepareVowTools>} powers
+ * @param {VowTools} powers
  */
 export const prepareNetworkProtocol = (zone, powers) => {
   const makeBinderKit = prepareBinder(zone, powers);
@@ -1272,7 +1275,7 @@ export const prepareEchoConnectionKit = zone => {
  * Create a protocol handler that just connects to itself.
  *
  * @param {import('@agoric/base-zone').Zone} zone
- * @param {ReturnType<import('@agoric/vow').prepareVowTools>} powers
+ * @param {VowTools} powers
  */
 export function prepareLoopbackProtocolHandler(zone, { watch, allVows }) {
   const detached = zone.detached();

@@ -19,6 +19,7 @@ import { makeQuorumCounter } from './quorumCounter.js';
 import { breakTie } from './breakTie.js';
 
 /**
+ * @import {Handle, Installation, Instance, Keyword, IssuerKeywordRecord, Invitation, ZCF} from '@agoric/zoe';
  * @import {QuestionSpec, BuildMultiVoteCounter, MultiOutcomeRecord, Position, VoteStatistics} from './types.js';
  */
 

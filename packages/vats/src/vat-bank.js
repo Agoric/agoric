@@ -19,8 +19,6 @@ import {
   prepareVirtualPurse,
 } from './virtual-purse.js';
 
-import '@agoric/notifier/exported.js';
-
 const { Fail } = assert;
 
 const { VirtualPurseControllerI } = makeVirtualPurseKitIKit();

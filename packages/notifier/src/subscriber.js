@@ -8,7 +8,11 @@ import { makePublishKit } from './publish-kit.js';
 
 import { makePinnedHistoryTopic } from './topic.js';
 
-import './types-ambient.js';
+/**
+ * @import {ERef} from '@endo/far';
+ * @import {EachTopic, IterationObserver, LatestTopic, Notifier, NotifierRecord, SubscriptionRecord, Publisher, PublishKit, StoredPublishKit, StoredSubscription, StoredSubscriber, Subscriber, Subscription, UpdateRecord} from '../src/types.js';
+ * @import {Marshaller, StorageNode, Unserializer} from '@agoric/internal/src/lib-chainStorage.js';
+ */
 
 /**
  * @template T

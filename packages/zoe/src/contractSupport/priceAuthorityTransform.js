@@ -4,7 +4,10 @@ import { Fail, assert } from '@agoric/assert';
 import { AmountMath } from '@agoric/ertp';
 import { makeNotifier } from '@agoric/notifier';
 
-/** @import {EOnly} from '@endo/eventual-send' */
+/**
+ * @import {EOnly} from '@endo/eventual-send';
+ * @import {PriceAuthority, PriceQuote, MutableQuote} from '@agoric/zoe';
+ */
 
 /**
  * @param {Brand<'set'>} quoteBrand

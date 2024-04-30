@@ -1,4 +1,5 @@
 import type { StartedInstanceKit } from './utils';
+import type { ZCF } from './zoe.js';
 
 const someContractStartFn = (
   zcf: ZCF,

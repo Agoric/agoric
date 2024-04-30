@@ -10,6 +10,12 @@ import { makeCosmjsFollower } from './follower-cosmjs.js';
 import { makeCastingSpec } from './casting-spec.js';
 
 /**
+ * @import {ERef} from '@endo/far';
+ * @import {IterationObserver, LatestTopic, Notifier, NotifierRecord, PublicationRecord, Publisher, PublishKit, StoredPublishKit, StoredSubscription, StoredSubscriber, Subscriber, Subscription, UpdateRecord} from '../src/types.js';
+ * @import {Marshaller, StorageNode, Unserializer} from '@agoric/internal/src/lib-chainStorage.js';
+ */
+
+/**
  * @template T
  * @param {ERef<import('./types.js').CastingSpec>} spec
  */

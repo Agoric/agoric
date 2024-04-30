@@ -6,6 +6,12 @@ import { E, Far } from '@endo/far';
 import { observeNotifier } from './asyncIterableAdaptor.js';
 
 /**
+ * @import {ERef} from '@endo/far';
+ * @import {BaseNotifier, Notifier, StoredFacet} from './types.js';
+ * @import {Marshaller, StorageNode, Unserializer} from '@agoric/internal/src/lib-chainStorage.js';
+ */
+
+/**
  * @template T
  * @typedef {BaseNotifier<T> & Omit<StoredFacet, 'getStoreKey'>} StoredNotifier
  */

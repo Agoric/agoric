@@ -3,9 +3,14 @@
 import { assert } from '@agoric/assert';
 import { E, Far } from '@endo/far';
 
-import './types-ambient.js';
 import { makePublishKit } from './publish-kit.js';
 import { subscribeLatest } from './subscribe.js';
+
+/**
+ * @import {ERef} from '@endo/far';
+ * @import {LatestTopic, Notifier, NotifierRecord, PublishKit, Subscriber, UpdateRecord} from './types.js';
+ * @import {Marshaller, StorageNode} from '@agoric/internal/src/lib-chainStorage.js';
+ */
 
 /**
  * @template T

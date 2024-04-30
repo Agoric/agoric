@@ -1,6 +1,10 @@
 export {};
 
-/** @import {ContractStartFunction} from '@agoric/zoe/src/zoeService/utils.js' */
+/**
+ * @import {AdminFacet, Handle, Installation, Instance, Invitation, Keyword, IssuerKeywordRecord, ZCF} from '@agoric/zoe';
+ * @import {Ratio} from '@agoric/zoe/src/contractSupport/types.js';
+ * @import {ContractStartFunction, InstallationStart} from '@agoric/zoe/src/zoeService/utils.js';
+ */
 
 /**
  * @typedef { 'unranked' | 'order' | 'plurality' } ChoiceMethod
@@ -563,7 +567,7 @@ export {};
  *   with creator-like powers but without the tightly held ability to change
  *   param values.
  * @property {(poserInvitation: Invitation) => Promise<void>} replaceElectorate
- * @property {() => AdminFacet} getAdminFacet
+ * @property {() => AdminFacet<SF>} getAdminFacet
  * @property {() => GovernedPublicFacet<Awaited<ReturnType<SF>>['publicFacet']>} getPublicFacet - public facet of the governed contract
  * @property {() => Instance} getInstance - instance of the governed
  *   contract
@@ -715,7 +719,7 @@ export {};
  * - typed for contractGovernor installation being started by Zoe. (It in turn starts the governed contract.)
  * - parameterized by Installation instead of StartFunction
  * @property {import('@agoric/zoe/src/zoeService/utils.js').Instance<GovernorSF>} instance
- * @property {AdminFacet} adminFacet
+ * @property {AdminFacet<any>} adminFacet
  * @property {GovernorCreatorFacet<InstallationStart<Awaited<I>>>} creatorFacet
  * @property {GovernorPublic} publicFacet
  */
@@ -725,10 +729,10 @@ export {};
  * @template {GovernableStartFn} SF
  * @typedef GovernanceFacetKit
  * Akin to StartedInstanceKit but designed for the results of starting governed contracts. Used in bootstrap space.
- * @property {AdminFacet} adminFacet of the governed contract
+ * @property {AdminFacet<GovernableStartFn>} adminFacet of the governed contract
  * @property {LimitedCF<SF>} creatorFacet creator-like facet within the governed contract (without the powers the governor needs)
  * @property {GovernorCreatorFacet<SF>} governorCreatorFacet of the governing contract
- * @property {AdminFacet} governorAdminFacet of the governing contract
+ * @property {AdminFacet<any>} governorAdminFacet of the governing contract
  * @property {Awaited<ReturnType<SF>>['publicFacet']} publicFacet
  * @property {Instance} instance
  * @property {Instance} governor

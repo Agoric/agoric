@@ -2,6 +2,8 @@
 
 /// <reference types="ses"/>
 
+export {};
+
 /**
  * @typedef {object} SeatGainsLossesRecord
  * @property {ZCFSeat} seat

@@ -240,7 +240,7 @@ test(`zoe.getTerms`, async t => {
   );
 
   const zoeTerms = await E(zoe).getTerms(instance);
-  // @ts-expect-error not a term of the contract
+  // XXX this used to detect the terms of the contract
   t.is(zoeTerms.invalid, undefined);
 
   const expected = {

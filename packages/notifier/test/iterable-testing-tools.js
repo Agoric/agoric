@@ -2,7 +2,12 @@ import { E } from '@endo/far';
 import { makePromiseKit } from '@endo/promise-kit';
 import { observeIteration, observeIterator } from '../src/index.js';
 
-import '../src/types-ambient.js';
+/**
+ * @import {ERef} from '@endo/far';
+ * @import {BaseNotifier, ForkableAsyncIterator, IterationObserver, Notifier, StoredFacet, Subscription} from '../src/types.js';
+ * @import {Marshaller, StorageNode} from '@agoric/internal/src/lib-chainStorage.js';
+ * @import {PromiseKit} from '@endo/promise-kit';
+ */
 
 export const invertPromiseSettlement = promise =>
   promise.then(

@@ -4,6 +4,8 @@ import { AmountMath } from '@agoric/ertp';
 import { M } from '@agoric/store';
 import { makeRatioFromAmounts } from '@agoric/zoe/src/contractSupport/index.js';
 
+/** @import {PriceDescription, PriceAuthority, PriceQuote, PriceQuoteCreate, PriceQuoteTrigger, PriceAuthorityKit} from '@agoric/zoe'; */
+
 const { Fail, quote: q } = assert;
 
 export const amountPattern = harden({ brand: M.remotable(), value: M.any() });

@@ -2,6 +2,11 @@
 import { getVowPayload, basicE } from './vow-utils.js';
 import { PromiseWatcherI, watchPromiseShim } from './watch-promise.js';
 
+/**
+ * @import {PromiseWatcher} from './watch-promise.js';
+ * @import {ERef, Vow, VowKit, VowResolver, Watcher} from './types.js';
+ */
+
 const { apply } = Reflect;
 
 /**
@@ -15,7 +20,7 @@ const makeWatchNextStep =
    * (usually durable) watcher object with the promise.
    *
    * @param {any} specimen
-   * @param {import('./watch-promise.js').PromiseWatcher} promiseWatcher
+   * @param {PromiseWatcher} promiseWatcher
    */
   (specimen, promiseWatcher) => {
     let promise;
@@ -29,9 +34,9 @@ const makeWatchNextStep =
   };
 
 /**
- * @param {import('./types.js').VowResolver | undefined} resolver
- * @param {import('./types.js').Watcher<unknown, unknown, unknown> | undefined} watcher
- * @param {keyof Required<import('./types.js').Watcher>} wcb
+ * @param {VowResolver | undefined} resolver
+ * @param {Watcher<unknown, unknown, unknown> | undefined} watcher
+ * @param {keyof Required<Watcher>} wcb
  * @param {unknown} value
  * @param {unknown} [watcherContext]
  */
@@ -68,8 +73,8 @@ const preparePromiseWatcher = (zone, isRetryableReason, watchNextStep) =>
      * @template [T=any]
      * @template [TResult1=T]
      * @template [TResult2=never]
-     * @param {import('./types.js').VowResolver<TResult1 | TResult2>} resolver
-     * @param {import('./types.js').Watcher<T, TResult1, TResult2>} [watcher]
+     * @param {VowResolver<TResult1 | TResult2>} resolver
+     * @param {Watcher<T, TResult1, TResult2>} [watcher]
      * @param {unknown} [watcherContext]
      */
     (resolver, watcher, watcherContext) => {
@@ -82,7 +87,7 @@ const preparePromiseWatcher = (zone, isRetryableReason, watchNextStep) =>
       return /** @type {Partial<typeof state>} */ (state);
     },
     {
-      /** @type {Required<import('./watch-promise.js').PromiseWatcher>['onFulfilled']} */
+      /** @type {Required<PromiseWatcher>['onFulfilled']} */
       onFulfilled(value) {
         const { watcher, watcherContext, resolver } = this.state;
         if (getVowPayload(value)) {
@@ -95,7 +100,7 @@ const preparePromiseWatcher = (zone, isRetryableReason, watchNextStep) =>
         this.state.resolver = undefined;
         settle(resolver, watcher, 'onFulfilled', value, watcherContext);
       },
-      /** @type {Required<import('./watch-promise.js').PromiseWatcher>['onRejected']} */
+      /** @type {Required<PromiseWatcher>['onRejected']} */
       onRejected(reason) {
         const { vow, watcher, watcherContext, resolver } = this.state;
         if (vow && isRetryableReason(reason)) {
@@ -111,7 +116,7 @@ const preparePromiseWatcher = (zone, isRetryableReason, watchNextStep) =>
 
 /**
  * @param {import('@agoric/base-zone').Zone} zone
- * @param {() => import('./types.js').VowKit<any>} makeVowKit
+ * @param {() => VowKit<any>} makeVowKit
  * @param {typeof watchPromiseShim} [watchPromise]
  * @param {(reason: any) => boolean} [isRetryableReason]
  */
@@ -133,12 +138,12 @@ export const prepareWatch = (
    * @template [TResult1=T]
    * @template [TResult2=T]
    * @template [C=unknown] watcher context
-   * @param {import('./types.js').ERef<T | import('./types.js').Vow<T>>} specimenP
-   * @param {import('./types.js').Watcher<T, TResult1, TResult2>} [watcher]
+   * @param {ERef<T | Vow<T>>} specimenP
+   * @param {Watcher<T, TResult1, TResult2>} [watcher]
    * @param {C} [watcherContext]
    */
   const watch = (specimenP, watcher, watcherContext) => {
-    /** @type {import('./types.js').VowKit<TResult1 | TResult2>} */
+    /** @type {VowKit<TResult1 | TResult2>} */
     const { resolver, vow } = makeVowKit();
 
     // Create a promise watcher to track vows, retrying upon rejection as

@@ -70,6 +70,10 @@ publish() {
     yarn build
     git commit --allow-empty -am "chore: prepare for publishing"
 
+    # use lerna to ensure these run in topological order, whereas npm query
+    # sorts in order of the array and lexically for the glob
+    # https://github.com/npm/cli/issues/4139#issuecomment-1730186418
+    yarn lerna run prepack
     # Convention used in Endo
     yarn lerna run build:types
 

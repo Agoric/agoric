@@ -38,7 +38,6 @@ export const makeInstallationStorage = (getBundleCapForID, zoeBaggage) => {
     zoeBaggage,
     'BundleIDInstallation',
     bundleLabel => ({ bundleLabel }),
-    // @ts-expect-error cast without StartFunction property
     {
       getBundle: _context => Fail`bundleID-based Installation`,
       getBundleLabel: ({ state: { bundleLabel } }) => bundleLabel,
@@ -50,7 +49,6 @@ export const makeInstallationStorage = (getBundleCapForID, zoeBaggage) => {
     zoeBaggage,
     'BundleInstallation',
     (bundle, bundleLabel) => ({ bundle, bundleLabel }),
-    // @ts-expect-error cast without StartFunction property
     {
       getBundle: ({ state: { bundle } }) => bundle,
       getBundleLabel: ({ state: { bundleLabel } }) => bundleLabel,

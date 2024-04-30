@@ -3,7 +3,7 @@ import { bindAllMethods } from '@agoric/internal';
 import { buildManualTimer as build } from '@agoric/swingset-vat/tools/manual-timer.js';
 import { TimeMath } from '@agoric/time';
 
-import './types-ambient.js';
+import './types.js';
 import './internal-types.js';
 
 const { Fail } = assert;

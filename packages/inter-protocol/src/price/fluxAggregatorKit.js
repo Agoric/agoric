@@ -29,6 +29,7 @@ export const INVITATION_MAKERS_DESC = 'oracle invitation';
  *   RelativeTime, not RelativeTimeValue
  * @import {RelativeTimeValue} from '@agoric/time'
  * @import {TimerService} from '@agoric/time'
+ * @import {PriceDescription, PriceQuoteValue} from '@agoric/zoe';
  */
 
 /** @type {(quote: PriceQuote) => PriceDescription} */

@@ -23,6 +23,11 @@ corepack enable
 yarn install 1>&2
 yarn build 1>&2
 
+# use lerna to ensure these run in topological order, whereas npm query
+# sorts in order of the array and lexically for the glob
+# https://github.com/npm/cli/issues/4139#issuecomment-1730186418
+yarn lerna run prepack 1>&2
+# Convention used in Endo
 yarn lerna run build:types 1>&2
 
 npm query .workspace | jq -r '.[].location' | while read -r dir; do

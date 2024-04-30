@@ -1,6 +1,9 @@
 import { Far, makeMarshal } from '@endo/marshal';
 
-import '../src/types-ambient.js';
+/**
+ * @import {IterationObserver} from '../src/types.js';
+ * @import {StorageNode} from '@agoric/internal/src/lib-chainStorage.js';
+ */
 
 export { eventLoopIteration } from '@agoric/internal/src/testing-utils.js';
 

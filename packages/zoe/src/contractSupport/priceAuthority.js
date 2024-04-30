@@ -8,6 +8,10 @@ import { makeTracer } from '@agoric/internal';
 import { TimestampShape } from '@agoric/time';
 import { M } from '@agoric/store';
 
+/**
+ * @import {MutableQuote, PriceAuthority, PriceQuote, PriceQuoteCreate, PriceQuoteTrigger, PriceAuthorityKit} from '@agoric/zoe';
+ */
+
 const { quote: q, Fail } = assert;
 
 const trace = makeTracer('PA', false);

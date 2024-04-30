@@ -9,6 +9,8 @@ import {
 import { quoteAsRatio, subtractToEmpty } from '../contractSupport.js';
 import { liquidationResults } from './liquidation.js';
 
+/** @import {PriceDescription} from '@agoric/zoe'; */
+
 /**
  * @typedef {{
  *   overage: Amount<'nat'>;

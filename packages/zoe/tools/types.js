@@ -1,5 +1,7 @@
 // @jessie-check
 
+export {};
+
 /**
  * @typedef {object} PriceQuote
  * @property {Amount<'set'>} quoteAmount

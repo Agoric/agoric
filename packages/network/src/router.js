@@ -9,6 +9,10 @@ import '@agoric/store/exported.js';
 /// <reference path="./types.js" />
 
 /**
+ * @import {VowTools} from '@agoric/vow';
+ */
+
+/**
  * @template T
  * @typedef {object} Router A delimited string router implementation
  * @property {(addr: string) => [string, T][]} getRoutes Return the match and
@@ -102,7 +106,7 @@ export const prepareRouter = zone => {
  * Create a router that behaves like a Protocol.
  *
  * @param {import('@agoric/base-zone').Zone} zone
- * @param {ReturnType<import('@agoric/vow').prepareVowTools>} powers
+ * @param {VowTools} powers
  * @param {typeof defaultE} [E] Eventual sender
  */
 export const prepareRouterProtocol = (zone, powers, E = defaultE) => {

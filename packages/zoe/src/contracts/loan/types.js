@@ -1,4 +1,8 @@
 /**
+ * @import {MutableQuote, PriceAuthority, PriceQuote, PriceQuoteCreate, PriceQuoteTrigger, PriceAuthorityKit} from '@agoric/zoe';
+ */
+
+/**
  * @typedef {Notifier<import('@agoric/time').TimestampRecord>} PeriodNotifier
  *
  *  The Notifier that provides notifications that periods have passed.
@@ -8,8 +12,9 @@
  *  using the interestRate.
  */
 
+// XXX this is an Instance but that's causing some type challenges and this example code is not worth solving them
 /**
- * @typedef {Instance} AutoswapInstance
+ * @typedef {any} AutoswapInstance
  *   The running contract instance for an Autoswap installation.  The
  *   publicFacet from the Autoswap
  *   instance is used for producing an invitation to sell the

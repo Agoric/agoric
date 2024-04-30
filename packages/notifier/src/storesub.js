@@ -8,6 +8,12 @@ import { makeSubscriptionKit } from './subscriber.js';
 import { subscribeEach } from './subscribe.js';
 
 /**
+ * @import {ERef} from '@endo/far';
+ * @import {IterationObserver, LatestTopic, Notifier, NotifierRecord, PublicationRecord, Publisher, PublishKit, StoredPublishKit, StoredSubscription, StoredSubscriber, Subscriber, Subscription, UpdateRecord} from '../src/types.js';
+ * @import {Marshaller, StorageNode, Unserializer} from '@agoric/internal/src/lib-chainStorage.js';
+ */
+
+/**
  * NB: does not yet survive upgrade https://github.com/Agoric/agoric-sdk/issues/6893
  *
  * @alpha
@@ -97,7 +103,7 @@ export const makeStoredSubscription = (
     serializeBodyFormat: 'smallcaps',
   }),
 ) => {
-  /** @type {Unserializer} */
+  /** @type {import('@agoric/internal/src/lib-chainStorage.js').Unserializer} */
   const unserializer = Far('unserializer', {
     fromCapData: data => E(marshaller).fromCapData(data),
     unserialize: data => E(marshaller).fromCapData(data),

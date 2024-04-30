@@ -26,6 +26,16 @@ import { getZcfBundleCap } from './createZCFVat.js';
 import { defaultFeeIssuerConfig, prepareFeeMint } from './feeMint.js';
 import { ZoeServiceI } from '../typeGuards.js';
 
+// XXX this file is the package index, so export types
+// eslint-disable-next-line import/export -- just types
+export * from '../types.js';
+// eslint-disable-next-line import/export -- just types
+export * from './types.js';
+export * from '../contractFacet/types.js';
+// eslint-disable-next-line import/export -- just types
+export * from '../../tools/types.js';
+export * from './utils.js';
+
 /** @import {Baggage} from '@agoric/vat-data' */
 
 const { Fail } = assert;

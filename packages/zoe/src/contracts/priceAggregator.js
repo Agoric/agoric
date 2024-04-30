@@ -13,7 +13,6 @@ import { E } from '@endo/eventual-send';
 import { Far } from '@endo/marshal';
 import { notForProductionUse } from '@agoric/internal/src/magic-cookie-test-only.js';
 
-import '../../tools/types-ambient.js';
 import {
   calculateMedian,
   makeOnewayPriceAuthorityKit,
@@ -33,6 +32,7 @@ import {
 
 /**
  * @import {LegacyMap} from '@agoric/store/exported.js'
+ * @import {PriceQuote, PriceDescription, PriceQuoteValue, PriceQuery} from '../../tools/types.js';
  */
 /** @typedef {bigint | number | string} ParsableNumber */
 /**

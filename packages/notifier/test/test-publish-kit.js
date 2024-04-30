@@ -17,10 +17,13 @@ import {
   subscribeLatest,
   prepareDurablePublishKit,
 } from '../src/index.js';
-import '../src/types-ambient.js';
+import '../src/types.js';
 import { invertPromiseSettlement } from './iterable-testing-tools.js';
 
-/** @import {makePublishKit as MakePublishKit} from '../src/index.js' */
+/**
+ * @import {makePublishKit as MakePublishKit} from '../src/index.js';
+ * @import {PublicationRecord} from '../src/types.js';
+ */
 
 const { ownKeys } = Reflect;
 const { quote: q } = assert;

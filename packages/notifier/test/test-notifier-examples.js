@@ -9,7 +9,7 @@ import {
 } from '../src/index.js';
 import { paula, alice, bob } from './iterable-testing-tools.js';
 
-import '../src/types-ambient.js';
+import '../src/types.js';
 
 const last = array => array[array.length - 1];
 

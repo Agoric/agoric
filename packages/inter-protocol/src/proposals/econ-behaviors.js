@@ -38,7 +38,7 @@ export const SECONDS_PER_WEEK = 7n * SECONDS_PER_DAY;
  *   >
  * >} psmCreatorFacet
  * @property {GovernorCreatorFacet<import('../../src/psm/psm.js')['start']>} psmGovernorCreatorFacet
- * @property {AdminFacet} psmAdminFacet
+ * @property {AdminFacet<import('../../src/psm/psm.js')['start']>} psmAdminFacet
  */
 
 /** @typedef {GovernanceFacetKit<import('../auction/auctioneer.js').start>} AuctioneerKit */

@@ -4,6 +4,7 @@ import { resolve as importMetaResolve } from 'import-meta-resolve';
 import { CONTRACT_ELECTORATE, ParamTypes } from '../src/index.js';
 
 /**
+ * @import {Handle, Installation, Instance, Keyword, IssuerKeywordRecord, ZoeService} from '@agoric/zoe';
  * @import {GovernableStartFn} from '../src/types.js';
  */
 

@@ -1,7 +1,10 @@
 // @jessie-check
 
 import { Far } from '@endo/far';
-import './types-ambient.js';
+
+/**
+ * @import {EachTopic, LatestTopic} from '../src/types.js';
+ */
 
 /**
  * @deprecated A pinned-history topic preserves all of its published values in

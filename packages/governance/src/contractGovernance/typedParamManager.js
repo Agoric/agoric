@@ -6,6 +6,7 @@ import { makeParamManagerBuilder } from './paramManager.js';
 const { Fail, quote: q } = assert;
 
 /**
+ * @import {Handle, Installation, Instance, Keyword, IssuerKeywordRecord, Invitation, ZCF} from '@agoric/zoe';
  * @import {VoteCounterCreatorFacet, VoteCounterPublicFacet, QuestionSpec, OutcomeRecord, AddQuestion, AddQuestionReturn, GovernanceSubscriptionState, GovernanceTerms, ParamManagerBase, ParamStateRecord, ParamValueForType, UpdateParams} from '../types.js';
  * @import {ParamType} from '../constants.js';
  */
