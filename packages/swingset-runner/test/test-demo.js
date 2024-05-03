@@ -23,14 +23,18 @@ function rimraf(dirPath) {
   }
 }
 
-async function innerTest(t, extraFlags, dbdir) {
+/**
+ * @param {import("ava").ExecutionContext<unknown>} t
+ * @param {{flags: string, dbdir?: string}} input
+ */
+async function innerTest(t, { flags, dbdir }) {
   await new Promise(resolve => {
     const appDir = 'demo/encouragementBot';
     if (dbdir) {
       dbdir = `${appDir}/${dbdir}`;
-      extraFlags += ` --dbdir ${dbdir}`;
+      flags += ` --dbdir ${dbdir}`;
     }
-    const proc = spawn(`node bin/runner ${extraFlags} run ${appDir}`, {
+    const proc = spawn(`node bin/runner ${flags} run ${appDir}`, {
       cwd: path.resolve(dirname, '..'),
       shell: true,
       stdio: ['ignore', 'pipe', 'inherit'],
@@ -43,10 +47,10 @@ async function innerTest(t, extraFlags, dbdir) {
       t.log(output);
       t.is(code, 0, 'exits successfully');
       const uMsg = 'user vat is happy';
-      t.not(output.indexOf(`\n${uMsg}\n`), -1, uMsg);
+      t.true(output.includes(`\n${uMsg}\n`), `'${uMsg}' not in '${output}'`);
       const bMsg = 'bot vat is happy';
-      t.not(output.indexOf(`\n${bMsg}\n`), -1, bMsg);
-      resolve();
+      t.true(output.includes(`\n${bMsg}\n`), `'${bMsg}' not in '${output}'`);
+      resolve(undefined);
       if (dbdir) {
         rimraf(dbdir);
       }
@@ -54,18 +58,21 @@ async function innerTest(t, extraFlags, dbdir) {
   });
 }
 
-test('run encouragmentBot demo with memdb', async t => {
-  await innerTest(t, '--memdb');
+test('run encouragmentBot demo with memdb', innerTest, {
+  flags: '--memdb',
 });
 
-test('run encouragmentBot demo with sqlite', async t => {
-  await innerTest(t, '--sqlite', 'sqlitetest');
+test('run encouragmentBot demo with sqlite', innerTest, {
+  flags: '--sqlite',
+  dbdir: 'sqlitetest',
 });
 
-test('run encouragmentBot demo with default', async t => {
-  await innerTest(t, '', 'defaulttest');
+test('run encouragmentBot demo with default', innerTest, {
+  flags: '',
+  dbdir: 'defaulttest',
 });
 
-test('run encouragmentBot demo with indirectly loaded vats', async t => {
-  await innerTest(t, '--indirect', 'indirecttest');
+test('run encouragmentBot demo with indirectly loaded vats', innerTest, {
+  flags: '--indirect',
+  dbdir: 'indirecttest',
 });

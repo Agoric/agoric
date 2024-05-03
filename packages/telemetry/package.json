@@ -35,7 +35,7 @@
     "@opentelemetry/sdk-metrics": "~1.9.0",
     "@opentelemetry/sdk-trace-base": "~1.9.0",
     "@opentelemetry/semantic-conventions": "~1.9.0",
-    "anylogger": "^0.21.0",
+    "anylogger": "^1.0.11",
     "better-sqlite3": "^9.1.1",
     "tmp": "^0.2.1"
   },
