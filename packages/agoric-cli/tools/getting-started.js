@@ -58,8 +58,18 @@ export const gettingStartedWorkflowTest = async (t, options = {}) => {
     });
   }
 
+  /** @param {string[]} args */
   function yarn(args) {
     return pspawnStdout('yarn', args, {
+      stdio: ['ignore', 'pipe', 'inherit'],
+      env: { ...process.env },
+      detached: true,
+    });
+  }
+
+  /** @param {string[]} args */
+  function npmRun(args) {
+    return pspawnStdout('npm', ['run', ...args], {
       stdio: ['ignore', 'pipe', 'inherit'],
       env: { ...process.env },
       detached: true,
@@ -113,7 +123,7 @@ export const gettingStartedWorkflowTest = async (t, options = {}) => {
 
     // ==============
     // yarn start:docker
-    t.is(await yarn(['start:docker']), 0, 'yarn start:docker works');
+    t.is(await npmRun(['start:docker']), 0, 'yarn start:docker works');
 
     // XXX: use abci_info endpoint to get block height
     // sleep to let contract start
@@ -121,11 +131,11 @@ export const gettingStartedWorkflowTest = async (t, options = {}) => {
 
     // ==============
     // yarn start:contract
-    t.is(await yarn(['start:contract']), 0, 'yarn start:contract works');
+    t.is(await npmRun(['start:contract']), 0, 'yarn start:contract works');
 
     // ==============
     // yarn start:ui
-    const startUiP = yarn(['start:ui']);
+    const startUiP = npmRun(['start:ui']);
     finalizers.push(() => pkill(startUiP.childProcess, 'SIGINT'));
     const uiListening = makePromiseKit();
     let retries = 0;

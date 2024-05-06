@@ -16,7 +16,7 @@ export default async function installMain(progname, rawArgs, powers, opts) {
   const { anylogger, fs, spawn } = powers;
   const log = anylogger('agoric:install');
 
-  const forceSdkVersion = rawArgs[1];
+  const forceSdkVersion = !!rawArgs[1];
 
   // Notify the preinstall guard that we are running.
   process.env.AGORIC_INSTALL = 'true';
@@ -28,9 +28,8 @@ export default async function installMain(progname, rawArgs, powers, opts) {
 
   const pspawn = makePspawn({ log, spawn, chalk });
 
-  const rimraf = file => pspawn('rm', ['-rf', file]);
-
   async function getWorktreePackagePaths(cwd = '.', map = new Map()) {
+    // TODO use Arborist like get-sdk-package-names.js does
     // run `yarn workspaces info` to get the list of directories to
     // use, instead of a hard-coded list
     const p = pspawn('yarn', ['workspaces', '--silent', 'info'], {
@@ -52,29 +51,23 @@ export default async function installMain(progname, rawArgs, powers, opts) {
   let sdkWorktree;
   /** @type {Map<string, string>} */
   const sdkPackageToPath = new Map();
-  const linkFolder = path.resolve(`_agstate/yarn-links`);
-  const linkFlags = [];
-  if (opts.sdk) {
-    linkFlags.push(`--link-folder=${linkFolder}`);
-  }
 
   const yarnInstallEachWorktree = async (phase, ...flags) => {
     for await (const workTree of workTrees) {
       log.info(`yarn install ${phase} in ${workTree}`);
-      const yarnInstall = await pspawn(
-        'yarn',
-        [...linkFlags, 'install', ...flags],
-        {
-          stdio: 'inherit',
-          cwd: workTree,
-        },
-      );
+      const yarnInstall = await pspawn('yarn', ['install', ...flags], {
+        stdio: 'inherit',
+        cwd: workTree,
+      });
       if (yarnInstall) {
         throw Error(`yarn install ${phase} failed in ${workTree}`);
       }
     }
   };
 
+  /**
+   * @param {boolean} forceVersion
+   */
   const updateSdkVersion = async forceVersion => {
     // Prune the old version (removing potentially stale on-disk and yarn.lock
     // packages), and update on-disk and yarn.lock packages to the new version.
@@ -238,11 +231,6 @@ export default async function installMain(progname, rawArgs, powers, opts) {
     const sdkRoot = path.resolve(dirname, `../../..`);
     await getWorktreePackagePaths(sdkRoot, sdkPackageToPath);
 
-    // We remove all the links to prevent `yarn install` below from corrupting
-    // them.
-    log('removing', linkFolder);
-    await rimraf(linkFolder);
-
     // Link the SDK.
     if (sdkWorktree) {
       await fs.unlink(sdkWorktree).catch(_ => {});
@@ -285,24 +273,11 @@ export default async function installMain(progname, rawArgs, powers, opts) {
   // Create symlinks to the SDK packages.
   await Promise.all(
     [...sdkPackageToPath.entries()].map(async ([pjName, dir]) => {
-      const SUBOPTIMAL = false;
-      await null;
-      if (SUBOPTIMAL) {
-        // This use of yarn is noisy and slow.
-        await pspawn('yarn', [...linkFlags, 'unlink', pjName]);
-        return pspawn('yarn', [...linkFlags, 'link'], {
-          stdio: 'inherit',
-          cwd: dir,
-        });
-      }
-
-      // This open-coding of the above yarn command is quiet and fast.
-      const linkName = `${linkFolder}/${pjName}`;
-      const linkDir = path.dirname(linkName);
-      log('linking', linkName);
-      return fs
-        .mkdir(linkDir, { recursive: true })
-        .then(_ => fs.symlink(path.relative(linkDir, dir), linkName));
+      await pspawn('yarn', ['unlink', pjName]);
+      return pspawn('yarn', ['link'], {
+        stdio: 'inherit',
+        cwd: dir,
+      });
     }),
   );
 
@@ -310,7 +285,7 @@ export default async function installMain(progname, rawArgs, powers, opts) {
   for await (const subdir of subdirs) {
     const exists = await fs.stat(`${subdir}/package.json`).catch(_ => false);
     const exitStatus = await (exists &&
-      pspawn('yarn', [...linkFlags, 'link', ...sdkPackages], {
+      pspawn('yarn', ['link', ...sdkPackages], {
         stdio: 'inherit',
         cwd: subdir,
       }));

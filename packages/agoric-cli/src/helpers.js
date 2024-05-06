@@ -12,7 +12,7 @@ export const getSDKBinaries = ({
   const xsnap = new URL(`${jsPfx}/xsnap`, myUrl).pathname;
   return {
     agSolo: new URL(`${jsPfx}/solo/src/entrypoint.js`, myUrl).pathname,
-    agSoloBuild: ['yarn', '--cwd', xsnap, `build:from-env`],
+    agSoloBuild: ['npm', 'run', 'build:from-env', '--workspace', xsnap],
     cosmosChain: new URL(`${goPfx}/cosmos/build/agd`, myUrl).pathname,
     cosmosChainBuild: cosmosBuild,
     cosmosClientBuild: cosmosBuild,
