@@ -50,7 +50,6 @@ const bootMsgEx = {
  */
 
 /** @typedef {MapStore<string, CreateVatResults>} VatStore */
-/** @typedef {ERef<ReturnType<import('../vat-zoe.js').buildRootObject>>} ZoeVat */
 
 /**
  * @param {BootstrapPowers & {}} powers
@@ -329,9 +328,7 @@ export const produceStartGovernedUpgradable = async ({
 harden(produceStartGovernedUpgradable);
 
 /**
- * @param {BootstrapPowers & {
- *   consume: { loadCriticalVat: ERef<VatLoader<ZoeVat>> };
- * }} powers
+ * @param {BootstrapPowers} powers
  */
 export const buildZoe = async ({
   consume: { vatAdminSvc, loadCriticalVat, client },
@@ -360,9 +357,7 @@ export const buildZoe = async ({
 harden(buildZoe);
 
 /**
- * @param {BootstrapPowers & {
- *   consume: { loadCriticalVat: ERef<VatLoader<PriceAuthorityVat>> };
- * }} powers
+ * @param {BootstrapPowers} powers
  */
 export const startPriceAuthorityRegistry = async ({
   consume: { loadCriticalVat, client },
@@ -418,9 +413,7 @@ harden(produceBoard);
 
 /**
  * @deprecated use produceBoard
- * @param {BootstrapPowers & {
- *   consume: { loadCriticalVat: ERef<VatLoader<BoardVat>> };
- * }} powers
+ * @param {BootstrapPowers} powers
  */
 export const makeBoard = async ({
   consume: { loadCriticalVat, client },
@@ -607,9 +600,7 @@ harden(mintInitialSupply);
 /**
  * Add IST (with initialSupply payment), BLD (with mint) to BankManager.
  *
- * @param {BootstrapSpace & {
- *   consume: { loadCriticalVat: ERef<VatLoader<BankVat>> };
- * }} powers
+ * @param {BootstrapSpace} powers
  */
 export const addBankAssets = async ({
   consume: {

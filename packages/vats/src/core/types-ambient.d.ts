@@ -109,7 +109,10 @@ type Producer<T> = {
 };
 
 type VatSourceRef = { bundleName?: string; bundleID?: string };
-type VatLoader<T> = (name: string, sourceRef?: VatSourceRef) => T;
+type VatLoader = <K extends keyof WellKnownVats>(
+  name: K,
+  sourceRef?: VatSourceRef,
+) => WellKnownVats[K];
 
 /** callback to assign a property onto the `home` object of the client */
 type PropertyMaker = (addr: string, flags: string[]) => Record<string, unknown>;
@@ -425,12 +428,12 @@ type BootstrapSpace = WellKnownSpaces &
   PromiseSpaceOf<
     ChainBootstrapSpaceT & {
       vatAdminSvc: VatAdminSvc;
+    } & {
+      loadVat: VatLoader;
+      loadCriticalVat: VatLoader;
     },
     {},
-    {
-      loadVat: VatLoader<unknown>;
-      loadCriticalVat: VatLoader<unknown>;
-    }
+    {}
   >;
 
 type ProvisioningVat = ERef<
@@ -498,3 +501,21 @@ type HttpVat = ERef<
 type UploadsVat = ERef<
   ReturnType<typeof import('@agoric/solo/src/vat-uploads.js').buildRootObject>
 >;
+
+type WellKnownVats = SwingsetVats & {
+  bank: BankVat;
+  board: BoardVat;
+  bridge: ChainStorageVat;
+  localchain: LocalChainVat;
+  ibc: IBCVat;
+  mints: MintsVat;
+  network: NetworkVat;
+  orchestration: ERef<
+    ReturnType<
+      typeof import('@agoric/orchestration/src/vat-orchestration.js').buildRootObject
+    >
+  >;
+  priceAuthority: PriceAuthorityVat;
+  provisioning: ProvisioningVat;
+  zoe: ERef<ReturnType<typeof import('../vat-zoe.js').buildRootObject>>;
+};

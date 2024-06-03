@@ -23,9 +23,7 @@ test('mintInitialSupply, addBankAssets bootstrap actions', async t => {
   // Supply bootstrap prerequisites.
   const space = /** @type {any} */ (makePromiseSpace(t.log));
   /**
-   * @type {BootstrapPowers & {
-   *   consume: { loadCriticalVat: VatLoader<any> };
-   * }}
+   * @type {BootstrapPowers}
    */
   const { produce, consume } = space;
   const { agoricNames, agoricNamesAdmin, spaces } =

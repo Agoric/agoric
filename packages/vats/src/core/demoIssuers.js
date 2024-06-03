@@ -218,8 +218,7 @@ const provideCoin = async (name, mints) => {
 };
 
 /**
- * @param {BootstrapSpace & { consume: { loadVat: VatLoader<MintsVat> } }} powers
- *   TODO: sync this type with end-user docs?
+ * @param {BootstrapSpace} powers TODO: sync this type with end-user docs?
  *
  * @typedef {{
  *   issuer: ERef<Issuer>;

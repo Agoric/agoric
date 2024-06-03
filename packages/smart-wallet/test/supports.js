@@ -100,12 +100,7 @@ const makeFakeBridgeManager = () =>
 export const makeMockTestSpace = async log => {
   const space = /** @type {any} */ (makePromiseSpace(log));
   /**
-   * @type {BootstrapPowers & {
-   *   consume: {
-   *     loadVat: (n: 'mints') => MintsVat;
-   *     loadCriticalVat: (n: 'mints') => MintsVat;
-   *   };
-   * }}
+   * @type {BootstrapPowers}
    */
   const { consume, produce } = space;
   const { agoricNames, agoricNamesAdmin, spaces } =

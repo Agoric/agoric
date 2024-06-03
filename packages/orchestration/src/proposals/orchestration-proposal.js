@@ -9,7 +9,6 @@ import { V as E } from '@agoric/vow/vat.js';
 /**
  * @param {BootstrapPowers & {
  *   consume: {
- *     loadCriticalVat: VatLoader<any>;
  *     portAllocator: PortAllocator;
  *   };
  *   produce: {
@@ -19,10 +18,6 @@ import { V as E } from '@agoric/vow/vat.js';
  *   };
  * }} powers
  * @param {{ options: { orchestrationRef: VatSourceRef } }} options
- *
- * @typedef {{
- *   orchestration: ERef<OrchestrationVat>;
- * }} OrchestrationVats
  */
 export const setupOrchestrationVat = async (
   {
@@ -36,7 +31,6 @@ export const setupOrchestrationVat = async (
   options,
 ) => {
   const { orchestrationRef } = options.options;
-  /** @type {OrchestrationVats} */
   const vats = {
     orchestration: E(loadCriticalVat)('orchestration', orchestrationRef),
   };

@@ -108,9 +108,7 @@ export const bridgeCoreEval = async allPowers => {
 harden(bridgeCoreEval);
 
 /**
- * @param {BootstrapPowers & {
- *   consume: { loadCriticalVat: ERef<VatLoader<ProvisioningVat>> };
- * }} powers
+ * @param {BootstrapPowers} powers
  */
 export const makeProvisioner = async ({
   consume: { clientCreator, loadCriticalVat },
@@ -302,10 +300,7 @@ export const startTimerService = async ({
 harden(startTimerService);
 
 /**
- * @param {BootDevices<ChainDevices> &
- *   BootstrapSpace & {
- *     consume: { loadCriticalVat: ERef<VatLoader<ChainStorageVat>> };
- *   }} powers
+ * @param {BootDevices<ChainDevices> & BootstrapSpace} powers
  */
 export const makeBridgeManager = async ({
   consume: { loadCriticalVat },
@@ -341,9 +336,7 @@ export const makeBridgeManager = async ({
 harden(makeBridgeManager);
 
 /**
- * @param {BootstrapSpace & {
- *   consume: { loadCriticalVat: ERef<VatLoader<ChainStorageVat>> };
- * }} powers
+ * @param {BootstrapSpace} powers
  */
 export const makeChainStorage = async ({
   consume: { loadCriticalVat, bridgeManager: bridgeManagerP },
@@ -376,9 +369,7 @@ export const makeChainStorage = async ({
 };
 
 /**
- * @param {BootstrapSpace & {
- *   consume: { loadCriticalVat: ERef<VatLoader<ChainStorageVat>> };
- * }} powers
+ * @param {BootstrapSpace} powers
  */
 export const produceHighPrioritySendersManager = async ({
   consume: { loadCriticalVat, storageBridgeManager: storageBridgeManagerP },

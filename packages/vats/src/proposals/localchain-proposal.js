@@ -5,7 +5,6 @@ import { BridgeId as BRIDGE_ID } from '@agoric/internal';
 /**
  * @param {BootstrapPowers & {
  *   consume: {
- *     loadCriticalVat: VatLoader<any>;
  *     localchainBridgeManager: import('../types').ScopedBridgeManager<'vlocalchain'>;
  *   };
  *   produce: {

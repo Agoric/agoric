@@ -77,7 +77,6 @@ export const registerNetworkProtocols = async (vats, dibcBridgeManager) => {
  * - echo port addrees: /ibc-port/custom-echo
  *
  * @param {BootstrapPowers & {
- *   consume: { loadCriticalVat: VatLoader<any> };
  *   produce: { portAllocator: Producer<any> };
  * }} powers
  * @param {object} options
