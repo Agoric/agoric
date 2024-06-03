@@ -19,7 +19,7 @@ index d24f8ca..9b9b38d 100644
      fs.writeFileSync(filePath, resolvedPrettier.format(input, { ...config, filepath: filePath }), "utf8");
 @@ -44,11 +44,11 @@ function maybeFormatFile(filePath) {
   * @param {{ granularPathspec: boolean; }} gitOpts
-  * @param {import("@lerna/child-process").ExecOpts} execOpts
+  * @param {import('@lerna/child-process').ExecOpts} execOpts
   */
 -function gitAdd(changedFiles, gitOpts, execOpts) {
 +async function gitAdd(changedFiles, gitOpts, execOpts) {

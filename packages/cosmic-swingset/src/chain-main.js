@@ -69,7 +69,7 @@ const toNumber = specimen => {
  * @param {"set" | "legacySet" | "setWithoutNotify"} setterMethod
  * @param {(value: string) => T} fromBridgeStringValue
  * @param {(value: T) => string} toBridgeStringValue
- * @returns {import("./helpers/bufferedStorage.js").KVStore<T>}
+ * @returns {import('./helpers/bufferedStorage.js').KVStore<T>}
  */
 const makePrefixedBridgeStorage = (
   call,

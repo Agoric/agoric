@@ -38,7 +38,7 @@ export const ExportManifestFileName = 'export-manifest.json';
 
 /**
  * @param {SwingStoreArtifactMode | undefined} artifactMode
- * @returns {import("@agoric/swing-store").ArtifactMode}
+ * @returns {import('@agoric/swing-store').ArtifactMode}
  */
 export const getEffectiveArtifactMode = artifactMode => {
   switch (artifactMode) {

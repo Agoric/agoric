@@ -2,7 +2,7 @@
 
 /**
  * @template {string} H - the name of the handle
- * @typedef {import("@endo/marshal").RemotableObject<H>} Handle Alias for RemotableObject
+ * @typedef {import('@endo/marshal').RemotableObject<H>} Handle Alias for RemotableObject
  */
 
 /**
@@ -24,13 +24,13 @@
  *
  * @typedef {object} InstanceRecord
  * @property {import('./zoeService/utils.js').Installation<any>} installation
- * @property {import("./zoeService/utils.js").Instance<any>} instance
+ * @property {import('./zoeService/utils.js').Instance<any>} instance
  * @property {AnyTerms} terms - contract parameters
  */
 
 /**
  * @template {AssetKind} [K=AssetKind]
- * @template {import("@endo/patterns").Key} [M=import("@endo/patterns").Key] member kind, for Amounts that have member values
+ * @template {import('@endo/patterns").Key} [M=import("@endo/patterns').Key] member kind, for Amounts that have member values
  * @typedef {object} IssuerRecord
  * @property {Brand<K>} brand
  * @property {Issuer<K, M>} issuer

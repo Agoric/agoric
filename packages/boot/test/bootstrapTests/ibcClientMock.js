@@ -12,7 +12,7 @@ import { V as E } from '@agoric/vow/vat.js';
  * @param {{
  *   portAllocator: ERef<PortAllocator>;
  * }} privateArgs
- * @param {import("@agoric/vat-data").Baggage} _baggage
+ * @param {import('@agoric/vat-data').Baggage} _baggage
  */
 export const start = async (zcf, privateArgs, _baggage) => {
   const { portAllocator } = privateArgs;

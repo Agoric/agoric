@@ -22,7 +22,7 @@
 
 const { freeze } = Object;
 
-/** @type {import("ses").Assert} */
+/** @type {import('ses').Assert} */
 const globalAssert = globalThis.assert;
 
 if (globalAssert === undefined) {
