@@ -1,7 +1,8 @@
 # Linear queue for the main branch.
 queue_rules:
   - name: main
-    conditions:
+    commit_message_template: "Merge (#{{ number }}): {{ title }}\n\n{{ body }}"
+    merge_conditions:
       - base=master
       # Require integration tests before merging only
       - or:
