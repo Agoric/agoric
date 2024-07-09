@@ -10,9 +10,11 @@ const { freeze } = Object;
 /** @param {string} path */
 const asset = path => fileURLToPath(new URL(path, import.meta.url));
 
+/** @typedef {{ path: string, make?: string }} ModdablePlatform */
+
 const ModdableSDK = {
   MODDABLE: asset('../moddable'),
-  /** @type { Record<string, { path: string, make?: string }>} */
+  /** @type { Record<string, ModdablePlatform>} */
   platforms: {
     Linux: { path: 'lin' },
     Darwin: { path: 'mac' },
@@ -225,22 +227,19 @@ const updateSubmodules = async (showEnv, { env, stdout, spawn, fs }) => {
 };
 
 /**
+ * @param {ModdablePlatform} platform
+ * @param {boolean} force
  * @param {{
- *   spawn: typeof import('child_process').spawn,
  *   fs: {
  *     existsSync: typeof import('fs').existsSync,
  *     rmdirSync: typeof import('fs').rmdirSync,
  *     readFile: typeof import('fs').promises.readFile,
  *     writeFile: typeof import('fs').promises.writeFile,
  *   },
- *   os: {
- *     type: typeof import('os').type,
- *   }
+ *   spawn: typeof import('child_process').spawn,
  * }} io
- * @param {object} [options]
- * @param {boolean} [options.forceBuild]
  */
-const makeXsnap = async ({ spawn, fs, os }, { forceBuild = false } = {}) => {
+const buildXsnap = async (platform, force, { fs, spawn }) => {
   const pjson = await fs.readFile(asset('../package.json'), 'utf-8');
   const pkg = JSON.parse(pjson);
 
@@ -255,13 +254,8 @@ const makeXsnap = async ({ spawn, fs, os }, { forceBuild = false } = {}) => {
     : '';
 
   const expectedConfigEnvs = configEnvs.concat('').join('\n');
-  if (forceBuild || existingConfigEnvs.trim() !== expectedConfigEnvs.trim()) {
+  if (force || existingConfigEnvs.trim() !== expectedConfigEnvs.trim()) {
     await fs.writeFile(configEnvFile, expectedConfigEnvs);
-  }
-
-  const platform = ModdableSDK.platforms[os.type()];
-  if (!platform) {
-    throw Error(`Unsupported OS found: ${os.type()}`);
   }
 
   const make = makeCLI(platform.make || 'make', { spawn });
@@ -307,13 +301,9 @@ async function main(args, { env, stdout, spawn, fs, os }) {
   await null;
 
   const osType = os.type();
-  const platform = {
-    Linux: 'lin',
-    Darwin: 'mac',
-    // Windows_NT: 'win', // One can dream.
-  }[osType];
-  if (platform === undefined) {
-    throw Error(`xsnap does not support platform ${osType}`);
+  const platform = ModdableSDK.platforms[osType];
+  if (!platform) {
+    throw Error(`xsnap does not support OS ${osType}`);
   }
 
   // If this is a working copy of xsnap in a checkout of agoric-sdk, we need to
@@ -343,7 +333,9 @@ async function main(args, { env, stdout, spawn, fs, os }) {
   // XXX This will need to account for the .exe extension if we recover support
   // for Windows.
   const hasBin = fs.existsSync(
-    asset(`../xsnap-native/xsnap/build/bin/${platform}/release/xsnap-worker`),
+    asset(
+      `../xsnap-native/xsnap/build/bin/${platform.path}/release/xsnap-worker`,
+    ),
   );
   let hasSource = fs.existsSync(asset('../moddable/xs/includes/xs.h'));
   const hasGit = fs.existsSync(asset('../moddable/.git'));
@@ -362,16 +354,16 @@ async function main(args, { env, stdout, spawn, fs, os }) {
     if (hasSource) {
       // Force a rebuild if for some reason the binary is out of date
       // Since the make checks may not always detect that situation
-      let forceBuild = !hasBin;
+      let force = !hasBin;
       if (hasBin) {
         const npm = makeCLI('npm', { spawn });
         await npm
           .run(['run', '-s', 'check-version'], { cwd: asset('..') })
           .catch(() => {
-            forceBuild = true;
+            force = true;
           });
       }
-      await makeXsnap({ spawn, fs, os }, { forceBuild });
+      await buildXsnap(platform, force, { spawn, fs });
     } else if (!hasBin) {
       throw Error(
         'XSnap has neither sources nor a pre-built binary. Docker? .dockerignore? npm files?',
