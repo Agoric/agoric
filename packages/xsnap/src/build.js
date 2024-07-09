@@ -313,65 +313,51 @@ async function main(args, { env, stdout, spawn, fs, os }) {
     throw Error(`xsnap does not support OS ${osType}`);
   }
 
-  // If this is a working copy of xsnap in a checkout of agoric-sdk, we need to
-  // either clone or update submodules.
-  // Otherwise, we are running from an extracted npm tarball and we should not
-  // attempt to update Git submodules and should make the binary from the
-  // published source.
-  //
-  // These steps will avoid rebuilding native xsnap in the common case for end
-  // users.
-  //
-  //                    ||      | X    || git
-  //                    || X    | X    || make
-  //                    || ---- | ---- || ----
-  // | bin | src | .git || pack | work ||
-  // | --- | --- | ---- || ---- | ---- ||
-  // |     |     |      ||      | X    ||
-  // |     |     | X    ||      |      ||
-  // |     | X   |      || X    |      ||
-  // |     | X   | X    ||      | X    ||
-  // | X   |     |      ||      |      ||
-  // | X   |     | X    ||      |      ||
-  // | X   | X   |      || X    |      ||
-  // | X   | X   | X    ||      | X    ||
-  //
-  // We build both release and debug, so checking for one should suffice.
+  // We build both release and debug executables, so checking for only the
+  // former is fine.
   // XXX This will need to account for the .exe extension if we recover support
   // for Windows.
-  const hasBin = fs.existsSync(
-    asset(
-      `../xsnap-native/xsnap/build/bin/${platform.path}/release/xsnap-worker`,
-    ),
+  const bin = asset(
+    `../xsnap-native/xsnap/build/bin/${platform.path}/release/xsnap-worker`,
   );
-  let hasSource = fs.existsSync(asset('../moddable/xs/includes/xs.h'));
+  const hasBin = fs.existsSync(bin);
+  const hasSource = fs.existsSync(asset('../moddable/xs/includes/xs.h'));
   const hasGit = fs.existsSync(asset('../moddable/.git'));
-  const isWorkingCopy = hasGit || (!hasSource && !hasBin);
-  const showEnv = args.includes('--show-env');
 
-  if (isWorkingCopy || showEnv) {
-    if (showEnv && !isWorkingCopy) {
+  // If a git submodule is present or source files and prebuilt executables are
+  // both absent, consider ourselves to be in an active git checkout (as opposed
+  // to e.g. an extracted npm tarball).
+  const isWorkingCopy = hasGit || (!hasSource && !hasBin);
+
+  // --show-env reports submodule status without making changes.
+  if (args.includes('--show-env')) {
+    if (!isWorkingCopy) {
       throw Error('XSnap requires a working copy and git to --show-env');
     }
-    await updateSubmodules(showEnv, { env, stdout, spawn, fs });
-    hasSource = true;
+    await updateSubmodules(true, { env, stdout, spawn, fs });
+    return;
   }
 
-  if (!showEnv) {
-    if (hasSource) {
-      // Force a rebuild if for some reason the binary is out of date
-      // Since the make checks may not always detect that situation
-      const npm = makeCLI('npm', { spawn });
-      const force = await (!hasBin ||
-        isRejected(
-          npm.run(['run', '-s', 'check-version'], { cwd: asset('..') }),
-        ));
-      await buildXsnap(platform, force, { spawn, fs });
-    } else if (!hasBin) {
-      throw Error(
-        'XSnap has neither sources nor a pre-built binary. Docker? .dockerignore? npm files?',
-      );
-    }
+  // Fetch/update source files via `git submodule` as appropriate.
+  if (isWorkingCopy) {
+    await updateSubmodules(false, { env, stdout, spawn, fs });
+  }
+
+  // If we now have source files, (re)build from them.
+  // Otherwise, require presence of a previously-built executable.
+  if (hasSource || isWorkingCopy) {
+    // Force a rebuild if for some reason the binary is out of date
+    // since the make checks may not always detect that situation.
+    const npm = makeCLI('npm', { spawn });
+    const force = await (!hasBin ||
+      isRejected(
+        npm.run(['run', '-s', 'check-version'], { cwd: asset('..') }),
+      ));
+    await buildXsnap(platform, force, { spawn, fs });
+  } else if (!hasBin) {
+    throw Error(
+      'XSnap has neither sources nor a pre-built binary. Docker? .dockerignore? npm files?',
+    );
   }
 }
 
