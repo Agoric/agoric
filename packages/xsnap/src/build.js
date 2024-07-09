@@ -159,64 +159,64 @@ const makeSubmodule = (path, repoUrl, { git }) => {
 };
 
 /**
- * @param {boolean} showEnv
+ * @typedef {{
+ *   url: string,
+ *   path: string,
+ *   commitHash?: string,
+ *   envPrefix: string,
+ * }} SubmoduleDescriptor
+ */
+
+/**
+ * @param {SubmoduleDescriptor[]} submodules
  * @param {{
- *   env: Record<string, string | undefined>,
- *   stdout: typeof process.stdout,
  *   spawn: typeof import('child_process').spawn,
+ *   stdout: typeof process.stdout,
+ * }} io
+ */
+const showEnv = async (submodules, { spawn, stdout }) => {
+  const git = makeCLI('git', { spawn });
+
+  await null;
+  for (const desc of submodules) {
+    const { path, envPrefix } = desc;
+    let { url, commitHash } = desc;
+    if (!commitHash) {
+      // We need to glean the commitHash and url from Git.
+      const submodule = makeSubmodule(path, '?', { git });
+      const [{ hash }, gitUrl] = await Promise.all([
+        submodule.status(),
+        submodule.config('url'),
+      ]);
+      commitHash = hash;
+      url = gitUrl;
+    }
+    stdout.write(`${envPrefix}URL=${url}\n`);
+    stdout.write(`${envPrefix}COMMIT_HASH=${commitHash}\n`);
+  }
+};
+
+/**
+ * @param {SubmoduleDescriptor[]} submodules
+ * @param {{
  *   fs: {
  *     existsSync: typeof import('fs').existsSync,
  *     rmdirSync: typeof import('fs').rmdirSync,
  *     readFile: typeof import('fs').promises.readFile,
  *   },
+ *   spawn: typeof import('child_process').spawn,
  * }} io
  */
-const updateSubmodules = async (showEnv, { env, stdout, spawn, fs }) => {
+const updateSubmodules = async (submodules, { fs, spawn }) => {
   const git = makeCLI('git', { spawn });
 
-  // When changing/adding entries here, make sure to search the whole project
-  // for `@@AGORIC_DOCKER_SUBMODULES@@`
-  const submodules = [
-    {
-      url: env.MODDABLE_URL || 'https://github.com/agoric-labs/moddable.git',
-      path: ModdableSDK.MODDABLE,
-      commitHash: env.MODDABLE_COMMIT_HASH,
-      envPrefix: 'MODDABLE_',
-    },
-    {
-      url:
-        env.XSNAP_NATIVE_URL || 'https://github.com/agoric-labs/xsnap-pub.git',
-      path: asset('../xsnap-native'),
-      commitHash: env.XSNAP_NATIVE_COMMIT_HASH,
-      envPrefix: 'XSNAP_NATIVE_',
-    },
-  ];
-
   await null;
-  if (showEnv) {
-    for (const submodule of submodules) {
-      const { path, envPrefix, commitHash } = submodule;
-      if (!commitHash) {
-        // We need to glean the commitHash and url from Git.
-        const sm = makeSubmodule(path, '?', { git });
-        const [{ hash }, url] = await Promise.all([
-          sm.status(),
-          sm.config('url'),
-        ]);
-        submodule.commitHash = hash;
-        submodule.url = url;
-      }
-      stdout.write(`${envPrefix}URL=${submodule.url}\n`);
-      stdout.write(`${envPrefix}COMMIT_HASH=${submodule.commitHash}\n`);
-    }
-    return;
-  }
-
   for (const { url, path, commitHash } of submodules) {
     const submodule = makeSubmodule(path, url, { git });
 
-    // Allow overriding of the checked-out version of the submodule.
-    if (commitHash) {
+    if (!commitHash) {
+      await submodule.init();
+    } else {
       // Do the moral equivalent of submodule update when explicitly overriding.
       try {
         fs.rmdirSync(submodule.path);
@@ -227,8 +227,6 @@ const updateSubmodules = async (showEnv, { env, stdout, spawn, fs }) => {
         await submodule.clone();
       }
       await submodule.checkout(commitHash);
-    } else {
-      await submodule.init();
     }
   }
 };
@@ -313,6 +311,24 @@ async function main(args, { env, stdout, spawn, fs, os }) {
     throw Error(`xsnap does not support OS ${osType}`);
   }
 
+  // When changing/adding entries here, make sure to search the whole project
+  // for `@@AGORIC_DOCKER_SUBMODULES@@`
+  const submodules = [
+    {
+      url: env.MODDABLE_URL || 'https://github.com/agoric-labs/moddable.git',
+      path: ModdableSDK.MODDABLE,
+      commitHash: env.MODDABLE_COMMIT_HASH,
+      envPrefix: 'MODDABLE_',
+    },
+    {
+      url:
+        env.XSNAP_NATIVE_URL || 'https://github.com/agoric-labs/xsnap-pub.git',
+      path: asset('../xsnap-native'),
+      commitHash: env.XSNAP_NATIVE_COMMIT_HASH,
+      envPrefix: 'XSNAP_NATIVE_',
+    },
+  ];
+
   // We build both release and debug executables, so checking for only the
   // former is fine.
   // XXX This will need to account for the .exe extension if we recover support
@@ -334,13 +350,13 @@ async function main(args, { env, stdout, spawn, fs, os }) {
     if (!isWorkingCopy) {
       throw Error('XSnap requires a working copy and git to --show-env');
     }
-    await updateSubmodules(true, { env, stdout, spawn, fs });
+    await showEnv(submodules, { spawn, stdout });
     return;
   }
 
   // Fetch/update source files via `git submodule` as appropriate.
   if (isWorkingCopy) {
-    await updateSubmodules(false, { env, stdout, spawn, fs });
+    await updateSubmodules(submodules, { fs, spawn });
   }
 
   // If we now have source files, (re)build from them.
