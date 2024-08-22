@@ -26,6 +26,7 @@ Then for the couple deeper packages
   yarn lerna exec --concurrency 1 --no-bail '../../../scripts/migrate-test-names.mjs'
 
 `;
+console.log(usage);
 
 const packageObj = fs.readJsonSync('package.json');
 console.log(`${chalk.bold(`Migrating test names: ${packageObj.name}`)}\n`);

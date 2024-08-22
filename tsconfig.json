@@ -25,5 +25,6 @@
   "include": [
     "eslint.config.mjs",
     "dist",
+    "scripts"
   ]
 }

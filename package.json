@@ -58,6 +58,7 @@
     "lint-fix": "yarn lerna run --no-bail lint-fix",
     "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
     "lint:packages": "yarn lerna run --no-bail lint",
+    "lint:scripts": "yarn eslint scripts/*js",
     "test": "yarn lerna run --no-bail test",
     "test:xs": "yarn workspaces foreach --all run test:xs",
     "build": "yarn workspaces foreach --all run build && scripts/agd-builder.sh stamp yarn-built",
