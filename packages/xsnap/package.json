@@ -12,11 +12,11 @@
   },
   "scripts": {
     "repl": "node src/xsrepl.js",
-    "build:bin": "if test -d ./test; then node src/build.js; else yarn build:from-env; fi",
+    "build:bin": "/bin/sh -c 'if test -d ./test; then node src/build.js; else yarn build:from-env; fi'",
     "build:env": "node src/build.js --show-env > build.env",
     "build:from-env": "{ cat build.env; echo node src/build.js; } | xargs env",
     "build": "yarn build:bin && yarn build:env",
-    "check-version": "xsnap_version=$(./scripts/get_xsnap_version.sh); if test \"${npm_package_version}\" != \"${xsnap_version}\"; then echo \"xsnap version mismatch; expected '${npm_package_version}', got '${xsnap_version}'\"; exit 1; fi",
+    "check-version": "/bin/sh -c 'if test \"${npm_package_version}\" != \"$(./scripts/get_xsnap_version.sh)\"; then echo \"xsnap version mismatch; expected '${npm_package_version}'\"; exit 1; fi'",
     "postinstall": "npm run build:from-env",
     "clean": "rm -rf xsnap-native/xsnap/build",
     "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
