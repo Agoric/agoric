@@ -38,6 +38,9 @@ RUN set -eux; \
 FROM node:18-bullseye AS cosmos-package
 ENV YARN_GLOBAL_FOLDER=/root/.yarn
 
+WORKDIR /usr/src/agoric-sdk
+COPY --link .yarnrc.yml lerna.json package.json repoconfig.sh tsconfig.json yarn.lock ./
+
 WORKDIR /usr/src/agoric-sdk/golang/cosmos
 COPY --from=cosmos-go --link /usr/src/agoric-sdk/golang/cosmos .
 COPY --link scripts /usr/src/agoric-sdk/scripts
@@ -45,10 +48,13 @@ COPY --link scripts /usr/src/agoric-sdk/scripts
 RUN corepack enable
 RUN echo unknown > git-revision.txt
 
+# We allow lockfile mutation here to avoid having to copy all the packages into this image.
+# (Yarn 4's --immutable flag seems to assume no fewer deps than the lockfile.)
+# Other tests ensure that golang/cosmos builds without mutating the lockfile.
 # XXX until https://github.com/Agoric/agoric-sdk/issues/9043, then just:
-# RUN yarn install --frozen-lockfile
+# RUN yarn install
 RUN bash -c \
-  "for i in {1..3}; do yarn install --frozen-lockfile --network-timeout 1000000 && exit 0 || (echo retrying; sleep 15;) done; exit 1"
+  "for i in {1..3}; do yarn install --network-timeout 1000000 && exit 0 || (echo retrying; sleep 15;) done; exit 1"
 RUN yarn build:gyp
 
 # Remove dev dependencies.
