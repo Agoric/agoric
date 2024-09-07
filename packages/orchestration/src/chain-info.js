@@ -9,8 +9,9 @@ import {
 import fetchedChainInfo from './fetched-chain-info.js'; // Refresh with scripts/refresh-chain-info.ts
 import { CosmosAssetInfoShape, CosmosChainInfoShape } from './typeGuards.js';
 
-/** @import {CosmosAssetInfo, CosmosChainInfo, EthChainInfo, IBCConnectionInfo} from './types.js'; */
+/** @import {CosmosChainInfo, EthChainInfo, IBCConnectionInfo} from './types.js'; */
 /** @import {NameAdmin} from '@agoric/vats'; */
+/** @import {Asset as CosmosAssetInfo} from '@chain-registry/types'; */
 
 /** @typedef {CosmosChainInfo | EthChainInfo} ChainInfo */
 
@@ -72,8 +73,6 @@ const knownChains = /** @satisfies {Record<string, ChainInfo>} */ (
 /** @typedef {typeof knownChains} KnownChains */
 
 /**
- * TODO(#9572): include this in registerChain
- *
  * @param {ERef<NameAdmin>} agoricNamesAdmin
  * @param {string} name
  * @param {CosmosAssetInfo[]} assets
@@ -112,6 +111,11 @@ export const registerChain = async (
       .update(name, vertex)
       .then(() => log(`registered agoricNames chain.${name}`)),
   ];
+
+  chainInfo.assetList &&
+    promises.push(
+      registerChainAssets(agoricNamesAdmin, name, chainInfo.assetList.assets),
+    );
 
   const { chainId } = chainInfo;
   for (const [counterChainId, connInfo] of Object.entries(connections)) {

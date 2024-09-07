@@ -84,7 +84,10 @@ function toConnectionEntry(ibcInfo, name, chainInfo) {
 /**
  * Converts the given chain info to our local config format
  *
- * @param {Pick<ChainRegistryClient, 'chains' | 'ibcData'>} registry
+ * @param {Pick<
+ *   ChainRegistryClient,
+ *   'chains' | 'ibcData' | 'getChainAssetList'
+ * >} registry
  */
 export const convertChainInfo = async registry => {
   /** @type {Record<string, CosmosChainInfo>} */
@@ -112,6 +115,9 @@ export const convertChainInfo = async registry => {
 
   const chainNames = registry.chains.map(c => c.chain_name).sort();
 
+  // eslint-disable-next-line no-nested-ternary
+  const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+
   // iterate this after chainInfo is filled out
   for (const name of chainNames) {
     console.log('processing connections', name);
@@ -121,9 +127,10 @@ export const convertChainInfo = async registry => {
       ibcData
         .map(datum => toConnectionEntry(datum, name, chainInfo))
         // sort alphabetically for consistency
-        .sort(([a], [b]) => (a && b ? a.localeCompare(b) : 0)),
+        .sort(([a], [b]) => (a && b ? cmp(a, b) : 0)),
     );
-    chainInfo[name] = { ...chainInfo[name], connections };
+    const assetList = registry.getChainAssetList(name);
+    chainInfo[name] = { ...chainInfo[name], connections, assetList };
   }
 
   // return object with insertion in alphabetical order of chain name

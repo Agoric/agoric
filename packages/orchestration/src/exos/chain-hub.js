@@ -10,7 +10,8 @@ import { CosmosChainInfoShape, IBCConnectionInfoShape } from '../typeGuards.js';
 /**
  * @import {NameHub} from '@agoric/vats';
  * @import {Vow, VowTools} from '@agoric/vow';
- * @import {CosmosAssetInfo, CosmosChainInfo, IBCConnectionInfo} from '../cosmos-api.js';
+ * @import {Asset as CosmosAssetInfo} from '@chain-registry/types';
+ * @import {CosmosChainInfo, IBCConnectionInfo} from '../cosmos-api.js';
  * @import {ChainInfo, KnownChains} from '../chain-info.js';
  * @import {Denom} from '../orchestration-api.js';
  * @import {Remote} from '@agoric/internal';

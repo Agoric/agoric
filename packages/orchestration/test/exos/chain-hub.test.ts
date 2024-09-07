@@ -18,7 +18,7 @@ import type {
   CosmosChainInfo,
   IBCConnectionInfo,
 } from '../../src/cosmos-api.js';
-import { assets as assetFixture } from '../assets.fixture.js';
+import fetchedChainInfo from '../../src/fetched-chain-info.js';
 
 const connection = {
   id: 'connection-1',
@@ -153,7 +153,11 @@ test('toward asset info in agoricNames (#9572)', async t => {
     chainHub.registerChain(name, { chainId: name });
   }
 
-  await registerChainAssets(nameAdmin, 'cosmoshub', assetFixture.cosmoshub);
+  await registerChainAssets(
+    nameAdmin,
+    'cosmoshub',
+    fetchedChainInfo.cosmoshub.assetList.assets,
+  );
   const details = await E(E(nameAdmin).readonly()).lookup(
     'chainAssets',
     'cosmoshub',
