@@ -82,14 +82,21 @@ function makeConsole(tagOrTagCreator) {
 }
 
 /**
- * @param {unknown} e
- * @param {Promise} pr
+ * Add a handler for unhandledRejection that logs to the console.
  */
-function unhandledRejectionHandler(e, pr) {
-  // Don't trigger sensitive hosts (like AVA).
-  pr.catch(() => {});
-  console.error('🤞 UnhandledPromiseRejection:', e);
-}
+const logUnhandledRejections = () => {
+  /**
+   * @param {unknown} e
+   * @param {Promise} pr
+   */
+  function loggingHandler(e, pr) {
+    // Don't trigger sensitive hosts (like AVA).
+    pr.catch(() => {});
+    console.error('🤞 UnhandledPromiseRejection:', e);
+  }
+
+  process.on('unhandledRejection', loggingHandler);
+};
 
 /**
  * @param {SwingStoreKernelStorage} kernelStorage
@@ -195,18 +202,7 @@ export async function makeSwingsetController(
   const { kernelBundle = await buildKernelBundle() } = runtimeOptions;
   writeSlogObject({ type: 'bundle-kernel-finish' });
 
-  // FIXME: Put this somewhere better.
-  const handlers = process.listeners('unhandledRejection');
-  let haveUnhandledRejectionHandler = false;
-  for (const handler of handlers) {
-    if (handler === unhandledRejectionHandler) {
-      haveUnhandledRejectionHandler = true;
-      break;
-    }
-  }
-  if (!haveUnhandledRejectionHandler) {
-    process.on('unhandledRejection', unhandledRejectionHandler);
-  }
+  logUnhandledRejections();
 
   function kernelRequire(what) {
     Fail`kernelRequire unprepared to satisfy require(${what})`;
@@ -221,6 +217,9 @@ export async function makeSwingsetController(
       require: kernelRequire,
       URL: globalThis.Base64, // Unavailable only on XSnap
       Base64: globalThis.Base64, // Available only on XSnap
+      process: {
+        env,
+      },
     },
   });
   const buildKernel = kernelNS.default;

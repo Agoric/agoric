@@ -101,7 +101,7 @@ const getHostKey = path => `host.${path}`;
  * @param {SwingStoreKernelStorage} kernelStorage
  * @param {string | (() => string | Promise<string>)} vatconfig absolute path or thunk
  * @param {unknown} bootstrapArgs JSON-serializable data
- * @param {{}} env
+ * @param {Record<string, string | undefined>} env
  * @param {*} options
  */
 export async function buildSwingset(
