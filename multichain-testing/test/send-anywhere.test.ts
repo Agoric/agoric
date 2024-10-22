@@ -1,17 +1,13 @@
 import anyTest from '@endo/ses-ava/prepare-endo.js';
 import type { TestFn } from 'ava';
 import { makeDoOffer } from '../tools/e2e-tools.js';
-import {
-  commonSetup,
-  SetupContextWithWallets,
-  chainConfig,
-} from './support.js';
+import { commonSetup, type SetupContext, chainConfig } from './support.js';
 import { createWallet } from '../tools/wallet.js';
 import { AmountMath } from '@agoric/ertp';
 import { makeQueryClient } from '../tools/query.js';
 import type { Amount } from '@agoric/ertp/src/types.js';
 
-const test = anyTest as TestFn<SetupContextWithWallets>;
+const test = anyTest as TestFn<SetupContext>;
 
 const accounts = ['osmosis1', 'osmosis2', 'cosmoshub1', 'cosmoshub2'];
 
@@ -20,17 +16,14 @@ const contractBuilder =
   '../packages/builders/scripts/testing/start-send-anywhere.js';
 
 test.before(async t => {
-  const { deleteTestKeys, setupTestKeys, ...rest } = await commonSetup(t);
-  deleteTestKeys(accounts).catch();
-  const wallets = await setupTestKeys(accounts);
-  t.context = { ...rest, wallets, deleteTestKeys };
-  const { startContract } = rest;
+  t.context = await commonSetup(t, accounts);
+  const { startContract } = t.context;
   await startContract(contractName, contractBuilder);
 });
 
 test.after(async t => {
   const { deleteTestKeys } = t.context;
-  deleteTestKeys(accounts);
+  await deleteTestKeys(accounts);
 });
 
 const sendAnywhereScenario = test.macro({

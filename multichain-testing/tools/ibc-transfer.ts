@@ -2,7 +2,6 @@ import { ExecutionContext } from 'ava';
 import type { StdFee } from '@cosmjs/amino';
 import { coins } from '@cosmjs/proto-signing';
 import { SigningStargateClient } from '@cosmjs/stargate';
-import { useChain } from 'starshipjs';
 import type {
   CosmosChainInfo,
   DenomAmount,
@@ -16,6 +15,7 @@ import {
 import { MsgTransfer } from '@agoric/cosmic-proto/ibc/applications/transfer/v1/tx.js';
 import { createWallet } from './wallet.js';
 import chainInfo from '../starship-chain-info.js';
+import type { UseChainFn } from './registry.js';
 
 interface MakeFeeObjectArgs {
   denom?: string;
@@ -61,6 +61,7 @@ export const makeIBCTransferMsg = (
   destination: SimpleChainAddress,
   sender: SimpleChainAddress,
   currentTime: number,
+  useChain: UseChainFn,
   opts: IBCMsgTransferOptions = {},
 ) => {
   const { timeoutHeight, timeoutTimestamp, memo = '' } = opts;
@@ -119,6 +120,7 @@ export const makeIBCTransferMsg = (
 export const createFundedWalletAndClient = async (
   t: ExecutionContext,
   chainName: string,
+  useChain: UseChainFn,
 ) => {
   const { chain, creditFromFaucet, getRpcEndpoint } = useChain(chainName);
   const wallet = await createWallet(chain.bech32_prefix);

@@ -10,7 +10,7 @@ import { toRequestQueryJson, typedJson } from '@agoric/cosmic-proto';
 import { decodeBase64 } from '@endo/base64';
 import {
   commonSetup,
-  SetupContextWithWallets,
+  type SetupContext,
   chainConfig,
   FAUCET_POUR,
 } from './support.js';
@@ -18,7 +18,7 @@ import { makeDoOffer } from '../tools/e2e-tools.js';
 import { createWallet } from '../tools/wallet.js';
 import { makeQueryClient } from '../tools/query.js';
 
-const test = anyTest as TestFn<SetupContextWithWallets>;
+const test = anyTest as TestFn<SetupContext>;
 
 const accounts = ['osmosis', 'cosmoshub', 'agoric'];
 
@@ -27,17 +27,14 @@ const contractBuilder =
   '../packages/builders/scripts/testing/start-query-flows.js';
 
 test.before(async t => {
-  const { deleteTestKeys, setupTestKeys, ...rest } = await commonSetup(t);
-  deleteTestKeys(accounts).catch();
-  const wallets = await setupTestKeys(accounts);
-  t.context = { ...rest, wallets, deleteTestKeys };
-  const { startContract } = rest;
+  t.context = await commonSetup(t, accounts);
+  const { startContract } = t.context;
   await startContract(contractName, contractBuilder);
 });
 
 test.after(async t => {
   const { deleteTestKeys } = t.context;
-  deleteTestKeys(accounts);
+  await deleteTestKeys(accounts);
 });
 
 const queryICQChain = test.macro({

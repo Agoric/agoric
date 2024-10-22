@@ -26,7 +26,7 @@ const retryUntilCondition = async <T>(
   condition: (result: T) => boolean,
   message: string,
   {
-    maxRetries = 6,
+    maxRetries = 8,
     retryIntervalMs = 3500,
     log = () => {},
     setTimeout = ambientSetTimeout,

@@ -1,0 +1,97 @@
+name: Multichain E2E Workflow Template
+
+on:
+  workflow_call:
+    inputs:
+      config:
+        required: true
+        type: string
+      relayer-type:
+        required: true
+        type: string
+
+jobs:
+  multichain-e2e:
+    runs-on: ubuntu-latest-16core
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+          path: ./agoric-sdk
+      - uses: ./agoric-sdk/.github/actions/restore-node
+        with:
+          node-version: 18.x
+          path: ./agoric-sdk
+
+      - name: yarn link
+        run: |
+          yarn link-cli ~/bin/agoric
+          echo "/home/runner/bin" >> $GITHUB_PATH
+        working-directory: ./agoric-sdk
+
+      - name: Enable Corepack
+        run: corepack enable
+        working-directory: ./agoric-sdk/multichain-testing
+
+      - name: Install @agoric/multichain-testing deps
+        run: yarn install
+        working-directory: ./agoric-sdk/multichain-testing
+
+      - name: Lint @agoric/multichain-testing
+        run: yarn lint
+        working-directory: ./agoric-sdk/multichain-testing
+
+      - name: Setup Starship Infrastructure
+        id: starship-infra
+        uses: cosmology-tech/starship-action@0.5.7
+        with:
+          # uses ghcr.io/agoric/agoric-sdk:dev image (latest master)
+          config: ./agoric-sdk/multichain-testing/${{ inputs.config }}
+          namespace: agoric-multichain-${{ inputs.relayer-type }}
+          timeout: 30m
+
+      - name: Fund Provision Pool
+        run: |
+          kubectl config set-context --current --namespace=agoric-multichain-${{ inputs.relayer-type }}
+          kubectl get pods
+          make fund-provision-pool
+        working-directory: ./agoric-sdk/multichain-testing
+
+      - name: Ensure ports are forwarded
+        run: |
+          curl --fail --retry 3 --retry-delay 10 http://localhost:26657/status || (echo "agoriclocal node is available")
+          curl --fail --retry 3 --retry-delay 10 http://localhost:8081/chains/agoriclocal || (echo "agoriclocal URL check failed")
+          curl --fail --retry 3 --retry-delay 10 http://localhost:8081/chains/osmosislocal || (echo "osmosislocal URL check failed")
+          curl --fail --retry 3 --retry-delay 10 http://localhost:8081/chains/gaialocal || (echo "gaialocal URL check failed")
+
+      - name: Override Chain Registry
+        run: make override-chain-registry
+        working-directory: ./agoric-sdk/multichain-testing
+
+      - name: Run @agoric/multichain-testing E2E Tests
+        run: yarn test
+        working-directory: ./agoric-sdk/multichain-testing
+        env:
+          FILE: ${{ inputs.config }}
+          RELAYER_TYPE: ${{ inputs.relayer-type }}
+
+      - name: Capture and print agoric validator logs
+        if: always()
+        run: kubectl logs agoriclocal-genesis-0 --container=validator || true
+        working-directory: ./agoric-sdk/multichain-testing
+
+      - name: Capture and print agoric-osmosis relayer logs
+        if: always()
+        run: kubectl logs ${{ inputs.relayer-type }}-agoric-osmosis-0 --container=relayer || true
+        working-directory: ./agoric-sdk/multichain-testing
+
+      - name: Capture and print agoric-cosmos relayer logs
+        if: always()
+        run: kubectl logs ${{ inputs.relayer-type }}-agoric-gaia-0 --container=relayer || true
+        working-directory: ./agoric-sdk/multichain-testing
+
+      - name: Capture and print osmosis-cosmos relayer logs
+        if: always()
+        run: kubectl logs ${{ inputs.relayer-type }}-osmosis-gaia-0 --container=relayer || true
+        working-directory: ./agoric-sdk/multichain-testing

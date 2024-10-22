@@ -1,13 +1,9 @@
 import anyTest from '@endo/ses-ava/prepare-endo.js';
 import type { TestFn } from 'ava';
 import { makeDoOffer } from '../tools/e2e-tools.js';
-import {
-  commonSetup,
-  SetupContextWithWallets,
-  chainConfig,
-} from './support.js';
+import { commonSetup, type SetupContext, chainConfig } from './support.js';
 
-const test = anyTest as TestFn<SetupContextWithWallets>;
+const test = anyTest as TestFn<SetupContext>;
 
 const accounts = ['agoric', 'cosmoshub', 'osmosis']; // one account for each scenario
 
@@ -16,17 +12,14 @@ const contractBuilder =
   '../packages/builders/scripts/orchestration/init-basic-flows.js';
 
 test.before(async t => {
-  const { deleteTestKeys, setupTestKeys, ...rest } = await commonSetup(t);
-  deleteTestKeys(accounts).catch();
-  const wallets = await setupTestKeys(accounts);
-  t.context = { ...rest, wallets, deleteTestKeys };
-  const { startContract } = rest;
+  t.context = await commonSetup(t, accounts);
+  const { startContract } = t.context;
   await startContract(contractName, contractBuilder);
 });
 
 test.after(async t => {
   const { deleteTestKeys } = t.context;
-  deleteTestKeys(accounts);
+  await deleteTestKeys(accounts);
 });
 
 const makeAccountScenario = test.macro({

@@ -1,31 +1,22 @@
 import anyTest from '@endo/ses-ava/prepare-endo.js';
 import type { TestFn } from 'ava';
-import {
-  commonSetup,
-  SetupContextWithWallets,
-  FAUCET_POUR,
-} from './support.js';
+import { commonSetup, type SetupContext, FAUCET_POUR } from './support.js';
 import { makeDoOffer } from '../tools/e2e-tools.js';
 import { makeQueryClient } from '../tools/query.js';
 import { sleep } from '../tools/sleep.js';
 import { STAKING_REWARDS_TIMEOUT } from './config.js';
 
-const test = anyTest as TestFn<SetupContextWithWallets>;
+const test = anyTest as TestFn<SetupContext>;
 
 const accounts = ['user1', 'user2'];
 
 test.before(async t => {
-  const { deleteTestKeys, setupTestKeys, ...rest } = await commonSetup(t);
-  // XXX not necessary for CI, but helpful for unexpected failures in
-  // active development (test.after cleanup doesn't run).
-  deleteTestKeys(accounts).catch();
-  const wallets = await setupTestKeys(accounts);
-  t.context = { ...rest, wallets, deleteTestKeys };
+  t.context = await commonSetup(t, accounts);
 });
 
 test.after(async t => {
   const { deleteTestKeys } = t.context;
-  deleteTestKeys(accounts);
+  await deleteTestKeys(accounts);
 });
 
 interface StakeIcaScenario {

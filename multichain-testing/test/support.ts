@@ -5,11 +5,15 @@ import fse from 'fs-extra';
 import childProcess from 'node:child_process';
 import { makeAgdTools } from '../tools/agd-tools.js';
 import { type E2ETools } from '../tools/e2e-tools.js';
-import { makeGetFile, makeSetupRegistry } from '../tools/registry.js';
+import {
+  makeGetFile,
+  makeSetupRegistry,
+  UseChainFn,
+} from '../tools/registry.js';
 import { generateMnemonic } from '../tools/wallet.js';
 import { makeRetryUntilCondition } from '../tools/sleep.js';
 import { makeDeployBuilder } from '../tools/deploy.js';
-import { makeHermes } from '../tools/hermes-tools.js';
+import { makeRelayer } from '../tools/relayer-tools.js';
 
 export const FAUCET_POUR = 10_000n * 1_000_000n;
 
@@ -29,7 +33,7 @@ export const chainConfig: Record<string, { expectedAddressPrefix: string }> = {
 } as const;
 
 const makeKeyring = async (
-  e2eTools: Pick<E2ETools, 'addKey' | 'deleteKey'>,
+  e2eTools: Pick<E2ETools, 'addKey' | 'deleteKey' | 'listKeys'>,
 ) => {
   let _keys = ['user1'];
   const setupTestKeys = async (keys = ['user1']) => {
@@ -43,18 +47,34 @@ const makeKeyring = async (
     return wallets;
   };
 
-  const deleteTestKeys = (keys: string[] = []) =>
-    Promise.allSettled(
-      Array.from(new Set([...keys, ..._keys])).map(key =>
-        e2eTools.deleteKey(key).catch(),
-      ),
+  const deleteTestKeys = async (keys: string[] = []) => {
+    const activeKeys = await e2eTools.listKeys();
+    const keysToDelete = Array.from(new Set([...keys, ..._keys])).filter(key =>
+      activeKeys.some(activeKey => activeKey.name === key),
+    );
+    return Promise.allSettled(
+      keysToDelete.map(key => e2eTools.deleteKey(key).catch()),
     ).catch();
+  };
 
   return { setupTestKeys, deleteTestKeys };
 };
 
-export const commonSetup = async (t: ExecutionContext) => {
-  const { useChain } = await setupRegistry();
+export const commonSetup = async (
+  t: ExecutionContext,
+  accounts: string[] = [],
+) => {
+  let useChain: UseChainFn;
+  try {
+    const registry = await setupRegistry({
+      config: `../${process.env.FILE || 'config.yaml'}`,
+    });
+    useChain = registry.useChain;
+  } catch (e) {
+    console.error('setupRegistry failed', e);
+    throw e;
+  }
+
   const tools = await makeAgdTools(t.log, childProcess);
   const keyring = await makeKeyring(tools);
   const deployBuilder = makeDeployBuilder(tools, fse.readJSON, execa);
@@ -62,7 +82,7 @@ export const commonSetup = async (t: ExecutionContext) => {
     log: t.log,
     setTimeout: globalThis.setTimeout,
   });
-  const hermes = makeHermes(childProcess);
+  const relayer = makeRelayer(childProcess);
 
   /**
    * Starts a contract if instance not found. Takes care of installing
@@ -91,18 +111,21 @@ export const commonSetup = async (t: ExecutionContext) => {
     );
   };
 
+  // XXX not necessary for CI, but helpful for unexpected failures in
+  // active development (test.after cleanup doesn't run).
+  await keyring.deleteTestKeys(accounts);
+  const wallets = await keyring.setupTestKeys(accounts);
+
   return {
     useChain,
     ...tools,
     ...keyring,
     retryUntilCondition,
     deployBuilder,
-    hermes,
+    relayer,
     startContract,
+    wallets,
   };
 };
 
 export type SetupContext = Awaited<ReturnType<typeof commonSetup>>;
-export type SetupContextWithWallets = Omit<SetupContext, 'setupTestKeys'> & {
-  wallets: Record<string, string>;
-};

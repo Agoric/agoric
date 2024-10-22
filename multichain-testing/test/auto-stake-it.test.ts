@@ -1,7 +1,6 @@
 import type { CosmosChainInfo } from '@agoric/orchestration';
 import anyTest from '@endo/ses-ava/prepare-endo.js';
 import type { ExecutionContext, TestFn } from 'ava';
-import { useChain } from 'starshipjs';
 import chainInfo from '../starship-chain-info.js';
 import { makeDoOffer } from '../tools/e2e-tools.js';
 import {
@@ -9,11 +8,11 @@ import {
   makeIBCTransferMsg,
 } from '../tools/ibc-transfer.js';
 import { makeQueryClient } from '../tools/query.js';
-import type { SetupContextWithWallets } from './support.js';
+import type { SetupContext } from './support.js';
 import { chainConfig, commonSetup } from './support.js';
 import { AUTO_STAKE_IT_DELEGATIONS_TIMEOUT } from './config.js';
 
-const test = anyTest as TestFn<SetupContextWithWallets>;
+const test = anyTest as TestFn<SetupContext>;
 
 const accounts = ['agoricAdmin', 'cosmoshub', 'osmosis'];
 
@@ -22,21 +21,18 @@ const contractBuilder =
   '../packages/builders/scripts/testing/start-auto-stake-it.js';
 
 test.before(async t => {
-  const { deleteTestKeys, setupTestKeys, ...rest } = await commonSetup(t);
-  deleteTestKeys(accounts).catch();
-  const wallets = await setupTestKeys(accounts);
-  t.context = { ...rest, wallets, deleteTestKeys };
-  const { startContract } = rest;
+  t.context = await commonSetup(t, accounts);
+  const { startContract } = t.context;
   await startContract(contractName, contractBuilder);
 });
 
 test.after(async t => {
   const { deleteTestKeys } = t.context;
-  deleteTestKeys(accounts);
+  await deleteTestKeys(accounts);
 });
 
-const makeFundAndTransfer = (t: ExecutionContext<SetupContextWithWallets>) => {
-  const { retryUntilCondition } = t.context;
+const makeFundAndTransfer = (t: ExecutionContext<SetupContext>) => {
+  const { retryUntilCondition, useChain } = t.context;
   return async (chainName: string, agoricAddr: string, amount = 100n) => {
     const { staking } = useChain(chainName).chainInfo.chain;
     const denom = staking?.staking_tokens?.[0].denom;
@@ -45,6 +41,7 @@ const makeFundAndTransfer = (t: ExecutionContext<SetupContextWithWallets>) => {
     const { client, address, wallet } = await createFundedWalletAndClient(
       t,
       chainName,
+      useChain,
     );
     const balancesResult = await retryUntilCondition(
       () => client.getAllBalances(address),
@@ -59,6 +56,7 @@ const makeFundAndTransfer = (t: ExecutionContext<SetupContextWithWallets>) => {
       { address: agoricAddr, chainName: 'agoric' },
       { address: address, chainName },
       Date.now(),
+      useChain,
     );
     console.log('Transfer Args:', transferArgs);
     // TODO #9200 `sendIbcTokens` does not support `memo`
@@ -89,6 +87,7 @@ const autoStakeItScenario = test.macro({
       vstorageClient,
       provisionSmartWallet,
       retryUntilCondition,
+      useChain,
     } = t.context;
 
     const fundAndTransfer = makeFundAndTransfer(t);

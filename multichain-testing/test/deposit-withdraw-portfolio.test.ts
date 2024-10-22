@@ -3,9 +3,9 @@ import type { TestFn } from 'ava';
 import { AmountMath } from '@agoric/ertp';
 import { makeDoOffer } from '../tools/e2e-tools.js';
 import { makeQueryClient } from '../tools/query.js';
-import { commonSetup, SetupContextWithWallets } from './support.js';
+import { commonSetup, type SetupContext } from './support.js';
 
-const test = anyTest as TestFn<SetupContextWithWallets>;
+const test = anyTest as TestFn<SetupContext>;
 
 const accounts = ['cosmoshub', 'osmosis'];
 
@@ -14,17 +14,14 @@ const contractBuilder =
   '../packages/builders/scripts/orchestration/init-basic-flows.js';
 
 test.before(async t => {
-  const { deleteTestKeys, setupTestKeys, ...rest } = await commonSetup(t);
-  deleteTestKeys(accounts).catch();
-  const wallets = await setupTestKeys(accounts);
-  t.context = { ...rest, wallets, deleteTestKeys };
-  const { startContract } = rest;
+  t.context = await commonSetup(t, accounts);
+  const { startContract } = t.context;
   await startContract(contractName, contractBuilder);
 });
 
 test.after(async t => {
   const { deleteTestKeys } = t.context;
-  deleteTestKeys(accounts);
+  await deleteTestKeys(accounts);
 });
 
 const portfolioAccountScenario = test.macro({

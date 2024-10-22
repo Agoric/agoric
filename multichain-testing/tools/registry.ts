@@ -7,6 +7,10 @@ export const makeGetFile =
 
 type GetFilePathFn = ReturnType<typeof makeGetFile>;
 
+export type UseChainFn = Awaited<
+  ReturnType<ReturnType<typeof makeSetupRegistry>>
+>['useChain'];
+
 export const makeSetupRegistry = (getFile: GetFilePathFn) => {
   let initialized = false;
   /**

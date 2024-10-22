@@ -17,7 +17,7 @@
   },
   "packageManager": "yarn@4.1.1",
   "devDependencies": {
-    "@agoric/cosmic-proto": "0.4.1-dev-08f8549.0",
+    "@agoric/cosmic-proto": "0.4.1-dev-5b3e4d0.0",
     "@cosmjs/crypto": "^0.32.4",
     "@cosmjs/proto-signing": "^0.32.4",
     "@cosmjs/stargate": "^0.32.4",

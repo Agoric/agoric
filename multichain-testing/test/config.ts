@@ -41,3 +41,8 @@ export const MAKE_ACCOUNT_AND_QUERY_BALANCE_TIMEOUT: RetryOptions = {
   retryIntervalMs: 5000,
   maxRetries: 24,
 };
+
+export const TWO_MINUTES: RetryOptions = {
+  retryIntervalMs: 5000,
+  maxRetries: 24,
+};

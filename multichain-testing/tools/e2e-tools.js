@@ -536,6 +536,7 @@ export const makeE2ETools = async (
       ),
     /** @param {string} name */
     deleteKey: async name => agd.keys.delete(name),
+    listKeys: async () => agd.keys.list(),
     copyFiles,
   };
 };

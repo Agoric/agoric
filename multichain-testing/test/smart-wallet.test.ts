@@ -1,14 +1,14 @@
 import anyTest from '@endo/ses-ava/prepare-endo.js';
 import type { TestFn } from 'ava';
 import { makeQueryClient } from '../tools/query.js';
-import { commonSetup, SetupContextWithWallets } from './support.js';
+import { commonSetup, type SetupContext } from './support.js';
 
-const test = anyTest as TestFn<SetupContextWithWallets>;
+const test = anyTest as TestFn<SetupContext>;
+
+const accounts = ['user1'];
 
 test.before(async t => {
-  const { setupTestKeys, ...rest } = await commonSetup(t);
-  const wallets = await setupTestKeys();
-  t.context = { ...rest, wallets };
+  t.context = await commonSetup(t, accounts);
 });
 
 test.after(async t => {

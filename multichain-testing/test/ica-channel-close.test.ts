@@ -4,16 +4,14 @@ import type { CosmosOrchestrationAccountStorageState } from '@agoric/orchestrati
 import type { IdentifiedChannelSDKType } from '@agoric/cosmic-proto/ibc/core/channel/v1/channel.js';
 import type { IBCChannelID, IBCPortID } from '@agoric/vats';
 import { makeDoOffer } from '../tools/e2e-tools.js';
-import {
-  commonSetup,
-  SetupContextWithWallets,
-  chainConfig,
-} from './support.js';
+import { commonSetup, type SetupContext, chainConfig } from './support.js';
 import { makeQueryClient } from '../tools/query.js';
 import { parseLocalAddress, parseRemoteAddress } from '../tools/address.js';
 import chainInfo from '../starship-chain-info.js';
+import { TWO_MINUTES } from './config.js';
+import { sleep } from '../tools/sleep.js';
 
-const test = anyTest as TestFn<SetupContextWithWallets>;
+const test = anyTest as TestFn<SetupContext>;
 
 const accounts = ['cosmoshub', 'osmosis'];
 
@@ -22,17 +20,14 @@ const contractBuilder =
   '../packages/builders/scripts/orchestration/init-basic-flows.js';
 
 test.before(async t => {
-  const { deleteTestKeys, setupTestKeys, ...rest } = await commonSetup(t);
-  deleteTestKeys(accounts).catch();
-  const wallets = await setupTestKeys(accounts);
-  t.context = { ...rest, wallets, deleteTestKeys };
-  const { startContract } = rest;
+  t.context = await commonSetup(t, accounts);
+  const { startContract } = t.context;
   await startContract(contractName, contractBuilder);
 });
 
 test.after(async t => {
   const { deleteTestKeys } = t.context;
-  deleteTestKeys(accounts);
+  await deleteTestKeys(accounts);
 });
 
 // XXX until https://github.com/Agoric/agoric-sdk/issues/9066,
@@ -182,6 +177,7 @@ const intentionalCloseAccountScenario = test.macro({
       () => remoteQueryClient.queryChannels(),
       ({ channels }) => !!findNewChannel(channels, { rPortID, lPortID }),
       `ICA channel is reopened on ${chainName} Host`,
+      TWO_MINUTES,
     );
     const newChannel = findNewChannel(channels, { rPortID, lPortID });
     t.log('New Channel after Reactivate', newChannel);
@@ -217,7 +213,7 @@ const channelCloseInitScenario = test.macro({
       vstorageClient,
       retryUntilCondition,
       useChain,
-      hermes,
+      relayer,
     } = t.context;
 
     // make an account so there's an ICA channel we can attempt to close
@@ -245,6 +241,7 @@ const channelCloseInitScenario = test.macro({
       ({ offerToPublicSubscriberPaths }) =>
         Object.fromEntries(offerToPublicSubscriberPaths)[offerId],
       `${offerId} continuing invitation is in vstorage`,
+      TWO_MINUTES,
     );
     const offerToPublicSubscriberMap = Object.fromEntries(
       currentWalletRecord.offerToPublicSubscriberPaths,
@@ -280,17 +277,20 @@ const channelCloseInitScenario = test.macro({
     console.log(
       `Initiating channelCloseInit for dst: ${JSON.stringify(dst)} src: ${JSON.stringify(src)}`,
     );
-    t.throws(
-      () => hermes.channelCloseInit(chainName, dst, src),
-      { message: /Command failed/ },
-      'hermes channelCloseInit failed from agoric side for ICA',
-    );
-    t.throws(
-      () => hermes.channelCloseInit(chainName, src, dst),
-      { message: /Command failed/ },
-      `hermes channelCloseInit failed from ${chainName} side for ICA`,
-    );
-
+    try {
+      t.log('relayer channelCloseInit failed from agoric side for ICA');
+      relayer.channelCloseInit(chainName, dst, src);
+    } catch (e) {
+      t.log(e); // hermes relayer throws, but go-relayer does not
+    }
+    try {
+      t.log(`relayer channelCloseInit failed from ${chainName} side for ICA`);
+      relayer.channelCloseInit(chainName, src, dst);
+    } catch (e) {
+      t.log(e); // hermes relayer throws, but go-relayer does not
+    }
+    t.log('Sleeping 10 seconds for potential channel closure to propagate');
+    await sleep(10000);
     const remoteQueryClient = makeQueryClient(
       await useChain(chainName).getRestEndpoint(),
     );
@@ -298,7 +298,7 @@ const channelCloseInitScenario = test.macro({
       () => remoteQueryClient.queryChannel(rPortID, rChannelID),
       // @ts-expect-error ChannelSDKType.state is a string not a number
       ({ channel }) => channel?.state === 'STATE_OPEN',
-      'Hermes closeChannelInit failed so ICA channel is still open',
+      'Relayer closeChannelInit failed so ICA channel is still open',
     );
     t.log(channel);
     t.is(
@@ -328,26 +328,30 @@ const channelCloseInitScenario = test.macro({
         portID: 'transfer',
         connectionID: rConnectionID,
       };
-      t.throws(
-        () =>
-          hermes.channelCloseInit(
-            chainName,
-            dstTransferChannel,
-            srcTransferChannel,
-          ),
-        { message: /Command failed/ },
-        'hermes channelCloseInit failed from agoric side for transfer',
-      );
-      t.throws(
-        () =>
-          hermes.channelCloseInit(
-            chainName,
-            srcTransferChannel,
-            dstTransferChannel,
-          ),
-        { message: /Command failed/ },
-        `hermes channelCloseInit failed from ${chainName} side for transfer`,
-      );
+      try {
+        t.log('relayer channelCloseInit failed from agoric side for transfer');
+        relayer.channelCloseInit(
+          chainName,
+          dstTransferChannel,
+          srcTransferChannel,
+        );
+      } catch (e) {
+        t.log(e); // hermes relayer throws, but go-relayer does not
+      }
+      try {
+        t.log(
+          `relayer channelCloseInit failed from ${chainName} side for transfer`,
+        );
+        relayer.channelCloseInit(
+          chainName,
+          srcTransferChannel,
+          dstTransferChannel,
+        );
+      } catch (e) {
+        t.log(e); // hermes relayer throws, but go-relayer does not
+      }
+      t.log('Sleeping 10 seconds for potential channel closure to propagate');
+      await sleep(10000);
 
       const { channel } = await retryUntilCondition(
         () =>
@@ -357,7 +361,7 @@ const channelCloseInitScenario = test.macro({
           ),
         // @ts-expect-error ChannelSDKType.state is a string not a number
         ({ channel }) => channel?.state === 'STATE_OPEN',
-        'Hermes closeChannelInit failed so transfer channel is still open',
+        'Relayer closeChannelInit failed so transfer channel is still open',
       );
       t.log(channel);
       t.is(

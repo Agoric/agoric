@@ -1,16 +1,12 @@
 import anyTest from '@endo/ses-ava/prepare-endo.js';
 import type { TestFn } from 'ava';
 import type { CosmosChainInfo } from '@agoric/orchestration';
-import {
-  commonSetup,
-  SetupContextWithWallets,
-  chainConfig,
-} from './support.js';
+import { commonSetup, type SetupContext, chainConfig } from './support.js';
 import { makeDoOffer } from '../tools/e2e-tools.js';
 import chainInfo from '../starship-chain-info.js';
 import { MAKE_ACCOUNT_AND_QUERY_BALANCE_TIMEOUT } from './config.js';
 
-const test = anyTest as TestFn<SetupContextWithWallets>;
+const test = anyTest as TestFn<SetupContext>;
 
 const accounts = ['osmosis', 'cosmoshub', 'agoric'];
 
@@ -19,17 +15,14 @@ const contractBuilder =
   '../packages/builders/scripts/testing/start-query-flows.js';
 
 test.before(async t => {
-  const { deleteTestKeys, setupTestKeys, ...rest } = await commonSetup(t);
-  deleteTestKeys(accounts).catch();
-  const wallets = await setupTestKeys(accounts);
-  t.context = { ...rest, wallets, deleteTestKeys };
-  const { startContract } = rest;
+  t.context = await commonSetup(t, accounts);
+  const { startContract } = t.context;
   await startContract(contractName, contractBuilder);
 });
 
 test.after(async t => {
   const { deleteTestKeys } = t.context;
-  deleteTestKeys(accounts);
+  await deleteTestKeys(accounts);
 });
 
 const queryAccountBalances = test.macro({

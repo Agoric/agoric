@@ -5,7 +5,7 @@ FILE = config.yaml
 
 HELM_REPO = starship
 HELM_CHART = devnet
-HELM_VERSION = v0.2.10
+HELM_VERSION = v0.2.19
 
 ###############################################################################
 ###                              All commands                               ###
@@ -73,7 +73,7 @@ add-address:
 	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd keys add user1
 
 fund-provision-pool:
-	kubectl exec -i agoriclocal-genesis-0 -c validator -- agd tx bank send faucet $(PROVISION_POOL_ADDR) 1000000000uist -y -b block
+	node_modules/.bin/tsx scripts/fund-provision-pool.ts
 
 override-chain-registry:
 	node_modules/.bin/tsx scripts/fetch-starship-chain-info.ts && \
@@ -102,4 +102,3 @@ wait-for-pods:
 
 .PHONY: start
 start: install wait-for-pods port-forward fund-provision-pool override-chain-registry
-

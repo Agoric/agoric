@@ -64,8 +64,22 @@ export const makeAgd = ({ execFileSync }) => {
      */
     const exec = (
       args,
-      opts = { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'ignore'] },
-    ) => execFileSync(kubectlBinary, [...binaryArgs, ...args], opts);
+      opts = { encoding: 'utf-8', stdio: ['ignore', 'pipe', 'pipe'] },
+    ) => {
+      try {
+        return execFileSync(kubectlBinary, [...binaryArgs, ...args], opts);
+      } catch (e) {
+        if (e instanceof Error && 'stderr' in e && 'stdout' in e) {
+          console.error(
+            `Error executing command: ${kubectlBinary} ${[...binaryArgs, ...args].join(' ')}`,
+          );
+          console.error(e);
+          if (e.stderr) console.error('stderr:', e.stderr.toString());
+          if (e.stdout) console.error('stdout:', e.stdout.toString());
+        }
+        throw e;
+      }
+    };
 
     const outJson = flags({ output: 'json' });
 
@@ -169,6 +183,17 @@ export const makeAgd = ({ execFileSync }) => {
           return exec([...keyringArgs, 'keys', 'delete', name, '-y'], {
             stdio: ['pipe', 'pipe', 'ignore'],
           });
+        },
+        /** @returns {Array<{name: string, address: string}>} */
+        list: () => {
+          const output = exec(
+            [...keyringArgs, 'keys', 'list', '--output', 'json'],
+            {
+              encoding: 'utf-8',
+              stdio: ['pipe', 'pipe', 'ignore'],
+            },
+          );
+          return JSON.parse(output);
         },
       },
       /**

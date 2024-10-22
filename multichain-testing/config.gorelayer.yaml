@@ -1,4 +1,5 @@
-name: agoric-multichain-testing
+# mirrors config.yaml, except s/hermes/go-relayer
+name: agoric-multichain-testing-go-relayer
 version: 0.2.19
 
 chains:
@@ -90,19 +91,19 @@ chains:
 
 relayers:
   - name: osmosis-gaia
-    type: hermes
+    type: go-relayer
     replicas: 1
     chains:
       - osmosislocal
       - gaialocal
   - name: agoric-osmosis
-    type: hermes
+    type: go-relayer
     replicas: 1
     chains:
       - agoriclocal
       - osmosislocal
   - name: agoric-gaia
-    type: hermes
+    type: go-relayer
     replicas: 1
     chains:
       - agoriclocal
