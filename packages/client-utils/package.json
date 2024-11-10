@@ -12,7 +12,8 @@
     "src"
   ],
   "scripts": {
-    "build": "exit 0",
+    "build": "tsc --project tsconfig.build.json",
+    "codegen": "node scripts/codegen.cjs",
     "prepack": "tsc --build tsconfig.build.json",
     "postpack": "git clean -f '*.d.ts*' '*.tsbuildinfo'",
     "test": "ava",
@@ -24,8 +25,10 @@
     "lint:eslint": "eslint ."
   },
   "devDependencies": {
+    "@cosmology/telescope": "^1.10.8",
     "ava": "^5.3.0",
     "c8": "^9.1.0",
+    "rimraf": "^5.0.0",
     "ts-blank-space": "^0.4.1"
   },
   "dependencies": {
@@ -38,6 +41,7 @@
     "@cosmjs/tendermint-rpc": "^0.32.3",
     "@endo/common": "^1.2.7",
     "@endo/errors": "^1.2.7",
+    "@endo/init": "^1.1.6",
     "@endo/marshal": "^1.6.1",
     "@endo/pass-style": "^1.4.6",
     "@endo/patterns": "^1.4.6",

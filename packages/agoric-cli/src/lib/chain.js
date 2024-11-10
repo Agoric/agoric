@@ -2,6 +2,7 @@
 /* eslint-env node */
 import { normalizeBech32 } from '@cosmjs/encoding';
 import { execFileSync as execFileSyncAmbient } from 'child_process';
+import { makeAgoricQueryClient } from '@agoric/client-utils';
 
 /**
  * @import {MinimalNetworkConfig} from '@agoric/client-utils';
@@ -100,20 +101,10 @@ harden(execSwingsetTransaction);
  *
  * @param {MinimalNetworkConfig} net
  */
-// TODO fetch by HTTP instead of shelling out https://github.com/Agoric/agoric-sdk/issues/9200
-export const fetchSwingsetParams = net => {
-  const { chainName, rpcAddrs } = net;
-  const cmd = [
-    `--node=${rpcAddrs[0]}`,
-    `--chain-id=${chainName}`,
-    'query',
-    'swingset',
-    'params',
-    '--output',
-    'json',
-  ];
-  const buffer = execFileSyncAmbient(agdBinary, cmd);
-  return JSON.parse(buffer.toString());
+export const fetchSwingsetParams = async net => {
+  const client = await makeAgoricQueryClient(net);
+  const { params } = await client.agoric.swingset.params();
+  return params;
 };
 harden(fetchSwingsetParams);
 

@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 // @ts-check
-import '@endo/init';
+import '@endo/init/legacy.js';
 
 import process from 'node:process';
 import assert from 'node:assert/strict';
 
-import { agoric } from '../dist/codegen/index.js';
+import { makeAgoricQueryClient } from '../dist/clients.js';
 
-const rpcEndpoint = 'https://emerynet.rpc.agoric.net:443';
+const config = {
+  rpcAddrs: ['https://emerynet.rpc.agoric.net:443'],
+  chainName: 'agoric-3',
+};
 
 const testMain = async () => {
-  const client = await agoric.ClientFactory.createRPCQueryClient({
-    rpcEndpoint,
-  });
+  const client = await makeAgoricQueryClient(config);
   const { params } = await client.agoric.swingset.params();
   assert.deepEqual(Object.keys(params).sort(), [
     'beansPerUnit',
