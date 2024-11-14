@@ -12186,7 +12186,7 @@ typescript-eslint@^7.18.0, typescript-eslint@^7.3.1:
     "@typescript-eslint/parser" "7.18.0"
     "@typescript-eslint/utils" "7.18.0"
 
-"typescript@5.1.6 - 5.6.x", typescript@^5.4.5, typescript@^5.6.2, typescript@~5.6.2:
+"typescript@5.1.6 - 5.6.x", typescript@^5.4.5, typescript@~5.6.2:
   version "5.6.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.6.3.tgz#5f3449e31c9d94febb17de03cc081dd56d81db5b"
   integrity sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==
@@ -12195,6 +12195,11 @@ typescript-eslint@^7.18.0, typescript-eslint@^7.3.1:
   version "4.9.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.5.tgz#095979f9bcc0d09da324d58d03ce8f8374cbe65a"
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
+
+typescript@~5.7.1-rc:
+  version "5.7.1-rc"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.7.1-rc.tgz#1fc978445d309964db88ca2f7f467c1e582dbcc7"
+  integrity sha512-d6m+HT78uZtyUbXbUyIvuJ6kXCTSJEfy+2pZSUwt9d6JZ0kOMNDwhIILfV5FnaxMwVa48Yfw4sK0ISC4Qyq5tw==
 
 uc.micro@^2.0.0, uc.micro@^2.1.0:
   version "2.1.0"
