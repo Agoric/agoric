@@ -24,7 +24,7 @@
     "@endo/errors": "^1.2.7",
     "@agoric/internal": "^0.3.2",
     "@endo/base64": "^1.0.8",
-    "@endo/bundle-source": "^3.4.2",
+    "@endo/bundle-source": "^3.5.0",
     "@endo/check-bundle": "^1.0.11",
     "@endo/nat": "^5.0.12",
     "better-sqlite3": "^9.1.1"

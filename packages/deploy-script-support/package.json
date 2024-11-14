@@ -43,7 +43,7 @@
     "@agoric/time": "^0.3.2",
     "@agoric/zoe": "^0.26.2",
     "@endo/base64": "^1.0.8",
-    "@endo/bundle-source": "^3.4.2",
+    "@endo/bundle-source": "^3.5.0",
     "@endo/far": "^1.1.8",
     "@endo/marshal": "^1.6.1",
     "@endo/nat": "^5.0.12",
