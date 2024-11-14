@@ -15,6 +15,13 @@
     "noImplicitThis": true,
     "noUncheckedSideEffectImports": true,
     "verbatimModuleSyntax": true,
+    /* Build config */
+    // NPM builds will have .ts extensions transformed by rewriteRelativeImportExtensions
+    "allowImportingTsExtensions": true,
+    // This isn't relevant until `tsconfig.build.json` is used (for
+    // noEmit:false) but it's better to have it here next to
+    // allowImportingTsExtensions to show what will happen upon build.
+    "rewriteRelativeImportExtensions": true,
     "noEmit": true
   },
   "include": [
