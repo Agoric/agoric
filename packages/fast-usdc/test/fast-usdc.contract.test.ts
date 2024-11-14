@@ -20,15 +20,15 @@ import { deeplyFulfilledObject } from '@agoric/internal';
 import type { Subscriber } from '@agoric/notifier';
 import { MockCctpTxEvidences } from './fixtures.js';
 import { commonSetup } from './supports.js';
-import type { FastUsdcTerms } from '../src/fast-usdc.contract.js';
+import type { FastUsdcTerms } from '../src/fast-usdc.contract.ts';
 import { makeFeeTools } from '../src/utils/fees.js';
 import type { PoolMetrics } from '../src/types.js';
 import { addressTools } from '../src/utils/address.js';
 
 const dirname = path.dirname(new URL(import.meta.url).pathname);
 
-const contractFile = `${dirname}/../src/fast-usdc.contract.js`;
-type StartFn = typeof import('../src/fast-usdc.contract.js').start;
+const contractFile = `${dirname}/../src/fast-usdc.contract.ts`;
+type StartFn = typeof import('../src/fast-usdc.contract.ts').start;
 
 const { add, isGTE, subtract } = AmountMath;
 

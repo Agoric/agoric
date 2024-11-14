@@ -4,7 +4,7 @@ import { PendingTxStatus } from './constants.js';
 
 /**
  * @import {TypedPattern} from '@agoric/internal';
- * @import {FastUsdcTerms} from './fast-usdc.contract.js';
+ * @import {FastUsdcTerms} from './fast-usdc.contract.ts';
  * @import {USDCProposalShapes} from './pool-share-math.js';
  * @import {CctpTxEvidence, FeeConfig, PendingTx, PoolMetrics, ChainPolicy, FeedPolicy} from './types.js';
  */

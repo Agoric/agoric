@@ -164,7 +164,7 @@ export const defaultProposalBuilder = async (
         options: toExternalConfig(config, crossVatContext, FastUSDCConfigShape),
         installKeys: {
           fastUsdc: publishRef(
-            install('@agoric/fast-usdc/src/fast-usdc.contract.js'),
+            install('@agoric/fast-usdc/src/fast-usdc.contract.ts'),
           ),
         },
       },

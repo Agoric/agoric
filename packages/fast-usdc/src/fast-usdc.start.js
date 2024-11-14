@@ -19,7 +19,7 @@ import { fromExternalConfig } from './utils/config-marshal.js';
  * @import {BootstrapManifest} from '@agoric/vats/src/core/lib-boot.js'
  * @import {Passable} from '@endo/marshal';
  * @import {LegibleCapData} from './utils/config-marshal.js'
- * @import {FastUsdcSF, FastUsdcTerms} from './fast-usdc.contract.js'
+ * @import {FastUsdcSF, FastUsdcTerms} from './fast-usdc.contract.ts'
  * @import {FeeConfig, FeedPolicy} from './types.js'
  */
 
