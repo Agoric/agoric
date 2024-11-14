@@ -11939,6 +11939,13 @@ ts-blank-space@^0.4.1:
   dependencies:
     typescript "5.1.6 - 5.6.x"
 
+ts-blank-space@^0.4.3:
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/ts-blank-space/-/ts-blank-space-0.4.3.tgz#9b98d8ab2f91a767af5a789c944e0544c7591686"
+  integrity sha512-TLGYO7DqEOygya6IQH7vqIokV2TYuF804Pv9zhc6k8Pos5ryTGZgMp6FyzGr42+pWkRix5pnO5ariMEKRkOVNg==
+  dependencies:
+    typescript "5.1.6 - 5.6.x"
+
 tsconfig-paths@^3.15.0:
   version "3.15.0"
   resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.15.0.tgz#5299ec605e55b1abb23ec939ef15edaf483070d4"

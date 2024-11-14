@@ -64,7 +64,7 @@
     "ava": "^5.3.1",
     "c8": "^9.1.0",
     "prettier": "^3.3.2",
-    "ts-blank-space": "^0.4.1"
+    "ts-blank-space": "^0.4.3"
   },
   "ava": {
     "extensions": {

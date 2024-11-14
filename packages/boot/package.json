@@ -59,7 +59,7 @@
     "@endo/patterns": "^1.4.6",
     "ava": "^5.3.0",
     "c8": "^9.1.0",
-    "ts-blank-space": "^0.4.1"
+    "ts-blank-space": "^0.4.3"
   },
   "files": [
     "CHANGELOG.md",
