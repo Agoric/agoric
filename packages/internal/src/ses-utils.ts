@@ -138,9 +138,9 @@ export type AllDefined<T extends Record<string, unknown>> = {
  * @param obj
  * @throws if any value in the object entries is not defined
  */
-export const assertAllDefined = <T extends Record<string, unknown>>(
+export function assertAllDefined<T extends Record<string, unknown>>(
   obj: T,
-): asserts obj is AllDefined<T> => {
+): asserts obj is AllDefined<T> {
   const missing = [];
   for (const [key, val] of Object.entries(obj)) {
     if (val === undefined) {
@@ -150,7 +150,8 @@ export const assertAllDefined = <T extends Record<string, unknown>>(
   if (missing.length > 0) {
     Fail`missing ${q(missing)}`;
   }
-};
+}
+harden(assertAllDefined);
 
 const notDone = harden({ done: false, value: undefined }) as IteratorResult<
   undefined,
