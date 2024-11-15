@@ -10,7 +10,7 @@ import {
   forever,
   deeplyFulfilledObject,
   synchronizedTee,
-} from '../src/ses-utils.js';
+} from '../src/ses-utils.ts';
 
 test('deeplyFulfilledObject', async t => {
   const someFar = Far('somefar', { getAsync: () => Promise.resolve('async') });

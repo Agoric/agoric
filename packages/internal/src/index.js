@@ -7,7 +7,7 @@ export * from './debug.js';
 export * from './errors.js';
 export * from './js-utils.js';
 export * from './method-tools.js';
-export * from './ses-utils.js';
+export * from './ses-utils.ts';
 export * from './typeCheck.js';
 export * from './typeGuards.js';
 
