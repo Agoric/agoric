@@ -55,7 +55,7 @@
     "@agoric/vat-data": "^0.5.2",
     "@agoric/vow": "^0.1.0",
     "@agoric/zone": "^0.2.2",
-    "@endo/bundle-source": "^3.4.2",
+    "@endo/bundle-source": "^3.5.0",
     "@endo/common": "^1.2.7",
     "@endo/captp": "^4.4.2",
     "@endo/eventual-send": "^1.2.7",

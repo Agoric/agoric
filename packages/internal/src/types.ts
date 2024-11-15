@@ -2,7 +2,7 @@
 import type { ERef, RemotableBrand } from '@endo/eventual-send';
 import type { Primitive } from '@endo/pass-style';
 import type { Pattern } from '@endo/patterns';
-import type { Callable } from './ses-utils.js';
+import type { Callable } from './ses-utils.ts';
 
 /**
  * A map corresponding with a total function such that `get(key)` is assumed to

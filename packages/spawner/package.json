@@ -39,7 +39,7 @@
   "devDependencies": {
     "@agoric/internal": "^0.3.2",
     "@agoric/swingset-vat": "^0.32.2",
-    "@endo/bundle-source": "^3.4.2",
+    "@endo/bundle-source": "^3.5.0",
     "@endo/init": "^1.1.6",
     "ava": "^5.3.0",
     "c8": "^9.1.0"

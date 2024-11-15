@@ -54,7 +54,7 @@
     "@agoric/swingset-liveslots": "^0.10.2",
     "@agoric/swingset-vat": "^0.32.2",
     "@agoric/zone": "^0.2.2",
-    "@endo/bundle-source": "^3.4.2",
+    "@endo/bundle-source": "^3.5.0",
     "@endo/init": "^1.1.6",
     "@endo/promise-kit": "^1.1.7",
     "@fast-check/ava": "^1.1.5",

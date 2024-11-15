@@ -31,7 +31,7 @@
     "@endo/errors": "^1.2.7",
     "@agoric/internal": "^0.3.2",
     "@agoric/xsnap-lockdown": "^0.14.0",
-    "@endo/bundle-source": "^3.4.2",
+    "@endo/bundle-source": "^3.5.0",
     "@endo/eventual-send": "^1.2.7",
     "@endo/init": "^1.1.6",
     "@endo/netstring": "^1.0.12",

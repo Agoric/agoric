@@ -36,7 +36,7 @@
     "@agoric/swingset-vat": "^0.32.2",
     "@agoric/vow": "^0.1.0",
     "@agoric/zone": "^0.2.2",
-    "@endo/bundle-source": "^3.4.2",
+    "@endo/bundle-source": "^3.5.0",
     "ava": "^5.3.0",
     "c8": "^9.1.0"
   },

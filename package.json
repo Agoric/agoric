@@ -14,7 +14,7 @@
     "@google-cloud/monitoring": "^4.1.0",
     "@jessie.js/eslint-plugin": "^0.4.1",
     "@types/express": "^4.17.17",
-    "@types/node": "^22.0.0",
+    "@types/node": "^22.9.0",
     "ava": "^5.3.0",
     "c8": "^9.1.0",
     "conventional-changelog-conventionalcommits": "^4.6.0",
@@ -36,7 +36,7 @@
     "type-coverage": "^2.27.1",
     "typedoc": "^0.26.7",
     "typedoc-plugin-markdown": "^4.2.1",
-    "typescript": "^5.6.2",
+    "typescript": "~5.7.1-rc",
     "typescript-eslint": "^7.18.0"
   },
   "resolutions": {

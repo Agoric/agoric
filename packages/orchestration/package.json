@@ -58,13 +58,13 @@
     "@chain-registry/client": "^1.47.4",
     "@cosmjs/amino": "^0.32.3",
     "@cosmjs/proto-signing": "^0.32.3",
-    "@endo/bundle-source": "^3.4.2",
+    "@endo/bundle-source": "^3.5.0",
     "@endo/import-bundle": "^1.3.1",
     "@endo/ses-ava": "^1.2.7",
     "ava": "^5.3.1",
     "c8": "^9.1.0",
     "prettier": "^3.3.2",
-    "ts-blank-space": "^0.4.1"
+    "ts-blank-space": "^0.4.3"
   },
   "ava": {
     "extensions": {
