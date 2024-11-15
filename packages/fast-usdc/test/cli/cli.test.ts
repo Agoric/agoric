@@ -1,6 +1,6 @@
 import '@endo/init/legacy.js';
 import test from 'ava';
-import { spawn } from 'child_process';
+import { execa } from 'execa';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { initProgram } from '../../src/cli/cli.js';
@@ -8,33 +8,15 @@ import { initProgram } from '../../src/cli/cli.js';
 const dir = dirname(fileURLToPath(import.meta.url));
 const CLI_PATH = join(dir, '../../src/cli/index.js');
 
-const collectStdErr = (cmd: string[]) =>
-  new Promise(resolve => {
-    const child = spawn('node', cmd);
-    let stderr = '';
-
-    child.stderr.on('data', data => {
-      stderr += data.toString();
-    });
-
-    child.on('close', () => {
-      resolve(stderr);
-    });
-  });
-
-const collectStdOut = (cmd: string[]) =>
-  new Promise(resolve => {
-    const child = spawn('node', cmd);
-    let stdout = '';
-
-    child.stdout.on('data', data => {
-      stdout += data.toString();
-    });
-
-    child.on('close', () => {
-      resolve(stdout);
-    });
-  });
+const runCli = async (args: string[]) => {
+  await null;
+  try {
+    const { stdout } = await execa(CLI_PATH, args);
+    return stdout;
+  } catch (error: any) {
+    return error.stderr || error.stdout || error.message;
+  }
+};
 
 const mockConfig = () => {
   let initArgs: any[];
@@ -67,119 +49,91 @@ const mockTransfer = () => {
 };
 
 test('shows help when run without arguments', async t => {
-  const output = await collectStdErr([CLI_PATH]);
+  const output = await runCli([]);
   // Replace home path (e.g. "/home/samsiegart/.fast-usdc") with "~/.fast-usdc" so snapshots work on different machines.
   const regex = /"\/(.+\/)?\.fast-usdc\/"/g;
-  const result = (output as string).replace(regex, '"~/.fast-usdc"');
+  const result = output.replace(regex, '"~/.fast-usdc"');
 
   t.snapshot(result);
 });
 
 test('shows help for transfer command', async t => {
-  const output = await collectStdOut([CLI_PATH, 'transfer', '-h']);
-
+  const output = await runCli(['transfer', '-h']);
   t.snapshot(output);
 });
 
 test('shows help for config command', async t => {
-  const output = await collectStdOut([CLI_PATH, 'config', '-h']);
-
+  const output = await runCli(['config', '-h']);
   t.snapshot(output);
 });
 
 test('shows help for config init command', async t => {
-  const output = await collectStdOut([CLI_PATH, 'config', 'init', '-h']);
-
+  const output = await runCli(['config', 'init', '-h']);
   t.snapshot(output);
 });
 
 test('shows help for config update command', async t => {
-  const output = await collectStdOut([CLI_PATH, 'config', 'update', '-h']);
-
+  const output = await runCli(['config', 'update', '-h']);
   t.snapshot(output);
 });
 
 test('shows help for config show command', async t => {
-  const output = await collectStdOut([CLI_PATH, 'config', 'show', '-h']);
-
+  const output = await runCli(['config', 'show', '-h']);
   t.snapshot(output);
 });
 
 test('shows help for deposit command', async t => {
-  const output = await collectStdOut([CLI_PATH, 'deposit', '-h']);
-
+  const output = await runCli(['deposit', '-h']);
   t.snapshot(output);
 });
 
 test('shows help for withdraw command', async t => {
-  const output = await collectStdOut([CLI_PATH, 'withdraw', '-h']);
-
+  const output = await runCli(['withdraw', '-h']);
   t.snapshot(output);
 });
 
 test('shows error when deposit command is run without options', async t => {
-  const output = await collectStdErr([CLI_PATH, 'deposit']);
-
+  const output = await runCli(['deposit']);
   t.snapshot(output);
 });
 
 test('shows error when deposit command is run with invalid amount', async t => {
-  const output = await collectStdErr([CLI_PATH, 'deposit', 'not-a-number']);
-
+  const output = await runCli(['deposit', 'not-a-number']);
   t.snapshot(output);
 });
 
 test('shows error when deposit command is run with invalid fee', async t => {
-  const output = await collectStdErr([
-    CLI_PATH,
-    'deposit',
-    '50',
-    '--fee',
-    'not-a-number',
-  ]);
-
+  const output = await runCli(['deposit', '50', '--fee', 'not-a-number']);
   t.snapshot(output);
 });
 
 test('shows error when withdraw command is run without options', async t => {
-  const output = await collectStdErr([CLI_PATH, 'withdraw']);
-
+  const output = await runCli(['withdraw']);
   t.snapshot(output);
 });
 
 test('shows error when withdraw command is run with invalid amount', async t => {
-  const output = await collectStdErr([CLI_PATH, 'withdraw', 'not-a-number']);
-
+  const output = await runCli(['withdraw', 'not-a-number']);
   t.snapshot(output);
 });
 
 test('shows error when withdraw command is run with invalid fee', async t => {
-  const output = await collectStdErr([
-    CLI_PATH,
-    'withdraw',
-    '50',
-    '--fee',
-    'not-a-number',
-  ]);
-
+  const output = await runCli(['withdraw', '50', '--fee', 'not-a-number']);
   t.snapshot(output);
 });
 
 test('shows error when config init command is run without options', async t => {
-  const output = await collectStdErr([CLI_PATH, 'config', 'init']);
-
+  const output = await runCli(['config', 'init']);
   t.snapshot(output);
 });
 
 test('shows error when transfer command is run without options', async t => {
-  const output = await collectStdErr([CLI_PATH, 'transfer']);
-
+  const output = await runCli(['transfer']);
   t.snapshot(output);
 });
 
 test('shows error when config init command is run without eth seed', async t => {
-  const output = await collectStdErr([
-    CLI_PATH,
+  const output = await runCli([
     'config',
     'init',
     '--noble-seed',
@@ -187,13 +141,11 @@ test('shows error when config init command is run without eth seed', async t => 
     '--agoric-seed',
     'bar',
   ]);
-
   t.snapshot(output);
 });
 
 test('shows error when config init command is run without agoric seed', async t => {
-  const output = await collectStdErr([
-    CLI_PATH,
+  const output = await runCli([
     'config',
     'init',
     '--noble-seed',
@@ -201,13 +153,11 @@ test('shows error when config init command is run without agoric seed', async t 
     '--eth-seed',
     'bar',
   ]);
-
   t.snapshot(output);
 });
 
 test('shows error when config init command is run without noble seed', async t => {
-  const output = await collectStdErr([
-    CLI_PATH,
+  const output = await runCli([
     'config',
     'init',
     '--agoric-seed',
@@ -215,7 +165,6 @@ test('shows error when config init command is run without noble seed', async t =
     '--eth-seed',
     'bar',
   ]);
-
   t.snapshot(output);
 });
 
