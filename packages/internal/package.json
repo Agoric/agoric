@@ -41,6 +41,14 @@
     "tsd": "^0.31.1"
   },
   "ava": {
+    "extensions": {
+      "js": true,
+      "ts": "module"
+    },
+    "nodeArguments": [
+      "--import=ts-blank-space/register",
+      "--no-warnings"
+    ],
     "require": [
       "@endo/init/debug.js"
     ],
