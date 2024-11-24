@@ -5,6 +5,7 @@ import { deeplyFulfilled } from '@endo/marshal';
 import { setUpZoeForTest } from '@agoric/zoe/tools/setup-zoe.js';
 import { AmountMath } from '@agoric/ertp';
 import { claim } from '@agoric/ertp/src/legacy-payment-helpers.js';
+// eslint-disable-next-line -- not in the TS project
 import centralSupplyBundle from '../bundles/bundle-centralSupply.js';
 import { feeIssuerConfig } from '../src/core/utils.js';
 

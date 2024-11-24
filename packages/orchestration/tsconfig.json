@@ -3,6 +3,7 @@
   "include": [
     "build",
     "index.js",
+    "scripts",
     "src",
     "test",
     "tools"

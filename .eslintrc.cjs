@@ -62,8 +62,7 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    // Works for us!
-    EXPERIMENTAL_useProjectService: true,
+    projectService: true,
     sourceType: 'module',
     project: [
       './packages/*/tsconfig.json',
@@ -152,10 +151,13 @@ module.exports = {
   },
   ignorePatterns: [
     'coverage/**',
+    '**/bundles/**',
     '**/output/**',
-    'bundles/**',
     'bundle-*',
     'dist/**',
+    'exported.*',
+    'types-*',
+    'types.*',
     'examples/**',
     'test262/**',
     '*.html',

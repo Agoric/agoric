@@ -2,6 +2,7 @@ import anyTest from 'ava';
 import path from 'path';
 import { buildVatController, buildKernelBundles } from '@agoric/swingset-vat';
 import bundleSource from '@endo/bundle-source';
+// eslint-disable-next-line -- not in the TS project
 import zcfBundle from '../../../bundles/bundle-contractFacet.js';
 
 const CONTRACT_FILES = ['minimalMakeKindContract'];

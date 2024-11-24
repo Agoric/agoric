@@ -10,6 +10,7 @@ import { makeScalarBigMapStore } from '@agoric/vat-data';
 import { evalContractBundle } from '../src/contractFacet/evalContractCode.js';
 import { handlePKitWarning } from '../src/handleWarning.js';
 import { makeHandle } from '../src/makeHandle.js';
+// eslint-disable-next-line -- not in the TS project
 import zcfBundle from '../bundles/bundle-contractFacet.js';
 
 /** @typedef { import('@agoric/swingset-vat').BundleID} BundleID */
