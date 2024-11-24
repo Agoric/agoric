@@ -15,6 +15,10 @@
     "noImplicitThis": true,
     "noUncheckedSideEffectImports": true,
     "verbatimModuleSyntax": true,
+    // .ts and rewriting relative paths allow us to include in bundles
+    // files that are JS executable (with TS chars blanked) but end in .ts
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
     "noEmit": true
   },
   "include": [
