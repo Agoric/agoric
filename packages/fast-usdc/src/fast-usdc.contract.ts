@@ -30,7 +30,7 @@ import {
 } from './exos/liquidity-pool.js';
 import { prepareSettler } from './exos/settler.js';
 import { prepareStatusManager } from './exos/status-manager.js';
-import { prepareTransactionFeedKit } from './exos/transaction-feed.js';
+import { prepareTransactionFeedKit } from './exos/transaction-feed.ts';
 import * as flows from './fast-usdc.flows.js';
 import { FastUSDCTermsShape, FeeConfigShape } from './type-guards.js';
 import { defineInertInvitation } from './utils/zoe.js';

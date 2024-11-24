@@ -6,7 +6,7 @@ import { makeHeapZone } from '@agoric/zone';
 import {
   prepareTransactionFeedKit,
   type TransactionFeedKit,
-} from '../../src/exos/transaction-feed.js';
+} from '../../src/exos/transaction-feed.ts';
 import { MockCctpTxEvidences } from '../fixtures.js';
 
 const nullZcf = null as any;
