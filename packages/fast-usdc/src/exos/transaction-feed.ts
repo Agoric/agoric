@@ -5,8 +5,8 @@ import { M } from '@endo/patterns';
 import { CctpTxEvidenceShape } from '../type-guards.js';
 import type { CctpTxEvidence } from '../types.js';
 import { defineInertInvitation } from '../utils/zoe.js';
-import type { OperatorKit } from './operator-kit.js';
-import { prepareOperatorKit } from './operator-kit.js';
+import type { OperatorKit } from './operator-kit.ts';
+import { prepareOperatorKit } from './operator-kit.ts';
 
 const trace = makeTracer('TxFeed', true);
 

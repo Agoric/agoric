@@ -35,7 +35,7 @@ import * as flows from './fast-usdc.flows.js';
 import { FastUSDCTermsShape, FeeConfigShape } from './type-guards.js';
 import { defineInertInvitation } from './utils/zoe.js';
 import type { CctpTxEvidence, FeeConfig } from './types.js';
-import type { OperatorKit } from './exos/operator-kit.js';
+import type { OperatorKit } from './exos/operator-kit.ts';
 
 const trace = makeTracer('FastUsdc');
 
