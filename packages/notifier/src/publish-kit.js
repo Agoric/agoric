@@ -402,15 +402,13 @@ const advanceDurablePublishKit = (context, value, targetStatus = 'live') => {
 /**
  * @param {import('@agoric/swingset-liveslots').Baggage} baggage
  * @param {string} kindName
+ * @returns {<T>(options?: Parameters<typeof initDurablePublishKitState>[0]) => PublishKit<T>}
  */
 export const prepareDurablePublishKit = (baggage, kindName) => {
   // TODO: Once we unify with makePublishKit, we will use a Zone-compatible weak
   // map for memoization.
   const makeMemoizedUpdateRecord = makeUpdateRecordFromPublicationRecord;
 
-  /**
-   * @returns {() => PublishKit<*>}
-   */
   return prepareExoClassKit(
     baggage,
     kindName,
