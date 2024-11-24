@@ -33,7 +33,7 @@ export {};
  * @typedef {object} Stores
  * @property {() => Stores} detached obtain store providers which are detached (the stores are anonymous rather than bound to `label` in the zone)
  * @property {(specimen: unknown) => boolean} isStorable return true if the specimen can be stored in the zone, whether as exo-object state or in a store
- * @property {(label: string, options?: StoreOptions) => MapStore<any, any>} mapStore provide a Map-like store named `label` in the zone
+ * @property {<K, V>(label: string, options?: StoreOptions) => MapStore<K, V>} mapStore provide a Map-like store named `label` in the zone
  * @property {<K>(label: string, options?: StoreOptions) => SetStore<K>} setStore provide a Set-like store named `label` in the zone
  * @property {<K, V>(
  *   label: string, options?: StoreOptions) => WeakMapStore<K, V>
