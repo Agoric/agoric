@@ -8,45 +8,42 @@ import { observeIteration, subscribeEach } from '@agoric/notifier';
 import {
   OrchestrationPowersShape,
   withOrchestration,
+  type Denom,
+  type OrchestrationAccount,
+  type OrchestrationPowers,
+  type OrchestrationTools,
 } from '@agoric/orchestration';
+import { makeZoeTools } from '@agoric/orchestration/src/utils/zoe-tools.js';
 import { provideSingleton } from '@agoric/zoe/src/contractSupport/durability.js';
 import { prepareRecorderKitMakers } from '@agoric/zoe/src/contractSupport/recorder.js';
-import { makeZoeTools } from '@agoric/orchestration/src/utils/zoe-tools.js';
 import { depositToSeat } from '@agoric/zoe/src/contractSupport/zoeHelpers.js';
 import { E } from '@endo/far';
 import { M, objectMap } from '@endo/patterns';
+import type { Zone } from '@agoric/zone';
+import type { HostInterface } from '@agoric/async-flow';
+import type { Vow } from '@agoric/vow';
 import { prepareAdvancer } from './exos/advancer.js';
-import { prepareLiquidityPoolKit } from './exos/liquidity-pool.js';
+import {
+  prepareLiquidityPoolKit,
+  type RepayAmountKWR,
+  type RepayPaymentKWR,
+} from './exos/liquidity-pool.js';
 import { prepareSettler } from './exos/settler.js';
 import { prepareStatusManager } from './exos/status-manager.js';
-import { prepareTransactionFeedKit } from './exos/transaction-feed.js';
-import { defineInertInvitation } from './utils/zoe.js';
-import { FastUSDCTermsShape, FeeConfigShape } from './type-guards.js';
+import { prepareTransactionFeedKit } from './exos/transaction-feed.ts';
 import * as flows from './fast-usdc.flows.js';
+import { FastUSDCTermsShape, FeeConfigShape } from './type-guards.js';
+import { defineInertInvitation } from './utils/zoe.js';
+import type { CctpTxEvidence, FeeConfig } from './types.js';
+import type { OperatorKit } from './exos/operator-kit.ts';
 
 const trace = makeTracer('FastUsdc');
 
-/**
- * @import {Denom} from '@agoric/orchestration';
- * @import {HostInterface} from '@agoric/async-flow';
- * @import {OrchestrationAccount} from '@agoric/orchestration';
- * @import {OrchestrationPowers, OrchestrationTools} from '@agoric/orchestration/src/utils/start-helper.js';
- * @import {Vow} from '@agoric/vow';
- * @import {Zone} from '@agoric/zone';
- * @import {OperatorKit} from './exos/operator-kit.js';
- * @import {CctpTxEvidence, FeeConfig} from './types.js';
- * @import {RepayAmountKWR, RepayPaymentKWR} from './exos/liquidity-pool.js';
- */
+export type FastUsdcTerms = {
+  usdcDenom: Denom;
+};
 
-/**
- * @typedef {{
- *   usdcDenom: Denom;
- * }} FastUsdcTerms
- */
-
-/** @type {ContractMeta<typeof start>} */
 export const meta = {
-  // @ts-expect-error TypedPattern not recognized as record
   customTermsShape: FastUSDCTermsShape,
   privateArgsShape: {
     // @ts-expect-error TypedPattern not recognized as record
@@ -54,19 +51,19 @@ export const meta = {
     feeConfig: FeeConfigShape,
     marshaller: M.remotable(),
   },
-};
+} as ContractMeta<typeof start>;
 harden(meta);
 
-/**
- * @param {ZCF<FastUsdcTerms>} zcf
- * @param {OrchestrationPowers & {
- *   marshaller: Marshaller;
- *   feeConfig: FeeConfig;
- * }} privateArgs
- * @param {Zone} zone
- * @param {OrchestrationTools} tools
- */
-export const contract = async (zcf, privateArgs, zone, tools) => {
+export const contract = async (
+  zcf: ZCF<FastUsdcTerms>,
+  privateArgs: OrchestrationPowers & {
+    feeConfig: FeeConfig;
+    marshaller: Marshaller;
+    storageNode: StorageNode;
+  },
+  zone: Zone,
+  tools: OrchestrationTools,
+) => {
   assert(tools, 'no tools');
   const terms = zcf.getTerms();
   assert('USDC' in terms.brands, 'no USDC brand');
@@ -109,27 +106,21 @@ export const contract = async (zcf, privateArgs, zone, tools) => {
   const { makeLocalAccount } = orchestrateAll(flows, {});
 
   const creatorFacet = zone.exo('Fast USDC Creator', undefined, {
-    /** @type {(operatorId: string) => Promise<Invitation<OperatorKit>>} */
-    async makeOperatorInvitation(operatorId) {
-      // eslint-disable-next-line no-use-before-define
+    async makeOperatorInvitation(
+      operatorId: string,
+    ): Promise<Invitation<OperatorKit>> {
       return feedKit.creator.makeOperatorInvitation(operatorId);
     },
-    /**
-     * @param {{ USDC: Amount<'nat'>}} amounts
-     */
-    testBorrow(amounts) {
+    testBorrow(amounts: { USDC: Amount<'nat'> }) {
       console.log('🚧🚧 UNTIL: borrow is integrated (#10388) 🚧🚧', amounts);
       const { zcfSeat: tmpAssetManagerSeat } = zcf.makeEmptySeatKit();
       poolKit.borrower.borrow(tmpAssetManagerSeat, amounts);
       return tmpAssetManagerSeat.getCurrentAllocation();
     },
-    /**
-     *
-     * @param {RepayAmountKWR} amounts
-     * @param {RepayPaymentKWR} payments
-     * @returns {Promise<AmountKeywordRecord>}
-     */
-    async testRepay(amounts, payments) {
+    async testRepay(
+      amounts: RepayAmountKWR,
+      payments: RepayPaymentKWR,
+    ): Promise<AmountKeywordRecord> {
       console.log('🚧🚧 UNTIL: repay is integrated (#10388) 🚧🚧', amounts);
       const { zcfSeat: tmpAssetManagerSeat } = zcf.makeEmptySeatKit();
       await depositToSeat(
@@ -154,10 +145,9 @@ export const contract = async (zcf, privateArgs, zone, tools) => {
      * Provide an API call in the form of an invitation maker, so that the
      * capability is available in the smart-wallet bridge during UI testing.
      *
-     * @param {CctpTxEvidence} evidence
+     * @param evidence
      */
-    makeTestPushInvitation(evidence) {
-      // eslint-disable-next-line no-use-before-define
+    makeTestPushInvitation(evidence: CctpTxEvidence) {
       void advancer.handleTransactionEvent(evidence);
       return makeTestInvitation();
     },
@@ -200,13 +190,12 @@ export const contract = async (zcf, privateArgs, zone, tools) => {
 
   const feedKit = zone.makeOnce('Feed Kit', () => makeFeedKit());
 
-  const poolAccountV =
+  const poolAccountV = zone.makeOnce('Pool Local Orch Account', () =>
+    makeLocalAccount(),
+  ) as unknown as Vow<
     // cast to HostInterface
-    /** @type { Vow<HostInterface<OrchestrationAccount<{chainId: 'agoric';}>>>} */ (
-      /** @type {unknown}*/ (
-        zone.makeOnce('Pool Local Orch Account', () => makeLocalAccount())
-      )
-    );
+    HostInterface<OrchestrationAccount<{ chainId: 'agoric' }>>
+  >;
   const poolAccount = await vowTools.when(poolAccountV);
 
   const advancer = zone.makeOnce('Advancer', () =>
@@ -232,4 +221,5 @@ harden(contract);
 
 export const start = withOrchestration(contract);
 harden(start);
-/** @typedef {typeof start} FastUsdcSF */
+
+export type FastUsdcSF = typeof start;

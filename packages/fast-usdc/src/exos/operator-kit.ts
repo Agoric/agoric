@@ -1,35 +1,36 @@
 import { makeTracer } from '@agoric/internal';
 import { Fail } from '@endo/errors';
 import { M } from '@endo/patterns';
+import type { Zone } from '@agoric/zone';
 import { CctpTxEvidenceShape } from '../type-guards.js';
+import type { CctpTxEvidence } from '../types.js';
 
-const trace = makeTracer('TxOperator');
+const trace: (message: string) => void = makeTracer('TxOperator');
 
-/**
- * @import {Zone} from '@agoric/zone';
- * @import {CctpTxEvidence} from '../types.js';
- */
+interface OperatorPowers {
+  submitEvidence: (evidence: CctpTxEvidence, operatorKit: OperatorKit) => void;
+}
 
-/**
- * @typedef {object} OperatorPowers
- * @property {(evidence: CctpTxEvidence, operatorKit: OperatorKit) => void} submitEvidence
- */
+interface OperatorStatus {
+  disabled?: boolean;
+  operatorId: string;
+}
 
-/**
- * @typedef {object} OperatorStatus
- * @property {boolean} [disabled]
- * @property {string} operatorId
- */
-
-/**
- * @typedef {Readonly<{ operatorId: string, powers: OperatorPowers }> & {disabled: boolean}} State
- */
+interface State {
+  operatorId: string;
+  powers: OperatorPowers;
+  disabled: boolean;
+}
 
 const OperatorKitI = {
   admin: M.interface('Admin', {
     disable: M.call().returns(),
   }),
 
+  /**
+   * NB: when this kit is an offer result, the smart-wallet will detect the `invitationMakers`
+   * key and save it for future offers.
+   */
   invitationMakers: M.interface('InvitationMakers', {
     SubmitEvidence: M.call(CctpTxEvidenceShape).returns(M.promise()),
   }),
@@ -40,20 +41,18 @@ const OperatorKitI = {
   }),
 };
 
-/**
- * @param {Zone} zone
- * @param {{ makeInertInvitation: Function }} staticPowers
- */
-export const prepareOperatorKit = (zone, staticPowers) =>
+export const prepareOperatorKit = (
+  zone: Zone,
+  staticPowers: { makeInertInvitation: Function },
+) =>
   zone.exoClassKit(
     'Operator Kit',
     OperatorKitI,
     /**
-     * @param {string} operatorId
-     * @param {OperatorPowers} powers facet of the durable transaction feed
-     * @returns {State}
+     * @param operatorId
+     * @param powers facet of the durable transaction feed
      */
-    (operatorId, powers) => {
+    (operatorId: string, powers: OperatorPowers): State => {
       return {
         operatorId,
         powers,
@@ -67,10 +66,6 @@ export const prepareOperatorKit = (zone, staticPowers) =>
           this.state.disabled = true;
         },
       },
-      /**
-       * NB: when this kit is an offer result, the smart-wallet will detect the `invitationMakers`
-       * key and save it for future offers.
-       */
       invitationMakers: {
         /**
          * Provide an API call in the form of an invitation maker, so that the
@@ -80,10 +75,9 @@ export const prepareOperatorKit = (zone, staticPowers) =>
          * place, rather than as a means of performing it as in the
          * fluxAggregator contract used for price oracles.
          *
-         * @param {CctpTxEvidence} evidence
-         * @returns {Promise<Invitation>}
+         * @param evidence
          */
-        async SubmitEvidence(evidence) {
+        async SubmitEvidence(evidence: CctpTxEvidence): Promise<Invitation> {
           const { operator } = this.facets;
           // TODO(bootstrap integration): cause this call to throw and confirm that it
           // shows up in the the smart-wallet UpdateRecord `error` property
@@ -97,16 +91,15 @@ export const prepareOperatorKit = (zone, staticPowers) =>
         /**
          * submit evidence from this operator
          *
-         * @param {CctpTxEvidence} evidence
+         * @param evidence
          */
-        async submitEvidence(evidence) {
+        async submitEvidence(evidence: CctpTxEvidence): Promise<void> {
           const { state } = this;
           !state.disabled || Fail`submitEvidence for disabled operator`;
           const result = state.powers.submitEvidence(evidence, this.facets);
           return result;
         },
-        /** @returns {OperatorStatus} */
-        getStatus() {
+        getStatus(): OperatorStatus {
           const { state } = this;
           return {
             operatorId: state.operatorId,
@@ -117,4 +110,4 @@ export const prepareOperatorKit = (zone, staticPowers) =>
     },
   );
 
-/** @typedef {ReturnType<ReturnType<typeof prepareOperatorKit>>} OperatorKit */
+export type OperatorKit = ReturnType<ReturnType<typeof prepareOperatorKit>>;
