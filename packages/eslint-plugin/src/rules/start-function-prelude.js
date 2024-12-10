@@ -59,19 +59,34 @@ export default {
         }
 
         // Check for await usage before and within the region
-        const awaitNodes = context.getSourceCode().ast.body.reduce((nodes, node) => {
+        let foundAwait = false;
+        
+        // Use ESLint's selector to find await expressions
+        const awaitExpressions = [];
+        context.getSourceCode().ast.body.forEach(node => {
           if (node.type === 'ExportNamedDeclaration' && 
               node.declaration?.type === 'FunctionDeclaration' &&
               node.declaration.id.name === 'start') {
-            return [
-              ...nodes,
-              ...context.sourceCode.getNodesByType(node, 'AwaitExpression')
-            ];
+            // Walk the function body looking for AwaitExpression nodes
+            const walk = node => {
+              if (node.type === 'AwaitExpression') {
+                awaitExpressions.push(node);
+              }
+              for (const key in node) {
+                if (typeof node[key] === 'object' && node[key] !== null) {
+                  if (Array.isArray(node[key])) {
+                    node[key].forEach(walk);
+                  } else {
+                    walk(node[key]);
+                  }
+                }
+              }
+            };
+            walk(node.declaration.body);
           }
-          return nodes;
-        }, []);
+        });
 
-        const foundAwait = awaitNodes.some(node => {
+        foundAwait = awaitExpressions.some(node => {
           const awaitLine = node.loc.start.line;
           const relativeLine = awaitLine - functionNode.loc.start.line;
           return relativeLine <= regionEndLine;
