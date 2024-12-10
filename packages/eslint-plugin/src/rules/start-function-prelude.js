@@ -60,7 +60,8 @@ export default {
 
         // Check for await usage before and within the region
         const awaitExpressions = [];
-        const checkForAwait = node => {
+        // Use ESTree visitor to find await expressions
+        const checkNode = (node) => {
           if (node.type === 'AwaitExpression') {
             const awaitLine = sourceCode.getLocFromIndex(node.range[0]).line;
             const relativeLine = awaitLine - functionNode.body.loc.start.line;
@@ -71,15 +72,22 @@ export default {
           }
         };
 
-        const functionBodyNode = functionNode.body;
-        context.getSourceCode().visitorKeys.forEach(key => {
-          if (Array.isArray(functionBodyNode[key])) {
-            functionBodyNode[key].forEach(child => {
-              context.getSourceCode().esTreeNodeToESTreeNode(child);
-              checkForAwait(child);
-            });
+        // Traverse the AST to find await expressions
+        const traverseNode = (node) => {
+          if (!node) return;
+          checkNode(node);
+          
+          for (const key of Object.keys(node)) {
+            const child = node[key];
+            if (Array.isArray(child)) {
+              child.forEach(traverseNode);
+            } else if (child && typeof child === 'object' && 'type' in child) {
+              traverseNode(child);
+            }
           }
-        });
+        };
+
+        traverseNode(functionNode.body);
 
         if (awaitExpressions.length > 0) {
           context.report({

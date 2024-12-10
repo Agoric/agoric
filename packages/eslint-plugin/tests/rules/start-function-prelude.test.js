@@ -1,4 +1,4 @@
-import { RuleTester } from 'eslint';
+import { RuleTester } from '@eslint/eslintrc';
 import rule from '../../src/rules/start-function-prelude.js';
 
 const ruleTester = new RuleTester({
