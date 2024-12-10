@@ -59,37 +59,26 @@ export default {
         }
 
         // Check for await usage before and within the region
-        const awaitExpressions = [];
-        // Use ESTree visitor to find await expressions
-        const checkNode = (node) => {
-          if (node.type === 'AwaitExpression') {
-            const awaitLine = sourceCode.getLocFromIndex(node.range[0]).line;
-            const relativeLine = awaitLine - functionNode.body.loc.start.line;
-
-            if (relativeLine <= regionEndLine) {
-              awaitExpressions.push(node);
-            }
-          }
-        };
+        let foundAwait = false;
 
         // Traverse the AST to find await expressions
-        const traverseNode = (node) => {
-          if (!node) return;
-          checkNode(node);
-          
-          for (const key of Object.keys(node)) {
-            const child = node[key];
-            if (Array.isArray(child)) {
-              child.forEach(traverseNode);
-            } else if (child && typeof child === 'object' && 'type' in child) {
-              traverseNode(child);
-            }
+        context.getSourceCode().visitorKeys[functionNode.body.type].forEach(key => {
+          const child = functionNode.body[key];
+          if (Array.isArray(child)) {
+            child.forEach(node => {
+              if (node.type === 'AwaitExpression') {
+                const awaitLine = sourceCode.getLocFromIndex(node.range[0]).line;
+                const relativeLine = awaitLine - functionNode.body.loc.start.line;
+
+                if (relativeLine <= regionEndLine) {
+                  foundAwait = true;
+                }
+              }
+            });
           }
-        };
+        });
 
-        traverseNode(functionNode.body);
-
-        if (awaitExpressions.length > 0) {
+        if (foundAwait) {
           context.report({
             node: awaitExpressions[0],
             message:
