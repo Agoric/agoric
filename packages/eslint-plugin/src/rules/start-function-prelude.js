@@ -80,7 +80,7 @@ export default {
 
         if (foundAwait) {
           context.report({
-            node: awaitExpressions[0],
+            node: functionNode,
             message:
               'await expressions are not allowed before or within the synchronous prelude region',
           });
