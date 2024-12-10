@@ -59,24 +59,22 @@ export default {
         }
 
         // Check for await usage before and within the region
-        let foundAwait = false;
-
-        // Walk the AST to find await expressions
-        context.getSourceCode().visitorKeys[functionNode.body.type].forEach(key => {
-          const child = functionNode.body[key];
-          if (Array.isArray(child)) {
-            child.forEach(node => {
-              if (node.type === 'AwaitExpression') {
-                const awaitLine = node.loc.start.line;
-                // Convert to relative line number within the function
-                const relativeLine = awaitLine - functionNode.loc.start.line;
-
-                if (relativeLine <= regionEndLine) {
-                  foundAwait = true;
-                }
-              }
-            });
+        const awaitNodes = context.getSourceCode().ast.body.reduce((nodes, node) => {
+          if (node.type === 'ExportNamedDeclaration' && 
+              node.declaration?.type === 'FunctionDeclaration' &&
+              node.declaration.id.name === 'start') {
+            return [
+              ...nodes,
+              ...context.sourceCode.getNodesByType(node, 'AwaitExpression')
+            ];
           }
+          return nodes;
+        }, []);
+
+        const foundAwait = awaitNodes.some(node => {
+          const awaitLine = node.loc.start.line;
+          const relativeLine = awaitLine - functionNode.loc.start.line;
+          return relativeLine <= regionEndLine;
         });
 
         if (foundAwait) {
