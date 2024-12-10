@@ -3,7 +3,8 @@ export default {
   meta: {
     type: 'problem',
     docs: {
-      description: 'Enforce start function to have proper synchronous prelude region',
+      description:
+        'Enforce start function to have proper synchronous prelude region',
       recommended: true,
     },
     schema: [], // no options
@@ -11,7 +12,10 @@ export default {
   create(context) {
     return {
       ExportNamedDeclaration(node) {
-        if (!node.declaration || node.declaration.type !== 'FunctionDeclaration') {
+        if (
+          !node.declaration ||
+          node.declaration.type !== 'FunctionDeclaration'
+        ) {
           return;
         }
 
@@ -22,15 +26,18 @@ export default {
 
         const sourceCode = context.getSourceCode();
         const functionBody = sourceCode.getText(functionNode.body);
-        
+
         // Check for #region and #endregion markers
-        const hasRegionMarker = functionBody.includes('#region synchronous prelude');
+        const hasRegionMarker = functionBody.includes(
+          '#region synchronous prelude',
+        );
         const hasEndRegionMarker = functionBody.includes('#endregion');
 
         if (!hasRegionMarker || !hasEndRegionMarker) {
           context.report({
             node: functionNode,
-            message: 'start function must contain #region synchronous prelude and #endregion markers',
+            message:
+              'start function must contain #region synchronous prelude and #endregion markers',
           });
           return;
         }
@@ -57,7 +64,7 @@ export default {
           if (node.type === 'AwaitExpression') {
             const awaitLine = sourceCode.getLocFromIndex(node.range[0]).line;
             const relativeLine = awaitLine - functionNode.body.loc.start.line;
-            
+
             if (relativeLine <= regionEndLine) {
               awaitExpressions.push(node);
             }
@@ -77,7 +84,8 @@ export default {
         if (awaitExpressions.length > 0) {
           context.report({
             node: awaitExpressions[0],
-            message: 'await expressions are not allowed before or within the synchronous prelude region',
+            message:
+              'await expressions are not allowed before or within the synchronous prelude region',
           });
         }
       },
