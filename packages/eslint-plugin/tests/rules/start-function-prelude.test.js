@@ -9,7 +9,7 @@ ruleTester.run('start-function-prelude', rule, {
   valid: [
     {
       code: `
-        export function start() {
+        export async function start() {
           //#region synchronous prelude
           const x = 1;
           const y = 2;
@@ -23,7 +23,7 @@ ruleTester.run('start-function-prelude', rule, {
   invalid: [
     {
       code: `
-        export function start() {
+        export async function start() {
           await something();
           //#region synchronous prelude
           const x = 1;
@@ -31,22 +31,28 @@ ruleTester.run('start-function-prelude', rule, {
         }
       `,
       errors: [
-        { message: 'await expressions are not allowed before or within the synchronous prelude region' },
+        {
+          message:
+            'await expressions are not allowed before or within the synchronous prelude region',
+        },
       ],
     },
     {
       code: `
-        export function start() {
+        export async function start() {
           const x = 1;
         }
       `,
       errors: [
-        { message: 'start function must contain #region synchronous prelude and #endregion markers' },
+        {
+          message:
+            'start function must contain #region synchronous prelude and #endregion markers',
+        },
       ],
     },
     {
       code: `
-        export function start() {
+        export async function start() {
           //#region synchronous prelude
           await something();
           const x = 1;
@@ -54,7 +60,10 @@ ruleTester.run('start-function-prelude', rule, {
         }
       `,
       errors: [
-        { message: 'await expressions are not allowed before or within the synchronous prelude region' },
+        {
+          message:
+            'await expressions are not allowed before or within the synchronous prelude region',
+        },
       ],
     },
   ],
