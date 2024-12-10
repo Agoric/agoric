@@ -61,21 +61,23 @@ export default {
         // Check for await usage before and within the region
         let foundAwait = false;
 
-        // Use ESLint's built-in selector to find await expressions
-        const awaitExpressions = context.getSourceCode().ast.tokens.filter(
-          token => token.type === 'Keyword' && token.value === 'await'
-        );
+        // Walk the AST to find await expressions
+        context.getSourceCode().visitorKeys[functionNode.body.type].forEach(key => {
+          const child = functionNode.body[key];
+          if (Array.isArray(child)) {
+            child.forEach(node => {
+              if (node.type === 'AwaitExpression') {
+                const awaitLine = node.loc.start.line;
+                // Convert to relative line number within the function
+                const relativeLine = awaitLine - functionNode.loc.start.line;
 
-        for (const awaitToken of awaitExpressions) {
-          const awaitLine = awaitToken.loc.start.line;
-          // Convert to relative line number within the function
-          const relativeLine = awaitLine - functionNode.loc.start.line;
-
-          if (relativeLine <= regionEndLine) {
-            foundAwait = true;
-            break;
+                if (relativeLine <= regionEndLine) {
+                  foundAwait = true;
+                }
+              }
+            });
           }
-        }
+        });
 
         if (foundAwait) {
           context.report({
