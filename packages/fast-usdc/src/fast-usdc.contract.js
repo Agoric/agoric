@@ -90,105 +90,131 @@ export const contract = async (zcf, privateArgs, zone, tools) => {
   assert('usdcDenom' in terms, 'no usdcDenom');
 
   const { feeConfig, marshaller, storageNode } = privateArgs;
-  const { makeRecorderKit } = prepareRecorderKitMakers(
-    zone.mapStore('vstorage'),
-    marshaller,
-  );
-
-  const makeStatusNode = () => E(storageNode).makeChildNode(STATUS_NODE);
-  const statusManager = prepareStatusManager(zone, makeStatusNode);
-
-  const { USDC } = terms.brands;
-  const { withdrawToSeat } = tools.zoeTools;
   const { baggage, chainHub, orchestrateAll, vowTools } = tools;
-  const makeSettler = prepareSettler(zone, {
-    statusManager,
-    USDC,
-    withdrawToSeat,
-    feeConfig,
-    vowTools: tools.vowTools,
-    zcf,
-    chainHub,
-  });
 
-  const { localTransfer } = makeZoeTools(zcf, vowTools);
-  const makeAdvancer = prepareAdvancer(zone, {
-    chainHub,
-    feeConfig,
-    localTransfer,
-    usdc: harden({
-      brand: terms.brands.USDC,
-      denom: terms.usdcDenom,
-    }),
-    statusManager,
-    vowTools,
-    zcf,
-  });
+  /** Define all durable kinds without awaiting external input. */
+  const defineKinds = () => {
+    const { makeRecorderKit } = prepareRecorderKitMakers(
+      zone.mapStore('vstorage'),
+      marshaller,
+    );
 
-  const makeFeedKit = prepareTransactionFeedKit(zone, zcf);
+    const makeStatusNode = () => E(storageNode).makeChildNode(STATUS_NODE);
+    const statusManager = prepareStatusManager(zone, makeStatusNode);
 
-  const makeLiquidityPoolKit = prepareLiquidityPoolKit(
-    zone,
-    zcf,
-    terms.brands.USDC,
-    { makeRecorderKit },
-  );
+    const { USDC } = terms.brands;
+    const { withdrawToSeat } = tools.zoeTools;
+    const makeSettler = prepareSettler(zone, {
+      statusManager,
+      USDC,
+      withdrawToSeat,
+      feeConfig,
+      vowTools: tools.vowTools,
+      zcf,
+      chainHub,
+    });
 
-  const makeTestInvitation = defineInertInvitation(
-    zcf,
-    'test of forcing evidence',
-  );
+    const { localTransfer } = makeZoeTools(zcf, vowTools);
+    const makeAdvancer = prepareAdvancer(zone, {
+      chainHub,
+      feeConfig,
+      localTransfer,
+      usdc: harden({
+        brand: terms.brands.USDC,
+        denom: terms.usdcDenom,
+      }),
+      statusManager,
+      vowTools,
+      zcf,
+    });
 
-  const { makeLocalAccount, makeNobleAccount } = orchestrateAll(flows, {});
+    const makeFeedKit = prepareTransactionFeedKit(zone, zcf);
 
-  const creatorFacet = zone.exo('Fast USDC Creator', undefined, {
-    /** @type {(operatorId: string) => Promise<Invitation<OperatorKit>>} */
-    async makeOperatorInvitation(operatorId) {
-      return feedKit.creator.makeOperatorInvitation(operatorId);
-    },
-    async connectToNoble() {
-      return vowTools.when(nobleAccountV, nobleAccount => {
-        trace('nobleAccount', nobleAccount);
-        return vowTools.when(
-          E(nobleAccount).getAddress(),
-          intermediateRecipient => {
-            trace('intermediateRecipient', intermediateRecipient);
-            advancer.setIntermediateRecipient(intermediateRecipient);
-            settlerKit.creator.setIntermediateRecipient(intermediateRecipient);
-            return intermediateRecipient;
-          },
-        );
-      });
-    },
-  });
+    const makeLiquidityPoolKit = prepareLiquidityPoolKit(
+      zone,
+      zcf,
+      terms.brands.USDC,
+      { makeRecorderKit },
+    );
 
-  const publicFacet = zone.exo('Fast USDC Public', undefined, {
-    // XXX to be removed before production
-    /**
-     * NB: Any caller with access to this invitation maker has the ability to
-     * force handling of evidence.
-     *
-     * Provide an API call in the form of an invitation maker, so that the
-     * capability is available in the smart-wallet bridge during UI testing.
-     *
-     * @param {CctpTxEvidence} evidence
-     */
-    makeTestPushInvitation(evidence) {
-      void advancer.handleTransactionEvent(evidence);
-      return makeTestInvitation();
-    },
-    makeDepositInvitation() {
-      return poolKit.public.makeDepositInvitation();
-    },
-    makeWithdrawInvitation() {
-      return poolKit.public.makeWithdrawInvitation();
-    },
-    getPublicTopics() {
-      return poolKit.public.getPublicTopics();
-    },
-  });
+    const makeTestInvitation = defineInertInvitation(
+      zcf,
+      'test of forcing evidence',
+    );
 
-  // ^^^ Define all kinds above this line. Keep remote calls below. vvv
+    const { makeLocalAccount, makeNobleAccount } = orchestrateAll(flows, {});
+
+    const creatorFacet = zone.exo('Fast USDC Creator', undefined, {
+      /** @type {(operatorId: string) => Promise<Invitation<OperatorKit>>} */
+      async makeOperatorInvitation(operatorId) {
+        return feedKit.creator.makeOperatorInvitation(operatorId);
+      },
+      async connectToNoble() {
+        return vowTools.when(nobleAccountV, nobleAccount => {
+          trace('nobleAccount', nobleAccount);
+          return vowTools.when(
+            E(nobleAccount).getAddress(),
+            intermediateRecipient => {
+              trace('intermediateRecipient', intermediateRecipient);
+              advancer.setIntermediateRecipient(intermediateRecipient);
+              settlerKit.creator.setIntermediateRecipient(
+                intermediateRecipient,
+              );
+              return intermediateRecipient;
+            },
+          );
+        });
+      },
+    });
+
+    const publicFacet = zone.exo('Fast USDC Public', undefined, {
+      // XXX to be removed before production
+      /**
+       * NB: Any caller with access to this invitation maker has the ability to
+       * force handling of evidence.
+       *
+       * Provide an API call in the form of an invitation maker, so that the
+       * capability is available in the smart-wallet bridge during UI testing.
+       *
+       * @param {CctpTxEvidence} evidence
+       */
+      makeTestPushInvitation(evidence) {
+        void advancer.handleTransactionEvent(evidence);
+        return makeTestInvitation();
+      },
+      makeDepositInvitation() {
+        return poolKit.public.makeDepositInvitation();
+      },
+      makeWithdrawInvitation() {
+        return poolKit.public.makeWithdrawInvitation();
+      },
+      getPublicTopics() {
+        return poolKit.public.getPublicTopics();
+      },
+    });
+
+    return {
+      creatorFacet,
+      publicFacet,
+      makeAdvancer,
+      makeLocalAccount,
+      makeNobleAccount,
+      makeFeedKit,
+      makeLiquidityPoolKit,
+      makeSettler,
+    };
+  };
+
+  const {
+    creatorFacet,
+    publicFacet,
+    makeLiquidityPoolKit,
+    makeFeedKit,
+    makeLocalAccount,
+    makeNobleAccount,
+    makeSettler,
+    makeAdvancer,
+  } = defineKinds();
 
   // NOTE: Using a ZCFMint is helpful for the usual reasons (
   // synchronous mint/burn, keeping assets out of contract vats, ...).
