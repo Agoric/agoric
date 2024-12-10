@@ -2,10 +2,7 @@ import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const pkg = JSON.parse(
-  fs.readFileSync(
-    new URL('../package.json', import.meta.url),
-    'utf8',
-  ),
+  fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8'),
 );
 
 // Import rules
@@ -17,7 +14,7 @@ const plugin = {
     name: pkg.name,
     version: pkg.version,
   },
-  
+
   // Rule definitions
   rules: {
     'dollar-sign': dollarSign,
@@ -26,15 +23,18 @@ const plugin = {
 
   // Recommended config
   configs: {
-    recommended: [{
-      plugins: {
-        '@agoric': plugin,
+    recommended: [
+      {
+        plugins: {
+          // @ts-expect-error used before declaration
+          '@agoric': plugin,
+        },
+        rules: {
+          '@agoric/dollar-sign': 'error',
+          '@agoric/start-function-prelude': 'error',
+        },
       },
-      rules: {
-        '@agoric/dollar-sign': 'error',
-        '@agoric/start-function-prelude': 'error',
-      },
-    }],
+    ],
   },
 };
 
