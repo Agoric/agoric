@@ -1,5 +1,5 @@
 import test from 'ava';
-import { runVOTest } from '../tools/vo-test-harness.js';
+import { makeSpy, runVOTest } from '../tools/vo-test-harness.js';
 
 async function voTestTest(t, mode) {
   let makeThing;
@@ -36,8 +36,6 @@ async function voTestTest(t, mode) {
   await runVOTest(t, prepare, makeTestThing, testTestThing);
 }
 
-// Note: these first two are not marked "test.failing" because
-// something is wrong and we need to fix it. Rather, they are
 // confirming that the voTestTest harness would catch problems during
 // downstream tests that use the harness, if those problems arose in
 // the "before" or "after" phases, and reported by the downstream test
@@ -47,20 +45,26 @@ async function voTestTest(t, mode) {
 // fails, otherwise the harness is not doing its job, and is hiding
 // real test failures in some downstream client package.
 
-test.failing('fail during "before" phase', async t => {
-  await voTestTest(t, 'before');
+test('fail during "before" phase', async t => {
+  const tSpy = makeSpy(t);
+  await voTestTest(tSpy, 'before');
+  t.is(tSpy.failureMessage, 'deliberate failure in before phase');
 });
 
-test.failing('fail during "after" phase', async t => {
-  await voTestTest(t, 'after');
+test('fail during "after" phase', async t => {
+  const tSpy = makeSpy(t);
+  await voTestTest(tSpy, 'after');
+  t.is(tSpy.failureMessage, 'deliberate failure in after phase');
 });
 
 // Similarly, this test makes sure that our harness can detect when
 // the downstream test misbehaves and holds on to the object they were
 // supposed to drop.
 
-test.failing('fail due to held object', async t => {
-  await voTestTest(t, 'hold');
+test('fail due to held object', async t => {
+  const tSpy = makeSpy(t);
+  await voTestTest(tSpy, 'hold');
+  t.is(tSpy.falsyMessage, 'somebody continues to hold test object');
 });
 
 test.serial('succeed', async t => {
