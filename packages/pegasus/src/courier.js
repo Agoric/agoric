@@ -80,7 +80,7 @@ export const makeCourierMaker =
 
         // The payment is already escrowed, and proposed to retain, so try sending.
         return when(E(connection).send(transferPacket))
-          .then(ack => E(transferProtocol).assertTransferPacketAck(ack))
+          .then(async ack => E(transferProtocol).assertTransferPacketAck(ack))
           .then(
             _ => zcfSeat.exit(),
             reason => {
@@ -105,7 +105,7 @@ export const makeCourierMaker =
       /** @type {DepositFacet} */
       const depositFacet = await E(board)
         .getValue(depositAddress)
-        .catch(_ =>
+        .catch(async _ =>
           E(namesByAddress).lookup(depositAddress, WalletName.depositFacet),
         );
 

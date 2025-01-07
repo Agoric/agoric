@@ -128,7 +128,7 @@ test('zoe vat upgrade trauma', async t => {
     30n,
   );
   const flow = Object.entries({
-    makeCoveredCallInstance: () =>
+    makeCoveredCallInstance: async () =>
       messageToObject(
         zoe,
         'startInstance',

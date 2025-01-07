@@ -11,7 +11,7 @@ const start = async zcf => {
   zcf.setTestJig(() => harden({ instance }));
 
   const publicFacet = Far('public facet', {
-    makeInvitation: () => zcf.makeInvitation(() => 17, 'simple'),
+    makeInvitation: async () => zcf.makeInvitation(() => 17, 'simple'),
   });
 
   return { publicFacet };

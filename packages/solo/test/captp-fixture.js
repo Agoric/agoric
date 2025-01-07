@@ -36,7 +36,7 @@ export async function makeFixture(PORT, noisy = false) {
 
   /** @type {WebSocket} */
   let ws;
-  function connect() {
+  async function connect() {
     process.stdout.write('# connecting');
     async function tryConnect(resolve, reject) {
       process.stdout.write('.');

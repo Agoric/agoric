@@ -322,7 +322,7 @@ export function buildRootObject(vatPowers, _vatParameters, baggage) {
     },
   );
 
-  function finishVatCreation(vatID) {
+  async function finishVatCreation(vatID) {
     const [pendingP, pendingRR] = producePRR();
     pendingVatCreations.set(vatID, pendingRR);
 

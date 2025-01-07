@@ -75,10 +75,13 @@ test('zoe - ownable-counter contract', async t => {
     'makeTransferInvitation',
   ]);
 
-  await t.throwsAsync(() => E(firstCounter).getInvitationCustomDetails(), {
-    message: '"OwnableCounter_caretaker" revoked',
-  });
-  await t.throwsAsync(() => E(firstCounter).incr(), {
+  await t.throwsAsync(
+    async () => E(firstCounter).getInvitationCustomDetails(),
+    {
+      message: '"OwnableCounter_caretaker" revoked',
+    },
+  );
+  await t.throwsAsync(async () => E(firstCounter).incr(), {
     message: '"OwnableCounter_caretaker" revoked',
   });
   t.is(await E(viewCounter).view(), 4n);

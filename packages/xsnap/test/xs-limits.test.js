@@ -23,7 +23,7 @@ test('heap exhaustion: orderly fail-stop', async t => {
   `;
   for (const debug of [false, true]) {
     const vat = await xsnap({ ...options(io), meteringLimit: 0, debug });
-    t.teardown(() => vat.terminate());
+    t.teardown(async () => vat.terminate());
     await t.throwsAsync(vat.evaluate(grow), {
       code: ExitCode.E_NOT_ENOUGH_MEMORY,
     });
@@ -49,7 +49,7 @@ test.skip('property name space exhaustion: orderly fail-stop', async t => {
   `;
   for (const debug of [false, true]) {
     const vat = await xsnap({ ...options(io), meteringLimit: 0, debug });
-    t.teardown(() => vat.terminate());
+    t.teardown(async () => vat.terminate());
     t.log({ debug, qty: 31000 });
     await t.notThrowsAsync(vat.evaluate(grow(31000)));
     t.log({ debug, qty: 4000000000 });
@@ -87,7 +87,7 @@ test.skip('property name space exhaustion: orderly fail-stop', async t => {
       }k; rep ${qty}; debug ${debug}`, async t => {
         const opts = { ...options(io), meteringLimit: 1e8, debug };
         const vat = await xsnap({ ...opts, parserBufferSize });
-        t.teardown(() => vat.terminate());
+        t.teardown(async () => vat.terminate());
         const expected = failure ? [failure] : [qty * 4 + 2];
         await vat.evaluate(grow(qty));
         t.deepEqual(
@@ -112,7 +112,7 @@ test.skip('property name space exhaustion: orderly fail-stop', async t => {
   for (const statement of challenges) {
     test(`large sizes - abort cluster: ${statement}`, async t => {
       const vat = await xsnap(options(io));
-      t.teardown(() => vat.terminate());
+      t.teardown(async () => vat.terminate());
       await t.throwsAsync(
         vat.evaluate(`
         (() => {

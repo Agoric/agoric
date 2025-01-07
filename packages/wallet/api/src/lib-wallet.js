@@ -370,8 +370,9 @@ export function makeWalletRoot({
 
   async function updateAllPurseState() {
     return Promise.all(
-      mapIterable(purseMapping.petnameToVal.entries(), ([petname, purse]) =>
-        updatePursesState(petname, purse),
+      mapIterable(
+        purseMapping.petnameToVal.entries(),
+        async ([petname, purse]) => updatePursesState(petname, purse),
       ),
     );
   }
@@ -526,7 +527,7 @@ export function makeWalletRoot({
 
   async function updateAllInboxState() {
     await Promise.all(
-      Array.from(inboxState.entries()).map(([id, offer]) =>
+      Array.from(inboxState.entries()).map(async ([id, offer]) =>
         // Don't trigger state changes.
         updateInboxState(id, offer, false),
       ),
@@ -586,7 +587,7 @@ export function makeWalletRoot({
    * @param {string} id
    * @param {ERef<UserSeat>} seat
    */
-  function subscribeToUpdates(id, seat) {
+  async function subscribeToUpdates(id, seat) {
     return E(E(seat).getExitSubscriber())
       .subscribeAfter()
       .then(update => updateOrResubscribe(id, seat, update));
@@ -623,7 +624,7 @@ export function makeWalletRoot({
 
     // Try reclaiming any of our payments that we successfully withdrew, but
     // were left unclaimed.
-    const tryReclaimingWithdrawnPayments = () =>
+    const tryReclaimingWithdrawnPayments = async () =>
       // Use allSettled to ensure we attempt all the deposits, regardless of
       // individual rejections.
       Promise.allSettled(
@@ -679,9 +680,9 @@ export function makeWalletRoot({
     // payouts.
     const depositedP = E(seat)
       .getPayouts()
-      .then(payoutObj => {
+      .then(async payoutObj => {
         return Promise.all(
-          Object.entries(payoutObj).map(([keyword, payoutP]) => {
+          Object.entries(payoutObj).map(async ([keyword, payoutP]) => {
             // We try to find a purse for this keyword, but even if we don't,
             // we still make it a normal incoming payment.
             const purseOrUndefined = purseKeywordRecord[keyword];
@@ -710,7 +711,7 @@ export function makeWalletRoot({
       : brandTable.initIssuer(issuer, addMeta);
     const { brand } = await recP;
     await initIssuerToBoardId(issuer, brand);
-    const addBrandPetname = () => {
+    const addBrandPetname = async () => {
       let p;
       const already = brandMapping.valToPetname.has(brand);
       petnameForBrand = brandMapping.suggestPetname(petnameForBrand, brand);
@@ -843,7 +844,7 @@ export function makeWalletRoot({
    * @param {Petname} petnameForPurse
    * @param {boolean} [defaultAutoDeposit]
    */
-  const makeEmptyPurse = (
+  const makeEmptyPurse = async (
     brandPetname,
     petnameForPurse,
     defaultAutoDeposit = true,
@@ -1162,7 +1163,7 @@ export function makeWalletRoot({
     }
 
     completeFn()
-      .then(_ => {
+      .then(async _ => {
         idToComplete.delete(id);
         const offer = idToOffer.get(id);
         const cancelledOffer = addMeta({
@@ -1211,7 +1212,7 @@ export function makeWalletRoot({
 
       const { depositedP, seat } = await executeOffer(compiledOffer);
 
-      idToComplete.set(id, () => {
+      idToComplete.set(id, async () => {
         alreadyResolved = true;
         return E(seat).tryExit();
       });
@@ -1220,7 +1221,7 @@ export function makeWalletRoot({
       // consummated. Only subscribe if it was postponed.
       void E(seat)
         .hasExited()
-        .then(exited => {
+        .then(async exited => {
           if (!exited) {
             return subscribeToUpdates(id, seat);
           }
@@ -1392,7 +1393,7 @@ export function makeWalletRoot({
    * @param {string} boardId
    * @param {string} [dappOrigin]
    */
-  function acceptPetname(
+  async function acceptPetname(
     acceptFn,
     suggestedPetname,
     boardId,
@@ -1431,7 +1432,7 @@ export function makeWalletRoot({
     // changed
     return acceptPetname(
       // Make a purse if we add the issuer.
-      (petname, value) => addIssuer(petname, value, true),
+      async (petname, value) => addIssuer(petname, value, true),
       suggestedPetname,
       issuerBoardId,
       dappOrigin,
@@ -1682,7 +1683,10 @@ export function makeWalletRoot({
     makeLookup('offer', idOnly('offer', idToOffer.get));
     makeLookup(
       'offerResult',
-      idOnly('offerResult', id => idToOfferResultPromiseKit.get(id).promise),
+      idOnly(
+        'offerResult',
+        async id => idToOfferResultPromiseKit.get(id).promise,
+      ),
     );
 
     return rootPathToLookup;
@@ -1706,7 +1710,7 @@ export function makeWalletRoot({
     return acceptOffer(`${dappOrigin}#${rawId}`);
   };
 
-  const handleSuggestIssuerAction = ({ petname, boardId }) =>
+  const handleSuggestIssuerAction = async ({ petname, boardId }) =>
     suggestIssuer(petname, boardId);
 
   /** @typedef {{spendAction: string}} Action */
@@ -1714,7 +1718,7 @@ export function makeWalletRoot({
    * @param {Action} obj
    * @returns {Promise<any>}
    */
-  const performAction = obj => {
+  const performAction = async obj => {
     const { type, data } = JSON.parse(obj.spendAction);
     switch (type) {
       case 'acceptOffer':
@@ -1862,11 +1866,11 @@ export function makeWalletRoot({
     // Make Zoe invite purse
     const ZOE_INVITE_PURSE_PETNAME = 'Default Zoe invite purse';
     const inviteIssuerP = E(zoe).getInvitationIssuer();
-    const addZoeIssuer = issuerP =>
+    const addZoeIssuer = async issuerP =>
       issuerManager.add(ZOE_INVITE_BRAND_PETNAME, issuerP);
-    const makeInvitePurse = () =>
+    const makeInvitePurse = async () =>
       wallet.makeEmptyPurse(ZOE_INVITE_BRAND_PETNAME, ZOE_INVITE_PURSE_PETNAME);
-    const addInviteDepositFacet = () =>
+    const addInviteDepositFacet = async () =>
       E(wallet).enableAutoDeposit(ZOE_INVITE_PURSE_PETNAME);
 
     await addZoeIssuer(inviteIssuerP)

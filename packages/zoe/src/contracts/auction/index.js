@@ -114,7 +114,7 @@ const start = zcf => {
     });
   };
 
-  const makeBidInvitation = () => {
+  const makeBidInvitation = async () => {
     /** @type {OfferHandler} */
     const performBid = seat => {
       assert(!isClosed, 'Auction session is closed, no more bidding');

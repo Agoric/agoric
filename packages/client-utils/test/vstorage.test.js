@@ -4,7 +4,7 @@ import test from 'ava';
 import { makeVStorage } from '../src/vstorage.js';
 
 /** @type {any} */
-const fetch = () => Promise.resolve({});
+const fetch = async () => Promise.resolve({});
 
 test('readFully can be used without instance binding', async t => {
   const vstorage = makeVStorage({ fetch }, { chainName: '', rpcAddrs: [''] });
@@ -14,5 +14,5 @@ test('readFully can be used without instance binding', async t => {
   vstorage.readAt = async () => ({ blockHeight: 0, values: ['test'] });
 
   // This would throw if readFully required 'this' binding
-  await t.notThrowsAsync(() => readFully('some/path'));
+  await t.notThrowsAsync(async () => readFully('some/path'));
 });

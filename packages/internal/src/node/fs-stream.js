@@ -8,7 +8,7 @@ import { open } from 'node:fs/promises';
  *   | import('net').Socket} stream
  * @returns {Promise<void>}
  */
-export const fsStreamReady = stream =>
+export const fsStreamReady = async stream =>
   new Promise((resolve, reject) => {
     if (stream.destroyed) {
       reject(Error('Stream already destroyed'));
@@ -66,8 +66,8 @@ export const makeFsStreamWriter = async filePath => {
       () => p,
       err =>
         p.then(
-          () => Promise.reject(err),
-          pError =>
+          async () => Promise.reject(err),
+          async pError =>
             Promise.reject(
               pError !== err ? AggregateError([err, pError]) : err,
             ),

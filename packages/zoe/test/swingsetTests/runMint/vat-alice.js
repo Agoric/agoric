@@ -55,7 +55,7 @@ const build = async (log, zoe, installations, feeMintAccess) => {
 
 export function buildRootObject(vatPowers) {
   return Far('root', {
-    build: (zoe, installations, feeMintAccess) =>
+    build: async (zoe, installations, feeMintAccess) =>
       build(vatPowers.testLog, zoe, installations, feeMintAccess),
   });
 }

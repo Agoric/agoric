@@ -23,7 +23,8 @@ const start = zcf => {
     seat.exit();
     return `The offer was accepted`;
   };
-  const makeRefundInvitation = () => zcf.makeInvitation(refund, 'getRefund');
+  const makeRefundInvitation = async () =>
+    zcf.makeInvitation(refund, 'getRefund');
 
   const publicFacet = Far('publicFacet', {
     getOffersCount: () => offersCount,

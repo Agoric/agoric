@@ -526,7 +526,7 @@ export const installBootContracts = async ({
     mintHolder,
   })) {
     const idP = E(vatAdminSvc).getBundleIDByName(name);
-    const installationP = idP.then(bundleID =>
+    const installationP = idP.then(async bundleID =>
       E(zoe).installBundleID(bundleID, name),
     );
     producer.resolve(installationP);

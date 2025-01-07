@@ -16,7 +16,12 @@ function parentLog(first, ...args) {
 export function makeNodeSubprocessFactory(tools) {
   const { startSubprocessWorker, testLog } = tools;
 
-  function createFromBundle(vatID, bundle, managerOptions, liveSlotsOptions) {
+  async function createFromBundle(
+    vatID,
+    bundle,
+    managerOptions,
+    liveSlotsOptions,
+  ) {
     assert(!managerOptions.enableSetup, 'not supported at all');
     assert(
       managerOptions.useTranscript,
@@ -62,7 +67,7 @@ export function makeNodeSubprocessFactory(tools) {
      * @param {import('@agoric/swingset-liveslots').VatDeliveryObject} delivery
      * @returns {Promise<import('@agoric/swingset-liveslots').VatDeliveryResult>}
      */
-    function deliverToWorker(delivery) {
+    async function deliverToWorker(delivery) {
       parentLog(`sending delivery`, delivery);
       !waiting || Fail`already waiting for delivery`;
       const pr = makePromiseKit();
@@ -107,7 +112,7 @@ export function makeNodeSubprocessFactory(tools) {
     parentLog(`instructing worker to load bundle..`);
     sendToWorker(['setBundle', vatID, bundle, liveSlotsOptions]);
 
-    function shutdown() {
+    async function shutdown() {
       // terminate(); // XXX currently disabled since it breaks profiling; we should revisit if we develop a problem with worker vat processes refusing to exit when requested to do so
       sendToWorker(['exit']);
       return E.when(done, _ => undefined);

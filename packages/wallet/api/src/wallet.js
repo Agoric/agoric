@@ -670,7 +670,7 @@ export function buildRootObject(vatPowers) {
  * @param {StartupTerms} terms
  * @param {*} _inviteMaker
  */
-export default function spawn(terms, _inviteMaker) {
+export default async function spawn(terms, _inviteMaker) {
   const walletVat = buildRootObject();
   return walletVat.startup(terms).then(_ => walletVat);
 }

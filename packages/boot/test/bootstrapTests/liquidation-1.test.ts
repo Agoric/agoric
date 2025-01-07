@@ -122,7 +122,7 @@ const outcome = {
 test.before(async t => {
   t.context = await makeLiquidationTestContext(t);
 });
-test.after.always(t => {
+test.after.always(async t => {
   return t.context.shutdown && t.context.shutdown();
 });
 

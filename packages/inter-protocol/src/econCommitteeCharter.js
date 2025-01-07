@@ -60,12 +60,12 @@ export const start = async (zcf, privateArgs, baggage) => {
     'instanceToGovernor',
   );
 
-  const makeParamInvitation = () => {
+  const makeParamInvitation = async () => {
     /**
      * @param {ZCFSeat} seat
      * @param {ParamChangesOfferArgs} args
      */
-    const voteOnParamChanges = (seat, args) => {
+    const voteOnParamChanges = async (seat, args) => {
       mustMatch(args, ParamChangesOfferArgsShape);
       seat.exit();
 
@@ -86,8 +86,8 @@ export const start = async (zcf, privateArgs, baggage) => {
     return zcf.makeInvitation(voteOnParamChanges, 'vote on param changes');
   };
 
-  const makeOfferFilterInvitation = (instance, strings, deadline) => {
-    const voteOnOfferFilterHandler = seat => {
+  const makeOfferFilterInvitation = async (instance, strings, deadline) => {
+    const voteOnOfferFilterHandler = async seat => {
       seat.exit();
 
       const governor = instanceToGovernor.get(instance);
@@ -103,13 +103,13 @@ export const start = async (zcf, privateArgs, baggage) => {
    * @param {string[]} methodArgs
    * @param {import('@agoric/time').TimestampValue} deadline
    */
-  const makeApiInvocationInvitation = (
+  const makeApiInvocationInvitation = async (
     instance,
     methodName,
     methodArgs,
     deadline,
   ) => {
-    const handler = seat => {
+    const handler = async seat => {
       seat.exit();
 
       const governor = instanceToGovernor.get(instance);
@@ -177,7 +177,7 @@ export const start = async (zcf, privateArgs, baggage) => {
         console.log('charter: adding instance', label);
         instanceToGovernor.init(governedInstance, governorFacet);
       },
-      makeCharterMemberInvitation: () =>
+      makeCharterMemberInvitation: async () =>
         zcf.makeInvitation(charterMemberHandler, INVITATION_MAKERS_DESC),
     },
   );

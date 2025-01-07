@@ -91,10 +91,10 @@ export const startSendAnywhere = async (
       () => undefined,
     );
 
-  const atomIssuer = await safeFulfill(() =>
+  const atomIssuer = await safeFulfill(async () =>
     E(agoricNames).lookup('issuer', 'ATOM'),
   );
-  const osmoIssuer = await safeFulfill(() =>
+  const osmoIssuer = await safeFulfill(async () =>
     E(agoricNames).lookup('issuer', 'OSMO'),
   );
 

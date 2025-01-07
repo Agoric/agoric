@@ -56,7 +56,7 @@ import {
  * }} privateArgs
  */
 // eslint-disable-next-line no-unused-vars -- used for typedef
-const testStartFn = (zcf, privateArgs) => start(zcf, privateArgs);
+const testStartFn = async (zcf, privateArgs) => start(zcf, privateArgs);
 
 /**
  * @typedef {object} TestContext

@@ -24,6 +24,6 @@ const build = async (log, zoe, installations) => {
 
 export function buildRootObject(vatPowers) {
   return Far('root', {
-    build: (...args) => build(vatPowers.testLog, ...args),
+    build: async (...args) => build(vatPowers.testLog, ...args),
   });
 }

@@ -35,7 +35,9 @@ test('types', async t => {
     Working: [ParamTypes.NAT, 0n],
   });
   mgr.getWorking().valueOf();
-  await t.throwsAsync(() => mgr.updateParams({ Working: 'not a bigint' }));
+  await t.throwsAsync(async () =>
+    mgr.updateParams({ Working: 'not a bigint' }),
+  );
 });
 
 test('makeParamManagerFromTerms', async t => {
@@ -109,14 +111,14 @@ test('Amount', async t => {
   t.deepEqual(paramManager.getShimmer(), AmountMath.make(floorBrand, 5n));
 
   await t.throwsAsync(
-    () => paramManager.updateParams({ Shimmer: 'fear,loathing' }),
+    async () => paramManager.updateParams({ Shimmer: 'fear,loathing' }),
     {
       message: 'Expected an Amount for "Shimmer", got: "fear,loathing"',
     },
   );
 
   await t.throwsAsync(
-    () =>
+    async () =>
       paramManager.updateParams({
         Shimmer: AmountMath.make(dessertBrand, 20n),
       }),
@@ -127,7 +129,7 @@ test('Amount', async t => {
   );
 
   await t.throwsAsync(
-    () => paramManager.updateParams({ Shimmer: 'fear,loathing' }),
+    async () => paramManager.updateParams({ Shimmer: 'fear,loathing' }),
     {
       message: 'Expected an Amount for "Shimmer", got: "fear,loathing"',
     },
@@ -159,7 +161,7 @@ test('params one installation', async t => {
 
   t.deepEqual(paramManager.getPName(), installationHandle);
   await t.throwsAsync(
-    () => paramManager.updateParams({ PName: 18.1 }),
+    async () => paramManager.updateParams({ PName: 18.1 }),
     {
       message: 'value for "PName" must be an Installation, was 18.1',
     },
@@ -196,7 +198,7 @@ test('params one instance', async t => {
 
   t.deepEqual(paramManager.getPName(), instanceHandle);
   await t.throwsAsync(
-    () => paramManager.updateParams({ PName: 18.1 }),
+    async () => paramManager.updateParams({ PName: 18.1 }),
     {
       message: 'value for "PName" must be an Instance, was 18.1',
     },
@@ -286,15 +288,18 @@ test('two Nats', async t => {
   t.is(paramManager.getSpeedLimit(), 299_792_458n);
 
   await t.throwsAsync(
-    () => paramManager.updateParams({ SpeedLimit: 300000000 }),
+    async () => paramManager.updateParams({ SpeedLimit: 300000000 }),
     {
       message: '300000000 must be a bigint',
     },
   );
 
-  await t.throwsAsync(() => paramManager.updateParams({ SpeedLimit: -37n }), {
-    message: '-37 is negative',
-  });
+  await t.throwsAsync(
+    async () => paramManager.updateParams({ SpeedLimit: -37n }),
+    {
+      message: '-37 is negative',
+    },
+  );
 });
 
 test('Ratio', async t => {
@@ -312,7 +317,7 @@ test('Ratio', async t => {
   t.is(paramManager.getGoldenRatio(), morePrecise);
 
   await t.throwsAsync(
-    () => paramManager.updateParams({ GoldenRatio: 300000000 }),
+    async () => paramManager.updateParams({ GoldenRatio: 300000000 }),
     {
       message: '"ratio" 300000000 must be a pass-by-copy record, not "number"',
     },
@@ -321,7 +326,7 @@ test('Ratio', async t => {
   const anotherBrand = makeIssuerKit('arbitrary').brand;
 
   await t.throwsAsync(
-    () =>
+    async () =>
       paramManager.updateParams({
         GoldenRatio: makeRatio(16180n, anotherBrand, 10_000n),
       }),
@@ -342,7 +347,7 @@ test('Strings', async t => {
   await paramManager.updateParams({ OurWeapons: 'fear,surprise' });
   t.is(paramManager.getOurWeapons(), 'fear,surprise');
   await t.throwsAsync(
-    () => paramManager.updateParams({ OurWeapons: 300000000 }),
+    async () => paramManager.updateParams({ OurWeapons: 300000000 }),
     {
       message: '300000000 must be a string',
     },

@@ -17,7 +17,7 @@ import { makeCloseLoanInvitation } from './close.js';
 import { makeAddCollateralInvitation } from './addCollateral.js';
 
 /** @type {MakeBorrowInvitation} */
-export const makeBorrowInvitation = (zcf, config) => {
+export const makeBorrowInvitation = async (zcf, config) => {
   const {
     mmr, // Maintenance Margin Requirement, as a Ratio
     priceAuthority,
@@ -133,11 +133,11 @@ export const makeBorrowInvitation = (zcf, config) => {
 
     /** @type {BorrowFacet} */
     const borrowFacet = Far('borrowFacet', {
-      makeCloseLoanInvitation: () =>
+      makeCloseLoanInvitation: async () =>
         makeCloseLoanInvitation(zcf, configWithBorrower),
-      makeAddCollateralInvitation: () =>
+      makeAddCollateralInvitation: async () =>
         makeAddCollateralInvitation(zcf, configWithBorrower),
-      getLiquidationPromise: () => liquidationPromiseKit.promise,
+      getLiquidationPromise: async () => liquidationPromiseKit.promise,
       getDebtNotifier,
       getLastCalculationTimestamp,
       getRecentCollateralAmount: () =>

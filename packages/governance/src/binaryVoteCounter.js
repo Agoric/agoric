@@ -125,7 +125,7 @@ const makeBinaryVoteCounter = (
     }
 
     // XXX if we should distinguish ties, publish should be called in if above
-    void E.when(outcomePromise.promise, position => {
+    void E.when(outcomePromise.promise, async position => {
       /** @type {OutcomeRecord} */
       const voteOutcome = {
         question: details.questionHandle,

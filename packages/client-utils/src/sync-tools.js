@@ -33,7 +33,7 @@
  * @param {number} ms
  * @param {{log: (message: string) => void, setTimeout: typeof global.setTimeout}} io
  */
-export const sleep = (ms, { log = () => {}, setTimeout }) =>
+export const sleep = async (ms, { log = () => {}, setTimeout }) =>
   new Promise(resolve => {
     log(`Sleeping for ${ms}ms...`);
     setTimeout(resolve, ms);
@@ -150,7 +150,7 @@ const makeGetInstances = follow => async () => {
  * @param {{ log: (message: string) => void, follow: () => object, setTimeout: typeof global.setTimeout }} ambientAuthority
  * @param {WaitUntilOptions} options
  */
-export const waitUntilContractDeployed = (
+export const waitUntilContractDeployed = async (
   contractName,
   ambientAuthority,
   options,
@@ -191,7 +191,12 @@ const checkCosmosBalance = (balances, threshold) => {
  * @param {{denom: string, value: number}} threshold
  * @param {WaitUntilOptions} options
  */
-export const waitUntilAccountFunded = (destAcct, io, threshold, options) => {
+export const waitUntilAccountFunded = async (
+  destAcct,
+  io,
+  threshold,
+  options,
+) => {
   const { query, setTimeout } = io;
   const queryCosmosBalance = makeQueryCosmosBalance(query);
   const { errorMessage, ...resolvedOptions } = overrideDefaultOptions(options);
@@ -239,7 +244,7 @@ const checkOfferState = (offerStatus, waitForPayouts, offerId) => {
  * @param {{ log?: typeof console.log, follow: () => object, setTimeout: typeof global.setTimeout }} io
  * @param {WaitUntilOptions} options
  */
-export const waitUntilOfferResult = (
+export const waitUntilOfferResult = async (
   addr,
   offerId,
   waitForPayouts,
@@ -280,7 +285,7 @@ const checkForInvitation = update => {
  * @param {{ follow: () => object, log: typeof console.log, setTimeout: typeof global.setTimeout}} io
  * @param {WaitUntilOptions} options
  */
-export const waitUntilInvitationReceived = (addr, io, options) => {
+export const waitUntilInvitationReceived = async (addr, io, options) => {
   const { follow, setTimeout } = io;
   const queryWallet = makeQueryWallet(follow);
   const { errorMessage, ...resolvedOptions } = overrideDefaultOptions(options);
@@ -407,7 +412,7 @@ const checkCommitteeElectionResult = (electionResult, expectedResult) => {
  * }} io
  * @param {WaitUntilOptions} options
  */
-export const waitUntilElectionResult = (
+export const waitUntilElectionResult = async (
   committeePathBase,
   expectedResult,
   io,
@@ -419,7 +424,7 @@ export const waitUntilElectionResult = (
     overrideDefaultOptions(options);
 
   return retryUntilCondition(
-    () => fetchLatestEcQuestion(committeePathBase, vstorage),
+    async () => fetchLatestEcQuestion(committeePathBase, vstorage),
     electionResult =>
       checkCommitteeElectionResult(electionResult, expectedResult),
     errorMessage,

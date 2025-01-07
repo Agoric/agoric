@@ -10,12 +10,12 @@ test('race', async t => {
   const provider = makeAtomicProvider(store);
 
   let i = 0;
-  const make = k =>
+  const make = async k =>
     // in Node 15+ use timers/promise
     new Promise(resolve => setTimeout(() => resolve(`${k} ${(i += 1)}`), 10));
 
   let finishCalled = 0;
-  const finish = () => {
+  const finish = async () => {
     finishCalled += 1;
     return Promise.resolve();
   };
@@ -36,10 +36,10 @@ test('reject', async t => {
   const provider = makeAtomicProvider(store);
 
   let i = 0;
-  const makeFail = k => Promise.reject(Error(`failure ${k} ${(i += 1)}`));
+  const makeFail = async k => Promise.reject(Error(`failure ${k} ${(i += 1)}`));
 
   let finishCalled = 0;
-  const finish = () => {
+  const finish = async () => {
     finishCalled += 1;
     return Promise.resolve();
   };
@@ -62,7 +62,7 @@ test('reject', async t => {
   t.is(finishCalled, 0);
 
   // success after failure
-  const makeValue = () => Promise.resolve('success');
+  const makeValue = async () => Promise.resolve('success');
   t.is(await provider.provideAsync('a', makeValue, finish), 'success');
   t.is(finishCalled, 1);
 });
@@ -77,7 +77,7 @@ test('far keys', async t => {
       getAllegedName: () => `${name} ${(i += 1)}`,
     });
 
-  const makeValue = brand => Promise.resolve(brand.getAllegedName());
+  const makeValue = async brand => Promise.resolve(brand.getAllegedName());
 
   const moola = makeBrand('moola');
   const moolb = makeBrand('moolb');

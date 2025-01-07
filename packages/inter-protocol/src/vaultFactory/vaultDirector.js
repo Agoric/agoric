@@ -161,7 +161,8 @@ const prepareVaultDirector = (
       rewardPoolAllocation: rewardPoolSeat.getCurrentAllocation(),
     });
   };
-  const writeMetrics = () => E(metricsKit.recorderP).write(sampleMetrics());
+  const writeMetrics = async () =>
+    E(metricsKit.recorderP).write(sampleMetrics());
 
   const updateShortfallReporter = async () => {
     const oldInvitation = baggage.has(shortfallInvitationKey)
@@ -367,7 +368,7 @@ const prepareVaultDirector = (
         getGovernedApiNames() {
           return harden([]);
         },
-        setOfferFilter: strings => zcf.setOfferFilter(strings),
+        setOfferFilter: async strings => zcf.setOfferFilter(strings),
       },
       machine: {
         // TODO move this under governance #3924
@@ -444,7 +445,7 @@ const prepareVaultDirector = (
         makeLiquidationWaker() {
           return makeWaker('liquidationWaker', _timestamp => {
             // XXX floating promise
-            allManagersDo(vm => vm.liquidateVaults(auctioneer));
+            allManagersDo(async vm => vm.liquidateVaults(auctioneer));
           });
         },
         makeReschedulerWaker() {

@@ -63,7 +63,7 @@ export const bridgeCoreEval = async allPowers => {
           /** @type {import('@agoric/cosmic-proto/swingset/swingset.js').CoreEvalProposalSDKType} */
           const { evals } = obj;
           return Promise.all(
-            evals.map(({ json_permits: jsonPermit, js_code: code }) =>
+            evals.map(async ({ json_permits: jsonPermit, js_code: code }) =>
               // Run in a new turn to avoid crosstalk of the evaluations.
               Promise.resolve()
                 .then(() => {
@@ -227,7 +227,7 @@ export const setupClientManager = async (
 
   /** @type {ClientCreator} */
   const clientCreator = Far('clientCreator', {
-    createUserBundle: (nickname, clientAddress, powerFlags) => {
+    createUserBundle: async (nickname, clientAddress, powerFlags) => {
       const c = E(clientCreator).createClientFacet(
         nickname,
         clientAddress,
@@ -263,8 +263,8 @@ export const setupClientManager = async (
 
       /** @type {ClientFacet} */
       const clientFacet = Far('chainProvisioner', {
-        getChainBundle: () =>
-          bundleReady.promise.then(_ => allValues(clientHome)),
+        getChainBundle: async () =>
+          bundleReady.promise.then(async _ => allValues(clientHome)),
         getConfiguration: () => notifier,
       });
 

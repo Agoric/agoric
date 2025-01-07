@@ -101,7 +101,7 @@ export const explodingStream = makeTestIterable(true);
  * @param {ERef<Passable>} p
  * @param {boolean} fails
  */
-export const testEnding = (t, p, fails) => {
+export const testEnding = async (t, p, fails) => {
   return E.when(
     p,
     result => {
@@ -148,7 +148,7 @@ const skip = (i, value, lossy) => {
  * @param {boolean} lossy
  * @returns {Promise<Passable>}
  */
-export const testManualConsumer = (t, iterable, lossy = false) => {
+export const testManualConsumer = async (t, iterable, lossy = false) => {
   const iterator = iterable[Symbol.asyncIterator]();
   const testLoop = i => {
     return iterator.next().then(

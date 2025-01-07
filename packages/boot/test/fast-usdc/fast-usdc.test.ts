@@ -48,7 +48,7 @@ test.before('bootstrap', async t => {
   });
   t.context = { ...ctx, harness };
 });
-test.after.always(t => t.context.shutdown?.());
+test.after.always(async t => t.context.shutdown?.());
 
 test.serial('oracles provision before contract deployment', async t => {
   const { walletFactoryDriver: wd } = t.context;
@@ -71,7 +71,7 @@ test.serial(
 
     const { oracles } = configurations.MAINNET;
     const [watcherWallet] = await Promise.all(
-      Object.values(oracles).map(addr => wd.provideSmartWallet(addr)),
+      Object.values(oracles).map(async addr => wd.provideSmartWallet(addr)),
     );
 
     // inbound `startChannelOpenInit` responses immediately.
@@ -281,7 +281,7 @@ test.serial('makes usdc advance', async t => {
     wd.provideSmartWallet('agoric1n4fcxsnkxe4gj6e24naec99hzmc4pjfdccy5nj'),
   ]);
   await Promise.all(
-    oracles.map(wallet =>
+    oracles.map(async wallet =>
       wallet.sendOffer({
         id: 'claim-oracle-invitation',
         invitationSpec: {
@@ -304,7 +304,7 @@ test.serial('makes usdc advance', async t => {
 
   harness?.useRunPolicy(true);
   await Promise.all(
-    oracles.map(wallet =>
+    oracles.map(async wallet =>
       wallet.sendOffer({
         id: 'submit-mock-evidence-osmo',
         invitationSpec: {
@@ -360,7 +360,7 @@ test.serial('skips usdc advance when risks identified', async t => {
   );
 
   await Promise.all(
-    oracles.map(wallet =>
+    oracles.map(async wallet =>
       wallet.sendOffer({
         id: 'submit-mock-evidence-dydx-risky',
         invitationSpec: {

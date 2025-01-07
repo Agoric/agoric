@@ -33,7 +33,9 @@ export const grantRunBehaviors = async ({
   consume: { client },
 }) => {
   const bundle = {
-    behaviors: Far('behaviors', { run: manifest => runBehaviors(manifest) }),
+    behaviors: Far('behaviors', {
+      run: async manifest => runBehaviors(manifest),
+    }),
   };
   return E(client).assignBundle([_addr => bundle]);
 };

@@ -63,7 +63,7 @@ const collateralBrandKey = 'ATOM';
 test.before(async t => {
   t.context = await makeTestContext(t);
 });
-test.after.always(t => t.context.shutdown?.());
+test.after.always(async t => t.context.shutdown?.());
 
 const walletAddr = 'agoric1a';
 

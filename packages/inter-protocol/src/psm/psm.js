@@ -129,7 +129,8 @@ export const start = async (zcf, privateArgs, baggage) => {
   );
 
   const { stableMint } = await provideAll(baggage, {
-    stableMint: () => zcf.registerFeeMint('Minted', privateArgs.feeMintAccess),
+    stableMint: async () =>
+      zcf.registerFeeMint('Minted', privateArgs.feeMintAccess),
   });
   const { brand: stableBrand } = stableMint.getIssuerRecord();
   (anchorPerMinted.numerator.brand === anchorBrand &&
@@ -172,7 +173,7 @@ export const start = async (zcf, privateArgs, baggage) => {
   );
 
   const { metricsKit } = await provideAll(baggage, {
-    metricsKit: () =>
+    metricsKit: async () =>
       E.when(E(privateArgs.storageNode).makeChildNode('metrics'), node =>
         makeRecorderKit(
           node,
@@ -346,8 +347,8 @@ export const start = async (zcf, privateArgs, baggage) => {
   };
 
   const { anchorAmountShape, stableAmountShape } = await provideAll(baggage, {
-    anchorAmountShape: () => E(anchorBrand).getAmountShape(),
-    stableAmountShape: () => E(stableBrand).getAmountShape(),
+    anchorAmountShape: async () => E(anchorBrand).getAmountShape(),
+    stableAmountShape: async () => E(stableBrand).getAmountShape(),
   });
 
   const publicFacet = prepareExo(

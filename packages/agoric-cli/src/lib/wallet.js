@@ -63,7 +63,7 @@ export const getCurrent = async (addr, { readPublished }) => {
  * @param {Pick<VstorageKit, 'readPublished'>} io
  * @returns {Promise<import('@agoric/smart-wallet/src/smartWallet.js').UpdateRecord>}
  */
-export const getLastUpdate = (addr, { readPublished }) => {
+export const getLastUpdate = async (addr, { readPublished }) => {
   return readPublished(`wallet.${addr}`);
 };
 

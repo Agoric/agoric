@@ -239,7 +239,7 @@ export const withdrawFromSeat = async (zcf, seat, amounts) => {
 export const saveAllIssuers = async (zcf, issuerKeywordRecord = harden({})) => {
   const { issuers } = zcf.getTerms();
   const issuersPSaved = Object.entries(issuerKeywordRecord).map(
-    ([keyword, issuer]) => {
+    async ([keyword, issuer]) => {
       // If the keyword does not yet exist, add it and the
       // associated issuer.
       if (issuers[keyword] === undefined) {

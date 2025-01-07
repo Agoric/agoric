@@ -317,7 +317,7 @@ test(`zoe - coveredCall - alice's deadline expires, cancelling alice and bob`, a
 
   // TODO is this await safe?
   await t.throwsAsync(
-    () => E(bobSeat).getOfferResult(),
+    async () => E(bobSeat).getOfferResult(),
     { message: /The covered call option is expired./ },
     'The call option should be expired',
   );

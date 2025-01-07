@@ -18,7 +18,7 @@ import { makeMarshal } from '@endo/marshal';
 
 const { toStringTag } = Symbol;
 
-const makeStandinPromise = kref => {
+const makeStandinPromise = async kref => {
   const p = Promise.resolve(`${kref} stand in`);
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   Object.defineProperty(p, toStringTag, {

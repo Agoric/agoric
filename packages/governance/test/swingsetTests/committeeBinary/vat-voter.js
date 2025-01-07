@@ -17,7 +17,7 @@ import { keyEQ } from '@agoric/store';
  */
 const verify = async (log, issue, electoratePublicFacet, instances) => {
   const questionHandles = await E(electoratePublicFacet).getOpenQuestions();
-  const detailsP = questionHandles.map(h => {
+  const detailsP = questionHandles.map(async h => {
     const question = E(electoratePublicFacet).getQuestion(h);
     return E(question).getDetails();
   });
@@ -68,7 +68,7 @@ const build = async (log, zoe) => {
       );
 
       return Far(`Voter ${name}`, {
-        verifyBallot: (question, instances) =>
+        verifyBallot: async (question, instances) =>
           verify(log, question, electoratePublicFacet, instances),
       });
     },
@@ -97,7 +97,7 @@ const build = async (log, zoe) => {
       );
 
       return Far(`Voter ${name}`, {
-        verifyBallot: (question, instances) =>
+        verifyBallot: async (question, instances) =>
           verify(log, question, electoratePublicFacet, instances),
       });
     },
@@ -108,5 +108,5 @@ const build = async (log, zoe) => {
 export const buildRootObject = vatPowers =>
   Far('root', {
     /** @param {ZoeService} zoe */
-    build: zoe => build(vatPowers.testLog, zoe),
+    build: async zoe => build(vatPowers.testLog, zoe),
   });

@@ -32,7 +32,7 @@ export const makeTestContext = async t => {
   const bundleCache = await makeNodeBundleCache(
     bundleDir,
     { cacheSourceMaps: false },
-    s => import(s),
+    async s => import(s),
   );
   const swingsetTestKit = await makeSwingsetTestKit(t.log, bundleDir, {
     configSpecifier: PLATFORM_CONFIG,
@@ -48,7 +48,7 @@ const test = anyTest as TestFn<Awaited<ReturnType<typeof makeTestContext>>>;
 test.before(async t => {
   t.context = await makeTestContext(t);
 });
-test.after.always(t => t.context.shutdown?.());
+test.after.always(async t => t.context.shutdown?.());
 
 test.serial('bootstrap produces provisioning vat', async t => {
   const { EV } = t.context.runUtils;

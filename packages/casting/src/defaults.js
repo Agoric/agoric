@@ -21,7 +21,8 @@ export const DEFAULT_KEEP_POLLING_SECONDS = 5;
  * @param {number} ms
  * @returns {Promise<void>}
  */
-export const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+export const delay = async ms =>
+  new Promise(resolve => setTimeout(resolve, ms));
 
 /**
  * @param {number} range
@@ -46,7 +47,7 @@ export const exponentialBackoff = (attempt = 0, base = 1_000, cap = 30_000) => {
  * @param {string} where
  * @returns {Promise<void>}
  */
-export const DEFAULT_JITTER = where => {
+export const DEFAULT_JITTER = async where => {
   const jitter = randomBackoff(DEFAULT_JITTER_SECONDS * 1_000);
   console.debug(`jittering ${where} by ${Math.ceil(jitter)}ms`);
   return delay(jitter);
@@ -60,7 +61,7 @@ export const DEFAULT_JITTER = where => {
  * @param {number} [attempt]
  * @returns {Promise<void>}
  */
-export const DEFAULT_RETRY_CALLBACK = (where, err, attempt = 0) => {
+export const DEFAULT_RETRY_CALLBACK = async (where, err, attempt = 0) => {
   const backoff = exponentialBackoff(attempt);
   console.log(
     `retrying ${where} in ${Math.ceil(backoff)}ms after attempt #${attempt}`,
@@ -74,7 +75,7 @@ export const DEFAULT_RETRY_CALLBACK = (where, err, attempt = 0) => {
  *
  * @returns {Promise<boolean>}
  */
-export const DEFAULT_KEEP_POLLING = () =>
+export const DEFAULT_KEEP_POLLING = async () =>
   delay(randomBackoff(DEFAULT_KEEP_POLLING_SECONDS * 1_000)).then(() => true);
 
 export const MAKE_DEFAULT_DECODER = () => {

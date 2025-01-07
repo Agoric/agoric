@@ -78,7 +78,7 @@ const assertHasNotExited = (c, msg) => {
  * @param {() => PublishKit<any>} makeDurablePublishKit
  */
 export const declareOldZoeSeatAdminKind = (baggage, makeDurablePublishKit) => {
-  const doExit = (
+  const doExit = async (
     zoeSeatAdmin,
     currentAllocation,
     withdrawFacet,

@@ -96,7 +96,7 @@ const start = zcf => {
         NO: tally.get('NO'),
       });
     },
-    makeVoterInvitation: () => {
+    makeVoterInvitation: async () => {
       assert(electionOpen, 'the election is closed');
       return zcf.makeInvitation(voteHandler, 'voter');
     },

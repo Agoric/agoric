@@ -21,7 +21,7 @@ const start = zcf => {
   assertIssuerKeywords(zcf, harden(['Asset', 'Price']));
 
   /** @type {OfferHandler} */
-  const makeMatchingInvitation = firstSeat => {
+  const makeMatchingInvitation = async firstSeat => {
     assertProposalShape(firstSeat, {
       give: { Asset: null },
       want: { Price: null },

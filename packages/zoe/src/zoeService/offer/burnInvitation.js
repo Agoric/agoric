@@ -14,7 +14,7 @@ import { E } from '@endo/eventual-send';
  *   invitationHandle: InvitationHandle,
  * }>}
  */
-export const burnInvitation = (invitationIssuer, invitation) => {
+export const burnInvitation = async (invitationIssuer, invitation) => {
   const handleRejected = reason => {
     const err = makeError(X`A Zoe invitation is required, not ${invitation}`);
     annotateError(err, X`Due to ${reason}`);

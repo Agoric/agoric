@@ -29,7 +29,7 @@ test('burnInvitation - not an invitation', async t => {
 
   await t.throwsAsync(
     // @ts-expect-error invalid payment for the purposes of testing
-    () => burnInvitation(mockInvitationKit.issuer, undefined),
+    async () => burnInvitation(mockInvitationKit.issuer, undefined),
     { message: 'A Zoe invitation is required, not "[undefined]"' },
   );
 });
@@ -53,7 +53,7 @@ test('burnInvitation - invitation already used', async t => {
   });
 
   await t.throwsAsync(
-    () => burnInvitation(mockInvitationKit.issuer, invitation),
+    async () => burnInvitation(mockInvitationKit.issuer, invitation),
     {
       message:
         'A Zoe invitation is required, not "[Alleged: mockInvitation payment]"',
@@ -79,7 +79,7 @@ test('burnInvitation - multiple invitations', async t => {
   );
 
   await t.throwsAsync(
-    () => burnInvitation(mockInvitationKit.issuer, invitations),
+    async () => burnInvitation(mockInvitationKit.issuer, invitations),
     {
       message: 'Only one invitation can be redeemed at a time',
     },

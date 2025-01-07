@@ -9,8 +9,8 @@ test('assertOfferResult', async t => {
     // @ts-expect-error mock
     getOfferResult: () => 'result',
   };
-  await t.notThrowsAsync(() => assertOfferResult(mockSeat, 'result'));
-  await t.throwsAsync(() => assertOfferResult(mockSeat, 'not result'), {
+  await t.notThrowsAsync(async () => assertOfferResult(mockSeat, 'result'));
+  await t.throwsAsync(async () => assertOfferResult(mockSeat, 'not result'), {
     message: /offerResult (.*) did not equal expected: .*/,
   });
 });

@@ -229,7 +229,7 @@ show-config      display the client connection parameters
       });
 
       // Prepare all the machines.
-      await guardFile(`${PROVISION_DIR}/prepare.stamp`, () =>
+      await guardFile(`${PROVISION_DIR}/prepare.stamp`, async () =>
         needReMain(['play', 'prepare-machine']),
       );
 
@@ -370,7 +370,7 @@ show-config      display the client connection parameters
       });
 
       // Bootstrap the chain nodes.
-      await guardFile(`${COSMOS_DIR}/prepare.stamp`, () =>
+      await guardFile(`${COSMOS_DIR}/prepare.stamp`, async () =>
         needReMain(['play', 'prepare-cosmos']),
       );
 
@@ -445,7 +445,7 @@ show-config      display the client connection parameters
         await makeFile(peers);
       });
 
-      await guardFile(`${COSMOS_DIR}/install.stamp`, () =>
+      await guardFile(`${COSMOS_DIR}/install.stamp`, async () =>
         needReMain(['play', 'install-cosmos']),
       );
 
@@ -483,7 +483,7 @@ show-config      display the client connection parameters
       const agChainCosmosEnvironment = [
         `-eserviceLines=${shellEscape(serviceLines.join('\n'))}`,
       ];
-      await guardFile(`${COSMOS_DIR}/service.stamp`, () =>
+      await guardFile(`${COSMOS_DIR}/service.stamp`, async () =>
         needReMain([
           'play',
           'install',
@@ -496,7 +496,7 @@ show-config      display the client connection parameters
         ]),
       );
 
-      await guardFile(`${COSMOS_DIR}/start.stamp`, () =>
+      await guardFile(`${COSMOS_DIR}/start.stamp`, async () =>
         needReMain(['play', 'start']),
       );
 
@@ -504,7 +504,7 @@ show-config      display the client connection parameters
 
       // Add the bootstrap validators.
       if (!importFrom) {
-        await guardFile(`${COSMOS_DIR}/validators.stamp`, () =>
+        await guardFile(`${COSMOS_DIR}/validators.stamp`, async () =>
           needReMain(['play', 'cosmos-validators']),
         );
       }

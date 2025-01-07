@@ -152,7 +152,7 @@ test('borrow not enough collateral', async t => {
     () => {},
     () => {},
   );
-  await t.throwsAsync(() => E(borrowSeat).getOfferResult(), {
+  await t.throwsAsync(async () => E(borrowSeat).getOfferResult(), {
     message: /The required margin is .*% but collateral only had value of .*/,
   });
 });
@@ -354,7 +354,7 @@ test('getDebtNotifier with interest', async t => {
 
   const seat = await E(zoe).offer(closeLoanInvitation, proposal, payments);
 
-  await t.throwsAsync(() => seat.getOfferResult(), {
+  await t.throwsAsync(async () => seat.getOfferResult(), {
     message:
       /Not enough Loan assets have been repaid. {2}.* is required, but only .* was repaid./,
   });
@@ -376,7 +376,7 @@ test('borrow collateral just too low', async t => {
     () => {},
   );
 
-  await t.throwsAsync(() => E(borrowSeatBad).getOfferResult(), {
+  await t.throwsAsync(async () => E(borrowSeatBad).getOfferResult(), {
     message: /The required margin is .*% but collateral only had value of .*/,
   });
 });

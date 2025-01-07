@@ -50,7 +50,7 @@ export const makeNotifierFromSubscriber = subscriber => {
    * @type {LatestTopic<T>}
    */
   const baseNotifier = harden({
-    getUpdateSince: (updateCount = undefined) =>
+    getUpdateSince: async (updateCount = undefined) =>
       E(subscriber).getUpdateSince(updateCount),
   });
 

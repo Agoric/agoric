@@ -108,11 +108,11 @@ export default async (homeP, endowments) => {
   const { writeCoreEval } = await makeHelpers(homeP, endowments);
 
   const tool = await makeInstallCache(homeP, {
-    loadBundle: spec => import(spec),
+    loadBundle: async spec => import(spec),
   });
 
   await writeCoreEval('gov-add-collateral', defaultProposalBuilder);
-  await writeCoreEval('gov-start-psm', opts =>
+  await writeCoreEval('gov-start-psm', async opts =>
     psmProposalBuilder({
       ...opts,
       // @ts-expect-error XXX makeInstallCache types

@@ -149,7 +149,7 @@ export const prepareFluxAggregatorKit = async (
         storageNode,
         /** @type {TypedPattern<PriceDescription>} */ (M.any()),
       ),
-    latestRoundKit: () =>
+    latestRoundKit: async () =>
       E.when(E(storageNode).makeChildNode('latestRound'), node =>
         makeRecorderKit(
           node,
@@ -285,7 +285,7 @@ export const prepareFluxAggregatorKit = async (
           oracles.delete(oracleId);
         },
 
-        getRoundData: roundIdRaw => {
+        getRoundData: async roundIdRaw => {
           return roundsManagerKit.contract.getRoundData(roundIdRaw);
         },
 

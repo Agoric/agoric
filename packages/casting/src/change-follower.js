@@ -18,7 +18,7 @@ export const makePollingChangeFollower = async leader => {
         next: async () => {
           if (!nextPollPromise) {
             nextPollPromise = keepPolling('polling change follower').then(
-              cont => {
+              async cont => {
                 if (cont) {
                   return E(leader)
                     .jitter('polling change follower')

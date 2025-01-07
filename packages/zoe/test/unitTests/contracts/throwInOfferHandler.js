@@ -23,10 +23,10 @@ const start = zcf => {
     await depositToSeat(zcf, seat, amounts, payments);
     return 'Should not get here';
   };
-  const makeThrowInOfferHandlerInvitation = () =>
+  const makeThrowInOfferHandlerInvitation = async () =>
     zcf.makeInvitation(throwInOfferHandler, 'throwInOfferHandler');
 
-  const makeThrowInDepositToSeatInvitation = () =>
+  const makeThrowInDepositToSeatInvitation = async () =>
     zcf.makeInvitation(throwInDepositToSeat, 'throwInDepositToSeat');
 
   const creatorFacet = Far('creatorFacet', {

@@ -203,7 +203,7 @@ test(`zcf saveAllIssuers - duplicate keyword`, async t => {
   );
 
   await t.notThrowsAsync(
-    () => saveAllIssuers(zcf, { P: pIssuer }),
+    async () => saveAllIssuers(zcf, { P: pIssuer }),
     'second issuer with same keyword should be ignored.',
   );
   t.is(zcf.getBrandForIssuer(pandaIssuer), pandaBrand, 'gelt');

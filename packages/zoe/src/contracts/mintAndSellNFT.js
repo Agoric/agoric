@@ -45,7 +45,7 @@ const start = zcf => {
    * @param {*} obj.moneyIssuer
    * @param {*} obj.pricePerItem
    */
-  const sellTokens = ({
+  const sellTokens = async ({
     customValueProperties,
     count,
     moneyIssuer,
@@ -94,7 +94,7 @@ const start = zcf => {
       sellItemsTerms,
     );
     return instanceRecordP.then(
-      ({ creatorInvitation, creatorFacet, instance, publicFacet }) => {
+      async ({ creatorInvitation, creatorFacet, instance, publicFacet }) => {
         assert(creatorInvitation);
         return E(zoeService)
           .offer(creatorInvitation, proposal, paymentKeywordRecord)

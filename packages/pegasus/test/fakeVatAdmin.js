@@ -6,13 +6,13 @@ import { evalContractBundle } from '@agoric/zoe/src/contractFacet/evalContractCo
 export default harden({
   createMeter: () => {},
   createUnlimitedMeter: () => {},
-  createVat: bundle => {
+  createVat: async bundle => {
     const rootP = E(evalContractBundle(bundle)).buildRootObject();
     return E.when(rootP, root =>
       harden({
         root,
         adminNode: {
-          done: () => {
+          done: async () => {
             return makePromiseKit().promise;
           },
           terminate: () => {},

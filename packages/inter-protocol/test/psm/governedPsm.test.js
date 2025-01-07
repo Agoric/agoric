@@ -47,7 +47,7 @@ test('psm block offers w/Governance', async t => {
   const giveCentral = knut.make(1_000_000n);
 
   await t.throwsAsync(
-    () =>
+    async () =>
       E(zoe).offer(
         E(psm.psmPublicFacet).makeWantMintedInvitation(),
         harden({ give: { In: giveCentral } }),
@@ -102,7 +102,7 @@ test('psm block offers w/charter', async t => {
 
   const giveCentral = knut.make(1_000_000n);
   await t.throwsAsync(
-    () =>
+    async () =>
       E(zoe).offer(
         E(psm.psmPublicFacet).makeWantMintedInvitation(),
         harden({ give: { In: giveCentral } }),
@@ -156,7 +156,7 @@ test('psm block offers w/charter via invitationMakers', async t => {
 
   const giveCentral = knut.make(1_000_000n);
   await t.throwsAsync(
-    () =>
+    async () =>
       E(zoe).offer(
         E(psm.psmPublicFacet).makeWantMintedInvitation(),
         harden({ give: { In: giveCentral } }),

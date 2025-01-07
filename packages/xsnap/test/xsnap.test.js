@@ -107,7 +107,7 @@ test('evaluate does not throw on unhandled rejections', async t => {
   // We can confirm this by running xsbug while running this test.
   for await (const debug of [false, true]) {
     const vat = await xsnap({ ...opts, debug });
-    t.teardown(() => vat.terminate());
+    t.teardown(async () => vat.terminate());
     await t.notThrowsAsync(vat.evaluate(`Promise.reject(1)`));
   }
 });
@@ -251,7 +251,9 @@ test('serialize concurrent messages', async t => {
       issueCommand(new TextEncoder().encode(String(number + 1)).buffer);
     };
   `);
-  await Promise.all([...count(100)].map(n => vat.issueStringCommand(`${n}`)));
+  await Promise.all(
+    [...count(100)].map(async n => vat.issueStringCommand(`${n}`)),
+  );
   await vat.close();
   t.deepEqual([...count(101, 1)], messages);
 });
@@ -381,7 +383,7 @@ test('execute immediately after makeSnapshotStream', async t => {
   t.deepEqual(messages, ['before']);
 });
 
-function delay(ms) {
+async function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -464,7 +466,7 @@ function pickXSnap(env = process.env) {
   if (XSNAP_TEST_RECORD) {
     console.log('SwingSet xs-worker tracing:', { XSNAP_TEST_RECORD });
     let serial = 0;
-    doXSnap = opts => {
+    doXSnap = async opts => {
       const workerTrace =
         path.resolve(XSNAP_TEST_RECORD, String(serial)) + path.sep;
       serial += 1;
@@ -524,7 +526,7 @@ test('GC after snapshot vs restore', async t => {
 
 test('bad option.name', async t => {
   const opts = Object.freeze({ ...options(io), name: '--sneaky' });
-  await t.throwsAsync(() => xsnap(opts), {
+  await t.throwsAsync(async () => xsnap(opts), {
     message: /cannot start with hyphen/,
   });
 });

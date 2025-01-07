@@ -102,7 +102,9 @@ test.before(async t => {
     auctioneer: bundleCache.load(contractRoots.auctioneer, 'auction'),
     reserve: bundleCache.load(contractRoots.reserve, 'reserve'),
   });
-  const installation = objectMap(bundles, bundle => E(zoe).install(bundle));
+  const installation = objectMap(bundles, async bundle =>
+    E(zoe).install(bundle),
+  );
 
   const feeMintAccess = await feeMintAccessP;
   const contextPs = {
@@ -819,9 +821,12 @@ test('adjust balances', async t => {
     }),
   );
 
-  await t.throwsAsync(() => E(aliceReduceCollateralSeat2).getOfferResult(), {
-    message: /Proposed debt.*exceeds max/,
-  });
+  await t.throwsAsync(
+    async () => E(aliceReduceCollateralSeat2).getOfferResult(),
+    {
+      message: /Proposed debt.*exceeds max/,
+    },
+  );
 
   // try to trade zero for zero
   const aliceReduceCollateralSeat3 = await E(zoe).offer(
@@ -1025,7 +1030,7 @@ test('transfer vault', async t => {
     vault: transferVault,
     publicNotifiers: { vault: transferNotifier },
   } = await legacyOfferResult(transferSeat);
-  await t.throwsAsync(() => E(aliceVault).getCurrentDebt());
+  await t.throwsAsync(async () => E(aliceVault).getCurrentDebt());
   const debtAfter = await E(transferVault).getCurrentDebt();
   t.deepEqual(debtAfter, debtAmount, 'vault lent 5000 Minted + fees');
   const collateralAfter = await E(transferVault).getCollateralAmount();
@@ -1082,7 +1087,7 @@ test('transfer vault', async t => {
     vault: t2Vault,
     publicNotifiers: { vault: t2Notifier },
   } = await legacyOfferResult(t2Seat);
-  await t.throwsAsync(() => E(transferVault).getCurrentDebt());
+  await t.throwsAsync(async () => E(transferVault).getCurrentDebt());
   const debtAfter2 = await E(t2Vault).getCurrentDebt();
   t.deepEqual(debtAmount, debtAfter2, 'vault lent 5000 Minted + fees');
 
@@ -1527,7 +1532,7 @@ test('debt too small - MinInitialDebt', async t => {
       Collateral: aeth.mint.mintPayment(collateralAmount),
     }),
   );
-  await t.throwsAsync(() => E(aliceVaultSeat).getOfferResult(), {
+  await t.throwsAsync(async () => E(aliceVaultSeat).getOfferResult(), {
     message:
       'Vault creation requires a minInitialDebt of {"brand":"[Alleged: IST brand]","value":"[50000n]"}',
   });
@@ -1565,7 +1570,7 @@ test('excessive debt on collateral type - debtLimit', async t => {
       Collateral: aeth.mint.mintPayment(collateralAmount),
     }),
   );
-  await t.throwsAsync(() => E(vaultSeat).getOfferResult(), {
+  await t.throwsAsync(async () => E(vaultSeat).getOfferResult(), {
     message:
       'Minting {"brand":"[Alleged: IST brand]","value":"[1050000n]"} past {"brand":"[Alleged: IST brand]","value":"[0n]"} would hit total debt limit {"brand":"[Alleged: IST brand]","value":"[1000000n]"}',
   });
@@ -1592,7 +1597,7 @@ test('addVaultType: invalid args do not modify state', async t => {
   const failsForSameReason = async p =>
     p
       .then(oops => t.fail(`${oops}`))
-      .catch(reason1 => t.throwsAsync(p, { message: reason1.message }));
+      .catch(async reason1 => t.throwsAsync(p, { message: reason1.message }));
   await failsForSameReason(
     E(vaultFactory)
       // @ts-expect-error bad args on purpose for test

@@ -87,7 +87,7 @@ test('Amount', async t => {
   );
 
   await t.throwsAsync(
-    () =>
+    async () =>
       paramManager.updateParams({
         Shimmer: AmountMath.make(dessertBrand, 20n),
       }),
@@ -98,7 +98,7 @@ test('Amount', async t => {
   );
 
   await t.throwsAsync(
-    () => paramManager.updateParams({ Shimmer: 'fear,loathing' }),
+    async () => paramManager.updateParams({ Shimmer: 'fear,loathing' }),
     {
       message: 'Expected an Amount for "Shimmer", got: "fear,loathing"',
     },
@@ -124,7 +124,7 @@ test('params one installation', async t => {
 
   t.deepEqual(paramManager.getInstallation('PName'), installationHandle);
   await t.throwsAsync(
-    () => paramManager.updateParams({ PName: 18.1 }),
+    async () => paramManager.updateParams({ PName: 18.1 }),
     {
       message: 'value for "PName" must be an Installation, was 18.1',
     },
@@ -165,7 +165,7 @@ test('params one instance', async t => {
 
   t.deepEqual(paramManager.getInstance('PName'), instanceHandle);
   await t.throwsAsync(
-    () => paramManager.updateParams({ PName: 18.1 }),
+    async () => paramManager.updateParams({ PName: 18.1 }),
     {
       message: 'value for "PName" must be an Instance, was 18.1',
     },
@@ -257,15 +257,18 @@ test('two Nats', async t => {
   t.is(paramManager.getNat('SpeedLimit'), 299_792_458n);
 
   await t.throwsAsync(
-    () => paramManager.updateParams({ SpeedLimit: 300000000 }),
+    async () => paramManager.updateParams({ SpeedLimit: 300000000 }),
     {
       message: '300000000 must be a bigint',
     },
   );
 
-  await t.throwsAsync(() => paramManager.updateParams({ SpeedLimit: -37n }), {
-    message: '-37 is negative',
-  });
+  await t.throwsAsync(
+    async () => paramManager.updateParams({ SpeedLimit: -37n }),
+    {
+      message: '-37 is negative',
+    },
+  );
 });
 
 test('Ratio', async t => {
@@ -284,14 +287,14 @@ test('Ratio', async t => {
   const anotherBrand = makeIssuerKit('arbitrary').brand;
 
   await t.throwsAsync(
-    () => paramManager.updateParams({ GoldenRatio: 300000000 }),
+    async () => paramManager.updateParams({ GoldenRatio: 300000000 }),
     {
       message: '"ratio" 300000000 must be a pass-by-copy record, not "number"',
     },
   );
 
   await t.throwsAsync(
-    () =>
+    async () =>
       paramManager.updateParams({
         GoldenRatio: makeRatio(16180n, anotherBrand, 10_000n),
       }),
@@ -332,7 +335,7 @@ test('Record', async t => {
     B2: 'Matchbox',
   };
   await t.throwsAsync(
-    () => paramManager.updateParams({ BestEP: brokenRecord }),
+    async () => paramManager.updateParams({ BestEP: brokenRecord }),
     {
       message:
         'Cannot pass non-frozen objects like {"A1":"Long Tall Sally","A2":"I Call Your Name","B1":"Slow Down","B2":"Matchbox"}. Use harden()',
@@ -340,7 +343,7 @@ test('Record', async t => {
   );
 
   await t.throwsAsync(
-    () =>
+    async () =>
       paramManager.updateParams({
         duration: '2:37',
       }),
@@ -350,7 +353,7 @@ test('Record', async t => {
   );
 
   await t.throwsAsync(
-    () =>
+    async () =>
       paramManager.updateParams({
         BestEP: '2:37',
       }),
@@ -370,7 +373,7 @@ test('Strings', async t => {
   await paramManager.updateParams({ OurWeapons: 'fear,surprise' });
   t.is(paramManager.getString('OurWeapons'), 'fear,surprise');
   await t.throwsAsync(
-    () =>
+    async () =>
       paramManager.updateParams({
         OurWeapons: 300000000,
       }),

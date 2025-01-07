@@ -123,6 +123,6 @@ export default async (homeP, endowments) => {
 
   await writeCoreEval(
     `gov-price-feeds-${opts.variant || 'from-config'}`,
-    utils => defaultProposalBuilder(utils, opts),
+    async utils => defaultProposalBuilder(utils, opts),
   );
 };

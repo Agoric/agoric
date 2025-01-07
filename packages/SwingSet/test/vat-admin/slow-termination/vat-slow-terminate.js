@@ -8,7 +8,7 @@ export function buildRootObject(vatPowers, _vatParameters, baggage) {
     dieHappy: completion => vatPowers.exitVat(completion),
     sendExport: () => Far('dude export', {}),
     acceptImports: imports => hold.push(imports),
-    forever: () => makePromiseKit().promise,
+    forever: async () => makePromiseKit().promise,
     makeVatstore: count => {
       for (let i = 0; i < count; i += 1) {
         baggage.init(`key-${i}`, i);

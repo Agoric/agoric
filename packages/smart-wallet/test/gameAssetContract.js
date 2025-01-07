@@ -57,7 +57,7 @@ export const start = async zcf => {
   };
 
   const publicFacet = Far('API', {
-    makeJoinInvitation: () =>
+    makeJoinInvitation: async () =>
       zcf.makeInvitation(joinHook, 'join', undefined, joinShape),
   });
 

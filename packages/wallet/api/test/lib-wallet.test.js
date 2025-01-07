@@ -226,7 +226,7 @@ test('lib-wallet issuer and purse methods', async t => {
   const moolaPayment = moolaBundle.mint.mintPayment(
     AmountMath.make(moolaBundle.brand, 100n),
   );
-  await waitForUpdate(E(moolaPurse).getCurrentAmountNotifier(), () =>
+  await waitForUpdate(E(moolaPurse).getCurrentAmountNotifier(), async () =>
     wallet.deposit('fun money', moolaPayment),
   );
   t.deepEqual(
@@ -363,7 +363,7 @@ test('lib-wallet dapp suggests issuer, instance, installation petnames', async t
   assert(Array.isArray(invitationAmountValue2));
   const [{ handle: inviteHandle2 }] = invitationAmountValue2;
 
-  await waitForUpdate(wallet.getPursesNotifier(), () =>
+  await waitForUpdate(wallet.getPursesNotifier(), async () =>
     wallet.deposit('Default Zoe invite purse', invite2),
   );
 
@@ -711,7 +711,7 @@ test('lib-wallet offer methods', async t => {
   await wallet.makeEmptyPurse('moola', 'Fun budget');
   const moolaPurse = wallet.getPurse('Fun budget');
 
-  await waitForUpdate(E(moolaPurse).getCurrentAmountNotifier(), () =>
+  await waitForUpdate(E(moolaPurse).getCurrentAmountNotifier(), async () =>
     wallet.deposit(
       'Fun budget',
       moolaBundle.mint.mintPayment(AmountMath.make(moolaBundle.brand, 100n)),
@@ -1059,7 +1059,7 @@ test('lib-wallet addOffer for autoswap swap', async t => {
   const accepted = await wallet.acceptOffer(id);
   assert(accepted);
   const { depositedP } = accepted;
-  await t.throwsAsync(() => wallet.getUINotifier(rawId, `unknown`), {
+  await t.throwsAsync(async () => wallet.getUINotifier(rawId, `unknown`), {
     message: 'offerResult must be a record to have a uiNotifier',
   });
 
@@ -1216,7 +1216,7 @@ test('lib-wallet performAction acceptOffer', async t => {
   assert(accepted);
   const { depositedP } = accepted;
   await t.throwsAsync(
-    () => wallet.getUINotifier(rawId, 'http://localhost:3001'),
+    async () => wallet.getUINotifier(rawId, 'http://localhost:3001'),
     {
       message: 'offerResult must be a record to have a uiNotifier',
     },
@@ -1346,7 +1346,7 @@ test('addOffer invitationQuery', async t => {
   const accepted = await wallet.acceptOffer(id);
   assert(accepted);
   const { depositedP } = accepted;
-  await t.throwsAsync(() => wallet.getUINotifier(rawId, `unknown`), {
+  await t.throwsAsync(async () => wallet.getUINotifier(rawId, `unknown`), {
     message: 'offerResult must be a record to have a uiNotifier',
   });
 
@@ -1467,7 +1467,7 @@ test('addOffer offer.invitation', async t => {
   const accepted = await wallet.acceptOffer(id);
   assert(accepted);
   const { depositedP } = accepted;
-  await t.throwsAsync(() => wallet.getUINotifier(rawId, `unknown`), {
+  await t.throwsAsync(async () => wallet.getUINotifier(rawId, `unknown`), {
     message: 'offerResult must be a record to have a uiNotifier',
   });
 

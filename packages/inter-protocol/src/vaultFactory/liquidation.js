@@ -215,7 +215,7 @@ export const watchForGovernanceChange = (
   timer,
   reschedulerWaker,
 ) => {
-  void E.when(E(timer).getCurrentTimestamp(), now =>
+  void E.when(E(timer).getCurrentTimestamp(), async now =>
     // make one observer that will usually ignore the update.
     observeIteration(
       subscribeEach(E(auctioneerPublicFacet).getSubscription()),

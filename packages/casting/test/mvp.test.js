@@ -34,7 +34,7 @@ const testHappyPath = (label, ...input) => {
       /** @type {import('../src/types.js').LeaderOptions} */
       const lo = {
         retryCallback: null, // fail fast, no retries
-        keepPolling: () => delay(1000).then(() => true), // poll really quickly
+        keepPolling: async () => delay(1000).then(() => true), // poll really quickly
         jitter: null, // no jitter
       };
       /** @type {import('../src/types.js').FollowerOptions} */
@@ -162,7 +162,7 @@ test('missing rpc server', async t => {
 
 test('unrecognized proof', async t => {
   await t.throwsAsync(
-    () =>
+    async () =>
       makeFollower(makeCastingSpec(':activityhash'), {}, { proof: 'bother' }),
     {
       message: /unrecognized follower proof mode.*/,
@@ -189,7 +189,7 @@ test('yields error on bad capdata without terminating', async t => {
   /** @type {import('../src/types.js').LeaderOptions} */
   const lo = {
     retryCallback: null, // fail fast, no retries
-    keepPolling: () => delay(1000).then(() => true), // poll really quickly
+    keepPolling: async () => delay(1000).then(() => true), // poll really quickly
     jitter: null, // no jitter
   };
   /** @type {import('../src/types.js').FollowerOptions} */

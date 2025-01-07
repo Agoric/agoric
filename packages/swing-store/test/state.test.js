@@ -15,7 +15,7 @@ import {
  * @param {string} [prefix]
  * @returns {Promise<[string, () => void]>}
  */
-const tmpDir = prefix =>
+const tmpDir = async prefix =>
   new Promise((resolve, reject) => {
     tmp.dir({ unsafeCleanup: true, prefix }, (err, name, removeCallback) => {
       if (err) {

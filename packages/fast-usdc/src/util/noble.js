@@ -96,7 +96,7 @@ export const queryForwardingAccount = async (
   let forwardingAddressRes;
   await null;
   try {
-    forwardingAddressRes = await fetch(query).then(res => res.json());
+    forwardingAddressRes = await fetch(query).then(async res => res.json());
   } catch (e) {
     out.error(`Error querying forwarding address from ${query}`);
     throw e;

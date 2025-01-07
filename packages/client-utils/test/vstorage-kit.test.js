@@ -14,7 +14,7 @@ const makeMockFetch = (responses = {}) => {
         },
       },
     };
-    return { json: () => Promise.resolve(response) };
+    return { json: async () => Promise.resolve(response) };
   };
 };
 

@@ -213,7 +213,7 @@ const start = async (zcf, privateArgs) => {
       }
       return E(timer)
         .getCurrentTimestamp()
-        .then(now =>
+        .then(async now =>
           authenticateQuote([{ amountIn, amountOut, timer, timestamp: now }]),
         );
     };
@@ -470,7 +470,7 @@ const start = async (zcf, privateArgs) => {
         });
 
         if (oracleNotifier) {
-          pushFromOracle(oracleNotifier, scaleValueOut, r =>
+          pushFromOracle(oracleNotifier, scaleValueOut, async r =>
             admin.pushResult(r),
           );
         }

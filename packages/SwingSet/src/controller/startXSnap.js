@@ -71,7 +71,7 @@ export function makeStartXSnap(options) {
       serial += 1;
       return workerTrace;
     };
-    doXSnap = opts => {
+    doXSnap = async opts => {
       const workerTraceDir = makeNextTraceDir();
       console.log('SwingSet xsnap worker tracing:', { workerTraceDir });
       fs.mkdirSync(workerTraceDir, { recursive: true });
@@ -174,7 +174,7 @@ export function makeStartXSnap(options) {
     if (overrideBundles) {
       bundles = overrideBundles; // ignore the usual bundles
     } else {
-      const bundlePs = bundleIDs.map(id => bundleHandler.getBundle(id));
+      const bundlePs = bundleIDs.map(async id => bundleHandler.getBundle(id));
       bundles = await Promise.all(bundlePs);
     }
 

@@ -137,7 +137,7 @@ export async function connectToChain(
 
   const helperDir = path.join(basedir, 'ag-cosmos-helper-statedir');
 
-  const readOrDefault = (file, dflt) =>
+  const readOrDefault = async (file, dflt) =>
     fs.promises
       .readFile(file, { encoding: 'utf-8' })
       .catch(e => {
@@ -192,7 +192,7 @@ export async function connectToChain(
   }
 
   let goodRpcHref = rpcHrefs[0];
-  const runHelper = (args, stdin = undefined) => {
+  const runHelper = async (args, stdin = undefined) => {
     const fullArgs = [
       ...args,
       `--chain-id=${chainID}`,
@@ -244,7 +244,7 @@ export async function connectToChain(
 
   let currentTxHashPK = makePromiseKit();
   let postponedTxHash;
-  const postponedWaitForTxHash = txHash => {
+  const postponedWaitForTxHash = async txHash => {
     postponedTxHash = txHash;
     return currentTxHashPK.promise;
   };
@@ -467,7 +467,7 @@ export async function connectToChain(
         updater.updateState(undefined);
 
         // Initialize the txHash subscription.
-        const subscribeAndWaitForTxHash = txHash => {
+        const subscribeAndWaitForTxHash = async txHash => {
           const thisPK = currentTxHashPK;
           postponedTxHash = undefined;
           currentTxHashPK = makePromiseKit();
@@ -784,7 +784,7 @@ ${chainID} chain does not yet know of address ${clientAddr}${adviseEgress(
   };
 
   // Begin the sender when we get the first (empty) mailbox update.
-  void mbNotifier.getUpdateSince().then(() => recurseEachSend());
+  void mbNotifier.getUpdateSince().then(async () => recurseEachSend());
 
   async function deliver(newMessages, acknum) {
     let doSend = false;

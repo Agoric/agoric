@@ -12,7 +12,7 @@ import { canBeDurable, prepareExoClassKit } from '@agoric/vat-data';
  */
 
 const sink = () => {};
-const makeQuietRejection = reason => {
+const makeQuietRejection = async reason => {
   const rejection = harden(Promise.reject(reason));
   void E.when(rejection, sink, sink);
   return rejection;
@@ -155,7 +155,7 @@ export const makePublishKit = () => {
    * @type {Subscriber<T>}
    */
   const subscriber = Far('Subscriber', {
-    subscribeAfter: (publishCount = -1n) => {
+    subscribeAfter: async (publishCount = -1n) => {
       assert.typeof(publishCount, 'bigint');
       if (publishCount === currentPublishCount) {
         return tailP;
@@ -167,7 +167,7 @@ export const makePublishKit = () => {
         );
       }
     },
-    getUpdateSince: updateCount => {
+    getUpdateSince: async updateCount => {
       if (updateCount === undefined) {
         return subscriber.subscribeAfter().then(makeMemoizedUpdateRecord);
       }
@@ -180,7 +180,7 @@ export const makePublishKit = () => {
           .subscribeAfter(updateCount)
           // ... so we poll the latest published update, without waiting for any
           // further ones.
-          .then(() => subscriber.getUpdateSince())
+          .then(async () => subscriber.getUpdateSince())
       );
     },
   });
@@ -266,7 +266,7 @@ const durablePublishKitEphemeralData = new WeakMap();
  * @param {Promise<*>} tail
  * @returns {Promise<*>}
  */
-const provideCurrentP = (state, facets, tail) => {
+const provideCurrentP = async (state, facets, tail) => {
   const ephemeralKey = getEphemeralKey(facets);
   const foundData = durablePublishKitEphemeralData.get(ephemeralKey);
   const currentP = foundData && foundData.currentP;

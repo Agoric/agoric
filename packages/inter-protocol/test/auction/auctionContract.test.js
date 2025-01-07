@@ -248,7 +248,7 @@ const makeAuctionDriver = async (t, params = defaultParams) => {
     /** @type {Promise<BookDataTracker>} */
     const tracker = E.when(
       E(publicFacet).getBookDataUpdates(brand),
-      subscription => subscriptionTracker(t, subscribeEach(subscription)),
+      async subscription => subscriptionTracker(t, subscribeEach(subscription)),
     );
     // @ts-expect-error I don't know what it wants.
     bookDataTrackers.init(brand, tracker);
@@ -345,7 +345,7 @@ const makeAuctionDriver = async (t, params = defaultParams) => {
       return timer;
     },
     getScheduleTracker() {
-      return E.when(E(publicFacet).getScheduleUpdates(), subscription =>
+      return E.when(E(publicFacet).getScheduleUpdates(), async subscription =>
         subscriptionTracker(t, subscribeEach(subscription)),
       );
     },
@@ -506,7 +506,7 @@ test.serial('Excessive want in proposal', async t => {
     undefined,
     collateral.make(5000n),
   );
-  await t.throwsAsync(() => E(seat).getOfferResult(), {
+  await t.throwsAsync(async () => E(seat).getOfferResult(), {
     message: 'seat has been exited',
   });
 
@@ -1365,10 +1365,13 @@ test('deposit unregistered collateral', async t => {
   const asset = withAmountUtils(makeIssuerKit('Asset'));
   const driver = await makeAuctionDriver(t);
 
-  await t.throwsAsync(() => driver.depositCollateral(asset.make(500n), asset), {
-    message:
-      /key "\[Alleged: Asset brand\]" not found in collection "brandToIssuerRecord"/,
-  });
+  await t.throwsAsync(
+    async () => driver.depositCollateral(asset.make(500n), asset),
+    {
+      message:
+        /key "\[Alleged: Asset brand\]" not found in collection "brandToIssuerRecord"/,
+    },
+  );
 });
 
 test('bid on unregistered collateral', async t => {

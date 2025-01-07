@@ -94,7 +94,7 @@ test(`depositToSeat - mismatched keywords`, async t => {
   );
   const newBucks = bucksMint.mintPayment(bucks(2n));
   await t.throwsAsync(
-    () => depositToSeat(zcf, zcfSeat, { C: bucks(2n) }, { D: newBucks }),
+    async () => depositToSeat(zcf, zcfSeat, { C: bucks(2n) }, { D: newBucks }),
     {
       message:
         'The "D" keyword in the paymentKeywordRecord was not a keyword in proposal.give, which had keywords: ["C"]',

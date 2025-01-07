@@ -18,7 +18,7 @@ import { assertAmountsEqual } from '../zoeTestHelpers.js';
 
 const { coerceTimestampRecord } = TimeMath;
 
-const makeTestPriceAuthority = (brands, priceList, timer) =>
+const makeTestPriceAuthority = async (brands, priceList, timer) =>
   makeFakePriceAuthority({
     actualBrandIn: brands.get('moola'),
     actualBrandOut: brands.get('bucks'),

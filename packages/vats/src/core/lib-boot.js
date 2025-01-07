@@ -104,7 +104,7 @@ export const makeBootstrap = (
     produce.agoricNamesAdmin.resolve(agoricNamesAdmin);
     produce.vatStore.resolve(vatStore);
 
-    const runBehaviors = manifest => {
+    const runBehaviors = async manifest => {
       return runModuleBehaviors({
         allPowers,
         behaviors,
@@ -173,7 +173,7 @@ export const makeBootstrap = (
      * @param {SwingsetVats} vats
      * @param {SoloDevices | ChainDevices} devices
      */
-    bootstrap: (vats, devices) => {
+    bootstrap: async (vats, devices) => {
       for (const [name, root] of Object.entries(vats)) {
         if (name !== 'vatAdmin') {
           vatData.set(name, { root });
@@ -187,7 +187,7 @@ export const makeBootstrap = (
       });
     },
     /** @param {string} name } */
-    consumeItem: name => {
+    consumeItem: async name => {
       assert.typeof(name, 'string');
       return consume[name];
     },

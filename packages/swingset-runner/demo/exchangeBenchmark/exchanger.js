@@ -111,7 +111,7 @@ async function build(name, zoe, issuers, payments, publicFacet) {
 
 export function buildRootObject(_vatPowers, vatParameters) {
   return Far('root', {
-    build: (zoe, issuers, payments, publicFacet) =>
+    build: async (zoe, issuers, payments, publicFacet) =>
       build(vatParameters.name, zoe, issuers, payments, publicFacet),
   });
 }

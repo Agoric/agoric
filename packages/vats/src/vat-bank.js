@@ -748,7 +748,7 @@ const prepareBankManager = (
         }
         // publish settled issuer identity
         void Promise.all([kit.issuer, E(kit.brand).getDisplayInfo()]).then(
-          ([issuer, displayInfo]) =>
+          async ([issuer, displayInfo]) =>
             E(nameAdmin).update(
               denom,
               /** @type {AssetInfo} */ (

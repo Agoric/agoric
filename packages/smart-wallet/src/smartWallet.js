@@ -242,7 +242,7 @@ const namesOf = async (target, nameHub) => {
  * @param {Brand} brand
  * @returns {Promise<boolean>} true iff the the brand and issuer match
  */
-const checkMutual = (issuer, brand) =>
+const checkMutual = async (issuer, brand) =>
   Promise.all([
     E(issuer)
       .getBrand()
@@ -815,7 +815,7 @@ export const prepareSmartWallet = (baggage, shared) => {
 
           // Add each payment amount to brandPaymentRecord as it is withdrawn. If
           // there's an error later, we can use it to redeposit the correct amount.
-          return objectMap(give, amount => {
+          return objectMap(give, async amount => {
             /** @type {Promise<Purse>} */
             const purseP = facets.helper.purseForBrand(amount.brand);
             const paymentP = E(purseP).withdraw(amount);
@@ -857,7 +857,7 @@ export const prepareSmartWallet = (baggage, shared) => {
             // Use allSettled to ensure we attempt all the deposits, regardless of
             // individual rejections.
             await Promise.allSettled(
-              Array.from(brandPaymentRecord.entries()).map(([b, p]) => {
+              Array.from(brandPaymentRecord.entries()).map(async ([b, p]) => {
                 // Wait for the withdrawal to complete.  This protects against a
                 // race when updating paymentToPurse.
                 const purseP = facets.helper.purseForBrand(b);
@@ -1042,7 +1042,7 @@ export const prepareSmartWallet = (baggage, shared) => {
           return E.when(
             E(publicMarshaller).fromCapData(actionCapData),
             /** @param {BridgeAction} action */
-            action => {
+            async action => {
               try {
                 switch (action.method) {
                   case 'executeOffer': {

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { bundlePaths, hashPaths } from './paths.js';
 
-const read = (name, path) => {
+const read = async (name, path) => {
   return fs.promises.readFile(path, { encoding: 'utf-8' }).catch(err => {
     console.error(`unable to read supervisor ${name} at ${path}`);
     console.error(

@@ -29,7 +29,7 @@ test('zoe - brokenAutomaticRefund', async t => {
   // Alice tries to create an instance, but the contract is badly
   // written.
   await t.throwsAsync(
-    () => E(zoe).startInstance(installation, issuerKeywordRecord),
+    async () => E(zoe).startInstance(installation, issuerKeywordRecord),
     { message: 'The contract did not correctly return a creatorInvitation' },
     'startInstance should have thrown',
   );

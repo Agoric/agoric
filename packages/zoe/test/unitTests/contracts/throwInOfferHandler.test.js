@@ -39,7 +39,7 @@ test('throw in offerHandler', async t => {
   // Uncomment below to see what the user would see
   // await throwsInOfferHandlerResult;
 
-  await t.throwsAsync(() => throwsInOfferHandlerResult, {
+  await t.throwsAsync(async () => throwsInOfferHandlerResult, {
     message: 'error thrown in offerHandler in contract',
   });
 
@@ -75,7 +75,7 @@ test('throw in offerHandler', async t => {
   // › cleanProposal (src/cleanProposal.js:116:10)
   // › src/zoeService/zoe.js:408:28"
 
-  await t.throwsAsync(() => throwsInDepositToSeatResult, {
+  await t.throwsAsync(async () => throwsInDepositToSeatResult, {
     message:
       // Should be able to use more informative error once SES double
       // disclosure bug is fixed. See

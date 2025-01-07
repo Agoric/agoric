@@ -166,7 +166,7 @@ export const makeAtomicProvider = store => {
    *   once after a new value is added to the store
    * @returns {Promise<V>}
    */
-  const provideAsync = (key, makeValue, finishValue) => {
+  const provideAsync = async (key, makeValue, finishValue) => {
     if (store.has(key)) {
       return Promise.resolve(store.get(key));
     }

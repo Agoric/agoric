@@ -5,7 +5,7 @@ export const queryUSDCBalance = async (
   /** @type {typeof globalThis.fetch} */ fetch,
 ) => {
   const query = `${api}/cosmos/bank/v1beta1/balances/${address}`;
-  const json = await fetch(query).then(res => res.json());
+  const json = await fetch(query).then(async res => res.json());
   const amount = json.balances?.find(b => b.denom === denom)?.amount ?? '0';
 
   return BigInt(amount);

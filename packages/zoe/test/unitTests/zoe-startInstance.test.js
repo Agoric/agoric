@@ -14,7 +14,7 @@ const dirname = path.dirname(new URL(import.meta.url).pathname);
 test('bad installation', async t => {
   const { zoe } = setup();
   // @ts-expect-error deliberate invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).startInstance(), {
+  await t.throwsAsync(async () => E(zoe).startInstance(), {
     message:
       'In "startInstance" method of (ZoeService): Expected at least 1 arguments: []',
   });
@@ -97,7 +97,7 @@ test('terms, issuerKeywordRecord switched', async t => {
   const installation = await E(zoe).installBundleID('b1-contract');
   const { moolaKit } = setup();
   await t.throwsAsync(
-    () =>
+    async () =>
       E(zoe).startInstance(
         installation,
         // @ts-expect-error intentional error
@@ -126,7 +126,7 @@ test('bad issuer, makeEmptyPurse throws', async t => {
   });
   await t.throwsAsync(
     // @ts-expect-error intentional error
-    () => E(zoe).startInstance(installation, { Money: badIssuer }),
+    async () => E(zoe).startInstance(installation, { Money: badIssuer }),
     {
       message:
         'A purse could not be created for brand "[Alleged: brand]" because: "[Error: bad issuer]"',
@@ -141,7 +141,7 @@ test('unexpected properties', async t => {
   const bundle = await bundleSource(contractPath);
   const installation = await E(zoe).install(bundle);
 
-  await t.throwsAsync(() => E(zoe).startInstance(installation), {
+  await t.throwsAsync(async () => E(zoe).startInstance(installation), {
     message:
       'contract "start" returned unrecognized properties ["unexpectedProperty"]',
   });
@@ -154,7 +154,7 @@ test('prepare and start', async t => {
   const bundle = await bundleSource(contractPath);
   const installation = await E(zoe).install(bundle);
 
-  await t.throwsAsync(() => E(zoe).startInstance(installation), {
+  await t.throwsAsync(async () => E(zoe).startInstance(installation), {
     message: 'contract must provide exactly one of "start" and "prepare"',
   });
 });
@@ -166,7 +166,7 @@ test('before meta', async t => {
   const bundle = await bundleSource(contractPath);
   const installation = await E(zoe).install(bundle);
 
-  await t.throwsAsync(() => E(zoe).startInstance(installation), {
+  await t.throwsAsync(async () => E(zoe).startInstance(installation), {
     message: 'privateArgs: "[undefined]" - Must be: {"greeting":"hello"}',
   });
 

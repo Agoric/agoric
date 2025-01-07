@@ -46,7 +46,7 @@ export function buildRootObject() {
     return three === 3 ? 'three good' : `not three, got ${three}`;
   }
 
-  function checkA([pB, pC, pF, three, evt, evwft]) {
+  async function checkA([pB, pC, pF, three, evt, evwft]) {
     return Promise.all([
       pB.then(checkResB),
       pC.then(checkResC, checkErrC),

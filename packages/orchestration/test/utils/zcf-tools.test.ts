@@ -22,7 +22,11 @@ const makeTestContext = async () => {
     fakeVatAdmin.admin,
   );
 
-  const bundleCache = await makeNodeBundleCache('bundles', {}, s => import(s));
+  const bundleCache = await makeNodeBundleCache(
+    'bundles',
+    {},
+    async s => import(s),
+  );
   const contractBundle = await bundleCache.load(contractEntry);
 
   fakeVatAdmin.vatAdminState.installBundle('b1-contract', contractBundle);

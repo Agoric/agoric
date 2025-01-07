@@ -228,7 +228,7 @@ test.before(async t => {
   t.context = await makeLiquidationTestContext(t);
 });
 
-test.after.always(t => {
+test.after.always(async t => {
   return t.context.shutdown && t.context.shutdown();
 });
 
@@ -257,7 +257,7 @@ test('concurrent flow 1', async t => {
   ];
 
   await Promise.all(
-    cases.map(({ collateralBrandKey }) =>
+    cases.map(async ({ collateralBrandKey }) =>
       ensureVaultCollateral(collateralBrandKey, t),
     ),
   );
@@ -290,7 +290,7 @@ test('concurrent flow 1', async t => {
   );
 
   await Promise.all(
-    cases.map(({ collateralBrandKey }) =>
+    cases.map(async ({ collateralBrandKey }) =>
       placeBids(collateralBrandKey, 'agoric1buyer', setups[collateralBrandKey]),
     ),
   );

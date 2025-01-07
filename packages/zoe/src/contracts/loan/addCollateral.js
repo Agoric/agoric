@@ -9,7 +9,7 @@ import { scheduleLiquidation } from './scheduleLiquidation.js';
 // facet given to the borrower.
 
 /** @type {MakeAddCollateralInvitation} */
-export const makeAddCollateralInvitation = (zcf, config) => {
+export const makeAddCollateralInvitation = async (zcf, config) => {
   const { collateralSeat } = config;
 
   /** @type {OfferHandler} */

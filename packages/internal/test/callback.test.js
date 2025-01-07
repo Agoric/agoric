@@ -161,7 +161,7 @@ test('far method callbacks', async t => {
   t.is(await p3r, '19go');
 
   // @ts-expect-error deliberate: is not assignable to SyncCallback
-  const thunk = () => cb.callSync(cbp2, 'go');
+  const thunk = async () => cb.callSync(cbp2, 'go');
   t.throws(thunk, { message: /not a function/ });
 });
 
@@ -179,7 +179,7 @@ test('far function callbacks', async t => {
   t.like(cbp2, { bound: [9, 10] });
   t.assert(cbp2.target instanceof Promise);
   // @ts-expect-error deliberate: is not assignable to SyncCallback
-  const thunk = () => cb.callSync(cbp2, 'go');
+  const thunk = async () => cb.callSync(cbp2, 'go');
   t.throws(thunk, { message: /not a function/ });
   const p2r = cb.callE(cbp2, 'go');
   t.assert(p2r instanceof Promise);

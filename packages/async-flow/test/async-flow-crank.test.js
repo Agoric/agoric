@@ -70,7 +70,7 @@ const testPlay3 = async (t, zone) => {
   const guestFunc = async () => neverSettlesP;
   t.notThrows(() => asyncFlow(zone, 'guestFunc', guestFunc));
   t.notThrowsAsync(
-    () => allWokenP,
+    async () => allWokenP,
     'will actually throw due to crank bug #9377',
   );
 };

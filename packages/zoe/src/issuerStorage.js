@@ -138,8 +138,9 @@ export const provideIssuerStorage = zcfBaggage => {
   const storeIssuerKeywordRecord = async uncleanIssuerKeywordRecord => {
     assertInstantiated();
     cleanKeywords(uncleanIssuerKeywordRecord);
-    const issuerRecordPs = objectMap(uncleanIssuerKeywordRecord, issuerP =>
-      storeIssuer(issuerP),
+    const issuerRecordPs = objectMap(
+      uncleanIssuerKeywordRecord,
+      async issuerP => storeIssuer(issuerP),
     );
     const issuerRecords = await deeplyFulfilledObject(issuerRecordPs);
     const issuers = objectMap(issuerRecords, ({ issuer }) => issuer);

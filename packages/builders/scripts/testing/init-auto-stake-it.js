@@ -67,7 +67,7 @@ export default async (homeP, endowments) => {
 
   const { writeCoreEval } = await makeHelpers(homeP, endowments);
 
-  await writeCoreEval(startAutoStakeIt.name, utils =>
+  await writeCoreEval(startAutoStakeIt.name, async utils =>
     defaultProposalBuilder(utils, opts),
   );
 };

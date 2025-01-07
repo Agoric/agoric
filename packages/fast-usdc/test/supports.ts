@@ -265,7 +265,7 @@ export const commonSetup = async (t: ExecutionContext<any>) => {
     utils: {
       pourPayment,
       inspectLocalBridge: () => harden([...localBridgeMessages]),
-      inspectDibcBridge: () => E(ibcBridge).inspectDibcBridge(),
+      inspectDibcBridge: async () => E(ibcBridge).inspectDibcBridge(),
       inspectBankBridge: () => harden([...bankBridgeMessages]),
       transmitTransferAck,
     },

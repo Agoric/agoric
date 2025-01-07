@@ -69,7 +69,7 @@ test('plural invitation details', async t => {
 
   const bothPayment = await E(invitePurse).withdraw(bothAmount);
 
-  await t.throwsAsync(() => E(zoe).getInvitationDetails(bothPayment), {
+  await t.throwsAsync(async () => E(zoe).getInvitationDetails(bothPayment), {
     message: 'Expected exactly 1 invitation, not 2',
   });
 });

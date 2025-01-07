@@ -139,7 +139,7 @@ export const makeWalletTool = ({ runMake, pspawnAgd, delay, log }) => {
     return JSON.parse(txt);
   };
 
-  const queryBalance = addr =>
+  const queryBalance = async addr =>
     query(['bank', 'balances', addr, '--output', 'json']).then(b => {
       console.log(addr, b);
       return b;
@@ -195,7 +195,7 @@ export const makeWalletTool = ({ runMake, pspawnAgd, delay, log }) => {
       await waitForBlock(`${a4}'s funds to appear`, 2, true);
       return queryBalance(ACCT_ADDR);
     },
-    provisionMine: ACCT_ADDR =>
+    provisionMine: async ACCT_ADDR =>
       waitMyTurn('provision', ACCT_ADDR).then(() =>
         runMake([...bind({ ACCT_ADDR }), 'provision-my-acct']),
       ),

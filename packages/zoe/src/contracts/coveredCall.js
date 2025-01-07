@@ -68,7 +68,7 @@ const start = zcf => {
   const sellSeatExpiredMsg = `The covered call option is expired.`;
 
   /** @type {OfferHandler} */
-  const makeOption = sellSeat => {
+  const makeOption = async sellSeat => {
     mustMatch(
       sellSeat.getProposal(),
       M.splitRecord({ exit: { afterDeadline: M.any() } }),

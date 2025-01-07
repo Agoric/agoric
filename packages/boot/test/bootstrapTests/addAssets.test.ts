@@ -52,7 +52,7 @@ test.before(async t => {
   };
 });
 
-test.after.always(t => {
+test.after.always(async t => {
   return t.context.shutdown && t.context.shutdown();
 });
 

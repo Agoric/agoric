@@ -229,7 +229,7 @@ export const makeZCFZygote = async (
    *     }
    * >}
    */
-  const evaluateContract = () => {
+  const evaluateContract = async () => {
     let bundle;
     if (passStyleOf(contractBundleCap) === 'remotable') {
       const bundleCap = contractBundleCap;
@@ -327,7 +327,7 @@ export const makeZCFZygote = async (
       powers.exitVat(completion);
     },
     shutdownWithFailure,
-    stopAcceptingOffers: () => E(zoeInstanceAdmin).stopAcceptingOffers(),
+    stopAcceptingOffers: async () => E(zoeInstanceAdmin).stopAcceptingOffers(),
     makeZCFMint,
     registerFeeMint,
     makeEmptySeatKit,
@@ -357,8 +357,9 @@ export const makeZCFZygote = async (
       }
     },
     getInstance: () => getInstanceRecHolder().getInstanceRecord().instance,
-    setOfferFilter: strings => E(zoeInstanceAdmin).setOfferFilter(strings),
-    getOfferFilter: () => E(zoeInstanceAdmin).getOfferFilter(),
+    setOfferFilter: async strings =>
+      E(zoeInstanceAdmin).setOfferFilter(strings),
+    getOfferFilter: async () => E(zoeInstanceAdmin).getOfferFilter(),
   });
 
   // snapshot zygote here //////////////////

@@ -244,8 +244,8 @@ test('brand', async t => {
   const delay = TimeMath.coerceRelativeTimeRecord(1000n, wrong);
   const exp = { message: /TimerBrands must match/ };
   t.throws(() => ts.setWakeup(when, handler), exp);
-  t.throws(() => ts.wakeAt(when), exp);
-  t.throws(() => ts.delay(delay), exp);
+  t.throws(async () => ts.wakeAt(when), exp);
+  t.throws(async () => ts.delay(delay), exp);
   t.throws(() => ts.makeRepeater(delay, delay), exp);
   t.throws(() => ts.repeatAfter(delay, delay, handler), exp);
   t.throws(() => ts.makeNotifier(delay, delay), exp);
@@ -443,7 +443,9 @@ test('delay', async t => {
   t.deepEqual(fired['0'], ['fulfill', toTS(110n)]);
 
   // delay must be non-negative
-  t.throws(() => ts.delay(toRT(-1n)), { message: /Must be non-negative/ });
+  t.throws(async () => ts.delay(toRT(-1n)), {
+    message: /Must be non-negative/,
+  });
 
   // cancelling a delay causes the promise to reject
   ts.cancel(cancel20);
@@ -1086,7 +1088,7 @@ test('iterator', async t => {
   t.deepEqual(done1, undefined);
 
   // concurrent next() is rejected
-  t.throws(() => iter.next(), {
+  t.throws(async () => iter.next(), {
     message: 'timer iterator dislikes overlapping next()',
   });
 

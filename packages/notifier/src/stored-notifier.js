@@ -58,8 +58,9 @@ export const makeStoredNotifier = (notifier, storageNode, marshaller) => {
 
   /** @type {StoredNotifier<T>} */
   const storedNotifier = Far('StoredNotifier', {
-    getUpdateSince: updateCount => E(notifier).getUpdateSince(updateCount),
-    getPath: () => E(storageNode).getPath(),
+    getUpdateSince: async updateCount =>
+      E(notifier).getUpdateSince(updateCount),
+    getPath: async () => E(storageNode).getPath(),
     getUnserializer: () => unserializer,
   });
   return storedNotifier;

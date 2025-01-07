@@ -38,8 +38,9 @@ export const claim = async (
 ) => {
   const srcPayment = await srcPaymentP;
   // @ts-expect-error XXX could be instantiated with a different subtype
-  return E.when(E(recoveryPurse).deposit(srcPayment, optAmountShape), amount =>
-    E(recoveryPurse).withdraw(amount),
+  return E.when(
+    E(recoveryPurse).deposit(srcPayment, optAmountShape),
+    async amount => E(recoveryPurse).withdraw(amount),
   );
 };
 harden(claim);
@@ -70,7 +71,7 @@ export const combine = async (
     ...srcPaymentsPs,
   ]);
   const emptyAmount = AmountMath.makeEmpty(brand, displayInfo.assetKind);
-  const amountPs = srcPayments.map(srcPayment =>
+  const amountPs = srcPayments.map(async srcPayment =>
     E(recoveryPurse).deposit(srcPayment),
   );
   const amounts = await Promise.all(amountPs);
@@ -141,6 +142,8 @@ export const splitMany = async (recoveryPurse, srcPaymentP, amounts) => {
   AmountMath.isEqual(srcAmount, total) ||
     Fail`rights were not conserved: ${total} vs ${srcAmount}`;
 
-  return Promise.all(amounts.map(amount => E(recoveryPurse).withdraw(amount)));
+  return Promise.all(
+    amounts.map(async amount => E(recoveryPurse).withdraw(amount)),
+  );
 };
 harden(splitMany);

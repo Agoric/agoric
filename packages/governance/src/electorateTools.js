@@ -83,8 +83,8 @@ const getOpenQuestions = async questionStore => {
  * @param {ERef<Handle<'Question'>>} questionHandleP
  * @param {MapStore<Handle<'Question'>, QuestionRecord>} questionStore
  */
-const getQuestion = (questionHandleP, questionStore) =>
-  E.when(questionHandleP, questionHandle =>
+const getQuestion = async (questionHandleP, questionStore) =>
+  E.when(questionHandleP, async questionHandle =>
     E(questionStore.get(questionHandle).publicFacet).getQuestion(),
   );
 
@@ -92,7 +92,7 @@ const getQuestion = (questionHandleP, questionStore) =>
  * @param {ZCF} zcf
  * @param {AddQuestion} addQuestion
  */
-const getPoserInvitation = (zcf, addQuestion) => {
+const getPoserInvitation = async (zcf, addQuestion) => {
   const questionPoserHandler = seat => {
     seat.exit();
     return Far(`questionPoser`, { addQuestion });

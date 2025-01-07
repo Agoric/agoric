@@ -15,7 +15,7 @@ test.before(async t => {
     '@agoric/vm-config/decentral-itest-orchestration-config.json',
   );
 });
-test.after.always(t => t.context.shutdown?.());
+test.after.always(async t => t.context.shutdown?.());
 
 test('resolves', async t => {
   const { walletFactoryDriver, buildProposal, evalProposal } = t.context;

@@ -36,7 +36,7 @@ export const makeSlogSender = async options => {
   };
 
   return Object.assign(slogSender, {
-    forceFlush: () => stream.flush(),
-    shutdown: () => stream.close(),
+    forceFlush: async () => stream.flush(),
+    shutdown: async () => stream.close(),
   });
 };

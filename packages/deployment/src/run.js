@@ -14,7 +14,7 @@ export const running = (process, { exec, spawn }) => {
     setSilent: val => {
       SETUP_SILENT = val;
     },
-    exec: cmd => {
+    exec: async cmd => {
       const cp = exec(cmd);
       const promise = new Promise((resolve, reject) => {
         cp.addListener('error', reject);
@@ -55,7 +55,7 @@ export const running = (process, { exec, spawn }) => {
       return ret.stdout;
     },
     cwd: () => process.cwd(),
-    chdir: path => {
+    chdir: async path => {
       if (!SETUP_SILENT) {
         console.error('$ cd', shellEscape(path));
       }
@@ -66,7 +66,7 @@ export const running = (process, { exec, spawn }) => {
     },
 
     // Dah-doo-run-run-run, dah-doo-run-run.
-    doRun: (cmd, readable, writeCb) => {
+    doRun: async (cmd, readable, writeCb) => {
       if (!SETUP_SILENT) {
         console.error('$', ...cmd.map(shellEscape));
       }

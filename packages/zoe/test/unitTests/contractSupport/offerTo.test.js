@@ -208,7 +208,7 @@ test(`offerTo - violates offer safety of fromSeat`, async t => {
   t.deepEqual(toSeatContractA.getCurrentAllocation(), {});
 
   await t.throwsAsync(
-    () =>
+    async () =>
       offerTo(
         zcfA,
         contractBInvitation,

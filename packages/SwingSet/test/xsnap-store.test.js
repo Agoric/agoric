@@ -17,7 +17,7 @@ const makeMockSnapStoreIO = () => ({
   measureSeconds: makeMeasureSeconds(() => 0),
 });
 
-const getBootScript = () =>
+const getBootScript = async () =>
   getLockdownBundle().then(bundle => `(${bundle.source}\n)()`.trim());
 
 /** @type {(compressedSize: number, fullSize: number) => number} */
@@ -61,7 +61,7 @@ async function bootSESWorker(name, handleCommand) {
 
 test(`create XS Machine, snapshot (${snapSize.raw} Kb), compress to smaller`, async t => {
   const vat = await bootWorker('xs1', async m => m, '1 + 1');
-  t.teardown(() => vat.close());
+  t.teardown(async () => vat.close());
 
   const db = sqlite3(':memory:');
   const store = makeSnapStore(db, () => {}, makeMockSnapStoreIO());
@@ -80,7 +80,7 @@ test(`create XS Machine, snapshot (${snapSize.raw} Kb), compress to smaller`, as
 
 test('SES bootstrap, save, compress', async t => {
   const vat = await bootSESWorker('ses-boot1', async m => m);
-  t.teardown(() => vat.close());
+  t.teardown(async () => vat.close());
 
   const db = sqlite3(':memory:');
   const store = makeSnapStore(db, () => {}, makeMockSnapStoreIO());
@@ -104,7 +104,7 @@ test('create SES worker, save, restore, resume', async t => {
   const store = makeSnapStore(db, () => {}, makeMockSnapStoreIO());
 
   const vat0 = await bootSESWorker('ses-boot2', async m => m);
-  t.teardown(() => vat0.close());
+  t.teardown(async () => vat0.close());
   await vat0.evaluate('globalThis.x = harden({a: 1})');
   await store.saveSnapshot('vat0', 1, vat0.makeSnapshotStream());
 
@@ -118,7 +118,7 @@ test('create SES worker, save, restore, resume', async t => {
     fs: { ...fs, ...fs.promises, tmpName },
   });
   await worker.isReady();
-  t.teardown(() => worker.close());
+  t.teardown(async () => worker.close());
   await worker.evaluate('x.a');
   t.pass();
 });
@@ -142,7 +142,7 @@ test('XS + SES snapshots are long-term deterministic', async t => {
   const store = makeSnapStore(db, () => {}, makeMockSnapStoreIO());
 
   const vat = await bootWorker('xs1', async m => m, '1 + 1');
-  t.teardown(() => vat.close());
+  t.teardown(async () => vat.close());
 
   const {
     filePath: _path1,

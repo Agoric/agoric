@@ -270,7 +270,7 @@ async function makeJSONStore(
  *            // changes
  * }
  */
-export function initJSONStore(dirPath) {
+export async function initJSONStore(dirPath) {
   if (dirPath !== null && dirPath !== undefined && `${dirPath}` !== dirPath) {
     throw Error('dirPath must be a string or nullish');
   }
@@ -294,7 +294,7 @@ export function initJSONStore(dirPath) {
  *            // changes
  * }
  */
-export function openJSONStore(dirPath) {
+export async function openJSONStore(dirPath) {
   if (`${dirPath}` !== dirPath) {
     throw Error('dirPath must be a string');
   }

@@ -75,7 +75,7 @@ harden(provideEmptySeat);
  * @param {T} thunks
  * @returns {Promise<{ [K in keyof T]: Awaited<ReturnType<T[K]>> }>}
  */
-export const provideAll = (baggage, thunks) => {
+export const provideAll = async (baggage, thunks) => {
   const keys = Object.keys(thunks);
   // assume if any keys are defined they all are
   const inBaggage = baggage.has(keys[0]);
@@ -112,7 +112,7 @@ harden(provideAll);
  * @param {(value: Awaited<ReturnType<T>>) => void} [withValue]
  * @returns {Promise<Awaited<ReturnType<T>>>}
  */
-export const provideSingleton = (mapStore, key, makeValue, withValue) => {
+export const provideSingleton = async (mapStore, key, makeValue, withValue) => {
   const stored = mapStore.has(key)
     ? undefined
     : E.when(makeValue(), v => mapStore.init(key, harden(v)));

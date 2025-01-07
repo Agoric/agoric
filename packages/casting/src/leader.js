@@ -31,7 +31,7 @@ export const makeRoundRobinLeader = (endpoints, leaderOptions = {}) => {
       }
       throw err;
     },
-    watchCasting: _castingSpecP => pollingChangeFollower,
+    watchCasting: async _castingSpecP => pollingChangeFollower,
     /**
      * @template T
      * @param {string} where
@@ -54,13 +54,15 @@ export const makeRoundRobinLeader = (endpoints, leaderOptions = {}) => {
               });
           }
 
-          retrying.then(() => jitter && jitter(where)).then(applyOne, reject);
+          retrying
+            .then(async () => jitter && jitter(where))
+            .then(applyOne, reject);
           thisAttempt += 1;
         };
 
         const applyOne = () => {
           Promise.resolve()
-            .then(() => callback(endpoints[endpointIndex]))
+            .then(async () => callback(endpoints[endpointIndex]))
             .then(res => {
               resolve(harden([res]));
               lastRespondingEndpointIndex = endpointIndex;

@@ -43,7 +43,7 @@ const scaleDecimals = num => BigInt(num * Number(COSMOS_UNIT));
  */
 export const makeOracleCommand = (logger, io = {}) => {
   const {
-    delay = ms => new Promise(resolve => setTimeout(resolve, ms)),
+    delay = async ms => new Promise(resolve => setTimeout(resolve, ms)),
     execFileSync = cp.execFileSync,
     env = process.env,
     stdout = process.stdout,
@@ -284,7 +284,7 @@ export const makeOracleCommand = (logger, io = {}) => {
 
         const feedPath = `published.priceFeed.${pair[0]}-${pair[1]}_price_feed`;
 
-        const readPrice = () =>
+        const readPrice = async () =>
           /** @type {Promise<PriceDescription>} */ (
             readLatestHead(feedPath).catch(() => {
               const viewer = `https://vstorage.agoric.net/#${networkConfig.rpcAddrs[0]}|published,published.priceFeed|${feedPath}`;

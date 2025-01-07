@@ -47,9 +47,12 @@ test('makeNameHubKit - lookup paths', async t => {
   t.is(await nh1.lookup('path1'), nh2);
   t.is(await nh1.lookup('path1', 'path2'), nh3);
   t.is(await nh1.lookup('path1', 'path2', 'path3'), 'finish2');
-  await t.throwsAsync(() => nh1.lookup('path1', 'path2', 'path3', 'path4'), {
-    message: /^target has no method "lookup", has/,
-  });
+  await t.throwsAsync(
+    async () => nh1.lookup('path1', 'path2', 'path3', 'path4'),
+    {
+      message: /^target has no method "lookup", has/,
+    },
+  );
 });
 
 test('makeNameHubKit - reserve and update', async t => {
@@ -57,7 +60,7 @@ test('makeNameHubKit - reserve and update', async t => {
 
   t.is(nameAdmin.readonly(), nameHub);
 
-  await t.throwsAsync(() => nameHub.lookup('hello'), {
+  await t.throwsAsync(async () => nameHub.lookup('hello'), {
     message: /"nameKey" not found: .*/,
   });
 
@@ -95,7 +98,7 @@ test('makeNameHubKit - reserve and delete', async t => {
 
   t.is(nameAdmin.readonly(), nameHub);
 
-  await t.throwsAsync(() => nameHub.lookup('goodbye'), {
+  await t.throwsAsync(async () => nameHub.lookup('goodbye'), {
     message: /"nameKey" not found: .*/,
   });
 
@@ -124,7 +127,7 @@ test('makeNameHubKit - reserve and delete', async t => {
   });
   t.truthy(lookedUpGoodbye);
 
-  await t.throwsAsync(() => nameHub.lookup('goodbye'), {
+  await t.throwsAsync(async () => nameHub.lookup('goodbye'), {
     message: /"nameKey" not found: .*/,
   });
 });
@@ -195,7 +198,7 @@ test('nameAdmin provideChild', async t => {
     'reserved keys should have a promise',
   );
 
-  await t.throwsAsync(() => namesByAddress.lookup('ag123', 'never'), {
+  await t.throwsAsync(async () => namesByAddress.lookup('ag123', 'never'), {
     message: '"nameKey" not found: "never"',
   });
 });

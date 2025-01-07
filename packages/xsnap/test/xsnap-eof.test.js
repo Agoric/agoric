@@ -197,7 +197,7 @@ const testInterruption = test.macro(
    * @param {(t: import('ava').ExecutionContext, results: Awaited<ReturnType<expectTermination>>) => void} verifyResults
    */
   async (t, beforeWait, onRequest, afterWait, verifyResults) => {
-    const handleCommand = message => {
+    const handleCommand = async message => {
       return onRequest(worker, message);
     };
     const worker = await spawnReflectiveWorker(handleCommand);
@@ -217,7 +217,7 @@ test(
     worker.toXsnap.destroy();
     return new Uint8Array();
   },
-  worker => worker.vat.close(),
+  async worker => worker.vat.close(),
   (t, results) =>
     verifyStdError(t, results, 'Got EOF on netstring read. Has parent died?\n'),
 );
@@ -234,7 +234,7 @@ test(
     worker.fromXsnap.destroy();
     return new Uint8Array();
   },
-  worker => worker.vat.close(),
+  async worker => worker.vat.close(),
   (t, results) =>
     verifyStdError(t, results, 'Caught SIGPIPE. Has parent died?\n'),
 );

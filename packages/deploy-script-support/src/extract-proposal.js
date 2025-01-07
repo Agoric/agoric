@@ -120,7 +120,7 @@ export const extractCoreProposalBundles = async (
     'steps' in coreProposals ? coreProposals.steps : [coreProposals];
   const bundleToSource = new Map();
   const extractedSteps = await Promise.all(
-    proposalSteps.map((proposalStep, i) =>
+    proposalSteps.map(async (proposalStep, i) =>
       Promise.all(
         proposalStep.map(async (coreProposal, j) => {
           const key = `${i}.${j}`;

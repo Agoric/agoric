@@ -198,7 +198,7 @@ export async function connectToFakeChain(basedir, GCI, delay, inbound) {
     },
   );
 
-  const simulateBlock = () =>
+  const simulateBlock = async () =>
     unhandledSimulateBlock().catch(e => {
       console.error(e);
       process.exit(1);

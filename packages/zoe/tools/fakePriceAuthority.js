@@ -242,7 +242,7 @@ export async function makeFakePriceAuthority(options) {
     latestTick = timestamp;
   }
 
-  function resolveQuoteWhen(operator, amountIn, amountOutLimit) {
+  async function resolveQuoteWhen(operator, amountIn, amountOutLimit) {
     assertBrands(amountIn.brand, amountOutLimit.brand);
     const promiseKit = makePromiseKit();
     const req = {
@@ -269,7 +269,7 @@ export async function makeFakePriceAuthority(options) {
 
   /** @type {PriceAuthority} */
   const priceAuthority = Far('fake price authority', {
-    getQuoteIssuer: (brandIn, brandOut) => {
+    getQuoteIssuer: async (brandIn, brandOut) => {
       assertBrands(brandIn, brandOut);
       return quoteIssuer;
     },
@@ -281,7 +281,7 @@ export async function makeFakePriceAuthority(options) {
       assertBrands(amountIn.brand, brandOut);
       return makeNotifierFromAsyncIterable(generateQuotes(amountIn, brandOut));
     },
-    quoteAtTime: (timeStamp, amountIn, brandOut) => {
+    quoteAtTime: async (timeStamp, amountIn, brandOut) => {
       timeStamp = TimeMath.absValue(timeStamp);
       assert.typeof(timeStamp, 'bigint');
       assertBrands(amountIn.brand, brandOut);
@@ -306,19 +306,19 @@ export async function makeFakePriceAuthority(options) {
       const timestamp = await E(timer).getCurrentTimestamp();
       return priceOutQuote(brandIn, amountOut, timestamp);
     },
-    quoteWhenGTE: (amountIn, amountOutLimit) => {
+    quoteWhenGTE: async (amountIn, amountOutLimit) => {
       const compareGTE = amount => AmountMath.isGTE(amount, amountOutLimit);
       return resolveQuoteWhen(compareGTE, amountIn, amountOutLimit);
     },
-    quoteWhenGT: (amountIn, amountOutLimit) => {
+    quoteWhenGT: async (amountIn, amountOutLimit) => {
       const compareGT = amount => !AmountMath.isGTE(amountOutLimit, amount);
       return resolveQuoteWhen(compareGT, amountIn, amountOutLimit);
     },
-    quoteWhenLTE: (amountIn, amountOutLimit) => {
+    quoteWhenLTE: async (amountIn, amountOutLimit) => {
       const compareLTE = amount => AmountMath.isGTE(amountOutLimit, amount);
       return resolveQuoteWhen(compareLTE, amountIn, amountOutLimit);
     },
-    quoteWhenLT: (amountIn, amountOutLimit) => {
+    quoteWhenLT: async (amountIn, amountOutLimit) => {
       const compareLT = amount => !AmountMath.isGTE(amount, amountOutLimit);
       return resolveQuoteWhen(compareLT, amountIn, amountOutLimit);
     },

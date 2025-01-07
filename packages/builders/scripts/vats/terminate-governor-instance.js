@@ -128,7 +128,7 @@ export default async (homeP, endowments) => {
   const dspModule = await import('@agoric/deploy-script-support');
   const { makeHelpers } = dspModule;
   const { writeCoreEval } = await makeHelpers(homeP, endowments);
-  await writeCoreEval(terminateGovernors.name, utils =>
+  await writeCoreEval(terminateGovernors.name, async utils =>
     defaultProposalBuilder(utils, scriptArgs),
   );
 };

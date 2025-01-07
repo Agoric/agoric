@@ -446,7 +446,7 @@ export const makeZoeStorageManager = (
           return state.instanceAdmins.getInstallation(instance);
         },
         getProposalShapeForInvitation,
-        installBundle: (allegedBundle, bundleLabel) => {
+        installBundle: async (allegedBundle, bundleLabel) => {
           return installationStorage.installBundle(allegedBundle, bundleLabel);
         },
         installBundleID(bundleID, bundleLabel) {

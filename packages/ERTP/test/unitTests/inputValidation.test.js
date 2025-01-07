@@ -140,7 +140,7 @@ test('makeIssuerKit bad optShutdownWithFailure', async t => {
 test('brand.isMyIssuer bad issuer', async t => {
   const { brand } = makeIssuerKit('myTokens');
   // @ts-expect-error Intentional wrong type for testing
-  await t.throwsAsync(() => brand.isMyIssuer('not an issuer'), {
+  await t.throwsAsync(async () => brand.isMyIssuer('not an issuer'), {
     message:
       /In "isMyIssuer" method of \(myTokens brand\): arg 0: .*"not an issuer" - Must be a remotable/,
   });
@@ -160,7 +160,7 @@ test('assertLivePayment', async t => {
   const paymentB = E(mintB).mintPayment(AmountMath.make(brandB, 837n));
 
   // payment is of the wrong brand
-  await t.throwsAsync(() => claim(E(issuer).makeEmptyPurse(), paymentB), {
+  await t.throwsAsync(async () => claim(E(issuer).makeEmptyPurse(), paymentB), {
     message:
       '"[Alleged: fungibleB payment]" was not a live payment for brand "[Alleged: fungible brand]". It could be a used-up payment, a payment for another brand, or it might not be a payment at all.',
   });
@@ -170,7 +170,7 @@ test('assertLivePayment', async t => {
   // use up payment
   await claim(E(issuer).makeEmptyPurse(), payment);
 
-  await t.throwsAsync(() => claim(E(issuer).makeEmptyPurse(), payment), {
+  await t.throwsAsync(async () => claim(E(issuer).makeEmptyPurse(), payment), {
     message:
       '"[Alleged: fungible payment]" was not a live payment for brand "[Alleged: fungible brand]". It could be a used-up payment, a payment for another brand, or it might not be a payment at all.',
   });
@@ -184,18 +184,24 @@ test('issuer.combine bad payments array', async t => {
   };
   // @ts-expect-error Intentional wrong type for testing
 
-  await t.throwsAsync(() => combine(E(issuer).makeEmptyPurse(), notAnArray), {
-    message: 'srcPaymentsPs is not iterable',
-  });
+  await t.throwsAsync(
+    async () => combine(E(issuer).makeEmptyPurse(), notAnArray),
+    {
+      message: 'srcPaymentsPs is not iterable',
+    },
+  );
 
   const notAnArray2 = Far('notAnArray2', {
     length: () => 2,
     split: () => {},
   });
   // @ts-expect-error Intentional wrong type for testing
-  await t.throwsAsync(() => combine(E(issuer).makeEmptyPurse(), notAnArray2), {
-    message: 'srcPaymentsPs is not iterable',
-  });
+  await t.throwsAsync(
+    async () => combine(E(issuer).makeEmptyPurse(), notAnArray2),
+    {
+      message: 'srcPaymentsPs is not iterable',
+    },
+  );
 });
 
 test('amount with accessor properties', async t => {

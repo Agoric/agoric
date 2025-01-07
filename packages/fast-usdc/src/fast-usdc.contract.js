@@ -81,7 +81,7 @@ const publishFeeConfig = async (node, marshaller, feeConfig) => {
  *  settlementAccount: ChainAddress['value'];
  * }} addresses
  */
-const publishAddresses = (contractNode, addresses) => {
+const publishAddresses = async (contractNode, addresses) => {
   return E(contractNode).setValue(JSON.stringify(addresses));
 };
 
@@ -164,7 +164,7 @@ export const contract = async (zcf, privateArgs, zone, tools) => {
       return feedKit.creator.makeOperatorInvitation(operatorId);
     },
     async connectToNoble() {
-      return vowTools.when(nobleAccountV, nobleAccount => {
+      return vowTools.when(nobleAccountV, async nobleAccount => {
         trace('nobleAccount', nobleAccount);
         return vowTools.when(
           E(nobleAccount).getAddress(),
@@ -244,7 +244,7 @@ export const contract = async (zcf, privateArgs, zone, tools) => {
   const shareMint = await provideSingleton(
     zone.mapStore('mint'),
     'PoolShare',
-    () =>
+    async () =>
       zcf.makeZCFMint('PoolShares', AssetKind.NAT, {
         decimalPlaces: 6,
       }),

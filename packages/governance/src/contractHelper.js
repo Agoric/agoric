@@ -39,7 +39,7 @@ const publicMixinAPI = harden({
  * @param {ZCF<GovernanceTerms<{}> & {}>} zcf
  * @param {import('./contractGovernance/typedParamManager.js').TypedParamManager<any>} paramManager
  */
-export const validateElectorate = (zcf, paramManager) => {
+export const validateElectorate = async (zcf, paramManager) => {
   const invitation = paramManager.getInternalParamValue(CONTRACT_ELECTORATE);
   return E.when(
     E(zcf.getInvitationIssuer()).isLive(invitation),
@@ -118,7 +118,7 @@ const facetHelpers = (zcf, paramManager) => {
     const governorFacet = Far('governorFacet', {
       getParamMgrRetriever: () =>
         Far('paramRetriever', { get: () => paramManager }),
-      getInvitation: name => paramManager.getInternalParamValue(name),
+      getInvitation: async name => paramManager.getInternalParamValue(name),
       getLimitedCreatorFacet: () => limitedCreatorFacet,
       // The contract provides a facet with the APIs that can be invoked by
       // governance
@@ -128,7 +128,7 @@ const facetHelpers = (zcf, paramManager) => {
       // methods it has. There's no clean way to have contracts specify the APIs
       // without also separately providing their names.
       getGovernedApiNames: () => Object.keys(governedApis),
-      setOfferFilter: strings => zcf.setOfferFilter(strings),
+      setOfferFilter: async strings => zcf.setOfferFilter(strings),
     });
 
     // exclusively for contractGovernor, which only reveals limitedCreatorFacet
@@ -158,7 +158,7 @@ const facetHelpers = (zcf, paramManager) => {
     const governorFacet = harden({
       getParamMgrRetriever: () =>
         Far('paramRetriever', { get: () => paramManager }),
-      getInvitation: (_context, /** @type {string} */ name) =>
+      getInvitation: async (_context, /** @type {string} */ name) =>
         paramManager.getInternalParamValue(name),
       getLimitedCreatorFacet: ({ facets }) => facets.limitedCreatorFacet,
       // The contract provides a facet with the APIs that can be invoked by
@@ -169,7 +169,7 @@ const facetHelpers = (zcf, paramManager) => {
       // without also separately providing their names.
       getGovernedApiNames: ({ facets }) =>
         getMethodNames(facets.governedApis || {}),
-      setOfferFilter: (_context, strings) => zcf.setOfferFilter(strings),
+      setOfferFilter: async (_context, strings) => zcf.setOfferFilter(strings),
     });
 
     return { governorFacet, limitedCreatorFacet };
@@ -197,7 +197,7 @@ const facetHelpers = (zcf, paramManager) => {
       {
         getParamMgrRetriever: () =>
           Far('paramRetriever', { get: () => paramManager }),
-        getInvitation: name => paramManager.getInternalParamValue(name),
+        getInvitation: async name => paramManager.getInternalParamValue(name),
         getLimitedCreatorFacet: () => limitedCreatorFacet,
         // The contract provides a facet with the APIs that can be invoked by
         // governance
@@ -207,7 +207,7 @@ const facetHelpers = (zcf, paramManager) => {
         // methods it has. There's no clean way to have contracts specify the APIs
         // without also separately providing their names.
         getGovernedApiNames: () => Object.keys(governedApis || {}),
-        setOfferFilter: strings => zcf.setOfferFilter(strings),
+        setOfferFilter: async strings => zcf.setOfferFilter(strings),
       },
     );
 

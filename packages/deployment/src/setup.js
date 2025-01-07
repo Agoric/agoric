@@ -18,7 +18,7 @@ export const setup = ({ resolve, env, setInterval }) => {
       const fullPath = `${it.SETUP_DIR}/ansible/${name}.yml`;
       return [PLAYBOOK_WRAPPER, fullPath, ...args];
     },
-    sleep: (seconds, why) => {
+    sleep: async (seconds, why) => {
       console.error(chalk.yellow(`Waiting ${seconds} seconds`, why || ''));
       return new Promise(res => setInterval(res, 1000 * seconds));
     },

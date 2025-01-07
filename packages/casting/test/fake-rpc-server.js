@@ -80,7 +80,7 @@ const fakeStatusResult = {
  * @param {Marshaller} [options.marshaller]
  * @param {number} [options.batchSize] count of stream-cell results per response, or 0/absent to return lone naked values
  */
-export const startFakeServer = (t, fakeValues, options = {}) => {
+export const startFakeServer = async (t, fakeValues, options = {}) => {
   const { log = console.log } = t;
   lastPort += 1;
   const PORT = lastPort;

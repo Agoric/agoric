@@ -150,7 +150,7 @@ export const prepareIcaAccountKit = (zone, { watch, asVow }) =>
         },
         /** @type {HostOf<IcaAccount['deactivate']>} */
         deactivate() {
-          return asVow(() => {
+          return asVow(async () => {
             const { connection } = this.state;
             if (!connection) throw Fail`Account not available or deactivated.`;
             this.state.isInitiatingClose = true;

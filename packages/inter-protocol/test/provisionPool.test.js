@@ -146,7 +146,7 @@ const tools = context => {
   // Each driver needs its own to avoid state pollution between tests
   context.mockChainStorage = makeMockChainStorageRoot();
   const { feeMintAccess, initialPoserInvitation } = context;
-  const startPSM = name => {
+  const startPSM = async name => {
     return E(zoe).startInstance(
       installs.psmInstall,
       harden({ AUSD: anchor.issuer }),
@@ -308,7 +308,7 @@ const makeWalletFactoryKitForAddresses = async addresses => {
       const mockWallet = Far('mock wallet', {
         getDepositFacet: () =>
           Far('mock depositFacet', {
-            receive: payment => E(purse).deposit(payment),
+            receive: async payment => E(purse).deposit(payment),
           }),
       });
       return [addr, mockWallet];

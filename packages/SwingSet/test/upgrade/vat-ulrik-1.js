@@ -185,8 +185,8 @@ export const buildRootObject = (_vatPowers, vatParameters, baggage) => {
       heldPromise.catch(() => 'hush');
     },
     getEternalPromiseInArray: () => [p1],
-    getEternalPromise: () => p2,
-    getWatchedDecidedPromise: () => p3,
+    getEternalPromise: async () => p2,
+    getWatchedDecidedPromise: async () => p3,
 
     makeLostKind: () => {
       makeKindHandle('unhandled');

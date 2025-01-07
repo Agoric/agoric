@@ -9,7 +9,7 @@ import { delay, exponentialBackoff, randomBackoff } from '@agoric/casting';
  */
 export const makeLeaderOptions = ({ log, sleep, jitter }) => {
   return {
-    retryCallback: (where, e, attempt) => {
+    retryCallback: async (where, e, attempt) => {
       const backoff = Math.ceil(exponentialBackoff(attempt));
       log(
         `Retrying ${where} in ${backoff}ms due to:`,

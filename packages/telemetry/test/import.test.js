@@ -3,7 +3,7 @@ import { test } from './prepare-test-env-ava.js';
 
 import { getTelemetryProviders } from '../src/index.js';
 
-const sleep = timeoutMs =>
+const sleep = async timeoutMs =>
   new Promise(resolve => setTimeout(resolve, timeoutMs));
 
 test('get telemetry providers', async t => {

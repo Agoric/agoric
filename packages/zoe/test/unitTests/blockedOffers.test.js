@@ -53,7 +53,7 @@ test(`blockedOffers - deny`, async t => {
   await zcf.setOfferFilter(['offerSeat for test']);
 
   await t.throwsAsync(
-    () =>
+    async () =>
       makeOffer(
         zoe,
         zcf,
@@ -72,7 +72,7 @@ test(`blockedOffers - prefix`, async t => {
   await zcf.setOfferFilter(['offerSeat for:']);
 
   await t.throwsAsync(
-    () =>
+    async () =>
       makeOffer(
         zoe,
         zcf,

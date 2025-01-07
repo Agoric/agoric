@@ -698,7 +698,9 @@ export const prepareLocalOrchestrationAccountKit = (
               opts?.timeoutTimestamp ??
               (opts?.timeoutHeight
                 ? 0n
-                : asVow(() => E(timestampHelper).getTimeoutTimestampNS()));
+                : asVow(async () =>
+                    E(timestampHelper).getTimeoutTimestampNS(),
+                  ));
 
             // don't resolve the vow until the transfer is confirmed on remote
             // and reject vow if the transfer fails for any reason

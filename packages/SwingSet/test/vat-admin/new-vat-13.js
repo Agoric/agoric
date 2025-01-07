@@ -1,6 +1,6 @@
 import { Far, E } from '@endo/far';
 
-export function buildRootObject(_vatPowers, vatParameters) {
+export async function buildRootObject(_vatPowers, vatParameters) {
   const { adder } = vatParameters;
   function rcvrMaker(seed) {
     let count = 0;

@@ -61,7 +61,7 @@ async function doTest(t, metered) {
   const spawnArgs1 = await p1;
   checkMetered(t, spawnArgs1, metered);
   await worker1.evaluate('1+2');
-  t.teardown(() => worker1.close());
+  t.teardown(async () => worker1.close());
 
   // now extract a snapshot
   await store.saveSnapshot('vat', 1, worker1.makeSnapshotStream());
@@ -77,7 +77,7 @@ async function doTest(t, metered) {
   const spawnArgs2 = await p2;
   checkMetered(t, spawnArgs2, metered);
   await worker2.evaluate('1+2');
-  t.teardown(() => worker2.close());
+  t.teardown(async () => worker2.close());
 }
 
 test('no metering', async t => {

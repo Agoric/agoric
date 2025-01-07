@@ -63,13 +63,13 @@ export const start = async (zcf, privateArgs) => {
   const limitedCreatorFacet = E(governedCF).getLimitedCreatorFacet();
 
   /** @param {ParamChangesSpec<any>} paramSpec */
-  const changeParams = paramSpec => {
+  const changeParams = async paramSpec => {
     const paramMgr = E(paramMgrRetriever).get(paramSpec.paramPath);
     return E(paramMgr).updateParams(paramSpec.changes);
   };
 
   /** @param {Array<string>} strings */
-  const setFilters = strings => E(governedCF).setOfferFilter(strings);
+  const setFilters = async strings => E(governedCF).setOfferFilter(strings);
 
   /**
    * @param {string} apiMethodName
@@ -92,7 +92,7 @@ export const start = async (zcf, privateArgs) => {
     changeParams,
     invokeAPI,
     setFilters,
-    getCreatorFacet: () => limitedCreatorFacet,
+    getCreatorFacet: async () => limitedCreatorFacet,
     getAdminFacet: () => adminFacet,
     getInstance: () => governedInstance,
     /** @returns {Awaited<ReturnType<SF>>['publicFacet']} */

@@ -29,17 +29,17 @@ const start = zcf => {
     seat.exit();
     return `The offer was accepted`;
   };
-  const makeSafeInvitation = () =>
+  const makeSafeInvitation = async () =>
     zcf.makeInvitation(safeAutoRefund, 'getRefund');
 
   const throwing = () => {
     offersCount += 1n;
     throw Error('someException');
   };
-  const makeThrowingInvitation = () =>
+  const makeThrowingInvitation = async () =>
     zcf.makeInvitation(throwing, 'getRefund');
 
-  const makeMatchingInvitation = firstSeat => {
+  const makeMatchingInvitation = async firstSeat => {
     assertProposalShape(firstSeat, {
       give: { Asset: null },
       want: { Price: null },
@@ -61,7 +61,7 @@ const start = zcf => {
   /** @type {import('@agoric/swingset-vat').ShutdownWithFailure} */
   const zcfShutdownWithFailure = reason => zcf.shutdownWithFailure(reason);
 
-  const makeSwapInvitation = () =>
+  const makeSwapInvitation = async () =>
     zcf.makeInvitation(makeMatchingInvitation, 'firstOffer');
 
   offersCount += 1n;

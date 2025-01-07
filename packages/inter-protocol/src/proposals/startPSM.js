@@ -145,7 +145,7 @@ export const startPSM = async (
     ]);
 
   const [anchorInfo, mintedInfo] = await Promise.all(
-    [anchorBrand, minted].map(b => E(b).getDisplayInfo()),
+    [anchorBrand, minted].map(async b => E(b).getDisplayInfo()),
   );
 
   const mintLimit = AmountMath.make(minted, MINT_LIMIT);

@@ -53,7 +53,7 @@ const makeWatchForOfferResult = ({ watch }) => {
  * @param {OutcomeWatchers} watchers
  * @param {UserSeat} seat
  */
-const watchForNumWants = ({ numWantsWatcher }, seat) => {
+const watchForNumWants = async ({ numWantsWatcher }, seat) => {
   const p = E(seat).numWantsSatisfied();
   watchPromise(p, numWantsWatcher, seat);
   return p;
@@ -63,7 +63,7 @@ const watchForNumWants = ({ numWantsWatcher }, seat) => {
  * @param {OutcomeWatchers} watchers
  * @param {UserSeat} seat
  */
-const watchForPayout = ({ paymentWatcher }, seat) => {
+const watchForPayout = async ({ paymentWatcher }, seat) => {
   const p = E(seat).getPayouts();
   watchPromise(p, paymentWatcher, seat);
   return p;
@@ -77,7 +77,7 @@ export const makeWatchOfferOutcomes = vowTools => {
    * @param {OutcomeWatchers} watchers
    * @param {UserSeat} seat
    */
-  const watchOfferOutcomes = (watchers, seat) => {
+  const watchOfferOutcomes = async (watchers, seat) => {
     // Use `when` to get a promise from the vow.
     // Unlike `asPromise` this doesn't warn in case of disconnections, which is
     // fine since we actually handle the outcome durably through the watchers.
@@ -245,8 +245,8 @@ export const prepareOfferWatcher = (baggage, vowTools) => {
 
           // This will block until all payouts succeed, but user will be updated
           // since each payout will trigger its corresponding purse notifier.
-          const amountPKeywordRecord = objectMap(payouts, paymentRef =>
-            E.when(paymentRef, payment => state.deposit.receive(payment)),
+          const amountPKeywordRecord = objectMap(payouts, async paymentRef =>
+            E.when(paymentRef, async payment => state.deposit.receive(payment)),
           );
           const amounts = await deeplyFulfilledObject(amountPKeywordRecord);
           facets.helper.updateStatus({ payouts: amounts });

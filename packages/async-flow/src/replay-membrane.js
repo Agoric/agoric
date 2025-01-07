@@ -539,7 +539,7 @@ export const makeReplayMembraneForTesting = ({
    *   paired with hVow.
    * @returns {Promise}
    */
-  const makeGuestForHostVow = (hVow, promiseKey = undefined) => {
+  const makeGuestForHostVow = async (hVow, promiseKey = undefined) => {
     isVow(hVow) || Fail`vow expected ${hVow}`;
     const { promise, resolve, reject } = makeGuestPromiseKit();
     promiseKey ??= promise;

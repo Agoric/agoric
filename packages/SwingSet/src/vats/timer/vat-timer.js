@@ -469,7 +469,7 @@ export const buildRootObject = (vatPowers, _vatParameters, baggage) => {
    * @param {CancelToken} cancelToken
    * @returns {Promise<Timestamp>}
    */
-  const wakeAtInternal = (when, now, cancelToken) => {
+  const wakeAtInternal = async (when, now, cancelToken) => {
     if (when <= now) {
       return Promise.resolve(toTimestamp(now));
     }
@@ -612,7 +612,7 @@ export const buildRootObject = (vatPowers, _vatParameters, baggage) => {
    * @param {CancelToken} [cancelToken]
    * @returns { Promise<Timestamp> }
    */
-  const wakeAt = (whenTS, cancelToken = undefined) => {
+  const wakeAt = async (whenTS, cancelToken = undefined) => {
     const when = fromTimestamp(whenTS);
     const now = getNow();
     return wakeAtInternal(when, now, cancelToken);
@@ -626,7 +626,7 @@ export const buildRootObject = (vatPowers, _vatParameters, baggage) => {
    * @param {CancelToken} [cancelToken]
    * @returns { Promise<Timestamp> }
    */
-  const addDelay = (delayRT, cancelToken = undefined) => {
+  const addDelay = async (delayRT, cancelToken = undefined) => {
     const delay = fromRelativeTime(delayRT);
     assert(delay >= 0n, 'delay must not be negative');
     const now = getNow();

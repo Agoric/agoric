@@ -35,7 +35,7 @@ export const makePrioritySendersManager = sendersNode => {
    * @param {import('./lib-chainStorage.js').StorageNode} node
    * @param {Set<string>} namespaces
    */
-  const refreshVstorage = (node, namespaces) => {
+  const refreshVstorage = async (node, namespaces) => {
     return E(node).setValue(
       // if the list set is empty, the string will be '' and thus deleted from IAVL
       [...namespaces.keys()].sort().join(','),
@@ -80,7 +80,7 @@ export const makePrioritySendersManager = sendersNode => {
      * @param {string} address
      * @returns {Promise<void>}
      */
-    remove: (rawNamespace, address) => {
+    remove: async (rawNamespace, address) => {
       const namespace = normalizeSenderNamespace(rawNamespace);
       const record = addressRecords.get(address);
       if (!record) {

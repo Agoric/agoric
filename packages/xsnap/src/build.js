@@ -31,7 +31,7 @@ const ModdableSDK = {
  */
 function makeCLI(command, { spawn }) {
   /** @param {import('child_process').ChildProcess} child */
-  const wait = child =>
+  const wait = async child =>
     new Promise((resolve, reject) => {
       child.on('close', () => {
         resolve(undefined);
@@ -51,7 +51,7 @@ function makeCLI(command, { spawn }) {
      * @param {string[]} args
      * @param {{ cwd?: string }} [opts]
      */
-    run: (args, opts) => {
+    run: async (args, opts) => {
       const { cwd = '.' } = opts || {};
       const child = spawn(command, args, {
         cwd,
@@ -63,7 +63,7 @@ function makeCLI(command, { spawn }) {
      * @param {string[]} args
      * @param {{ cwd?: string }} [opts]
      */
-    pipe: (args, opts) => {
+    pipe: async (args, opts) => {
       const { cwd = '.' } = opts || {};
       const child = spawn(command, args, {
         cwd,
@@ -370,7 +370,7 @@ async function main(args, { env, stdout, spawn, fs, os }) {
   }
 }
 
-const run = () =>
+const run = async () =>
   main(process.argv.slice(2), {
     env: { ...process.env },
     stdout: process.stdout,

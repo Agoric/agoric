@@ -128,7 +128,9 @@ export const makeDriverContext = async ({
     auctioneer: bundleCache.load(contractRoots.auctioneer, 'auction'),
     reserve: bundleCache.load(contractRoots.reserve, 'reserve'),
   });
-  const installation = objectMap(bundles, bundle => E(zoe).install(bundle));
+  const installation = objectMap(bundles, async bundle =>
+    E(zoe).install(bundle),
+  );
 
   const feeMintAccess = await feeMintAccessP;
   const contextPs = {
@@ -528,7 +530,7 @@ export const makeManagerDriver = async (
      * @param {VaultFactoryParamPath} [paramPath] defaults to root path for the
      *   factory
      */
-    setGovernedParam: (
+    setGovernedParam: async (
       name,
       newValue,
       paramPath = { key: 'governedParams' },
@@ -543,7 +545,7 @@ export const makeManagerDriver = async (
       );
     },
     /** @param {string[]} filters */
-    setGovernedFilters: filters => {
+    setGovernedFilters: async filters => {
       trace(t, 'setGovernedFilters', filters);
       const vfGov = NonNullish(t.context.puppetGovernors.vaultFactory);
       return E(vfGov).setFilters(harden(filters));

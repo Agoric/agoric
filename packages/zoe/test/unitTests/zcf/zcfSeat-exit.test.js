@@ -57,7 +57,7 @@ test(`zoe - wrongly throw zcfSeat.exit()`, async t => {
 
   const userSeat1 = await E(zoe).offer(invitation1);
 
-  await t.throwsAsync(() => E(userSeat1).getOfferResult(), {
+  await t.throwsAsync(async () => E(userSeat1).getOfferResult(), {
     message:
       'If an offerHandler throws, it must provide a reason of type Error, but the reason was undefined. Please fix the contract code to specify a reason for throwing.',
   });
@@ -72,7 +72,7 @@ test(`zoe - wrongly throw zcfSeat.exit()`, async t => {
 
   const userSeat2 = await E(zoe).offer(invitation2);
 
-  await t.throwsAsync(() => E(userSeat2).getOfferResult(), {
+  await t.throwsAsync(async () => E(userSeat2).getOfferResult(), {
     message: 'here is a string',
   });
   t.falsy(vatAdminState.getHasExited());

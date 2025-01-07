@@ -17,7 +17,7 @@ const makeFeedKit = () => {
   return makeKit();
 };
 
-const makeOperators = (feedKit: TransactionFeedKit) => {
+const makeOperators = async (feedKit: TransactionFeedKit) => {
   const operators = Object.fromEntries(
     ['op1', 'op2', 'op3'].map(name => [
       name,

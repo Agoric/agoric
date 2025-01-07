@@ -89,17 +89,17 @@ export const makeZoeTools = (zcf, { when, allVows, allSettled, asVow }) => {
 
       // Now all the `amounts` are accessible, so we can move them to the localAccount
       const payments = await Promise.all(
-        keys(amounts).map(kw => E(userSeat).getPayout(kw)),
+        keys(amounts).map(async kw => E(userSeat).getPayout(kw)),
       );
       const settleDeposits = await when(
-        allSettled(payments.map(pmt => E(localAccount).deposit(pmt))),
+        allSettled(payments.map(async pmt => E(localAccount).deposit(pmt))),
       );
       // if any of the deposits to localAccount failed, unwind all of the allocations
       if (settleDeposits.find(x => x.status === 'rejected')) {
         const amts = values(amounts);
         const errors = [];
         // withdraw the successfully deposited payments
-        const paymentsOrWithdrawVs = settleDeposits.map((x, i) => {
+        const paymentsOrWithdrawVs = settleDeposits.map(async (x, i) => {
           if (x.status === 'rejected') {
             errors.push(x.reason);
             return payments[i];
@@ -140,7 +140,9 @@ export const makeZoeTools = (zcf, { when, allVows, allSettled, asVow }) => {
       !destSeat.hasExited() || Fail`The seat cannot have exited.`;
 
       const settledWithdrawals = await when(
-        allSettled(values(amounts).map(amt => E(localAccount).withdraw(amt))),
+        allSettled(
+          values(amounts).map(async amt => E(localAccount).withdraw(amt)),
+        ),
       );
 
       // if any of the withdrawals were rejected, unwind the successful ones

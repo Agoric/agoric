@@ -31,7 +31,7 @@ export const DENOM_UNIT = 1_000_000n;
  * @param {string} bundleName
  * @returns {Promise<SourceBundle>}
  */
-export const provideBundle = (t, sourceRoot, bundleName) => {
+export const provideBundle = async (t, sourceRoot, bundleName) => {
   assert(
     t.context && t.context.bundleCache,
     'must set t.context.bundleCache in test.before()',
@@ -150,7 +150,7 @@ export const scale6 = x => BigInt(Math.round(x * 1_000_000));
 export { withAmountUtils } from '@agoric/zoe/tools/test-utils.js';
 
 /** @param {ERef<StoredSubscription<unknown> | StoredSubscriber<unknown>>} subscription */
-export const subscriptionKey = subscription => {
+export const subscriptionKey = async subscription => {
   return E(subscription)
     .getStoreKey()
     .then(storeKey => {
@@ -169,7 +169,7 @@ export const subscriptionKey = subscription => {
  * }>} hasTopics
  * @param {string} subscriberName
  */
-export const topicPath = (hasTopics, subscriberName) => {
+export const topicPath = async (hasTopics, subscriberName) => {
   return E(hasTopics)
     .getPublicTopics()
     .then(topics => topics[subscriberName])

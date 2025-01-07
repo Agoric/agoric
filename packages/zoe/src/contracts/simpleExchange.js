@@ -127,7 +127,7 @@ const start = zcf => {
     );
   };
 
-  const makeExchangeInvitation = () =>
+  const makeExchangeInvitation = async () =>
     zcf.makeInvitation(exchangeOfferHandler, 'exchange');
 
   const publicFacet = Far('SimpleExchangePublicFacet', {

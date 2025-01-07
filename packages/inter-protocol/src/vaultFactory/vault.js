@@ -762,7 +762,7 @@ export const prepareVault = (baggage, makeRecorderKit, zcf) => {
           const { helper } = facets;
           helper.assertCloseable();
           return zcf.makeInvitation(
-            seat => helper.closeHook(seat),
+            async seat => helper.closeHook(seat),
             state.manager.scopeDescription('CloseVault'),
             undefined,
             M.splitRecord({

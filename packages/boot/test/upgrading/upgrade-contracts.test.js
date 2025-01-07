@@ -12,7 +12,7 @@ import { buildVatController } from '@agoric/swingset-vat';
 const test = anyTest;
 
 const bfile = name => new URL(name, import.meta.url).pathname;
-const importSpec = spec =>
+const importSpec = async spec =>
   importMetaResolve(spec, import.meta.url).then(u => new URL(u).pathname);
 
 test('upgrade mintHolder', async t => {

@@ -55,7 +55,7 @@ export default async (homeP, endowments) => {
     return JSON.parse(feedPolicy);
   };
   const config = harden({ feedPolicy: parseFeedPolicy() });
-  await writeCoreEval('eval-fast-usdc-policy-update', utils =>
+  await writeCoreEval('eval-fast-usdc-policy-update', async utils =>
     updateProposalBuilder(utils, config),
   );
 };

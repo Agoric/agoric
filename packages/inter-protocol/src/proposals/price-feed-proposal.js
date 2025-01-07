@@ -140,7 +140,7 @@ export const createPriceFeed = async (
       installationP = E(zoe).installBundleID(bundleID);
       await E.when(
         installationP,
-        installation =>
+        async installation =>
           E(E(agoricNamesAdmin).lookupAdmin('installation')).update(
             'priceAggregator',
             installation,

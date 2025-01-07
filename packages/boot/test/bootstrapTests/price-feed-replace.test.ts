@@ -32,7 +32,7 @@ test.before(
   async t =>
     (t.context = await makeLiquidationTestContext(t, { env: process.env })),
 );
-test.after.always(t => t.context.shutdown());
+test.after.always(async t => t.context.shutdown());
 
 const collateralBrandKey = 'ATOM';
 const managerIndex = 0;

@@ -17,7 +17,7 @@ export const makeTimerDeviceDateNow =
 
 // Make a function that returns the latest polled time.  This only provides as
 // high resolution as the timer service poll interval.
-export const makeTimerServiceDateNow = (
+export const makeTimerServiceDateNow = async (
   timerService,
   timerPollInterval = DEFAULT_TIMER_SERVICE_POLL_INTERVAL,
 ) => {

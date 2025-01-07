@@ -336,7 +336,7 @@ test('monitor transfers', async t => {
   let upcallCount = 0;
   const zone = rootZone.subZone('tap');
   const tap: TargetApp = zone.exo('tap', undefined, {
-    receiveUpcall: (obj: unknown) => {
+    receiveUpcall: async (obj: unknown) => {
       upcallCount += 1;
       t.log('receiveUpcall', obj);
       return Promise.resolve();

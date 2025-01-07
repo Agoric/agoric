@@ -64,7 +64,10 @@ test('ibc connection', async t => {
 
   // closed connections cannot send packets
   await E(icaConnection).close();
-  await t.throwsAsync(() => E(icaConnection).send('fake packet bytes string'), {
-    message: 'Connection closed',
-  });
+  await t.throwsAsync(
+    async () => E(icaConnection).send('fake packet bytes string'),
+    {
+      message: 'Connection closed',
+    },
+  );
 });

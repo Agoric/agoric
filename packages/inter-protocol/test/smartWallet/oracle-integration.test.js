@@ -111,7 +111,7 @@ const setupFeedWithWallets = async (t, oracleAddresses) => {
   const { agoricNames } = t.context.consume;
 
   const wallets = await Promise.all(
-    oracleAddresses.map(addr => t.context.simpleProvideWallet(addr)),
+    oracleAddresses.map(async addr => t.context.simpleProvideWallet(addr)),
   );
 
   const oracleWallets = Object.fromEntries(zip(oracleAddresses, wallets));

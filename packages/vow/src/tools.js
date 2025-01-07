@@ -69,7 +69,7 @@ export const prepareBasicVowTools = (zone, powers = {}) => {
   const allSettled = maybeVows => watchUtils.allSettled(maybeVows);
 
   /** @type {AsPromiseFunction} */
-  const asPromise = (specimenP, ...watcherArgs) =>
+  const asPromise = async (specimenP, ...watcherArgs) =>
     watchUtils.asPromise(specimenP, ...watcherArgs);
 
   return harden({

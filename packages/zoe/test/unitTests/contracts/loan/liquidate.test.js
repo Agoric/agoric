@@ -53,7 +53,7 @@ test('test doLiquidation with mocked autoswap', async t => {
   };
 
   const autoswapPublicFacetP = Promise.resolve({
-    makeSwapInInvitation: () => zcf.makeInvitation(swapHandler, 'swap'),
+    makeSwapInInvitation: async () => zcf.makeInvitation(swapHandler, 'swap'),
   });
 
   await doLiquidation(
@@ -118,11 +118,11 @@ test('test with malfunctioning autoswap', async t => {
   };
 
   const autoswapPublicFacetP = Promise.resolve({
-    makeSwapInInvitation: () => zcf.makeInvitation(swapHandler, 'swap'),
+    makeSwapInInvitation: async () => zcf.makeInvitation(swapHandler, 'swap'),
   });
 
   await t.throwsAsync(
-    () =>
+    async () =>
       doLiquidation(
         zcf,
         collateralSeat,

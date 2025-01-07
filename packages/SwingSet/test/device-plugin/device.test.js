@@ -22,7 +22,7 @@ async function setupVatController(t) {
     inputQueue.push(thunk);
   };
 
-  const importPlugin = mod => {
+  const importPlugin = async mod => {
     t.is(mod, 'pingpong');
     return import('./pingpong.js');
   };

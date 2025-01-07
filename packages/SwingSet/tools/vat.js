@@ -51,11 +51,11 @@ async function main() {
       deepLog(d.acceptanceQueue);
     };
     r.context.dump2 = () => controller.dump();
-    r.context.run = () => {
+    r.context.run = async () => {
       console.log('run!');
       return controller.run();
     };
-    r.context.step = () => {
+    r.context.step = async () => {
       console.log('step!');
       return controller.step();
     };

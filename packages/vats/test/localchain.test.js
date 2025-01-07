@@ -166,12 +166,12 @@ test('localchain - deposit and withdraw', async t => {
         t.true(AmountMath.isEqual(paymentAmount, oneHundredBldAmt));
 
         await t.throwsAsync(
-          () => E(NonNullish(contractsLca)).withdraw(oneHundredBldAmt),
+          async () => E(NonNullish(contractsLca)).withdraw(oneHundredBldAmt),
           // fake bank is has different error messages than production
         );
 
         await t.throwsAsync(
-          () => E(NonNullish(contractsLca)).withdraw(oneHundredBeanAmt),
+          async () => E(NonNullish(contractsLca)).withdraw(oneHundredBeanAmt),
           {
             message: /not found in collection "brandToAssetRecord"/,
           },

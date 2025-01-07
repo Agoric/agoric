@@ -87,7 +87,7 @@ export const makeSmartWalletKit = async ({ fetch, delay }, networkConfig) => {
    * @param {string} addr
    * @returns {Promise<UpdateRecord>}
    */
-  const getLastUpdate = addr => {
+  const getLastUpdate = async addr => {
     return vsk.readPublished(`wallet.${addr}`);
   };
 
@@ -95,7 +95,7 @@ export const makeSmartWalletKit = async ({ fetch, delay }, networkConfig) => {
    * @param {string} addr
    * @returns {Promise<CurrentWalletRecord>}
    */
-  const getCurrentWalletRecord = addr => {
+  const getCurrentWalletRecord = async addr => {
     return vsk.readPublished(`wallet.${addr}.current`);
   };
 

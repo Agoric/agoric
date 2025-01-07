@@ -348,7 +348,7 @@ test.serial('unsuccessful vote by 2 outgoing members', async t => {
   t.log('voting is done by invitations already present and should fail');
   const votePromises = outgoingCommittee
     .slice(0, 2)
-    .map(member =>
+    .map(async member =>
       member.voteOnLatestProposal(getVoteId(3), offerIds.vote.outgoing),
     );
 
@@ -399,7 +399,7 @@ test.serial(
 
     t.log('Voting on question using first all wallets');
     t.log('first 2 should pass, last should fail');
-    const votePromises = committee.map((member, index) =>
+    const votePromises = committee.map(async (member, index) =>
       member.voteOnLatestProposal(
         getVoteId(4),
         index === 2 ? offerIds.vote.outgoing : offerIds.vote.incoming,
@@ -455,7 +455,7 @@ test.serial(
 
     t.log('Voting on question using first all wallets');
     t.log('first 2 should fail, last should pass');
-    const votePromises = committee.map((member, index) =>
+    const votePromises = committee.map(async (member, index) =>
       member.voteOnLatestProposal(
         getVoteId(5),
         index === 0 ? offerIds.vote.incoming : offerIds.vote.outgoing,

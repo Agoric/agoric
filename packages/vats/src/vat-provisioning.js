@@ -156,7 +156,7 @@ export function buildRootObject(_vatPowers, _vatParameters, baggage) {
           updater.updateState(harden({ clientHome, clientAddress: address }));
         });
         return Far('emulatedClientFacet', {
-          getChainBundle: () => chainBundle,
+          getChainBundle: async () => chainBundle,
           getConfiguration: () => notifier,
         });
       });

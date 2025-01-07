@@ -12,7 +12,7 @@ import { mustMatch } from '@agoric/store';
 import { loadSwingsetConfigFile, shape as ssShape } from '@agoric/swingset-vat';
 import { provideBundleCache } from '@agoric/swingset-vat/tools/bundleTool.js';
 
-const importConfig = configName =>
+const importConfig = async configName =>
   importMetaResolve(`@agoric/vm-config/${configName}`, import.meta.url).then(
     u => new URL(u).pathname,
   );
@@ -66,7 +66,11 @@ const makeTestContext = async () => {
   const pathResolve = (...ps) => path.join(dirname, ...ps);
 
   const cacheDir = pathResolve('..', 'bundles');
-  const bundleCache = await provideBundleCache(cacheDir, {}, s => import(s));
+  const bundleCache = await provideBundleCache(
+    cacheDir,
+    {},
+    async s => import(s),
+  );
 
   const vizTool = pathResolve('..', 'tools', 'authorityViz.js');
   const runViz = pspawn(vizTool, { spawn: ambientSpawn });

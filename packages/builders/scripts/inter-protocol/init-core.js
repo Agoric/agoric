@@ -151,7 +151,7 @@ export const defaultProposalBuilder = async (
 
   /** @param {Record<string, [string, string]>} group */
   const publishGroup = group =>
-    objectMap(group, ([mod, bundle]) => publishRef(install(mod, bundle)));
+    objectMap(group, async ([mod, bundle]) => publishRef(install(mod, bundle)));
 
   const anchorOptions = anchorDenom && {
     denom: anchorDenom,
@@ -189,14 +189,14 @@ export default async (homeP, endowments) => {
   const { writeCoreEval } = await makeHelpers(homeP, endowments);
 
   const tool = await makeInstallCache(homeP, {
-    loadBundle: spec => import(spec),
+    loadBundle: async spec => import(spec),
   });
   await Promise.all([
-    writeCoreEval('gov-econ-committee', opts =>
+    writeCoreEval('gov-econ-committee', async opts =>
       // @ts-expect-error XXX makeInstallCache types
       committeeProposalBuilder({ ...opts, wrapInstall: tool.wrapInstall }),
     ),
-    writeCoreEval('gov-amm-vaults-etc', opts =>
+    writeCoreEval('gov-amm-vaults-etc', async opts =>
       // @ts-expect-error XXX makeInstallCache types
       mainProposalBuilder({ ...opts, wrapInstall: tool.wrapInstall }),
     ),

@@ -63,7 +63,7 @@ harden(callSync);
  * @param {Parameters<I>} args
  * @returns {Promise<Awaited<ReturnType<I>>>}
  */
-export const callE = (callback, ...args) => {
+export const callE = async (callback, ...args) => {
   const { target, methodName, bound } = callback;
   if (methodName === undefined) {
     return E(target)(...bound, ...args);

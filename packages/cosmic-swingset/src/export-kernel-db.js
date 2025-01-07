@@ -350,7 +350,7 @@ export const main = async (
     },
   );
 
-  registerShutdown(() => exporter.stop());
+  registerShutdown(async () => exporter.stop());
 
   exporter.onStarted().then(
     () =>

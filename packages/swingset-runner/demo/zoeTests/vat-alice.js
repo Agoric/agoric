@@ -588,6 +588,6 @@ const build = async (log, zoe, issuers, payments, installations, timer) => {
 
 export function buildRootObject() {
   return Far('root', {
-    build: (...args) => build(makePrintLog(), ...args),
+    build: async (...args) => build(makePrintLog(), ...args),
   });
 }

@@ -110,13 +110,13 @@ const provideWeak = (store, key, make) => {
  * @param {import('./types.js').NameHub} hub
  * @param {unknown} [_newValue]
  */
-const updated = (updateCallback, hub, _newValue = undefined) => {
+const updated = async (updateCallback, hub, _newValue = undefined) => {
   if (!updateCallback) {
     return;
   }
 
   // wait for values to settle before writing
-  return E.when(deeplyFulfilledObject(hub.entries()), settledEntries =>
+  return E.when(deeplyFulfilledObject(hub.entries()), async settledEntries =>
     E(updateCallback).write(settledEntries),
   );
 };
@@ -219,7 +219,9 @@ export const prepareNameHubKit = zone => {
             return { nameHub: childHub, nameAdmin: childAdmin };
           }
           const child = makeNameHubKit();
-          await Promise.all(reserved.map(k => child.nameAdmin.reserve(k)));
+          await Promise.all(
+            reserved.map(async k => child.nameAdmin.reserve(k)),
+          );
           void nameAdmin.update(key, child.nameHub, child.nameAdmin);
           return child;
         },

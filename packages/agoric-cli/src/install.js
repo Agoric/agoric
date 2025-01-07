@@ -27,7 +27,7 @@ export default async function installMain(progname, rawArgs, powers, opts) {
 
   const pspawn = makePspawn({ log, spawn, chalk });
 
-  const rimraf = file => pspawn('rm', ['-rf', file]);
+  const rimraf = async file => pspawn('rm', ['-rf', file]);
 
   async function getWorktreePackagePaths(cwd = '.', map = new Map()) {
     // run `yarn workspaces info` to get the list of directories to
@@ -188,7 +188,7 @@ export default async function installMain(progname, rawArgs, powers, opts) {
 
     // Ensure we do all the package.json+yarn.lock additions after any necessary
     // pruning, even if there are failures.
-    await prunedP.finally(() =>
+    await prunedP.finally(async () =>
       // Ensure the package.jsons are installed with the fresh version information.
       Promise.allSettled(addPackagesTodo.map(async update => update())),
     );

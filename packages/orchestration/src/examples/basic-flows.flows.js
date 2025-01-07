@@ -56,8 +56,12 @@ export const makePortfolioAccount = async (
   trace('makePortfolioAccount', chainNames);
   seat.exit(); // no funds exchanged
   mustMatch(chainNames, M.arrayOf(M.string()));
-  const allChains = await Promise.all(chainNames.map(n => orch.getChain(n)));
-  const allAccounts = await Promise.all(allChains.map(c => c.makeAccount()));
+  const allChains = await Promise.all(
+    chainNames.map(async n => orch.getChain(n)),
+  );
+  const allAccounts = await Promise.all(
+    allChains.map(async c => c.makeAccount()),
+  );
 
   const accountEntries = harden(
     /** @type {[string, OrchestrationAccount<any>][]} */ (

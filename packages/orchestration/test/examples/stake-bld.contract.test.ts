@@ -76,7 +76,7 @@ test('makeAccount, deposit, withdraw', async t => {
   t.true(AmountMath.isEqual(withdrawAmt, bld.units(100)), 'withdraw');
 
   await t.throwsAsync(
-    () => E(account).withdraw(bld.units(100)),
+    async () => E(account).withdraw(bld.units(100)),
     undefined, // fake bank error messages don't match production
     'cannot withdraw more than balance',
   );
@@ -140,7 +140,7 @@ test('makeStakeBldInvitation', async t => {
     });
   }
 
-  await t.throwsAsync(() => E(invitationMakers).CloseAccount(), {
+  await t.throwsAsync(async () => E(invitationMakers).CloseAccount(), {
     message: 'not yet implemented',
   });
 });

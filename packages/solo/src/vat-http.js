@@ -131,7 +131,7 @@ export function buildRootObject(vatPowers) {
     },
 
     registerURLHandler,
-    registerAPIHandler: h => registerURLHandler(h, '/api'),
+    registerAPIHandler: async h => registerURLHandler(h, '/api'),
     send,
     doneLoading,
 

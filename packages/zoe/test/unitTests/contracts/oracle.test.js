@@ -177,8 +177,12 @@ test('single oracle', /** @param {ExecutionContext} t */ async t => {
     }),
   );
 
-  await t.throwsAsync(() => E(offer2).getOfferResult(), { instanceOf: Error });
-  await t.throwsAsync(() => E(offer4).getOfferResult(), { instanceOf: Error });
+  await t.throwsAsync(async () => E(offer2).getOfferResult(), {
+    instanceOf: Error,
+  });
+  await t.throwsAsync(async () => E(offer4).getOfferResult(), {
+    instanceOf: Error,
+  });
   t.deepEqual(
     await link.issuer.getAmountOf(E(offer4).getPayout('Fee')),
     underAmount,
@@ -198,7 +202,7 @@ test('single oracle', /** @param {ExecutionContext} t */ async t => {
 
   await E(shutdownSeat)
     .getPayouts()
-    .then(payouts =>
+    .then(async payouts =>
       Promise.all(
         Object.entries(payouts).map(async ([keyword, payment]) => {
           const amount = await link.issuer.getAmountOf(payment);
@@ -216,15 +220,18 @@ test('single oracle', /** @param {ExecutionContext} t */ async t => {
   const badOffer = E(zoe).offer(badInvitation);
 
   // Ensure the oracle no longer functions after revocation.
-  await t.throwsAsync(() => E(badOffer).getOfferResult(), {
+  await t.throwsAsync(async () => E(badOffer).getOfferResult(), {
     instanceOf: Error,
     message: `No further offers are accepted`,
   });
 
-  await t.throwsAsync(() => E(publicFacet).query({ hello: 'not again' }), {
-    instanceOf: Error,
-    message: `Oracle revoked`,
-  });
+  await t.throwsAsync(
+    async () => E(publicFacet).query({ hello: 'not again' }),
+    {
+      instanceOf: Error,
+      message: `Oracle revoked`,
+    },
+  );
 
   t.deepEqual(
     await link.issuer.getAmountOf(E(withdrawOffer).getPayout('Fee')),

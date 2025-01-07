@@ -126,7 +126,7 @@ const start = zcf => {
     return defaultAcceptanceMsg;
   };
 
-  const makeBuyerInvitation = () => {
+  const makeBuyerInvitation = async () => {
     const itemsAmount = sellerSeat.getAmountAllocated('Items');
     assert(
       sellerSeat && !AmountMath.isEmpty(itemsAmount),

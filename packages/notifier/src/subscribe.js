@@ -95,7 +95,7 @@ const makeEachIterator = (topic, nextCellP) => {
   // https://web.archive.org/web/20160404122250/http://wiki.ecmascript.org/doku.php?id=strawman:concurrency#infinite_queue
   const self = Far('EachIterator', {
     [Symbol.asyncIterator]: () => self,
-    next: () => {
+    next: async () => {
       const {
         head: resultP,
         publishCount: publishCountP,
@@ -151,7 +151,9 @@ const makeEachIterator = (topic, nextCellP) => {
 export const subscribeEach = topic => {
   const iterable = Far('EachIterable', {
     [Symbol.asyncIterator]: () => {
-      const firstCellP = reconnectAsNeeded(() => E(topic).subscribeAfter());
+      const firstCellP = reconnectAsNeeded(async () =>
+        E(topic).subscribeAfter(),
+      );
       return makeEachIterator(topic, firstCellP);
     },
   });
@@ -184,7 +186,7 @@ const cloneLatestIterator = (topic, localUpdateCount, terminalResult) => {
 
     // Send the next request now, skipping past intermediate updates
     // and upgrade disconnections.
-    const { value, updateCount } = await reconnectAsNeeded(() =>
+    const { value, updateCount } = await reconnectAsNeeded(async () =>
       E(topic).getUpdateSince(localUpdateCount),
     );
     // Make sure the next request is for a fresher value.

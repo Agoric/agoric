@@ -6,7 +6,7 @@
 import { importBundle } from '@endo/import-bundle';
 import { handlePWarning } from '../handleWarning.js';
 
-const evalContractBundle = (bundle, additionalEndowments = {}) => {
+const evalContractBundle = async (bundle, additionalEndowments = {}) => {
   // Make the console more verbose.
   const louderConsole = {
     ...console,

@@ -52,7 +52,7 @@ test('board values must be scalar keys', async t => {
   const board = makeFakeBoard();
   const nonKey = harden({ a: 1 });
   // @ts-expect-error intentional error
-  await t.throwsAsync(() => E(board).getId(nonKey), {
+  await t.throwsAsync(async () => E(board).getId(nonKey), {
     message: /arg 0: A "copyRecord" cannot be a scalar key: {"a":1}/,
   });
 });

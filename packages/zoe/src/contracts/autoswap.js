@@ -320,16 +320,16 @@ const start = async zcf => {
     return 'Liquidity successfully removed.';
   };
 
-  const makeAddLiquidityInvitation = () =>
+  const makeAddLiquidityInvitation = async () =>
     zcf.makeInvitation(addLiquidityHandler, 'autoswap add liquidity');
 
-  const makeRemoveLiquidityInvitation = () =>
+  const makeRemoveLiquidityInvitation = async () =>
     zcf.makeInvitation(removeLiquidityHandler, 'autoswap remove liquidity');
 
-  const makeSwapInInvitation = () =>
+  const makeSwapInInvitation = async () =>
     zcf.makeInvitation(swapInHandler, 'autoswap swap');
 
-  const makeSwapOutInvitation = () =>
+  const makeSwapOutInvitation = async () =>
     zcf.makeInvitation(swapOutHandler, 'autoswap swap');
 
   /**

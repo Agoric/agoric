@@ -54,29 +54,29 @@ function makeFakeVatAdmin(testContextSetter = undefined, makeRemote = x => x) {
   // test-only state can be provided from contracts
   // to their tests.
   const admin = Far('vatAdmin', {
-    getBundleCap: bundleID => {
+    getBundleCap: async bundleID => {
       if (!idToBundleCap.has(bundleID)) {
         idToBundleCap.init(bundleID, bogusBundleCap());
       }
       return Promise.resolve(idToBundleCap.get(bundleID));
     },
-    waitForBundleCap: bundleID => {
+    waitForBundleCap: async bundleID => {
       if (!idToBundleCap.has(bundleID)) {
         idToBundleCap.init(bundleID, bogusBundleCap());
       }
       return Promise.resolve(idToBundleCap.get(bundleID));
     },
-    getNamedBundleCap: name => {
+    getNamedBundleCap: async name => {
       if (name === 'zcf') {
         return Promise.resolve(zcfBundleCap);
       }
       const id = nameToBundleID.get(name);
       return Promise.resolve(idToBundleCap.get(id));
     },
-    getBundleIDByName: name => {
+    getBundleIDByName: async name => {
       return Promise.resolve().then(() => nameToBundleID.get(name));
     },
-    createVat: (bundleCap, { vatParameters = {} } = {}) => {
+    createVat: async (bundleCap, { vatParameters = {} } = {}) => {
       bundleCap === zcfBundleCap || Fail`fakeVatAdmin only knows ZCF`;
       const exitKit = makePromiseKit();
       handlePKitWarning(exitKit);
@@ -114,7 +114,7 @@ function makeFakeVatAdmin(testContextSetter = undefined, makeRemote = x => x) {
         harden({
           root,
           adminNode: Far('adminNode', {
-            done: () => {
+            done: async () => {
               return exitKit.promise;
             },
             terminateWithFailure: () => {},

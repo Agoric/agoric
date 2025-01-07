@@ -201,7 +201,7 @@ const makeScenario = () => {
         });
         const result = Promise.resolve(null).then(() => handler(zcfSeat));
         const userSeat = harden({
-          getOfferResult: () => result,
+          getOfferResult: async () => result,
         });
         return userSeat;
       },
@@ -524,14 +524,14 @@ test(`undelegate waits for unbonding period`, async t => {
     validator,
   };
   const toUndelegate = await E(invitationMakers).Undelegate([delegation]);
-  const current = () => E(timer).getCurrentTimestamp().then(time.format);
+  const current = async () => E(timer).getCurrentTimestamp().then(time.format);
   t.log(await current(), 'undelegate', delegation.amount.value);
   const seat = E(zoe).offer(toUndelegate);
 
   const beforeDone = E(timer)
     .tickN(15 * DAYf)
     .then(() => 15);
-  const afterDone = beforeDone.then(() =>
+  const afterDone = beforeDone.then(async () =>
     E(timer)
       .tickN(10 * DAYf)
       .then(() => 25),

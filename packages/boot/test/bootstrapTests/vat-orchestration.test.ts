@@ -70,7 +70,7 @@ test.before(async t => {
   await setupDeps();
 });
 
-test.after.always(t => t.context.shutdown?.());
+test.after.always(async t => t.context.shutdown?.());
 
 // skipping until EV supports Vows, or this functionality is tested elsewhere #9572
 test.skip('makeAccount returns an ICA connection', async t => {

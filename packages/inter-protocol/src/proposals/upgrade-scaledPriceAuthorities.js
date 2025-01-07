@@ -26,7 +26,7 @@ export const upgradeScaledPriceAuthorities = async (
   if (scaledPARef && bundleID) {
     await E.when(
       E(zoe).installBundleID(bundleID),
-      installation =>
+      async installation =>
         E(E(agoricNamesAdmin).lookupAdmin('installation')).update(
           'scaledPriceAuthority',
           installation,

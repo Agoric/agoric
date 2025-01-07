@@ -21,7 +21,7 @@ const makeFakeFeeDepositFacetKit = feeIssuer => {
     },
   };
 
-  const getPayments = () =>
+  const getPayments = async () =>
     // await event loop so the receive() can run
     Promise.resolve(eventLoopIteration()).then(_ => depositPayments);
 

@@ -43,7 +43,7 @@ const start = async zcf => {
     getCurrentFees() {
       return feeSeat.getCurrentAllocation();
     },
-    makeShutdownInvitation: () => {
+    makeShutdownInvitation: async () => {
       const shutdown = seat => {
         revoked = true;
         atomicTransfer(zcf, feeSeat, seat, feeSeat.getCurrentAllocation());

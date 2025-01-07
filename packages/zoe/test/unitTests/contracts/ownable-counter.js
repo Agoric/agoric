@@ -61,7 +61,7 @@ export const start = async (zcf, privateArgs, baggage) => {
 
   const makeOwnableCounter = prepareOwnable(
     zone,
-    (...args) => zcf.makeInvitation(...args),
+    async (...args) => zcf.makeInvitation(...args),
     'OwnableCounter',
     /** @type {const} */ (['incr', 'getInvitationCustomDetails']),
   );

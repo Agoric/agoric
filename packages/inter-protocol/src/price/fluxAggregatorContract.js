@@ -166,7 +166,7 @@ export const start = async (zcf, privateArgs, baggage) => {
      * @param {string[]} addrs
      * @returns {Promise<PromiseSettledResult<string>[]>}
      */
-    addOracles: addrs => {
+    addOracles: async addrs => {
       return Promise.allSettled(addrs.map(addOracle));
     },
     /**
@@ -177,7 +177,7 @@ export const start = async (zcf, privateArgs, baggage) => {
      * @param {string[]} addrs
      * @returns {Promise<PromiseSettledResult<string>[]>}
      */
-    removeOracles: addrs => {
+    removeOracles: async addrs => {
       return Promise.allSettled(addrs.map(removeOracle));
     },
   };

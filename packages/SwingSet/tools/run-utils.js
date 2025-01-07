@@ -109,7 +109,7 @@ export const makeRunUtils = (controller, harness) => {
     presence =>
       new Proxy(harden({}), {
         get: (_t, method, _rx) => {
-          const boundMethod = (...args) =>
+          const boundMethod = async (...args) =>
             queueAndRun(() =>
               controller.queueToVatObject(presence, method, args),
             );
@@ -120,7 +120,7 @@ export const makeRunUtils = (controller, harness) => {
       vat: vatName =>
         new Proxy(harden({}), {
           get: (_t, method, _rx) => {
-            const boundMethod = (...args) =>
+            const boundMethod = async (...args) =>
               queueAndRun(() =>
                 controller.queueToVatRoot(vatName, method, args),
               );
@@ -130,7 +130,7 @@ export const makeRunUtils = (controller, harness) => {
       sendOnly: presence =>
         new Proxy(harden({}), {
           get: (_t, method, _rx) => {
-            const boundMethod = (...args) =>
+            const boundMethod = async (...args) =>
               queueAndRun(
                 () => controller.queueToVatObject(presence, method, args),
                 true,
@@ -140,7 +140,7 @@ export const makeRunUtils = (controller, harness) => {
         }),
       get: presence =>
         new Proxy(harden({}), {
-          get: (_t, pathElement, _rx) =>
+          get: async (_t, pathElement, _rx) =>
             queueAndRun(() =>
               controller.queueToVatRoot('bootstrap', 'awaitVatObject', [
                 presence,

@@ -16,7 +16,7 @@ test('install', async t => {
   /** @type {import('../../src/startInstance.js').InstallationManager} */
   // @ts-expect-error mock
   const installationManager = {
-    add: (_petname, installation) => {
+    add: async (_petname, installation) => {
       addedInstallation = installation;
       return Promise.resolve();
     },

@@ -70,10 +70,11 @@ export const makeStoredSubscriber = (subscriber, storageNode, marshaller) => {
 
   /** @type {StoredSubscriber<T>} */
   const storesub = Far('StoredSubscriber', {
-    subscribeAfter: publishCount => subscriber.subscribeAfter(publishCount),
-    getUpdateSince: updateCount => subscriber.getUpdateSince(updateCount),
-    getPath: () => E(storageNode).getPath(),
-    getStoreKey: () => E(storageNode).getStoreKey(),
+    subscribeAfter: async publishCount =>
+      subscriber.subscribeAfter(publishCount),
+    getUpdateSince: async updateCount => subscriber.getUpdateSince(updateCount),
+    getPath: async () => E(storageNode).getPath(),
+    getStoreKey: async () => E(storageNode).getStoreKey(),
     getUnserializer: () => unserializer,
   });
   return storesub;
@@ -130,7 +131,7 @@ export const makeStoredSubscription = (
     // Publish the value, capturing any error.
     E(marshaller)
       .toCapData(obj)
-      .then(serialized => {
+      .then(async serialized => {
         const encoded = JSON.stringify(serialized);
         return E(storageNode).setValue(encoded);
       })
@@ -156,10 +157,11 @@ export const makeStoredSubscription = (
       return harden({ ...storeKey, subscription });
     },
     getUnserializer: () => unserializer,
-    getSharableSubscriptionInternals: () =>
+    getSharableSubscriptionInternals: async () =>
       subscription.getSharableSubscriptionInternals(),
     [Symbol.asyncIterator]: () => subscription[Symbol.asyncIterator](),
-    subscribeAfter: publishCount => subscription.subscribeAfter(publishCount),
+    subscribeAfter: async publishCount =>
+      subscription.subscribeAfter(publishCount),
   });
   return storesub;
 };

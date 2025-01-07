@@ -16,7 +16,7 @@ test('sanity', async t => {
     }
     return l;
   };
-  const myMain = args => {
+  const myMain = async args => {
     const oldConsole = console;
     try {
       // @ts-expect-error

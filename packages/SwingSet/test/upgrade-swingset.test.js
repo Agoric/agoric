@@ -36,7 +36,7 @@ test('kernel refuses to run with out-of-date DB - v0', async t => {
   await commit();
 
   // Now build a controller around this modified state, which should fail.
-  await t.throwsAsync(() => makeSwingsetController(kernelStorage), {
+  await t.throwsAsync(async () => makeSwingsetController(kernelStorage), {
     message: /kernel DB is too old/,
   });
 });
@@ -59,7 +59,7 @@ test('kernel refuses to run with out-of-date DB - v1', async t => {
   await commit();
 
   // Now build a controller around this modified state, which should fail.
-  await t.throwsAsync(() => makeSwingsetController(kernelStorage), {
+  await t.throwsAsync(async () => makeSwingsetController(kernelStorage), {
     message: /kernel DB is too old/,
   });
 });
@@ -81,7 +81,7 @@ test('kernel refuses to run with out-of-date DB - v2', async t => {
   await commit();
 
   // Now build a controller around this modified state, which should fail.
-  await t.throwsAsync(() => makeSwingsetController(kernelStorage), {
+  await t.throwsAsync(async () => makeSwingsetController(kernelStorage), {
     message: /kernel DB is too old/,
   });
 });
@@ -153,7 +153,7 @@ test('upgrade kernel state', async t => {
   await commit();
 
   // confirm that this state is too old for the kernel to use
-  await t.throwsAsync(() => makeSwingsetController(kernelStorage), {
+  await t.throwsAsync(async () => makeSwingsetController(kernelStorage), {
     message: /kernel DB is too old/,
   });
 
@@ -237,7 +237,7 @@ test('upgrade non-reaping kernel state', async t => {
   await commit();
 
   // confirm that this state is too old for the kernel to use
-  await t.throwsAsync(() => makeSwingsetController(kernelStorage), {
+  await t.throwsAsync(async () => makeSwingsetController(kernelStorage), {
     message: /kernel DB is too old/,
   });
 
@@ -389,7 +389,7 @@ test('v3 upgrade', async t => {
   const data = { ...debug.dump().kvEntries };
 
   // confirm that this state is too old for the kernel to use
-  await t.throwsAsync(() => makeSwingsetController(kernelStorage), {
+  await t.throwsAsync(async () => makeSwingsetController(kernelStorage), {
     message: /kernel DB is too old/,
   });
 

@@ -150,7 +150,7 @@ const verifyPublishKit = test.macro(async (t, makePublishKit) => {
 
   t.throws(
     // @ts-expect-error deliberate testing of invalid invocation
-    () => subscriber.subscribeAfter(Number(secondPublishCount)),
+    async () => subscriber.subscribeAfter(Number(secondPublishCount)),
     { message: /bigint/ },
   );
 
@@ -195,7 +195,7 @@ const verifySubscribeAfter = test.macro(async (t, makePublishKit) => {
   for (const badCount of [1n, 0, '', false, Symbol('symbol'), {}]) {
     t.throws(
       // @ts-expect-error deliberate invalid arguments for testing
-      () => subscriber.subscribeAfter(badCount),
+      async () => subscriber.subscribeAfter(badCount),
       undefined,
       `subscribeAfter must reject invalid publish count: ${typeof badCount} ${q(
         badCount,

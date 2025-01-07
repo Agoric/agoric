@@ -20,7 +20,7 @@ import { prepareSmartWallet } from '../src/smartWallet.js';
 /** @type {import('ava').TestFn<Awaited<ReturnType<makeTestContext>>>} */
 const test = anyTest;
 
-const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+const delay = async ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const nodeRequire = createRequire(import.meta.url);
 const asset = {
@@ -69,7 +69,11 @@ const mockBootstrapPowers = async (
 
 const makeTestContext = async t => {
   const bootKit = await mockBootstrapPowers(t.log);
-  const bundleCache = await makeNodeBundleCache('bundles/', {}, s => import(s));
+  const bundleCache = await makeNodeBundleCache(
+    'bundles/',
+    {},
+    async s => import(s),
+  );
 
   const { agoricNames, board, zoe } = bootKit.powers.consume;
   const startAnyContract = async () => {
@@ -102,7 +106,7 @@ const makeTestContext = async t => {
     const ie = await E(E(agoricNames).lookup('issuer')).entries();
     const byName = Object.fromEntries(ie);
     const descriptors = await Promise.all(
-      be.map(([name, b]) => {
+      be.map(async ([name, b]) => {
         /** @type {Promise<import('../src/smartWallet.js').BrandDescriptor>} */
         const d = allValues({
           brand: b,

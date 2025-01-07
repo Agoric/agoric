@@ -57,7 +57,7 @@ export const makeZoeSeatAdminFactory = baggage => {
 
   declareOldZoeSeatAdminKind(baggage, makeDurablePublishKit);
 
-  const doExit = (
+  const doExit = async (
     zoeSeatAdmin,
     currentAllocation,
     withdrawFacet,

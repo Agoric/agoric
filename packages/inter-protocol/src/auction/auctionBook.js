@@ -476,7 +476,7 @@ export const prepareAuctionBook = (baggage, zcf, makeRecorderKit) => {
 
           void E.when(
             quoteNotifierP,
-            quoteNotifier =>
+            async quoteNotifier =>
               observeNotifier(quoteNotifier, {
                 updateState: quote => {
                   trace(

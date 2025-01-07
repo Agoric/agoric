@@ -59,7 +59,7 @@ export const start = () => {
         }
       },
       /** @param {{ moduleFormat: string}} bundleShell */
-      install: bundleShell => {
+      install: async bundleShell => {
         const writer = new ZipWriter();
         for (const [name, [_hash, content]] of nameToContent.entries()) {
           writer.write(name, content);

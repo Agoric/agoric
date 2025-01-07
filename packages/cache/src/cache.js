@@ -26,7 +26,7 @@ export const makeCache = (coordinator = makeScalarStoreCoordinator()) => {
    * @param {Passable} key the cache key (any key type acceptable to the cache)
    * @param {[] | [Update] | [Update, Pattern]} optUpdateGuardPattern an optional
    */
-  const cache = (key, ...optUpdateGuardPattern) => {
+  const cache = async (key, ...optUpdateGuardPattern) => {
     if (optUpdateGuardPattern.length === 0) {
       return E(coordinator).getRecentValue(key);
     }

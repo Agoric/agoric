@@ -11,7 +11,7 @@ import { assertProposalShape } from '@agoric/zoe/src/contractSupport/index.js';
 export async function start(zcf, { feeMintAccess }) {
   const stableMint = await zcf.registerFeeMint('RUN', feeMintAccess);
 
-  function makeFaucetInvitation() {
+  async function makeFaucetInvitation() {
     /** @param {ZCFSeat} seat */
     async function faucetHook(seat) {
       assertProposalShape(seat, { want: { RUN: null } });

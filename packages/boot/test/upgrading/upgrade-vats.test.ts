@@ -12,7 +12,7 @@ import { matchAmount, matchIter, matchRef } from '../../tools/supports.js';
 import type { buildRootObject as buildTestMintVat } from './vat-mint.js';
 
 const bfile = name => new URL(name, import.meta.url).pathname;
-const importSpec = spec =>
+const importSpec = async spec =>
   importMetaResolve(spec, import.meta.url).then(u => new URL(u).pathname);
 
 const makeCallOutbound = t => (srcID, obj) => {
@@ -341,10 +341,10 @@ test('upgrade vat-bank', async t => {
 
   t.is(incarnationNumber, 1, 'Bank vat must be upgraded');
 
-  await t.throwsAsync(() => EV(noBridgeIterator).next(), {
+  await t.throwsAsync(async () => EV(noBridgeIterator).next(), {
     message: 'vat terminated',
   });
-  await t.throwsAsync(() => EV(bridgedIterator).next(), {
+  await t.throwsAsync(async () => EV(bridgedIterator).next(), {
     message: 'vat terminated',
   });
 

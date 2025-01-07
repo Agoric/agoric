@@ -274,7 +274,7 @@ export const makeImportContext = (makePresence = defaultMakePresence) => {
    * @param {Slot} slot
    * @param {string} iface
    */
-  const provideVal = (table, slot, iface) => {
+  const provideVal = async (table, slot, iface) => {
     if (table.bySlot.has(slot)) {
       return table.bySlot.get(slot);
     }
@@ -288,7 +288,7 @@ export const makeImportContext = (makePresence = defaultMakePresence) => {
      * @param {string} slot
      * @param {string} iface
      */
-    fromBoard: (slot, iface) => {
+    fromBoard: async (slot, iface) => {
       isDefaultBoardId(slot) || Fail`bad board slot ${q(slot)}`;
       return provideVal(boardObjects, slot, iface);
     },
@@ -297,7 +297,7 @@ export const makeImportContext = (makePresence = defaultMakePresence) => {
      * @param {string} slot
      * @param {string} iface
      */
-    fromMyWallet: (slot, iface) => {
+    fromMyWallet: async (slot, iface) => {
       if (!slot) {
         // Empty or null slots are neither in the wallet nor the board.
         return makePresence(`${slot}`);

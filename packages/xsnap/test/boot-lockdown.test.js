@@ -16,7 +16,7 @@ import { options, loader } from './message-tools.js';
 const io = { spawn: proc.spawn, os: os.type(), fs, tmpName }; // WARNING: ambient
 const ld = loader(import.meta.url, fs.promises.readFile);
 
-const getBootScript = () =>
+const getBootScript = async () =>
   getLockdownBundle().then(bundle => `(${bundle.source}\n)()`.trim());
 
 /**

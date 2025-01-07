@@ -158,6 +158,6 @@ export default async (homeP, endowments) => {
 
   await writeCoreEval(
     `replace-committee-${opts.variant || 'from-config'}`,
-    utils => defaultProposalBuilder(utils, opts),
+    async utils => defaultProposalBuilder(utils, opts),
   );
 };

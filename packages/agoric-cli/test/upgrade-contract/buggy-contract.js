@@ -25,7 +25,7 @@ export const start = async (zcf, _privateArgs, baggage) => {
 
   return harden({
     publicFacet: zone.exo('PublicFacet', undefined, {
-      makeInvitation: () => {
+      makeInvitation: async () => {
         return zcf.makeInvitation(offerHandler, 'free tokens');
       },
     }),

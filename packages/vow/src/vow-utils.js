@@ -64,7 +64,7 @@ harden(getVowPayload);
  * @param {PassableCap | Vow} k
  * @returns {PassableCap}
  */
-export const toPassableCap = k => {
+export const toPassableCap = async k => {
   const payload = getVowPayload(k);
   if (payload === undefined) {
     return /** @type {PassableCap} */ (k);

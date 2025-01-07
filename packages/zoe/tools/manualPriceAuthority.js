@@ -55,7 +55,7 @@ export function makeManualPriceAuthority(options) {
     return floorDivideBy(amountOut, currentPrice);
   };
 
-  function createQuote(priceQuery) {
+  async function createQuote(priceQuery) {
     if (disabled) {
       throw Error('disabled');
     }

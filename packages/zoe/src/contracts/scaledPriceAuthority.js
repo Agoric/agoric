@@ -87,7 +87,7 @@ export const prepare = async (zcf, privateArgs, baggage) => {
       getPriceAuthority: M.call().returns(M.promise()),
     }),
     {
-      getPriceAuthority: () => withInitial,
+      getPriceAuthority: async () => withInitial,
     },
   );
   return harden({ publicFacet });

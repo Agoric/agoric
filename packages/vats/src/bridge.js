@@ -18,7 +18,7 @@ import { E } from '@endo/far';
  * >} [handler]
  * @returns {Promise<import('./types.js').ScopedBridgeManager<BridgeId>>}
  */
-export const makeScopedBridge = (bridgeManager, bridgeIdValue, handler) =>
+export const makeScopedBridge = async (bridgeManager, bridgeIdValue, handler) =>
   /** @type {Promise<import('./types.js').ScopedBridgeManager<BridgeId>>} */ (
     E(bridgeManager).register(bridgeIdValue, handler)
   );

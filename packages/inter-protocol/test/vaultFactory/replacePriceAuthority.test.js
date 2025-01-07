@@ -95,7 +95,9 @@ test.before(async t => {
     reserve: bundleCache.load(contractRoots.reserve, 'reserve'),
     auctioneer: bundleCache.load(contractRoots.auctioneer, 'auction'),
   });
-  const installation = objectMap(bundles, bundle => E(zoe).install(bundle));
+  const installation = objectMap(bundles, async bundle =>
+    E(zoe).install(bundle),
+  );
 
   const feeMintAccess = await feeMintAccessP;
   const contextPs = {

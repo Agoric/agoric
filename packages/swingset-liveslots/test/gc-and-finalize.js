@@ -112,7 +112,7 @@ const makeCollectedResultKit = () => {
   };
 };
 
-export function watchCollected(target) {
+export async function watchCollected(target) {
   const kit = makeCollectedResultKit();
   fr.register(target, kit);
 

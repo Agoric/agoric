@@ -38,7 +38,7 @@ const testConvert = (t, zone, showOnConsole = false) => {
     return Far(`${iface} guest wrapper`, {});
   };
 
-  const makeGuestForHostVow = _hVow => Promise.resolve('guest P');
+  const makeGuestForHostVow = async _hVow => Promise.resolve('guest P');
 
   const { guestToHost, hostToGuest } = makeConvertKit(
     bij,

@@ -40,7 +40,7 @@ const start = async zcf => {
   const creatorFacet = Far('creatorFacet', {
     // The creator of the instance can send invitations to anyone
     // they wish to.
-    makeInvitation: (value = 1000n) =>
+    makeInvitation: async (value = 1000n) =>
       zcf.makeInvitation(mintPayment(value), 'mint a payment'),
     getTokenIssuer: () => issuer,
   });

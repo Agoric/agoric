@@ -683,7 +683,7 @@ export default async function main(
           },
         );
 
-        exportData.exporter.onDone().catch(() => {
+        exportData.exporter.onDone().catch(async () => {
           if (exportData === stateSyncExport) {
             stateSyncExport = undefined;
           }

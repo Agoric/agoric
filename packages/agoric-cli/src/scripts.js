@@ -29,7 +29,7 @@ export const makeLookup =
    * @param  {string[]} args
    * @returns {Promise<any>}
    */
-  (...args) => {
+  async (...args) => {
     /** @type {string[]} */
     let namePath;
     if (args.length === 1 && Array.isArray(args[0])) {
@@ -102,7 +102,7 @@ export const makeScriptLoader =
           );
         };
       } else {
-        installUnsafePlugin = (plugin, pluginOpts = undefined) => {
+        installUnsafePlugin = async (plugin, pluginOpts = undefined) => {
           const tryInstallUnsafePlugin = async () => {
             const absPath = pathResolve(plugin);
             const pluginName = absPath.replace(PATH_SEP_RE, '_');
@@ -167,7 +167,7 @@ export { bootPlugin } from ${JSON.stringify(absPath)};
          * @param {import('@endo/bundle-source').BundleOptions<ModuleFormat>} options
          * @returns {Promise<import('@endo/bundle-source').BundleSourceResult<ModuleFormat>>}
          */
-        bundleSource: (file, options = {}) =>
+        bundleSource: async (file, options = {}) =>
           bundleSource(pathResolve(file), {
             elideComments: true,
             ...options,

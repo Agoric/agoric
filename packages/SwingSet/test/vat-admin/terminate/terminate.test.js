@@ -142,7 +142,7 @@ async function doTerminateCritical(
   }
 
   const kpid = controller.queueToVatRoot('bootstrap', 'performTest', [mode]);
-  const err = await t.throwsAsync(() => controller.run());
+  const err = await t.throwsAsync(async () => controller.run());
   const thrown = kunser({ body: err.message, slots: [] });
   if (typeof thrown === 'string') {
     t.is(thrown, mode);
@@ -444,7 +444,7 @@ test.serial('invalid criticalVatKey causes vat creation to fail', async t => {
   config.defaultReapInterval = 'never';
   const controller = await buildVatController(config, [], t.context.data);
   t.teardown(controller.shutdown);
-  await t.throwsAsync(() => controller.run(), {
+  await t.throwsAsync(async () => controller.run(), {
     message: /invalid criticalVatKey/,
   });
 });

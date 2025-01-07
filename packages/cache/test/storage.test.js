@@ -110,7 +110,7 @@ test('makeChainStorageCoordinator with remote values', async t => {
 test('makeChainStorageCoordinator with updater', async t => {
   const { cache, storageNodeState } = setup();
 
-  const increment = (counter = 0) => Promise.resolve(counter + 1);
+  const increment = async (counter = 0) => Promise.resolve(counter + 1);
 
   // Initial
   t.is(await cache('counter', increment), 1);

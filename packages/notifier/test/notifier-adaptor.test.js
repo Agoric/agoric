@@ -37,12 +37,12 @@ test('async iterator - for await fails', async t => {
   return testEnding(t, p, true);
 });
 
-test('observeIteration - update from iterator finishes', t => {
+test('observeIteration - update from iterator finishes', async t => {
   const u = makeTestIterationObserver(t, false, false);
   return observeIteration(finiteStream, u);
 });
 
-test('observeIteration - update from iterator fails', t => {
+test('observeIteration - update from iterator fails', async t => {
   const u = makeTestIterationObserver(t, false, true);
   return observeIteration(explodingStream, u);
 });
@@ -50,7 +50,7 @@ test('observeIteration - update from iterator fails', t => {
 test('observeIteration - synchronous throw from observer stops hard', async t => {
   t.plan(2);
   await t.throwsAsync(
-    () =>
+    async () =>
       observeIteration(finiteStream, {
         updateState: state => {
           t.is(state, 1);
@@ -70,24 +70,24 @@ test('observeIteration - synchronous throw from observer stops hard', async t =>
 
 test('observeIteration - rejection from observer does nothing', async t => {
   const u = makeTestIterationObserver(t, true, false);
-  const handledRejection = reason => {
+  const handledRejection = async reason => {
     const r = Promise.reject(reason);
     r.catch(() => {});
     return r;
   };
   await observeIteration(finiteStream, {
     ...u,
-    updateState: state => {
+    updateState: async state => {
       u.updateState(state);
       return handledRejection(
         Error('updateState rejection does not propagate'),
       );
     },
-    finish: state => {
+    finish: async state => {
       u.finish(state);
       return handledRejection(Error('finish rejection does not propagate'));
     },
-    fail: reason => {
+    fail: async reason => {
       u.fail(reason);
       return handledRejection(Error('fail rejection does not propagate'));
     },
@@ -124,13 +124,13 @@ test('notifier adaptor - for await fails', async t => {
   return testEnding(t, p, true);
 });
 
-test('notifier adaptor - update from notifier finishes', t => {
+test('notifier adaptor - update from notifier finishes', async t => {
   const u = makeTestIterationObserver(t, true, false);
   const n = makeNotifierFromAsyncIterable(finiteStream);
   return observeNotifier(n, u);
 });
 
-test('notifier adaptor - update from notifier fails', t => {
+test('notifier adaptor - update from notifier fails', async t => {
   const u = makeTestIterationObserver(t, true, true);
   const n = makeNotifierFromAsyncIterable(explodingStream);
   return observeNotifier(n, u);

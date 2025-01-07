@@ -117,7 +117,7 @@ test('binary spoiled', async t => {
   t.deepEqual(alicePositions[0], FISH);
 
   await t.throwsAsync(
-    () => E(creatorFacet).submitVote(aliceSeat, [harden({ text: 'no' })]),
+    async () => E(creatorFacet).submitVote(aliceSeat, [harden({ text: 'no' })]),
     {
       message: `The specified choice is not a legal position: {"text":"no"}.`,
     },
@@ -183,9 +183,12 @@ test('binary bad vote', async t => {
   );
   const aliceSeat = makeHandle('Voter');
 
-  await t.throwsAsync(() => E(creatorFacet).submitVote(aliceSeat, [BAIT]), {
-    message: `The specified choice is not a legal position: {"text":"Cut Bait"}.`,
-  });
+  await t.throwsAsync(
+    async () => E(creatorFacet).submitVote(aliceSeat, [BAIT]),
+    {
+      message: `The specified choice is not a legal position: {"text":"Cut Bait"}.`,
+    },
+  );
 
   closeFacet.closeVoting();
   const outcome = await E(publicFacet)
@@ -376,7 +379,7 @@ test('binary question too many positions', async t => {
 
   const alicePositions = aliceTemplate.getDetails().positions;
   await t.throwsAsync(
-    () => E(creatorFacet).submitVote(aliceSeat, alicePositions),
+    async () => E(creatorFacet).submitVote(aliceSeat, alicePositions),
     {
       message: 'only 1 position allowed',
     },

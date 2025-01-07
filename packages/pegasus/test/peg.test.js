@@ -322,9 +322,9 @@ async function testRemotePeg(t) {
   t.assert(!stillIsLive2, 'payment is consumed');
 
   await E(connP).close();
-  await t.throwsAsync(() => remoteDenomAit.next(), {
+  await t.throwsAsync(async () => remoteDenomAit.next(), {
     message: 'pegasusConnectionHandler closed',
   });
 }
 
-test('remote peg', t => testRemotePeg(t));
+test('remote peg', async t => testRemotePeg(t));

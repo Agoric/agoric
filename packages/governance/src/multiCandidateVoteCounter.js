@@ -142,7 +142,7 @@ const makeMultiCandidateVoteCounter = (
       outcomePromise.resolve(untiedPositions.concat(tieWinners));
     }
 
-    void E.when(outcomePromise.promise, winPositions => {
+    void E.when(outcomePromise.promise, async winPositions => {
       /** @type { MultiOutcomeRecord } */
       const voteOutcome = {
         question: details.questionHandle,

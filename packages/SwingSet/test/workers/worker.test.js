@@ -81,7 +81,7 @@ test('accept node command-line args for node worker', async t => {
 
 test('reject node command-line args for non-node worker', async t => {
   const config = nodeVatConfig('xsnap');
-  await t.throwsAsync(() => buildVatController(config, []), {
+  await t.throwsAsync(async () => buildVatController(config, []), {
     message: "nodeOptions requires managerType 'node-subprocess'",
   });
 });

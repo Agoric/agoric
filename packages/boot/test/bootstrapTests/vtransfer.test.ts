@@ -20,7 +20,7 @@ type DefaultTestContext = Awaited<ReturnType<typeof makeDefaultTestContext>>;
 const test: TestFn<DefaultTestContext> = anyTest;
 
 test.before(async t => (t.context = await makeDefaultTestContext(t)));
-test.after.always(t => t.context.shutdown?.());
+test.after.always(async t => t.context.shutdown?.());
 
 test('vtransfer', async t => {
   const {
@@ -108,7 +108,7 @@ test('vtransfer', async t => {
   ]);
 
   // test adding an interceptor for the same target, which should fail
-  await t.throwsAsync(() => evalProposal(testVtransferProposal), {
+  await t.throwsAsync(async () => evalProposal(testVtransferProposal), {
     message: /Target.*already registered/,
   });
 });

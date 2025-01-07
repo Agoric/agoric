@@ -20,12 +20,12 @@ const makeFakeVstorageKit = () => {
 
   const setValue = newValue => (value = newValue);
   // TODO remove this when we switch all sync-tools to use client-utils's vstorageKit
-  const follow = () => Promise.resolve(value);
+  const follow = async () => Promise.resolve(value);
   /**
    * @param {string} path Assumes the path will be something like 'published.auction.book0'
    * where value = { book0: {...} }
    */
-  const readLatestHead = path => {
+  const readLatestHead = async path => {
     const key = path.split('.').at(-1);
     // @ts-expect-error path will be a string joined by "."
     return Promise.resolve(value[key]);
@@ -53,7 +53,7 @@ const makeFakeBalanceQuery = () => {
   };
 
   const setResult = newValue => (result = newValue);
-  const query = () => Promise.resolve(result);
+  const query = async () => Promise.resolve(result);
 
   return { setResult, query };
 };

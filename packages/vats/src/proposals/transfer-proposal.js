@@ -60,7 +60,7 @@ export const setupTransferMiddleware = async (
     vats.transfer,
   ).makeTransferMiddlewareKit();
   const vtransferID = BRIDGE_ID.VTRANSFER;
-  const provideBridgeTargetKit = bridge =>
+  const provideBridgeTargetKit = async bridge =>
     E(vats.transfer).provideBridgeTargetKit(
       bridge,
       VTRANSFER_IBC_EVENT,

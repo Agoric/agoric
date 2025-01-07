@@ -235,7 +235,7 @@ test('multi candidate spoiled', async t => {
   t.deepEqual(alicePositions[0], FISH);
 
   await t.throwsAsync(
-    () => E(creatorFacet).submitVote(aliceSeat, [harden({ text: 'no' })]),
+    async () => E(creatorFacet).submitVote(aliceSeat, [harden({ text: 'no' })]),
     {
       message: `The specified choice is not a legal position: {"text":"no"}.`,
     },
@@ -609,7 +609,8 @@ test('multi candidate exceeds max choices', async t => {
   t.deepEqual(positions[0], FISH);
 
   await t.throwsAsync(
-    () => E(creatorFacet).submitVote(aliceSeat, [positions[0], positions[1]]),
+    async () =>
+      E(creatorFacet).submitVote(aliceSeat, [positions[0], positions[1]]),
     {
       message: `The number of choices exceeds the max choices.`,
     },

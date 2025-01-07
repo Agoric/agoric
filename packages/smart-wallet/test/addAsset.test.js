@@ -15,7 +15,7 @@ import { makeDefaultTestContext } from './contexts.js';
 import { ActionType, headValue, makeMockTestSpace } from './supports.js';
 import { makeImportContext } from '../src/marshal-contexts.js';
 
-const importSpec = spec =>
+const importSpec = async spec =>
   importMetaResolve(spec, import.meta.url).then(u => new URL(u).pathname);
 
 /**
@@ -152,7 +152,7 @@ const makeScenario = t => {
     walletUpdates,
   ) => {
     const ctx = makeImportContext();
-    const vsGet = path =>
+    const vsGet = async path =>
       E(vsRPC).getBody(`mockChainStorageRoot.${path}`, ctx.fromBoard);
 
     // Ingest well-known brands, instances.
@@ -228,7 +228,8 @@ test.serial('trading in non-vbank asset: game real-estate NFTs', async t => {
    * @param {Record<string, Bundle>} bundles
    */
   const finishBootstrap = async ({ consume }, bundles) => {
-    const kindAdmin = kind => E(consume.agoricNamesAdmin).lookupAdmin(kind);
+    const kindAdmin = async kind =>
+      E(consume.agoricNamesAdmin).lookupAdmin(kind);
 
     const publishAgoricNames = async () => {
       const { board, chainStorage } = consume;
@@ -253,7 +254,7 @@ test.serial('trading in non-vbank asset: game real-estate NFTs', async t => {
       const { chainStorage, bankManager, board, feeMintAccess, zoe } = consume;
       const stable = await E(zoe)
         .getFeeIssuer()
-        .then(issuer => {
+        .then(async issuer => {
           return E(issuer)
             .getBrand()
             .then(brand => ({ issuer, brand }));
@@ -311,7 +312,7 @@ test.serial('trading in non-vbank asset: game real-estate NFTs', async t => {
     } = await E(zoe).getTerms(instance);
 
     t.log('CoreEval script: share via agoricNames:', brand);
-    const kindAdmin = kind => E(agoricNamesAdmin).lookupAdmin(kind);
+    const kindAdmin = async kind => E(agoricNamesAdmin).lookupAdmin(kind);
     await Promise.all([
       E(kindAdmin('instance')).update('game1', instance),
       E(kindAdmin('issuer')).update('Place', issuer),
@@ -328,7 +329,7 @@ test.serial('trading in non-vbank asset: game real-estate NFTs', async t => {
     const { fromEntries } = Object;
     const ctx = makeImportContext();
     await eventLoopIteration();
-    const vsGet = path =>
+    const vsGet = async path =>
       E(rpc).getBody(`mockChainStorageRoot.${path}`, ctx.fromBoard);
 
     // @ts-expect-error unsafe testing cast
@@ -364,11 +365,11 @@ test.serial('trading in non-vbank asset: game real-estate NFTs', async t => {
   const { consume, simpleProvideWallet, sendToBridge } = t.context;
 
   const bundles = {
-    game: await importSpec('./gameAssetContract.js').then(spec =>
+    game: await importSpec('./gameAssetContract.js').then(async spec =>
       bundleSource(spec),
     ),
     centralSupply: await importSpec('@agoric/vats/src/centralSupply.js').then(
-      spec => bundleSource(spec),
+      async spec => bundleSource(spec),
     ),
   };
 
@@ -471,7 +472,7 @@ test.serial('non-vbank asset: give before deposit', async t => {
   const goofyClient = async (rpc, walletBridge) => {
     const { fromEntries } = Object;
     const ctx = makeImportContext();
-    const vsGet = path =>
+    const vsGet = async path =>
       E(rpc).getBody(`mockChainStorageRoot.${path}`, ctx.fromBoard);
     // @ts-expect-error unsafe testing cast
     const wkBrand = fromEntries(await vsGet(`agoricNames.brand`));

@@ -350,7 +350,7 @@ test('zoe - alice tries to complete after completion has already occurred', asyn
 
   t.is(await E(aliceSeat).getOfferResult(), 'The offer was accepted');
 
-  await t.throwsAsync(() => E(aliceSeat).tryExit(), {
+  await t.throwsAsync(async () => E(aliceSeat).tryExit(), {
     message: /seat has (already|been) exited/,
   });
 

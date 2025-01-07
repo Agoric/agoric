@@ -11,7 +11,7 @@ export const mockOut = () => {
 
 export const mockrl = (answer: string) => {
   return {
-    question: () => Promise.resolve(answer),
+    question: async () => Promise.resolve(answer),
     close: () => {},
   };
 };

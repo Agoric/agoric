@@ -168,7 +168,7 @@ test('publish bundle with fake HTTP server ok', async t => {
     });
   });
   t.teardown(
-    () =>
+    async () =>
       new Promise((resolve, reject) =>
         server.close(err => {
           if (err) {

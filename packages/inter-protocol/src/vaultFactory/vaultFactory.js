@@ -92,7 +92,8 @@ export const start = async (zcf, privateArgs, baggage) => {
 
   trace('awaiting debtMint');
   const { debtMint } = await provideAll(baggage, {
-    debtMint: () => zcf.registerFeeMint('Minted', privateArgs.feeMintAccess),
+    debtMint: async () =>
+      zcf.registerFeeMint('Minted', privateArgs.feeMintAccess),
   });
 
   zcf.setTestJig(() => ({

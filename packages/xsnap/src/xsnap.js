@@ -274,7 +274,7 @@ export async function xsnap(options) {
   await snapshotLoader?.afterSpawn(snapshotLoadStream);
 
   if (snapshotLoader) {
-    void vatExit.promise.catch(noop).then(() => {
+    void vatExit.promise.catch(noop).then(async () => {
       if (snapshotLoader) {
         const { cleanup } = snapshotLoader;
         snapshotLoader = undefined;

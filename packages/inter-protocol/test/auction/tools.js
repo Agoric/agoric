@@ -39,7 +39,9 @@ export const setUpInstallations = async zoe => {
   });
   /** @type {AuctionTestInstallations} */
   // @ts-expect-error cast
-  const installations = objectMap(bundles, bundle => E(zoe).install(bundle));
+  const installations = objectMap(bundles, async bundle =>
+    E(zoe).install(bundle),
+  );
   return installations;
 };
 

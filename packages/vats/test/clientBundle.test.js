@@ -85,7 +85,7 @@ test('connectFaucet produces payments', async t => {
     Promise.resolve(
       // @ts-expect-error never mind other methods
       Far('mockBankManager', {
-        getBankForAddress: _a =>
+        getBankForAddress: async _a =>
           Far('mockBank', {
             // @ts-expect-error never mind other methods
             getPurse: brand => ({
@@ -140,7 +140,7 @@ test('connectFaucet produces payments', async t => {
   const pmts = await E(userBundle.faucet).tapFaucet();
 
   const detail = await Promise.all(
-    pmts.map(({ issuer, payment, pursePetname }) =>
+    pmts.map(async ({ issuer, payment, pursePetname }) =>
       E(issuer)
         .getAmountOf(payment)
         .then(a => [pursePetname, showAmount(a)]),

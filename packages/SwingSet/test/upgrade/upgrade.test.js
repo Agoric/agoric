@@ -568,7 +568,7 @@ test('non-durable exports are abandoned by upgrade of liveslots vat', async t =>
   };
   /** @type {Record<string, { presence: unknown, kref: string }>} */
   const counters = {};
-  const runIncrement = presence => messageToObject(presence, 'increment');
+  const runIncrement = async presence => messageToObject(presence, 'increment');
   for (const [name, methodName] of Object.entries(counterGetters)) {
     const counter = await messageToObject(exporterRoot, methodName);
     const val = await runIncrement(counter);
@@ -644,12 +644,12 @@ test('non-durable exports are abandoned by upgrade of liveslots vat', async t =>
   // Verify post-upgrade behavior.
   t.is(await messageToObject(exporterRoot, 'getVersion'), 'v2');
   await t.throwsAsync(
-    () => runIncrement(counters.ephCounter.presence),
+    async () => runIncrement(counters.ephCounter.presence),
     { message: 'vat terminated' },
     'message to ephemeral object from previous incarnation must go splat',
   );
   await t.throwsAsync(
-    () => runIncrement(counters.virCounter.presence),
+    async () => runIncrement(counters.virCounter.presence),
     { message: 'vat terminated' },
     'message to non-durable virtual object from previous incarnation must go splat',
   );

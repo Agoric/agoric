@@ -53,7 +53,7 @@ function makeExportCallback() {
   };
 }
 
-const tmpDir = prefix =>
+const tmpDir = async prefix =>
   new Promise((resolve, reject) => {
     tmp.dir({ unsafeCleanup: true, prefix }, (err, name, removeCallback) => {
       if (err) {

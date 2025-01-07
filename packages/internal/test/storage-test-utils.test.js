@@ -41,7 +41,7 @@ test('makeFakeStorageKit', async t => {
   for (const [label, val] of nonStrings) {
     await t.throwsAsync(
       // @ts-expect-error invalid value
-      () => rootNode.setValue(val),
+      async () => rootNode.setValue(val),
       undefined,
       `${label} value for root node is rejected`,
     );
@@ -138,7 +138,7 @@ test('makeFakeStorageKit', async t => {
   for await (const [label, val] of nonStrings) {
     await t.throwsAsync(
       // @ts-expect-error invalid value
-      () => deepNode.setValue(val),
+      async () => deepNode.setValue(val),
       undefined,
       `${label} value for non-root node is rejected`,
     );
@@ -198,7 +198,7 @@ test('makeFakeStorageKit sequence data', async t => {
 
   await t.throwsAsync(
     // @ts-expect-error
-    () => rootNode.setValue([]),
+    async () => rootNode.setValue([]),
     undefined,
     'array value is rejected',
   );

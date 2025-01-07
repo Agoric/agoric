@@ -122,7 +122,8 @@ const start = zcf => {
   };
 
   const publicFacet = Far('publicFacet', {
-    makeInvitation: () => zcf.makeInvitation(exchangeOfferHandler, 'exchange'),
+    makeInvitation: async () =>
+      zcf.makeInvitation(exchangeOfferHandler, 'exchange'),
   });
 
   return { publicFacet };

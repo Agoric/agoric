@@ -279,7 +279,7 @@ export const makeSlogSenderFromBuffer = ({ writeCircBuf }) => {
     // Prepend a newline so that the file can be more easily manipulated.
     const data = new TextEncoder().encode(`\n${serialized}`);
     // console.log('have obj', obj, data);
-    toWrite = toWrite.then(() => writeCircBuf(data));
+    toWrite = toWrite.then(async () => writeCircBuf(data));
   };
   return Object.assign(writeJSON, {
     forceFlush: async () => {

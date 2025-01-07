@@ -106,7 +106,7 @@ export const makePopulatedFakeVatAdmin = () => {
     fakeNameToCap.set(name, cap);
   }
 
-  const createVat = (bundleCap, options) => {
+  const createVat = async (bundleCap, options) => {
     assert(bundleCap);
     if (bundleCap === zcfBundleCap) {
       return fakeVatAdmin.createVat(zcfBundleCap, options);

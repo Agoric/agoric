@@ -27,7 +27,7 @@ export const makeFreshShutdown = (verbose = true) => {
     const shutdowners = [...shutdownThunks.keys()];
     shutdownThunks.clear();
     Promise.allSettled(
-      [...shutdowners].map(t => Promise.resolve(isSigInt).then(t)),
+      [...shutdowners].map(async t => Promise.resolve(isSigInt).then(t)),
     )
       .then(statuses => {
         for (const status of statuses) {

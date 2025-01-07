@@ -21,7 +21,8 @@ import {
 import { InvalidArgumentError } from 'commander';
 import { outputActionAndHint } from './bridge-action.js';
 
-export const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+export const delay = async ms =>
+  new Promise(resolve => setTimeout(resolve, ms));
 
 /** @param {string} arg */
 const parseDecimal = arg => {

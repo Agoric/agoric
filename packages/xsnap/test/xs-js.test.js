@@ -40,7 +40,7 @@ test('accept std regex range', async t => {
 test('simple TextEncoder / TextDecoder are available', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   await vat.evaluate(`
     const encoder = new TextEncoder();
     const decoder = new TextDecoder();
@@ -54,7 +54,7 @@ test('simple TextEncoder / TextDecoder are available', async t => {
 test('Base64.encode', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   await vat.evaluate(`
     const encoder = new TextEncoder();
     globalThis.handleCommand = inputBuffer => {
@@ -72,7 +72,7 @@ test('Base64.encode', async t => {
 test('Base64.encode degenerate input case', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   await vat.evaluate(`
     const encoder = new TextEncoder();
     globalThis.handleCommand = inputBuffer => {
@@ -90,7 +90,7 @@ test('Base64.encode degenerate input case', async t => {
 test('Base64.decode', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   await vat.evaluate(`
     const decoder = new TextDecoder();
     globalThis.handleCommand = inputBuffer => {
@@ -111,7 +111,7 @@ test('Base64.decode', async t => {
 test('bigint map key', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   await vat.evaluate(`
     const encoder = new TextEncoder();
     const send = it => issueCommand(encoder.encode(JSON.stringify(it)).buffer);
@@ -124,7 +124,7 @@ test('bigint map key', async t => {
 test('bigint toString', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   await vat.evaluate(`
     const encoder = new TextEncoder();
     const send = it => issueCommand(encoder.encode(JSON.stringify(it)).buffer);
@@ -137,7 +137,7 @@ test('bigint toString', async t => {
 test('keyword in destructuring', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   await vat.evaluate(`
     const encoder = new TextEncoder();
     const send = it => issueCommand(encoder.encode(JSON.stringify(it)).buffer);
@@ -150,7 +150,7 @@ test('keyword in destructuring', async t => {
 test('round-trip byte sequences via JSON including string literals', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
 
   // Appease typescript.
   const send = _val => /* dummy */ {};
@@ -202,7 +202,7 @@ test('round-trip byte sequences via JSON including string literals', async t => 
 test('Text encode / decode edge cases with CESU-8', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
 
   const send = _val => /* dummy */ {}; // for static checker
 

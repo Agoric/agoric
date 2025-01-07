@@ -145,12 +145,12 @@ export const makeDefaultTestContext = async (t, makeSpace) => {
      *
      * @param {Brand<'nat'>} brand
      */
-    const getBalanceFor = brand =>
+    const getBalanceFor = async brand =>
       E(E(bank).getPurse(brand)).getCurrentAmount();
     return { getBalanceFor, wallet };
   };
 
-  const simpleProvideWallet = address =>
+  const simpleProvideWallet = async address =>
     provideWalletAndBalances(address).then(({ wallet }) => wallet);
 
   /**
@@ -225,7 +225,8 @@ export const makeDefaultTestContext = async (t, makeSpace) => {
     anchor,
     invitationBrand: await E(E(zoe).getInvitationIssuer()).getBrand(),
     sendToBridge:
-      walletBridgeManager && (obj => E(walletBridgeManager).toBridge(obj)),
+      walletBridgeManager &&
+      (async obj => E(walletBridgeManager).toBridge(obj)),
     consume,
     provideWalletAndBalances,
     simpleProvideWallet,

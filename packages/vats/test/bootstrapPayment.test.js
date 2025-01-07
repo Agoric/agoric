@@ -52,7 +52,7 @@ test.before(async (/** @type {CentralSupplyTestContext} */ t) => {
  * @param {CentralSupplyTestContext} t
  * @param {bigint} bootstrapPaymentValue
  */
-const startContract = (t, bootstrapPaymentValue) => {
+const startContract = async (t, bootstrapPaymentValue) => {
   const {
     zoe,
     feeMintAccess,
@@ -123,7 +123,7 @@ test('bootstrap payment - only minted once', async (/** @type {CentralSupplyTest
   const bootstrapPayment2 = E(creatorFacet).getBootstrapPayment();
 
   await t.throwsAsync(
-    () => claim(E(issuers.IST).makeEmptyPurse(), bootstrapPayment2),
+    async () => claim(E(issuers.IST).makeEmptyPurse(), bootstrapPayment2),
     {
       message: /was not a live payment/,
     },

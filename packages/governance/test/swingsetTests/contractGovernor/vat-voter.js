@@ -111,5 +111,5 @@ const build = async (log, zoe) => {
 /** @type {import('@agoric/swingset-vat/src/kernel/vat-loader/types.js').BuildRootObjectForTestVat} */
 export const buildRootObject = vatPowers =>
   Far('root', {
-    build: (...args) => build(vatPowers.testLog, ...args),
+    build: async (...args) => build(vatPowers.testLog, ...args),
   });

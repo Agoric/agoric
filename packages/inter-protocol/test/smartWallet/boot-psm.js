@@ -291,12 +291,12 @@ export const buildRootObject = async (vatPowers, vatParameters) => {
       inviteToEconCharter(powersFor('inviteToEconCharter'), {
         options: { voterAddresses: economicCommitteeAddresses },
       }),
-      ...anchorAssets.map(anchorOptions =>
+      ...anchorAssets.map(async anchorOptions =>
         makeAnchorAsset(powersFor('makeAnchorAsset'), {
           options: { anchorOptions },
         }),
       ),
-      ...anchorAssets.map(anchorOptions =>
+      ...anchorAssets.map(async anchorOptions =>
         startPSM(powersFor(startPSM.name), {
           options: { anchorOptions },
         }),
@@ -311,7 +311,7 @@ export const buildRootObject = async (vatPowers, vatParameters) => {
   };
 
   return Far('bootstrap', {
-    bootstrap: (vats, devices) => {
+    bootstrap: async (vats, devices) => {
       const { D } = vatPowers;
       D(devices.mailbox).registerInboundHandler(
         Far('dummyInboundHandler', { deliverInboundMessages: () => {} }),
@@ -338,7 +338,7 @@ export const buildRootObject = async (vatPowers, vatParameters) => {
       produce[name].reset();
     },
     // expose consume mostly for testing
-    consumeItem: name => {
+    consumeItem: async name => {
       assert.typeof(name, 'string');
       return consume[name];
     },

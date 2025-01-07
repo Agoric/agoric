@@ -59,7 +59,7 @@ bench.addBenchmark('adjust vault balance', {
 
     const adjustN = async n => {
       const range = [...Array(n)].map((_, i) => i + 1);
-      await Promise.all(range.map(i => adjustVault(i, n, round)));
+      await Promise.all(range.map(async i => adjustVault(i, n, round)));
     };
 
     const roundSize = context.options.size ? Number(context.options.size) : 1;

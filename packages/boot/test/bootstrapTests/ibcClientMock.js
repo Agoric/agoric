@@ -47,8 +47,8 @@ export const start = async (zcf, privateArgs, _baggage) => {
       assert(connP, 'must connect first');
       ackP = E(connP).send(data);
     },
-    getAck: () => E.when(ackP),
-    close: () => E(connP).close(),
+    getAck: async () => E.when(ackP),
+    close: async () => E(connP).close(),
     getLocalAddress: async () => {
       return E(myPort).getLocalAddress();
     },

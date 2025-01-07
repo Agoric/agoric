@@ -32,7 +32,10 @@ export const makeLeaderFromRpcAddresses = (rpcAddrs, leaderOptions) => {
  * @param {string} netconfigURL
  * @param {import('./types.js').LeaderOptions} [options]
  */
-export const makeLeaderFromNetworkConfig = (netconfigURL, options = {}) => {
+export const makeLeaderFromNetworkConfig = async (
+  netconfigURL,
+  options = {},
+) => {
   const { retryCallback = DEFAULT_RETRY_CALLBACK, jitter = DEFAULT_JITTER } =
     options;
   /** @type {import('./types.js').LeaderOptions['retryCallback']} */
@@ -58,8 +61,8 @@ export const makeLeaderFromNetworkConfig = (netconfigURL, options = {}) => {
     };
     const retryLeader = async err => {
       retry(where, err, attempt)
-        .then(() => jitter(where))
-        .then(() => makeLeader().then(resolve, retryLeader))
+        .then(async () => jitter(where))
+        .then(async () => makeLeader().then(resolve, retryLeader))
         .catch(reject);
       attempt += 1;
     };

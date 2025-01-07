@@ -28,7 +28,7 @@ const ZcfProbeI = M.interface('ZCF Probe', {
  */
 export const start = async (zcf, privateArgs, baggage) => {
   const { probeMint } = await provideAll(baggage, {
-    probeMint: () => zcf.makeZCFMint('Ducats'),
+    probeMint: async () => zcf.makeZCFMint('Ducats'),
   });
 
   const storageNode = privateArgs?.storageNode;

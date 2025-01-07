@@ -79,7 +79,7 @@ export const makeWhen = (
    * @param {(reason: any) => TResult2 | PromiseLike<TResult2>} [onRejected]
    * @returns {Promise<TResult1 | TResult2>}
    */
-  const when = (specimenP, onFulfilled, onRejected) => {
+  const when = async (specimenP, onFulfilled, onRejected) => {
     const unwrapped = unwrap(specimenP);
 
     // We've extracted the final result.

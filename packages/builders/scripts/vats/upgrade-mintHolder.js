@@ -120,7 +120,7 @@ export default async (homeP, endowments) => {
   }
 
   const { writeCoreEval } = await makeHelpers(homeP, endowments);
-  await writeCoreEval(`upgrade-mintHolder`, utils =>
+  await writeCoreEval(`upgrade-mintHolder`, async utils =>
     defaultProposalBuilder(utils, opts),
   );
 };

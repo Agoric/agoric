@@ -60,7 +60,8 @@ test('add another instance admin for same instance', async t => {
 
   const mockInstanceAdmin2 = Far('mockInstanceAdmin', {});
   await t.throwsAsync(
-    () => ias.updater.initInstanceAdmin(mockInstance1, mockInstanceAdmin2),
+    async () =>
+      ias.updater.initInstanceAdmin(mockInstance1, mockInstanceAdmin2),
     { message: /"\[Alleged: mockInstance\]" already registered/ },
   );
 });

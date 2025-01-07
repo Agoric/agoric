@@ -147,7 +147,7 @@ test('makeVirtualPurse', async t => {
     );
   };
 
-  const performWithdrawal = () => {
+  const performWithdrawal = async () => {
     expected.pullAmount(fungible837);
     return E(vpurse).withdraw(fungible837);
   };
@@ -216,7 +216,7 @@ test('makeVirtualPurse withdraw from escrowPurse', async t => {
   balanceUpdater.updateState(fungible837);
   await checkNotifier();
 
-  const performWithdrawal = () => {
+  const performWithdrawal = async () => {
     expected.pullAmount(fungible837);
     return E(vpurse).withdraw(fungible837);
   };
@@ -309,7 +309,7 @@ test('vpurse.deposit promise', async t => {
 
   await t.throwsAsync(
     // @ts-expect-error deliberate invalid arguments for testing
-    () => E(vpurse).deposit(exclusivePaymentP, fungible25),
+    async () => E(vpurse).deposit(exclusivePaymentP, fungible25),
     {
       message:
         /In "deposit" method of \(VirtualPurseKit purse\): arg 0: .*"\[Promise\]" - Must be a remotable/,

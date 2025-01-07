@@ -394,14 +394,14 @@ test('recover when some withdrawals succeed and others fail', async t => {
   const { make } = AmountMath;
   const { anchor } = t.context;
   const { agoricNames, bankManager } = t.context.consume;
-  const getBalance = (addr, brand) => {
+  const getBalance = async (addr, brand) => {
     const bank = E(bankManager).getBankForAddress(addr);
     const purse = E(bank).getPurse(brand);
     return E(purse).getCurrentAmount();
   };
-  const namedBrands = kws =>
+  const namedBrands = async kws =>
     Promise.all(
-      kws.map(kw =>
+      kws.map(async kw =>
         E(agoricNames)
           .lookup('brand', kw)
           .then(b => [kw, b]),

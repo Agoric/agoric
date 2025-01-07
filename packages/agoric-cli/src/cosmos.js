@@ -37,7 +37,7 @@ export default async function cosmosMain(progname, rawArgs, powers, opts) {
         .stat(cosmosHelper)
         .then(
           () => 0,
-          e => {
+          async e => {
             if (e.code === 'ENOENT') {
               // Build the client helper.
               log.warn('Building the Cosmos client helper...');
@@ -56,7 +56,7 @@ export default async function cosmosMain(progname, rawArgs, powers, opts) {
             throw e;
           },
         )
-        .then(code => {
+        .then(async code => {
           if (code !== 0) {
             throw Error(`Cosmos client helper build failed with code ${code}`);
           }

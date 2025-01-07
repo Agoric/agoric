@@ -15,7 +15,7 @@ const streamFinished = promisify(streamFinishedCallback);
 export const makeArchiveSnapshot = (dirPath, powers) => {
   const { fs, path, tmp } = powers;
   fs.mkdirSync(dirPath, { recursive: true });
-  const archiveSnapshot = (name, gzData) => {
+  const archiveSnapshot = async (name, gzData) => {
     const destPath = path.join(dirPath, `${name}.gz`);
     return withDeferredCleanup(async addCleanup => {
       const {
@@ -52,7 +52,7 @@ harden(makeArchiveSnapshot);
 export const makeArchiveTranscript = (dirPath, powers) => {
   const { fs, path, tmp } = powers;
   fs.mkdirSync(dirPath, { recursive: true });
-  const archiveTranscript = (spanName, entries) => {
+  const archiveTranscript = async (spanName, entries) => {
     const destPath = path.join(dirPath, `${spanName}.gz`);
     return withDeferredCleanup(async addCleanup => {
       const {

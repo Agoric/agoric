@@ -30,7 +30,7 @@ const start = async (zcf, privateArgs) => {
 
   const creatorFacet = Far('mint creator facet', {
     getMintedAmount: () => zcfSeat.getAmountAllocated('Winnings'),
-    getMintedPayout: () => {
+    getMintedPayout: async () => {
       zcfSeat.exit();
       return E(userSeat).getPayout('Winnings');
     },

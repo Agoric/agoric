@@ -52,7 +52,7 @@ export const makeGovCommand = (_logger, io = {}) => {
     stderr = process.stderr,
     fetch = global.fetch,
     execFileSync = execFileSyncAmbient,
-    delay = ms => new Promise(resolve => setTimeout(resolve, ms)),
+    delay = async ms => new Promise(resolve => setTimeout(resolve, ms)),
   } = io;
 
   const cmd = new Command('gov').description('Electoral governance commands');

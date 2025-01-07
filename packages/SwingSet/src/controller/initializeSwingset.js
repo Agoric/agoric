@@ -39,7 +39,7 @@ const allValues = async obj => {
   return fromEntries(zip(keys(obj), vs));
 };
 
-const bundleRelative = rel =>
+const bundleRelative = async rel =>
   bundleSource(new URL(rel, import.meta.url).pathname);
 
 /**
@@ -434,7 +434,7 @@ export async function initializeSwingset(
     ? provideBundleCache(
         config.bundleCachePath,
         { dev: config.includeDevDependencies, format: config.bundleFormat },
-        s => import(s),
+        async s => import(s),
       )
     : null);
 
@@ -543,7 +543,7 @@ export async function initializeSwingset(
   async function processGroup(groupName, nameToBundle) {
     const group = config[groupName] || {};
     const names = Object.keys(group).sort();
-    const processP = names.map(name =>
+    const processP = names.map(async name =>
       processDesc(group[name], nameToBundle).catch(err => {
         throw Error(`config.${groupName}.${name}: ${err.message}`);
       }),

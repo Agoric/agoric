@@ -45,12 +45,12 @@ test('errors', async t => {
   });
   const manager = makePrioritySendersManager(storage.rootNode);
 
-  t.throws(() => manager.remove('oracles', 'agoric1a'), {
+  t.throws(async () => manager.remove('oracles', 'agoric1a'), {
     message: 'address not registered: "agoric1a"',
   });
 
   await manager.add('oracles', 'agoric1a');
-  t.throws(() => manager.remove('unknown', 'agoric1a'), {
+  t.throws(async () => manager.remove('unknown', 'agoric1a'), {
     message: 'namespace "unknown" does not have address "agoric1a"',
   });
 

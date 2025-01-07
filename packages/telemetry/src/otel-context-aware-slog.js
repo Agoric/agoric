@@ -125,7 +125,7 @@ export const makeSlogSender = async options => {
   };
 
   return Object.assign(slogSender, {
-    forceFlush: () => otelLogExporter.forceFlush(),
+    forceFlush: async () => otelLogExporter.forceFlush(),
     shutdown,
   });
 };

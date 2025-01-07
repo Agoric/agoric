@@ -67,7 +67,7 @@ const test = anyTest as TestFn<
 test.before(async t => {
   t.context = await makeDefaultTestContext(t);
 });
-test.after.always(t => {
+test.after.always(async t => {
   return t.context.shutdown && t.context.shutdown();
 });
 

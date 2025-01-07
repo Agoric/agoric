@@ -58,7 +58,7 @@ export const replaceScaledPriceAuthorities = async (powers, { options }) => {
   if (scaledPARef && bundleID) {
     await E.when(
       E(zoe).installBundleID(bundleID),
-      installation =>
+      async installation =>
         E(installationsAdmin).update('scaledPriceAuthority', installation),
       err =>
         console.error(

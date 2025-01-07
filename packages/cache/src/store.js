@@ -10,7 +10,7 @@ import { withGroundState, makeState } from './state.js';
  * @param {(obj: Passable) => Passable} [sanitize]
  * @returns {(key: Passable) => Promise<string>}
  */
-const makeKeyToString = (sanitize = obj => obj) => {
+const makeKeyToString = (sanitize = async obj => obj) => {
   let lastNonce = 0;
   const valToNonce = new WeakMap();
   const valToSlot = val => {
@@ -148,7 +148,7 @@ export const makeScalarStoreCoordinator = (
       const keyStr = await serializePassable(key);
       return applyCacheTransaction(
         keyStr,
-        () => newValue,
+        async () => newValue,
         guardPattern,
         sanitize,
         defaultStateStore,
@@ -158,7 +158,7 @@ export const makeScalarStoreCoordinator = (
       const keyStr = await serializePassable(key);
       return applyCacheTransaction(
         keyStr,
-        oldValue => E(updater).update(oldValue),
+        async oldValue => E(updater).update(oldValue),
         guardPattern,
         sanitize,
         defaultStateStore,
@@ -228,7 +228,7 @@ export const makeChainStorageCoordinator = (storageNode, marshaller) => {
       const keyStr = await serializePassable(key);
       const storedValue = await applyCacheTransaction(
         keyStr,
-        () => newValue,
+        async () => newValue,
         guardPattern,
         sanitize,
         defaultStateStore,
@@ -239,7 +239,7 @@ export const makeChainStorageCoordinator = (storageNode, marshaller) => {
       const keyStr = await serializePassable(key);
       const storedValue = await applyCacheTransaction(
         keyStr,
-        oldValue => E(updater).update(oldValue),
+        async oldValue => E(updater).update(oldValue),
         guardPattern,
         sanitize,
         defaultStateStore,

@@ -37,7 +37,7 @@ function makeExportLog() {
  * @param {string} [prefix]
  * @returns {Promise<[string, () => void]>}
  */
-const tmpDir = prefix =>
+const tmpDir = async prefix =>
   new Promise((resolve, reject) => {
     tmp.dir({ unsafeCleanup: true, prefix }, (err, name, removeCallback) => {
       if (err) {
@@ -314,7 +314,7 @@ async function testExportImport(
   t.deepEqual(artifactNames, expectedArtifactNames);
 
   const beforeDump = debug.dump(keepSnapshots);
-  function doImport() {
+  async function doImport() {
     return importSwingStore(exporter, null, { artifactMode: importMode });
   }
 

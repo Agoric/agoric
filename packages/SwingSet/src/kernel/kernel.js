@@ -2043,7 +2043,7 @@ export default function buildKernel(
   }
 
   // mostly used by tests, only needed with thread/process-based workers
-  function shutdown() {
+  async function shutdown() {
     return vatWarehouse.shutdown();
   }
 

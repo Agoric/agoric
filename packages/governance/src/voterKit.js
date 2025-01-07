@@ -48,7 +48,7 @@ export const prepareVoterKit = (baggage, { submitVote, zcf }) => {
       invitationMakers: {
         makeVoteInvitation(positions, questionHandle) {
           const { voter } = this.facets;
-          const continuingVoteHandler = cSeat => {
+          const continuingVoteHandler = async cSeat => {
             cSeat.exit();
             return voter.castBallotFor(questionHandle, positions);
           };

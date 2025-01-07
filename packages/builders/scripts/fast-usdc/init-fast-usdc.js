@@ -191,7 +191,7 @@ export default async (homeP, endowments) => {
     noNoble,
   });
 
-  await writeCoreEval('start-fast-usdc', utils =>
+  await writeCoreEval('start-fast-usdc', async utils =>
     defaultProposalBuilder(utils, config),
   );
 };

@@ -15,7 +15,7 @@ const behavior = {
   },
 };
 
-export const buildRootObject = (_vatPowers, vatParameters, baggage) => {
+export const buildRootObject = async (_vatPowers, vatParameters, baggage) => {
   const durandalHandle = baggage.get('durandalHandle');
   const makeDurandal = defineDurableKind(durandalHandle, initialize, behavior);
   // note: to test #5725, newDur must be the first new Durandal

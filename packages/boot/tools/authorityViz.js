@@ -243,7 +243,7 @@ const main = async (args, { stdout, fsp, meta }) => {
 
   const { MANIFEST } = await meta
     .resolve(bootstrap.sourceSpec, meta.url)
-    .then(p => meta.load(p));
+    .then(async p => meta.load(p));
   // console.log('manifest keys:', Object.keys(MANIFEST));
 
   const [gov] = ['--gov'].map(opt => opts.includes(opt));
@@ -276,7 +276,7 @@ const run = async () => {
     meta: {
       resolve: metaResolve.resolve,
       url: import.meta.url,
-      load: specifier => import(specifier),
+      load: async specifier => import(specifier),
     },
   });
 };

@@ -66,7 +66,7 @@ export async function buildRootObject(powers, vatParameters, baggage) {
   return Far('contractRunner', {
     // initialize instance-specific state of the contract
     /** @type {StartZcf} */
-    startZcf: (
+    startZcf: async (
       zoeInstanceAdmin,
       instanceRecordFromZoe,
       issuerStorageFromZoe,

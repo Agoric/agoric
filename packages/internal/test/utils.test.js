@@ -13,7 +13,9 @@ import {
 } from '../src/ses-utils.js';
 
 test('deeplyFulfilledObject', async t => {
-  const someFar = Far('somefar', { getAsync: () => Promise.resolve('async') });
+  const someFar = Far('somefar', {
+    getAsync: async () => Promise.resolve('async'),
+  });
   const unfulfilled = harden({
     obj1: {
       obj2a: {

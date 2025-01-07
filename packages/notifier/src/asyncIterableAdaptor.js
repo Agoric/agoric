@@ -52,7 +52,7 @@ export const makeAsyncIterableFromNotifier = subscribeLatest;
  * @param {Partial<IterationObserver<T>>} iterationObserver
  * @returns {Promise<undefined>}
  */
-export const observeIterator = (asyncIteratorP, iterationObserver) => {
+export const observeIterator = async (asyncIteratorP, iterationObserver) => {
   return new Promise((ack, observerError) => {
     const recur = () => {
       E.when(
@@ -88,7 +88,7 @@ export const observeIterator = (asyncIteratorP, iterationObserver) => {
  * @param {Partial<IterationObserver<T>>} iterationObserver
  * @returns {Promise<undefined>}
  */
-export const observeIteration = (asyncIterableP, iterationObserver) => {
+export const observeIteration = async (asyncIterableP, iterationObserver) => {
   const iteratorP = E(asyncIterableP)[Symbol.asyncIterator]();
   return observeIterator(iteratorP, iterationObserver);
 };
@@ -104,5 +104,5 @@ export const observeIteration = (asyncIterableP, iterationObserver) => {
  * @param {Partial<IterationObserver<T>>} iterationObserver
  * @returns {Promise<undefined>}
  */
-export const observeNotifier = (notifierP, iterationObserver) =>
+export const observeNotifier = async (notifierP, iterationObserver) =>
   observeIteration(subscribeLatest(notifierP), iterationObserver);

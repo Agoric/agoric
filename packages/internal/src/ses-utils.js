@@ -106,7 +106,7 @@ export const aggregateTryFinally = async (trier, finalizer) =>
           () => tryError,
           finalizeError => makeAggregateError([tryError, finalizeError]),
         )
-        .then(error => Promise.reject(error)),
+        .then(async error => Promise.reject(error)),
   );
 
 /**
@@ -134,7 +134,7 @@ export const withDeferredCleanup = async fn => {
     });
     await PromiseAllOrErrors(cleanupResults);
   };
-  return aggregateTryFinally(() => fn(addCleanup), finalizer);
+  return aggregateTryFinally(async () => fn(addCleanup), finalizer);
 };
 
 /**
@@ -249,7 +249,9 @@ export const synchronizedTee = (sourceStream, readerCount) => {
 
   /** @returns {Promise<void>} */
   const pullNext = async () => {
-    const requests = await Promise.allSettled(queues.map(queue => queue.get()));
+    const requests = await Promise.allSettled(
+      queues.map(async queue => queue.get()),
+    );
     const rejections = [];
     /** @type {Array<(value: PromiseLike<IteratorResult<T>>) => void>} */
     const resolvers = [];
@@ -271,7 +273,7 @@ export const synchronizedTee = (sourceStream, readerCount) => {
       annotateError(error, X`Teed rejections: ${rejections}`);
       result =
         sourceStream.throw?.(error) ||
-        Promise.resolve(sourceStream.return?.()).then(() =>
+        Promise.resolve(sourceStream.return?.()).then(async () =>
           Promise.reject(error),
         );
     } else if (done) {

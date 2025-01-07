@@ -31,7 +31,7 @@ const { entries } = Object;
  * @returns {Marshal<string>}
  */
 export const makeMarshalFromRecord = slotToVal => {
-  const convertSlotToVal = slot => {
+  const convertSlotToVal = async slot => {
     slot in slotToVal || Fail`unknown slot ${slot}`;
     return slotToVal[slot];
   };

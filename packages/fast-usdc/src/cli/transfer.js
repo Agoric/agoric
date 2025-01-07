@@ -110,7 +110,10 @@ const transfer = async (
           if (currentBalance !== startingBalance) {
             res();
           } else {
-            setTimeout(() => refreshUSDCBalance().catch(rej), refreshDelayMS);
+            setTimeout(
+              async () => refreshUSDCBalance().catch(rej),
+              refreshDelayMS,
+            );
           }
         };
         refreshUSDCBalance().catch(rej);

@@ -604,7 +604,7 @@ export const start = async (zcf, privateArgs, baggage) => {
     return 'deposited';
   };
 
-  const makeDepositInvitation = () =>
+  const makeDepositInvitation = async () =>
     zcf.makeInvitation(
       depositOfferHandler,
       'deposit Collateral',
@@ -674,16 +674,18 @@ export const start = async (zcf, privateArgs, baggage) => {
     }),
   );
 
-  const scheduler = await E.when(scheduleKit.recorderP, scheduleRecorder =>
-    makeScheduler(
-      driver,
-      timer,
-      // @ts-expect-error types are correct. How to convince TS?
-      params,
-      timerBrand,
-      scheduleRecorder,
-      publicFacet.getSubscription(),
-    ),
+  const scheduler = await E.when(
+    scheduleKit.recorderP,
+    async scheduleRecorder =>
+      makeScheduler(
+        driver,
+        timer,
+        // @ts-expect-error types are correct. How to convince TS?
+        params,
+        timerBrand,
+        scheduleRecorder,
+        publicFacet.getSubscription(),
+      ),
   );
 
   const creatorFacet = makeFarGovernorFacet(

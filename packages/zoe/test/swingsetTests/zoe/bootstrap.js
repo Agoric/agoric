@@ -99,7 +99,7 @@ export function buildRootObject(vatPowers, vatParameters) {
       const installedPs = vatParameters.contractNames.map(name =>
         E(vatAdminSvc)
           .getNamedBundleCap(name)
-          .then(bcap => E(zoe).installBundleID(D(bcap).getBundleID()))
+          .then(async bcap => E(zoe).installBundleID(D(bcap).getBundleID()))
           .then(installation => {
             installations[name] = installation;
           }),

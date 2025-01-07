@@ -411,7 +411,7 @@ export const makePegasus = ({ zcf, board, namesByAddress, when }) => {
             return receive(parts);
           };
 
-          return doReceive().catch(error =>
+          return doReceive().catch(async error =>
             E(transferProtocol).makeTransferPacketAck(false, error),
           );
         },

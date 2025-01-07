@@ -62,7 +62,7 @@ async function main() {
    * @param {string} prompt
    * @returns {Promise<string>}
    */
-  function ask(prompt) {
+  async function ask(prompt) {
     const { promise, resolve } = /** @type {PromiseKit<string>} */ (
       makePromiseKit()
     );

@@ -82,6 +82,11 @@ module.exports = {
 
   rules: {
     '@typescript-eslint/no-unused-expressions': 'off', // we use `cond || Fail`
+    '@typescript-eslint/promise-function-async': [
+      // so throw in promise-returning function still returns a promise
+      'warn',
+      { checkFunctionExpressions: false },
+    ],
     '@typescript-eslint/no-empty-object-type': 'warn',
     '@typescript-eslint/no-unnecessary-type-constraint': 'warn',
     '@typescript-eslint/no-unsafe-function-type': 'warn',

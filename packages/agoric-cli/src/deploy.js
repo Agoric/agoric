@@ -180,14 +180,17 @@ const connectAndRun = async (
     ws.on('error', e => {
       if (e.code === 'ECONNREFUSED' && !connected) {
         // Retry in a little bit.
-        setTimeout(() => retryWebsocket().catch(exit.reject), RETRY_DELAY_MS);
+        setTimeout(
+          async () => retryWebsocket().catch(exit.reject),
+          RETRY_DELAY_MS,
+        );
         return;
       }
       exit.reject(e);
     });
   };
   // Start the retry process.
-  return retryWebsocket().then(() => exit.promise);
+  return retryWebsocket().then(async () => exit.promise);
 };
 
 export default async function deployMain(progname, rawArgs, powers, opts) {

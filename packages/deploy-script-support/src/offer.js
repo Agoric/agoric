@@ -79,7 +79,7 @@ export const makeOfferAndFindInvitationAmount = (
     return withdrawInvitation(invitationDetails);
   };
 
-  const depositPayouts = (seat, payoutPursePetnames) => {
+  const depositPayouts = async (seat, payoutPursePetnames) => {
     const makeDepositInPurse = keyword => {
       const deposit = payment => {
         const pursePetname = payoutPursePetnames[keyword];
@@ -88,9 +88,9 @@ export const makeOfferAndFindInvitationAmount = (
       };
       return deposit;
     };
-    const handlePayments = paymentsP => {
+    const handlePayments = async paymentsP => {
       const allDepositedP = Promise.all(
-        Object.entries(paymentsP).map(([keyword, paymentP]) => {
+        Object.entries(paymentsP).map(async ([keyword, paymentP]) => {
           const depositInPurse = makeDepositInPurse(keyword);
           return E.when(paymentP, depositInPurse);
         }),

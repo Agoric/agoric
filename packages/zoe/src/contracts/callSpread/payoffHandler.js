@@ -27,7 +27,7 @@ function makePayoffHandler(zcf, seatPromiseKits, collateralSeat) {
   let seatsExited = 0;
 
   /** @type {MakeOptionInvitation} */
-  function makeOptionInvitation(position) {
+  async function makeOptionInvitation(position) {
     return zcf.makeInvitation(
       // All we do at the time of exercise is resolve the promise.
       seat => seatPromiseKits[position].resolve(seat),

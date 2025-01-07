@@ -6,7 +6,7 @@ import { makePromiseKit } from '@endo/promise-kit';
 // This can only be imported from the Start Compartment, where 'setImmediate'
 // is available.
 
-export function waitUntilQuiescent() {
+export async function waitUntilQuiescent() {
   // the delivery might cause some number of (native) Promises to be
   // created and resolved, so we use the IO queue to detect when the
   // Promise queue is empty. The IO queue (setImmediate and setTimeout) is

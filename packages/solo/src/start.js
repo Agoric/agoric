@@ -308,8 +308,8 @@ const buildSwingset = async (
 
   // Our typical user will always want to wait for the results of
   // the boxed promise, so by default, extract it and await it.
-  const queuedDeliverInboundCommand = obj =>
-    queuedBoxedDeliverInboundCommand(obj).then(([p]) => p);
+  const queuedDeliverInboundCommand = async obj =>
+    queuedBoxedDeliverInboundCommand(obj).then(async ([p]) => p);
 
   let intervalMillis;
 
@@ -348,7 +348,7 @@ const buildSwingset = async (
       intervalMillis = interval;
       setTimeout(queuedMoveTimeForward, intervalMillis);
     },
-    resetOutdatedState: withInputQueue(() => {
+    resetOutdatedState: withInputQueue(async () => {
       plugin.reset();
       return processKernel();
     }),

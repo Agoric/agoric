@@ -77,7 +77,7 @@ export const start = async (zcf, privateArgs, baggage) => {
   const zone = makeDurableZone(baggage);
 
   const { accountsStorageNode } = await provideAll(baggage, {
-    accountsStorageNode: () => E(storageNode).makeChildNode('accounts'),
+    accountsStorageNode: async () => E(storageNode).makeChildNode('accounts'),
   });
 
   const { makeRecorderKit } = prepareRecorderKitMakers(baggage, marshaller);

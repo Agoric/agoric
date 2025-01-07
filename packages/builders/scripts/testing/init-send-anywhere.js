@@ -61,7 +61,7 @@ export default async (homeP, endowments) => {
 
   const { writeCoreEval } = await makeHelpers(homeP, endowments);
 
-  await writeCoreEval(startSendAnywhere.name, utils =>
+  await writeCoreEval(startSendAnywhere.name, async utils =>
     defaultProposalBuilder(utils, opts),
   );
 };

@@ -12,7 +12,7 @@ import {
 // so paths can be expresssed relative to this file and made absolute
 const bfile = name => new URL(name, import.meta.url).pathname;
 
-const importSpec = spec =>
+const importSpec = async spec =>
   importMetaResolve(spec, import.meta.url).then(u => new URL(u).pathname);
 
 test('walletFactory service upgrade', async t => {

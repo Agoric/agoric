@@ -167,7 +167,7 @@ export const makeProposalExtractor = ({ childProcess, fs }: Powers) => {
   const getPkgPath = (pkg, fileName = '') =>
     new URL(`../../${pkg}/${fileName}`, import.meta.url).pathname;
 
-  const importSpec = spec =>
+  const importSpec = async spec =>
     importMetaResolve(spec, import.meta.url).then(u => new URL(u).pathname);
 
   const runPackageScript = (
@@ -228,7 +228,8 @@ export const makeProposalExtractor = ({ childProcess, fs }: Powers) => {
       ).toString(),
     );
 
-    const loadPkgFile = fileName => fs.readFile(join(tmpDir, fileName), 'utf8');
+    const loadPkgFile = async fileName =>
+      fs.readFile(join(tmpDir, fileName), 'utf8');
 
     const evalsP = Promise.all(
       built.evals.map(async ({ permit, script }) => {
@@ -625,13 +626,13 @@ export const makeSwingsetTestKit = async (
   const updateTimer = async time => {
     await timer.poll(time);
   };
-  const jumpTimeTo = (targetTime: Timestamp) => {
+  const jumpTimeTo = async (targetTime: Timestamp) => {
     targetTime = TimeMath.absValue(targetTime);
     targetTime >= currentTime ||
       Fail`cannot reverse time :-(  (${targetTime} < ${currentTime})`;
     currentTime = targetTime;
     trace('jumpTimeTo', currentTime);
-    return runUtils.queueAndRun(() => updateTimer(currentTime), true);
+    return runUtils.queueAndRun(async () => updateTimer(currentTime), true);
   };
   const advanceTimeTo = async (targetTime: Timestamp) => {
     targetTime = TimeMath.absValue(targetTime);
@@ -640,10 +641,10 @@ export const makeSwingsetTestKit = async (
     while (currentTime < targetTime) {
       trace('stepping time from', currentTime, 'towards', targetTime);
       currentTime += 1n;
-      await runUtils.queueAndRun(() => updateTimer(currentTime), true);
+      await runUtils.queueAndRun(async () => updateTimer(currentTime), true);
     }
   };
-  const advanceTimeBy = (
+  const advanceTimeBy = async (
     n: number,
     unit: 'seconds' | 'minutes' | 'hours' | 'days',
   ) => {

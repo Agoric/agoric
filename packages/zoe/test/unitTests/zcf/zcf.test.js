@@ -190,7 +190,7 @@ test(`zcf.saveIssuer - bad issuer`, async t => {
   const { moolaKit } = setup();
   const { zcf } = await setupZCFTest();
   // @ts-expect-error deliberate invalid arguments for testing
-  await t.throwsAsync(() => zcf.saveIssuer(moolaKit.brand, 'A'), {
+  await t.throwsAsync(async () => zcf.saveIssuer(moolaKit.brand, 'A'), {
     // TODO: improve error message
     // https://github.com/Agoric/agoric-sdk/issues/1701
     message: /target has no method "getBrand", has /,
@@ -211,7 +211,7 @@ test(`zcf.saveIssuer - bad issuer, makeEmptyPurse throws`, async t => {
   });
   await t.throwsAsync(
     // @ts-expect-error deliberate invalid arguments for testing
-    () => zcf.saveIssuer(badIssuer, 'A'),
+    async () => zcf.saveIssuer(badIssuer, 'A'),
     {
       message:
         'A purse could not be created for brand "[Alleged: brand]" because: "[Error: bad issuer]"',
@@ -250,7 +250,7 @@ test(`zcf.saveIssuer - args reversed`, async t => {
 test(`zcf.makeInvitation - no offerHandler`, async t => {
   const { zcf } = await setupZCFTest();
   // @ts-expect-error bad argument
-  t.throws(() => zcf.makeInvitation(undefined, 'myInvitation'), {
+  t.throws(async () => zcf.makeInvitation(undefined, 'myInvitation'), {
     message: / must be provided/,
   });
 });
@@ -276,7 +276,7 @@ test(`zcf.makeInvitation - throwing offerHandler`, async t => {
   const isLive = await E(invitationIssuer).isLive(invitationP);
   t.truthy(isLive);
   const seat = E(zoe).offer(invitationP);
-  await t.throwsAsync(() => E(seat).getOfferResult(), {
+  await t.throwsAsync(async () => E(seat).getOfferResult(), {
     message: 'my error message',
   });
 });
@@ -284,7 +284,7 @@ test(`zcf.makeInvitation - throwing offerHandler`, async t => {
 test(`zcf.makeInvitation - no description`, async t => {
   const { zcf } = await setupZCFTest();
   // @ts-expect-error deliberate invalid arguments for testing
-  t.throws(() => zcf.makeInvitation(() => {}), {
+  t.throws(async () => zcf.makeInvitation(() => {}), {
     message:
       'In "makeInvitation" method of (zcf): Expected at least 2 arguments: ["<redacted raw arg>"]',
   });
@@ -295,7 +295,7 @@ test(`zcf.makeInvitation - non-string description`, async t => {
   // TODO: improve error message
   // https://github.com/Agoric/agoric-sdk/issues/1704
   // @ts-expect-error deliberate invalid arguments for testing
-  t.throws(() => zcf.makeInvitation(() => {}, { something: 'a' }), {
+  t.throws(async () => zcf.makeInvitation(() => {}, { something: 'a' }), {
     message:
       'In "makeInvitation" method of (zcf): arg 1: copyRecord {"something":"a"} - Must be a string',
   });
@@ -358,7 +358,7 @@ test(`zcf.makeInvitation - customDetails stratification`, async t => {
 test(`zcf.makeZCFMint - no keyword`, async t => {
   const { zcf } = await setupZCFTest();
   // @ts-expect-error deliberate invalid arguments for testing
-  await t.throwsAsync(() => zcf.makeZCFMint(), {
+  await t.throwsAsync(async () => zcf.makeZCFMint(), {
     message:
       // Should be able to use more informative error once SES double
       // disclosure bug is fixed. See
@@ -372,14 +372,14 @@ test(`zcf.makeZCFMint - no keyword`, async t => {
 test(`zcf.makeZCFMint - keyword already in use`, async t => {
   const { moolaIssuer } = setup();
   const { zcf } = await setupZCFTest({ A: moolaIssuer });
-  await t.throwsAsync(() => zcf.makeZCFMint('A'), {
+  await t.throwsAsync(async () => zcf.makeZCFMint('A'), {
     message: 'keyword "A" must be unique',
   });
 });
 
 test(`zcf.makeZCFMint - bad keyword`, async t => {
   const { zcf } = await setupZCFTest();
-  await t.throwsAsync(() => zcf.makeZCFMint('a'), {
+  await t.throwsAsync(async () => zcf.makeZCFMint('a'), {
     message:
       // Should be able to use more informative error once SES double
       // disclosure bug is fixed. See
@@ -393,7 +393,7 @@ test(`zcf.makeZCFMint - bad keyword`, async t => {
 test(`zcf.makeZCFMint - not a math kind`, async t => {
   const { zcf } = await setupZCFTest();
   // @ts-expect-error deliberate invalid arguments for testing
-  await t.throwsAsync(() => zcf.makeZCFMint('A', 'whatever'), {
+  await t.throwsAsync(async () => zcf.makeZCFMint('A', 'whatever'), {
     message:
       'In "makeZoeMint" method of (zoeInstanceAdmin): arg 1?: "whatever" - Must match one of ["nat","set","copySet","copyBag"]',
   });
@@ -910,7 +910,7 @@ test(`userSeat.tryExit from zcf.makeEmptySeatKit - waived`, async t => {
   const { zcf } = await setupZCFTest();
   const { zcfSeat, userSeat } = zcf.makeEmptySeatKit({ waived: null });
   t.falsy(zcfSeat.hasExited());
-  await t.throwsAsync(() => E(userSeat).tryExit(), {
+  await t.throwsAsync(async () => E(userSeat).tryExit(), {
     message: 'Only seats with the exit rule "onDemand" can exit at will',
   });
   t.falsy(zcfSeat.hasExited());
@@ -924,7 +924,7 @@ test(`userSeat.tryExit from zcf.makeEmptySeatKit - afterDeadline`, async t => {
     afterDeadline: { timer, deadline: 1n },
   });
   t.falsy(zcfSeat.hasExited());
-  await t.throwsAsync(() => E(userSeat).tryExit(), {
+  await t.throwsAsync(async () => E(userSeat).tryExit(), {
     message: 'Only seats with the exit rule "onDemand" can exit at will',
   });
   t.falsy(zcfSeat.hasExited());
@@ -973,7 +973,7 @@ test(`userSeat.getPayouts, getPayout from zcf.makeEmptySeatKit`, async t => {
   const payoutAP = E(userSeat).getPayout('A');
   const payoutBP = E(userSeat).getPayout('B');
 
-  await t.throwsAsync(() => E(userSeat).getPayout('C'), {
+  await t.throwsAsync(async () => E(userSeat).getPayout('C'), {
     message: /No payout for "C"/,
   });
 
@@ -994,7 +994,7 @@ test(`userSeat.getPayout() should throw from zcf.makeEmptySeatKit`, async t => {
   const { zcf } = await setupZCFTest();
   const { userSeat } = zcf.makeEmptySeatKit();
   // @ts-expect-error deliberate invalid arguments for testing
-  await t.throwsAsync(() => E(userSeat).getPayout(), {
+  await t.throwsAsync(async () => E(userSeat).getPayout(), {
     message:
       'In "getPayout" method of (ZoeUserSeat userSeat): Expected at least 1 arguments: []',
   });
@@ -1192,7 +1192,7 @@ test(`zcf.shutdown - no further offers accepted`, async t => {
   const { zoe, zcf, vatAdminState } = await setupZCFTest();
   const invitation = await zcf.makeInvitation(() => {}, 'seat');
   zcf.shutdown('sayonara');
-  await t.throwsAsync(() => E(zoe).offer(invitation), {
+  await t.throwsAsync(async () => E(zoe).offer(invitation), {
     message: 'No further offers are accepted',
   });
   t.is(vatAdminState.getExitMessage(), 'sayonara');
@@ -1203,7 +1203,7 @@ test(`zcf.shutdownWithFailure - no further offers accepted`, async t => {
   const { zoe, zcf, vatAdminState } = await setupZCFTest();
   const invitation = await zcf.makeInvitation(() => {}, 'seat');
   zcf.shutdownWithFailure(Error(`And don't come back`));
-  await t.throwsAsync(() => E(zoe).offer(invitation), {
+  await t.throwsAsync(async () => E(zoe).offer(invitation), {
     message: 'No further offers are accepted',
   });
   t.is(vatAdminState.getExitMessage().message, `And don't come back`);
@@ -1226,7 +1226,7 @@ test(`zcf.stopAcceptingOffers`, async t => {
   await zcf.stopAcceptingOffers();
   t.truthy(await E(invitationIssuer).isLive(invitation2));
   await t.throwsAsync(
-    () => E(zoe).offer(invitation2),
+    async () => E(zoe).offer(invitation2),
     { message: 'No further offers are accepted' },
     `can't make further offers`,
   );
@@ -1237,7 +1237,7 @@ test(`zcf.stopAcceptingOffers`, async t => {
 test(`zcf.setOfferFilter - illegal lists`, async t => {
   const { zcf } = await setupZCFTest();
   // @ts-expect-error invalid argument
-  await t.throwsAsync(() => zcf.setOfferFilter('nonList'), {
+  await t.throwsAsync(async () => zcf.setOfferFilter('nonList'), {
     message: / arg 0: string "nonList" - Must be a copyArray/,
   });
 });
@@ -1313,7 +1313,7 @@ test('numWantsSatisfied: fail', async t => {
   t.is(await E(userSeat).numWantsSatisfied(), 0);
 
   await t.throwsAsync(
-    () => E(E(userSeat).getExitSubscriber()).getUpdateSince(),
+    async () => E(E(userSeat).getExitSubscriber()).getUpdateSince(),
     { message: 'whatever' },
   );
 });

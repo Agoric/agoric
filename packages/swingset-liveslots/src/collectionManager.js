@@ -356,7 +356,7 @@ export function makeCollectionManager(
       return prefix(encodedKey);
     }
 
-    function dbKeyToKey(dbKey) {
+    async function dbKeyToKey(dbKey) {
       // convert e.g. vc.5.r0000000001:o+v10/1 to r0000000001:o+v10/1
       const dbEntryKey = dbKey.substring(dbKeyPrefix.length);
       return decodeKey(dbEntryKey);

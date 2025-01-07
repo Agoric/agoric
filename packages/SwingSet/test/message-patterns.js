@@ -449,7 +449,7 @@ export function buildPatterns(log) {
       log(a.alice === alice2);
       log(alice2 === alice3);
     };
-    objB.b64_one = () => {
+    objB.b64_one = async () => {
       return pX.promise; // resolves to amy
     };
     objB.b64_two = (resPX, argPY) => {
@@ -510,7 +510,7 @@ export function buildPatterns(log) {
       await p3;
     };
     const pk = makePromiseKit();
-    objB.b66_wait = () => pk.promise;
+    objB.b66_wait = async () => pk.promise;
     objB.b66_msg1 = p2 => {
       log('one');
       p2.then(() => log('p2 resolved'));
@@ -840,7 +840,7 @@ export function buildPatterns(log) {
       E(aliceP).a84_three('calling alice'); // 1: promise second appears as target
     };
     const p1 = makePromiseKit();
-    objB.b84_one = () => {
+    objB.b84_one = async () => {
       const aliceP = p1.promise;
       return aliceP;
     };
@@ -860,7 +860,7 @@ export function buildPatterns(log) {
       E(b.bob).b85_three(a.alice, aliceP); // 2: promise second appears as argument
     };
     const p1 = makePromiseKit();
-    objB.b85_one = () => {
+    objB.b85_one = async () => {
       const aliceP = p1.promise;
       return harden(aliceP);
     };
@@ -886,7 +886,7 @@ export function buildPatterns(log) {
       E(billP).log_bill('three'); // 1: promise second appears as a target
     };
     const p1 = makePromiseKit();
-    objB.b86_one = () => {
+    objB.b86_one = async () => {
       const billP = p1.promise;
       return harden(billP);
     };
@@ -905,7 +905,7 @@ export function buildPatterns(log) {
       E(b.bob).b87_three(billP); // 2: promise second appears as argument
     };
     const p1 = makePromiseKit();
-    objB.b87_one = () => {
+    objB.b87_one = async () => {
       const billP = p1.promise;
       return harden(billP);
     };

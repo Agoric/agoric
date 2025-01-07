@@ -12,7 +12,7 @@ export const makeFile = (
   /** @type {mkdirSync} */ mkdir,
   /** @type {existsSync} */ pathExists,
 ) => {
-  const read = () => readFile(path, 'utf-8');
+  const read = async () => readFile(path, 'utf-8');
 
   const write = async (/** @type {string} */ data) => {
     const dir = dirname(path);

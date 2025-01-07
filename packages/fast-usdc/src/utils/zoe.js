@@ -19,7 +19,7 @@ const trace = makeTracer('ZoeUtils');
  * @returns {() => Promise<Invitation>} an arg-less invitation maker
  */
 export const defineInertInvitation = (zcf, description) => {
-  return () =>
+  return async () =>
     zcf.makeInvitation(seat => {
       trace(`ℹ️ An offer was made on an inert invitation for ${description}`);
       seat.exit();

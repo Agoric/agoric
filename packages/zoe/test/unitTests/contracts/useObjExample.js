@@ -57,7 +57,7 @@ const start = zcf => {
 
   const publicFacet = Far('publicFacet', {
     // The only publicFacet method is to make an invitation.
-    makeInvitation: () => zcf.makeInvitation(makeUseObj, 'use object'),
+    makeInvitation: async () => zcf.makeInvitation(makeUseObj, 'use object'),
   });
 
   return harden({ publicFacet });

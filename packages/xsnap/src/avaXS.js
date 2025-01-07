@@ -21,7 +21,7 @@ const avaAssert = `./avaAssertXS.js`;
 const avaHandler = `./avaHandler.cjs`;
 
 /** @type { (ref: string, readFile: typeof import('fs').promises.readFile ) => Promise<string> } */
-const asset = (ref, readFile) =>
+const asset = async (ref, readFile) =>
   readFile(fileURLToPath(new URL(ref, import.meta.url)), 'utf8');
 
 /**
@@ -233,7 +233,7 @@ async function avaConfig(args, options, { glob, readFile }) {
    * @param {string} pattern
    * @returns {Promise<string[]>}
    */
-  const globFiles = pattern =>
+  const globFiles = async pattern =>
     new Promise((res, rej) =>
       glob(pattern, {}, (err, matches) => (err ? rej(err) : res(matches))),
     );
@@ -345,7 +345,9 @@ export async function main(
   const requiredBundles = await Promise.all(
     require
       .filter(specifier => !['esm', ...externals].includes(specifier))
-      .map(specifier => bundleSource(specifier, 'getExport', { externals })),
+      .map(async specifier =>
+        bundleSource(specifier, 'getExport', { externals }),
+      ),
   );
   const requiredScripts = requiredBundles.map(
     ({ source }) => `(${source}\n)()`,

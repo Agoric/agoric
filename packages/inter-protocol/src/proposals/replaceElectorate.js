@@ -70,7 +70,7 @@ const handlehighPrioritySendersList = async (
   const { addressesToAdd, addressesToRemove } = highPrioritySendersConfig;
 
   await Promise.all(
-    addressesToAdd.map(addr =>
+    addressesToAdd.map(async addr =>
       E(highPrioritySendersManager).add(
         HIGH_PRIORITY_SENDERS_NAMESPACE,
         traced('High Priority Senders: adding', addr),
@@ -79,7 +79,7 @@ const handlehighPrioritySendersList = async (
   );
 
   await Promise.all(
-    addressesToRemove.map(addr =>
+    addressesToRemove.map(async addr =>
       E(highPrioritySendersManager).remove(
         HIGH_PRIORITY_SENDERS_NAMESPACE,
         traced('High Priority Senders: removing', addr),

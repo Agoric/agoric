@@ -92,7 +92,7 @@ export const start = async (zcf, privateArgs, baggage) => {
   const provisionPoolKit = await provideSingleton(
     baggage,
     'provisionPoolKit',
-    () =>
+    async () =>
       makeProvisionPoolKit({
         // XXX governance can change the brand of the amount but should only be able to change the value
         // NB: changing the brand will break this pool

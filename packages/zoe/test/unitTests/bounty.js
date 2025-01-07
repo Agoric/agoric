@@ -22,7 +22,7 @@ const start = async zcf => {
   const { oracle, deadline, condition, timer, fee } = zcf.getTerms();
 
   /** @type {(funderSeat: ZCFSeat) => Promise<Invitation>} */
-  function funder(funderSeat) {
+  async function funder(funderSeat) {
     const endowBounty = harden({
       give: { Bounty: null },
     });

@@ -89,7 +89,7 @@ export const createGov = async (homeP, endowments) => {
   const inLookup = JSON.parse(IN_BRAND_LOOKUP);
   const outLookup = JSON.parse(OUT_BRAND_LOOKUP);
 
-  const proposalBuilder = powers =>
+  const proposalBuilder = async powers =>
     defaultProposalBuilder(powers, {
       AGORIC_INSTANCE_NAME,
       IN_BRAND_DECIMALS: parseInt(IN_BRAND_DECIMALS, 10),

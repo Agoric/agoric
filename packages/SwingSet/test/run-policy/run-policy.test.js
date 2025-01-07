@@ -110,7 +110,8 @@ async function testCranks(t, mode) {
   }
 }
 
-test('run policy - cranks - messages', t => testCranks(t, 'messages'));
-test('run policy - cranks - resolutions', t => testCranks(t, 'resolutions'));
-test('run policy - computrons', t => testCranks(t, 'computrons'));
-test('run policy - wallclock', t => testCranks(t, 'wallclock'));
+test('run policy - cranks - messages', async t => testCranks(t, 'messages'));
+test('run policy - cranks - resolutions', async t =>
+  testCranks(t, 'resolutions'));
+test('run policy - computrons', async t => testCranks(t, 'computrons'));
+test('run policy - wallclock', async t => testCranks(t, 'wallclock'));

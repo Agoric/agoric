@@ -33,7 +33,7 @@ export const iterateLatest = follower =>
       const latestIterable = E(follower).getLatestIterable();
       const iterator = E(latestIterable)[Symbol.asyncIterator]();
       return Far('iterateLatest iterator', {
-        next: () => E(iterator).next(),
+        next: async () => E(iterator).next(),
       });
     },
   });
@@ -53,7 +53,7 @@ export const iterateEach = (follower, options) =>
       const eachIterable = E(follower).getEachIterable(options);
       const iterator = E(eachIterable)[Symbol.asyncIterator]();
       return Far('iterateEach iterator', {
-        next: () => E(iterator).next(),
+        next: async () => E(iterator).next(),
       });
     },
   });
@@ -71,7 +71,7 @@ export const iterateReverse = (follower, options) =>
       const eachIterable = E(follower).getReverseIterable(options);
       const iterator = E(eachIterable)[Symbol.asyncIterator]();
       return Far('iterateEach iterator', {
-        next: () => E(iterator).next(),
+        next: async () => E(iterator).next(),
       });
     },
   });

@@ -11,7 +11,7 @@ import { assertProposalShape } from '../../contractSupport/index.js';
 // given back and the contract is shut down.
 
 /** @type {MakeCloseLoanInvitation} */
-export const makeCloseLoanInvitation = (zcf, config) => {
+export const makeCloseLoanInvitation = async (zcf, config) => {
   const { collateralSeat, getDebt, lenderSeat } = config;
 
   /** @type {OfferHandler} */

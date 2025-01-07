@@ -134,7 +134,7 @@ test('send (to addr on same chain)', async t => {
   );
 
   await t.throwsAsync(
-    () => E(account).send(toAddress, ist.make(10n) as AmountArg),
+    async () => E(account).send(toAddress, ist.make(10n) as AmountArg),
     {
       message:
         "'amountToCoin' not working for \"[Alleged: IST brand]\" until #10449; use 'DenomAmount' for now",

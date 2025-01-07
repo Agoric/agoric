@@ -477,7 +477,7 @@ export const prepareRoundsManagerKit = baggage =>
           const { contract } = this.facets;
 
           /** @param {PriceQuery} priceQuery */
-          return Far('createQuote', priceQuery => {
+          return Far('createQuote', async priceQuery => {
             const { lastValueOutForUnitIn, unitIn } = state;
 
             // Sniff the current baseValueOut.
@@ -533,7 +533,7 @@ export const prepareRoundsManagerKit = baggage =>
             }
             return E(timerPresence)
               .getCurrentTimestamp()
-              .then(now =>
+              .then(async now =>
                 contract.authenticateQuote([
                   { amountIn, amountOut, timer: timerPresence, timestamp: now },
                 ]),

@@ -21,7 +21,7 @@ export const defaultProposalBuilder = async (_, opts) => {
 export default async (homeP, endowments) => {
   const { writeCoreEval } = await makeHelpers(homeP, endowments);
 
-  await writeCoreEval('replace-feeDistributor-testing', utils =>
+  await writeCoreEval('replace-feeDistributor-testing', async utils =>
     defaultProposalBuilder(utils, {
       collectionInterval: 30n,
       keywordShares: {

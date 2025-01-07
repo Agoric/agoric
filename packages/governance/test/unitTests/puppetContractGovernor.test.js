@@ -55,7 +55,7 @@ test('multiple params bad change', async t => {
   });
 
   await t.throwsAsync(
-    () => E(governorFacets.creatorFacet).changeParams(paramChangesSpec),
+    async () => E(governorFacets.creatorFacet).changeParams(paramChangesSpec),
     {
       message:
         'In "getAmountOf" method of (Zoe Invitation issuer): arg 0: "[13n]" - Must be a remotable Payment, not bigint',

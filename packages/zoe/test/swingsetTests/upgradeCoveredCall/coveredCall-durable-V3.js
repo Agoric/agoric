@@ -62,7 +62,7 @@ export const start = async (zcf, _privateArgs, instanceBaggage) => {
   );
 
   /** @type {OfferHandler} */
-  const makeOption = sellSeat => {
+  const makeOption = async sellSeat => {
     mustMatch(
       sellSeat.getProposal(),
       M.split({ exit: { afterDeadline: M.any() } }),

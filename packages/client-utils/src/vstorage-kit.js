@@ -113,7 +113,7 @@ export const makeVstorageKit = ({ fetch }, config) => {
      * Read latest at path and unmarshal it
      * @type {(path: string) => Promise<unknown>}
      */
-    const readLatestHead = path =>
+    const readLatestHead = async path =>
       vstorage.readLatest(path).then(unserializeHead);
 
     /**
@@ -126,7 +126,7 @@ export const makeVstorageKit = ({ fetch }, config) => {
      *
      * @type {<T extends string>(subpath: T) => Promise<TypedPublished<T>>}
      */
-    const readPublished = subpath =>
+    const readPublished = async subpath =>
       // @ts-expect-error cast
       readLatestHead(`published.${subpath}`);
 

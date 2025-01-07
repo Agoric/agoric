@@ -76,7 +76,7 @@ export const start = (zcf, privateArgs, baggage) => {
   const { subscriber: questionsSubscriber, publisher: questionsPublisher } =
     makeStoredPublishKit(questionNode, privateArgs.marshaller);
 
-  const makeCommitteeVoterInvitation = index => {
+  const makeCommitteeVoterInvitation = async index => {
     // https://github.com/Agoric/agoric-sdk/pull/3448/files#r704003612
     // This will produce unique descriptions because
     // makeCommitteeVoterInvitation() is only called within the following loop,

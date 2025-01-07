@@ -56,7 +56,7 @@ test.before(async t => {
   );
   t.context = { ...ctx, harness };
 });
-test.after.always(t => t.context.shutdown?.());
+test.after.always(async t => t.context.shutdown?.());
 
 /**
  * Test the config itself. Part of this suite so we don't have to start up another swingset.

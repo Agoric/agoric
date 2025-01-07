@@ -80,7 +80,7 @@ export const startLife = async (
   let buildTools;
   try {
     buildTools = await build(getBaggage());
-    fakeVomKit.wpm.loadWatchedPromiseTable(vref => {
+    fakeVomKit.wpm.loadWatchedPromiseTable(async vref => {
       // See revivePromise in liveslots.js
       const { getValForSlot, valToSlot, setValForSlot } = fakeVomKit.fakeStuff;
       // Assume all promises were decided by the previous incarnation

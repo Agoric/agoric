@@ -226,7 +226,7 @@ export function makeXsSubprocessFactory({
     }
     mk.setDeliverToWorker(deliverToWorker);
 
-    function shutdown() {
+    async function shutdown() {
       handleCommandKit?.revoke();
       handleCommandKit = undefined;
       return worker.close().then(_ => undefined);

@@ -149,7 +149,7 @@ test('communication', async t => {
   const it = subscribeEach(sub)[Symbol.asyncIterator]();
 
   const kit = makeIssuerKit('BLD', AssetKind.NAT, harden({ decimalPlaces: 6 }));
-  await t.throwsAsync(() => E(bank).getPurse(kit.brand), {
+  await t.throwsAsync(async () => E(bank).getPurse(kit.brand), {
     message: /not found/,
   });
 
@@ -231,7 +231,7 @@ test('communication', async t => {
   const feePurse = await E(bank).getPurse(feeKit.brand);
   await E(feePurse).withdraw(AmountMath.make(feeKit.brand, 35n));
   await t.throwsAsync(
-    () => E(feePurse).withdraw(AmountMath.make(feeKit.brand, 99n)),
+    async () => E(feePurse).withdraw(AmountMath.make(feeKit.brand, 99n)),
     { instanceOf: Error, message: 'insufficient ufee funds' },
   );
 

@@ -14,7 +14,7 @@ export const pickEndpoint = ({ rpcAddrs }) => rpcAddrs[0];
  * @param {{ fetch: typeof window.fetch }} io
  * @returns {Promise<Tendermint34Client>}
  */
-export const makeTendermint34Client = (endpoint, { fetch }) => {
+export const makeTendermint34Client = async (endpoint, { fetch }) => {
   const rpcClient = makeTendermintRpcClient(endpoint, fetch);
   return Tendermint34Client.create(rpcClient);
 };

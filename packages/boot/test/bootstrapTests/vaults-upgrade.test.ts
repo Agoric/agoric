@@ -84,7 +84,7 @@ test.before(async t => {
   const shared = await makeDefaultTestContext(t);
   t.context = { shared };
 });
-test.after.always(t => t.context.shared.shutdown());
+test.after.always(async t => t.context.shared.shutdown());
 
 test.serial('re-bootstrap', async t => {
   const oldContext = { ...t.context.shared };
@@ -205,7 +205,7 @@ test.serial('audit bootstrap exports', async t => {
   const toIface = new Map();
   const anObj = Far('obj', {});
   const aPromise = harden(new Promise(() => {}));
-  const saveBootstrapIface = (slot, iface) => {
+  const saveBootstrapIface = async (slot, iface) => {
     if (slot.startsWith('p')) return aPromise;
     if (oids.has(slot)) {
       toIface.set(slot, iface);

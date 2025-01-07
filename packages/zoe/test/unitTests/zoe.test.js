@@ -31,7 +31,7 @@ test(`zoe.getInvitationIssuer`, async t => {
 test(`E(zoe).install bad bundle`, async t => {
   const { zoe } = setup();
   // @ts-expect-error deliberate invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).install(), {
+  await t.throwsAsync(async () => E(zoe).install(), {
     message:
       'In "install" method of (ZoeService): Expected at least 1 arguments: []',
   });
@@ -48,7 +48,7 @@ test(`E(zoe).install(bundle)`, async t => {
 test(`E(zoe).installBundleID bad id`, async t => {
   const { zoe } = setup();
   // @ts-expect-error deliberate invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).installBundleID(), {
+  await t.throwsAsync(async () => E(zoe).installBundleID(), {
     message:
       'In "installBundleID" method of (ZoeService): Expected at least 1 arguments: []',
   });
@@ -57,7 +57,7 @@ test(`E(zoe).installBundleID bad id`, async t => {
 test(`E(zoe).installBundleID bad label`, async t => {
   const { zoe } = setup();
   // @ts-expect-error deliberate invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).installBundleID('a', harden([])), {
+  await t.throwsAsync(async () => E(zoe).installBundleID('a', harden([])), {
     message:
       'In "installBundleID" method of (ZoeService): arg 1?: copyArray [] - Must be a string',
   });
@@ -93,7 +93,7 @@ test(`E(zoe).offer - payment instead of paymentKeywordRecord`, async t => {
   const payment = mint.mintPayment(amount);
   const invitation = zcf.makeInvitation(() => {}, 'noop');
   // @ts-expect-error deliberate invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).offer(invitation, proposal, payment), {
+  await t.throwsAsync(async () => E(zoe).offer(invitation, proposal, payment), {
     message:
       'In "offer" method of (ZoeService): arg 2?: remotable "[Alleged: Token payment]" - Must be a copyRecord',
   });
@@ -140,7 +140,7 @@ test(`E(zoe).getPublicFacet promise for instance`, async t => {
 test(`E(zoe).getPublicFacet - no instance`, async t => {
   const { zoe } = setup();
   // @ts-expect-error deliberate invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).getPublicFacet(), {
+  await t.throwsAsync(async () => E(zoe).getPublicFacet(), {
     message:
       /In "getPublicFacet" method of \(ZoeService\): Expected at least 1 arguments: \[\]/,
   });
@@ -171,7 +171,7 @@ test(`zoe.getIssuers - none`, async t => {
 test(`zoe.getIssuers - no instance`, async t => {
   const { zoe } = setup();
   // @ts-expect-error invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).getIssuers(), {
+  await t.throwsAsync(async () => E(zoe).getIssuers(), {
     message:
       /In "getIssuers" method of \(ZoeService\): Expected at least 1 arguments: \[\]/,
   });
@@ -202,7 +202,7 @@ test(`zoe.getBrands - none`, async t => {
 test(`zoe.getBrands - no instance`, async t => {
   const { zoe } = setup();
   // @ts-expect-error invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).getBrands(), {
+  await t.throwsAsync(async () => E(zoe).getBrands(), {
     message:
       /In "getBrands" method of \(ZoeService\): Expected at least 1 arguments: \[\]/,
   });
@@ -258,7 +258,7 @@ test(`zoe.getTerms`, async t => {
 test(`zoe.getTerms - no instance`, async t => {
   const { zoe } = setup();
   // @ts-expect-error invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).getTerms(), {
+  await t.throwsAsync(async () => E(zoe).getTerms(), {
     message:
       /In "getTerms" method of \(ZoeService\): Expected at least 1 arguments: \[\]/,
   });
@@ -295,7 +295,7 @@ test(`zoe.getInstance`, async t => {
 test(`zoe.getInstance - no invitation`, async t => {
   const { zoe } = await setupZCFTest();
   // @ts-expect-error invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).getInstance(), {
+  await t.throwsAsync(async () => E(zoe).getInstance(), {
     message:
       'In "getInstance" method of (ZoeService): Expected at least 1 arguments: []',
   });
@@ -311,7 +311,7 @@ test(`zoe.getInstallation`, async t => {
 test(`zoe.getInstallation - no invitation`, async t => {
   const { zoe } = await setupZCFTest();
   // @ts-expect-error invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).getInstallation(), {
+  await t.throwsAsync(async () => E(zoe).getInstallation(), {
     message:
       'In "getInstallation" method of (ZoeService): Expected at least 1 arguments: []',
   });
@@ -320,15 +320,18 @@ test(`zoe.getInstallation - no invitation`, async t => {
 test(`zoe.getInvitationDetails`, async t => {
   const { zcf } = await setupZCFTest();
   // @ts-expect-error
-  await t.throwsAsync(() => E(zcf).makeInvitation(undefined, 'invitation'), {
-    message: 'offerHandler must be provided',
-  });
+  await t.throwsAsync(
+    async () => E(zcf).makeInvitation(undefined, 'invitation'),
+    {
+      message: 'offerHandler must be provided',
+    },
+  );
 });
 
 test(`zoe.getInvitationDetails - no invitation`, async t => {
   const { zoe } = await setupZCFTest();
   // @ts-expect-error invalid arguments for testing
-  await t.throwsAsync(() => E(zoe).getInvitationDetails(), {
+  await t.throwsAsync(async () => E(zoe).getInvitationDetails(), {
     message:
       'In "getInvitationDetails" method of (ZoeService): Expected at least 1 arguments: []',
   });

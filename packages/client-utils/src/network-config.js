@@ -35,7 +35,7 @@ export const fetchNetworkConfig = async (spec, { fetch }) => {
   }
 
   return fetch(toNetworkConfigUrl(netName))
-    .then(res => res.json())
+    .then(async res => res.json())
     .catch(err => {
       throw Error(`cannot get network config (${spec}): ${err.message}`);
     });

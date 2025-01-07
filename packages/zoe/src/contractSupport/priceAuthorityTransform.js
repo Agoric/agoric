@@ -164,8 +164,8 @@ export const makePriceAuthorityTransform = async ({
 
       /** @type {EOnly<MutableQuote>} */
       const mutableQuote = Far('MutableQuote', {
-        cancel: e => E(sourceMutableQuote).cancel(e),
-        updateLevel: (newAmountIn, newAmountOutLimit) => {
+        cancel: async e => E(sourceMutableQuote).cancel(e),
+        updateLevel: async (newAmountIn, newAmountOutLimit) => {
           AmountMath.coerce(actualBrandIn, newAmountIn);
           AmountMath.coerce(actualBrandOut, newAmountOutLimit);
 
@@ -174,7 +174,8 @@ export const makePriceAuthorityTransform = async ({
             makeSourceAmountOut(newAmountOutLimit),
           );
         },
-        getPromise: () => E(sourceMutableQuote).getPromise().then(scaleQuote),
+        getPromise: async () =>
+          E(sourceMutableQuote).getPromise().then(scaleQuote),
       });
       return mutableQuote;
     };

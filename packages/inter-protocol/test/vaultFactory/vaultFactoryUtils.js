@@ -189,7 +189,7 @@ export const getRunFromFaucet = async (t, amount) => {
  *
  * @param {UserSeat<VaultKit>} vaultSeat
  */
-export const legacyOfferResult = vaultSeat => {
+export const legacyOfferResult = async vaultSeat => {
   return E(vaultSeat)
     .getOfferResult()
     .then(result => {

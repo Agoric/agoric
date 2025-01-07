@@ -74,7 +74,7 @@ test('notifier - update after state change', async t => {
 
   const updateInWaiting = notifier.getUpdateSince(updateDeNovo.updateCount);
   t.is(updateDeNovo.value, 1, 'first state check (1)');
-  const all = Promise.all([updateInWaiting]).then(([update1]) => {
+  const all = Promise.all([updateInWaiting]).then(async ([update1]) => {
     t.is(update1.value, 3, '4th check (delayed) 3');
     const thirdStatePromise = notifier.getUpdateSince(update1.updateCount);
     return Promise.all([thirdStatePromise]).then(([update2]) => {
@@ -98,7 +98,7 @@ test('notifier - final state', async t => {
   const updateDeNovo = await notifier.getUpdateSince();
   const updateInWaiting = notifier.getUpdateSince(updateDeNovo.updateCount);
   t.is(updateDeNovo.value, 1, 'initial state is one');
-  const all = Promise.all([updateInWaiting]).then(([update]) => {
+  const all = Promise.all([updateInWaiting]).then(async ([update]) => {
     t.is(update.value, 'final', 'state is "final"');
     t.falsy(update.updateCount, 'no handle after close');
     const postFinalUpdate = notifier.getUpdateSince(update.updateCount);

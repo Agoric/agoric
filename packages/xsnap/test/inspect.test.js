@@ -8,7 +8,7 @@ import { getLockdownBundle } from '@agoric/xsnap-lockdown';
 import { xsnap } from '../src/xsnap.js';
 import { options } from './message-tools.js';
 
-const getBootScript = () =>
+const getBootScript = async () =>
   getLockdownBundle().then(bundle => `(${bundle.source}\n)()`.trim());
 const io = { spawn: proc.spawn, os: os.type(), fs, tmpName }; // WARNING: ambient
 const testCases = [

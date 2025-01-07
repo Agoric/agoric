@@ -120,7 +120,7 @@ export const makeScheduler = async (
    * Publish the schedule. To be called after clockTick() (which processes a
    * descending step) or when the next round is scheduled.
    */
-  const publishSchedule = () => {
+  const publishSchedule = async () => {
     const sched = harden({
       activeStartTime: liveSchedule?.startTime || null,
       nextStartTime: nextSchedule?.startTime || null,

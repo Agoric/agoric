@@ -111,7 +111,7 @@ const makeVowishStore = name => {
  */
 export const prepareBijection = (
   zone,
-  unwrap = (_hostWrapper, guestWrapper) => guestWrapper,
+  unwrap = async (_hostWrapper, guestWrapper) => guestWrapper,
 ) => {
   /** @type {Ephemera<Bijection, VowishStore>} */
   const g2h = makeEphemera(() => makeVowishStore('guestToHost'));

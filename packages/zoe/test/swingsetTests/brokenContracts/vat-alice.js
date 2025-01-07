@@ -122,7 +122,7 @@ const build = async (log, zoe, issuers, payments, installations) => {
     E(swapSeat)
       .getOfferResult()
       .then(
-        o => {
+        async o => {
           return E(invitationIssuer)
             .isLive(o)
             .then(val => {
@@ -408,6 +408,6 @@ const build = async (log, zoe, issuers, payments, installations) => {
 
 export function buildRootObject(vatPowers) {
   return Far('root', {
-    build: (...args) => build(vatPowers.testLog, ...args),
+    build: async (...args) => build(vatPowers.testLog, ...args),
   });
 }

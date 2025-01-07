@@ -17,7 +17,8 @@ import { INVITATION_MAKERS_DESC } from '../exos/transaction-feed.js';
 import { CctpTxEvidenceShape } from '../type-guards.js';
 import { outputActionAndHint } from './bridge-action.js';
 
-export const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+export const delay = async ms =>
+  new Promise(resolve => setTimeout(resolve, ms));
 
 /** @param {string} arg */
 const parseNat = arg => {

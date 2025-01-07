@@ -248,10 +248,13 @@ test.serial('test durable toggle eventual send', async t => {
 
   nextLife();
   const zone1 = makeDurableZone(getBaggage(), 'durableRoot');
-  await t.throwsAsync(() => testFirstPlay(t, zone1, testMode.noEventualSend), {
-    message:
-      /^panic over "\[Error: guest eventual applyMethod not yet supported:/,
-  });
+  await t.throwsAsync(
+    async () => testFirstPlay(t, zone1, testMode.noEventualSend),
+    {
+      message:
+        /^panic over "\[Error: guest eventual applyMethod not yet supported:/,
+    },
+  );
 
   await eventLoopIteration();
   nextLife();
@@ -261,10 +264,13 @@ test.serial('test durable toggle eventual send', async t => {
   await eventLoopIteration();
   nextLife();
   const zone2 = makeDurableZone(getBaggage(), 'durableRoot');
-  await t.throwsAsync(() => testReplay(t, zone2, testMode.noEventualSend), {
-    message:
-      /^panic over "\[Error: guest eventual applyMethod not yet supported:/,
-  });
+  await t.throwsAsync(
+    async () => testReplay(t, zone2, testMode.noEventualSend),
+    {
+      message:
+        /^panic over "\[Error: guest eventual applyMethod not yet supported:/,
+    },
+  );
 
   await eventLoopIteration();
   nextLife();

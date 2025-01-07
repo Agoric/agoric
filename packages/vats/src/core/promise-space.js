@@ -168,7 +168,7 @@ export const makePromiseSpace = (optsOrLog = {}) => {
   /** @type {PromiseSpaceOf<T>['consume']} */
   // @ts-expect-error cast
   const consume = new Proxy(harden({}), {
-    get: (_target, name) => {
+    get: async (_target, name) => {
       assert.typeof(name, 'string');
       return provideState(name).pk.promise;
     },

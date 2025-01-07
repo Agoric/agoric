@@ -154,7 +154,9 @@ export const makePriceFeedDriver = async (
   const priceFeedName = oracleBrandFeedName(collateralBrandKey, 'USD');
 
   const oracleWallets = await Promise.all(
-    oracleAddresses.map(addr => walletFactoryDriver.provideSmartWallet(addr)),
+    oracleAddresses.map(async addr =>
+      walletFactoryDriver.provideSmartWallet(addr),
+    ),
   );
 
   let nonce = 0;
@@ -165,7 +167,7 @@ export const makePriceFeedDriver = async (
     nonce += 1;
     adminOfferId = `accept-${collateralBrandKey}-oracleInvitation${nonce}`;
     return Promise.all(
-      oracleWallets.map(w =>
+      oracleWallets.map(async w =>
         w.executeOffer({
           id: adminOfferId,
           invitationSpec: {
@@ -185,7 +187,7 @@ export const makePriceFeedDriver = async (
   return {
     async setPrice(price: number) {
       await Promise.all(
-        oracleWallets.map(w =>
+        oracleWallets.map(async w =>
           w.executeOfferMaker(
             Offers.fluxAggregator.PushPrice,
             {
@@ -229,7 +231,7 @@ export const makeGovernanceDriver = async (
   let invitationsAccepted = false;
 
   const smartWallets = await Promise.all(
-    committeeAddresses.map(address =>
+    committeeAddresses.map(async address =>
       walletFactoryDriver.provideSmartWallet(address),
     ),
   );
@@ -385,7 +387,7 @@ export const makeGovernanceDriver = async (
     voteId = 'voteInNewLimit',
     committeeId = committeeMembershipId,
   ) => {
-    const promises = members.map(member =>
+    const promises = members.map(async member =>
       member.voteOnLatestProposal(voteId, committeeId),
     );
     await Promise.all(promises);

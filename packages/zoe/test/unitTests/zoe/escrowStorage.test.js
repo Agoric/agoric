@@ -97,13 +97,13 @@ test('provideEscrowStorage', async t => {
   });
 
   await Promise.all(
-    Object.entries(initialAllocation).map(([keyword, amount]) =>
+    Object.entries(initialAllocation).map(async ([keyword, amount]) =>
       assertAmountsEqual(t, amount, initialAllocation2[keyword]),
     ),
   );
 
   await Promise.all(
-    Object.entries(initialAllocation2).map(([keyword, amount]) =>
+    Object.entries(initialAllocation2).map(async ([keyword, amount]) =>
       assertAmountsEqual(t, amount, initialAllocation[keyword]),
     ),
   );
@@ -166,10 +166,13 @@ test('payments without matching give keywords', async t => {
     },
   });
 
-  await t.throwsAsync(() => depositPayments(proposal, paymentPKeywordRecord), {
-    message:
-      'The "Moola" keyword in the paymentKeywordRecord was not a keyword in proposal.give, which had keywords: ["GameTicket","Money"]',
-  });
+  await t.throwsAsync(
+    async () => depositPayments(proposal, paymentPKeywordRecord),
+    {
+      message:
+        'The "Moola" keyword in the paymentKeywordRecord was not a keyword in proposal.give, which had keywords: ["GameTicket","Money"]',
+    },
+  );
 });
 
 test(`give keywords without matching payments`, async t => {
@@ -201,8 +204,11 @@ test(`give keywords without matching payments`, async t => {
     },
   });
 
-  await t.throwsAsync(() => depositPayments(proposal, paymentPKeywordRecord), {
-    message:
-      'The "Money" keyword in proposal.give did not have an associated payment in the paymentKeywordRecord, which had keywords: ["GameTicket"]',
-  });
+  await t.throwsAsync(
+    async () => depositPayments(proposal, paymentPKeywordRecord),
+    {
+      message:
+        'The "Money" keyword in proposal.give did not have an associated payment in the paymentKeywordRecord, which had keywords: ["GameTicket"]',
+    },
+  );
 });

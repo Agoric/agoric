@@ -220,7 +220,7 @@ export const makeInterCommand = (
   };
 
   /** @param {number} ms */
-  const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const delay = async ms => new Promise(resolve => setTimeout(resolve, ms));
   const show = (info, indent = false) =>
     stdout.write(
       `${JSON.stringify(info, bigintReplacer, indent ? 2 : undefined)}\n`,

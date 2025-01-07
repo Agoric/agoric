@@ -100,7 +100,9 @@ test.before(async t => {
     reserve: bundleCache.load(contractRoots.reserve, 'reserve'),
     auctioneer: bundleCache.load(contractRoots.auctioneer, 'auction'),
   });
-  const installation = objectMap(bundles, bundle => E(zoe).install(bundle));
+  const installation = objectMap(bundles, async bundle =>
+    E(zoe).install(bundle),
+  );
 
   const feeMintAccess = await feeMintAccessP;
   const contextPs = {
@@ -2141,7 +2143,7 @@ test('Bug 7422 vault reinstated with no assets', async t => {
     lockedQuote: null,
   });
 
-  const openVault = (collateral, want) =>
+  const openVault = async (collateral, want) =>
     E(zoe).offer(
       E(aethCollateralManager).makeVaultInvitation(),
       harden({
@@ -2377,7 +2379,7 @@ test('Bug 7346 excess collateral to holder', async t => {
     lockedQuote: null,
   });
 
-  const openVault = (collateral, want) =>
+  const openVault = async (collateral, want) =>
     E(zoe).offer(
       E(aethCollateralManager).makeVaultInvitation(),
       harden({
@@ -2831,7 +2833,7 @@ test('Bug 7784 reconstitute both', async t => {
     lockedQuote: null,
   });
 
-  const openVault = (collateral, want) =>
+  const openVault = async (collateral, want) =>
     E(zoe).offer(
       E(aethCollateralManager).makeVaultInvitation(),
       harden({
@@ -3050,7 +3052,7 @@ test('Bug 7796 missing lockedPrice', async t => {
     lockedQuote: null,
   });
 
-  const openVault = (collateral, want) =>
+  const openVault = async (collateral, want) =>
     E(zoe).offer(
       E(aethCollateralManager).makeVaultInvitation(),
       harden({
@@ -3328,7 +3330,7 @@ test('Bug 7851 & no bidders', async t => {
     lockedQuote: null,
   });
 
-  const openVault = (collateral, want) =>
+  const openVault = async (collateral, want) =>
     E(zoe).offer(
       E(aethCollateralManager).makeVaultInvitation(),
       harden({

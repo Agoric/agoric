@@ -103,7 +103,7 @@ export const startClient = async ({
 
   // Tell the http server about our presences.  This can be called in
   // any order (whether localBundle and/or chainBundle are set or not).
-  const updatePresences = () =>
+  const updatePresences = async () =>
     E(vats.http).setPresences(localBundle, chainBundle, deprecated);
 
   const { D } = vatPowers;

@@ -12,7 +12,7 @@ const start = async (zcf, privateArgs) => {
   const run10 = AmountMath.make(runMint.getIssuerRecord().brand, 10n);
 
   const creatorFacet = Far('creatorFacet', {
-    mintRun: () => {
+    mintRun: async () => {
       const { zcfSeat, userSeat } = zcf.makeEmptySeatKit();
       runMint.mintGains(harden({ RUN: run10 }), zcfSeat);
       zcfSeat.exit();

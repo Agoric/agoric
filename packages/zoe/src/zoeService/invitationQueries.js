@@ -22,11 +22,11 @@ export const makeInvitationQueryFns = invitationIssuer => {
   };
 
   /** @type {GetInstance} */
-  const getInstance = invitation =>
+  const getInstance = async invitation =>
     E.get(getInvitationDetails(invitation)).instance;
 
   /** @type {GetInstallation} */
-  const getInstallation = invitation =>
+  const getInstallation = async invitation =>
     E.get(getInvitationDetails(invitation)).installation;
 
   return harden({

@@ -88,7 +88,7 @@ export const makeSlogSender = async (opts = {}) => {
     slogSenderModules.map(async moduleIdentifier =>
       import(moduleIdentifier)
         .then(
-          /** @param {{makeSlogSender: import('./index.js').MakeSlogSender}} module */ ({
+          /** @param {{makeSlogSender: import('./index.js').MakeSlogSender}} module */ async ({
             makeSlogSender: maker,
           }) => {
             if (typeof maker !== 'function') {
@@ -160,13 +160,13 @@ export const makeSlogSender = async (opts = {}) => {
     return Object.assign(slogSender, {
       forceFlush: async () =>
         PromiseAllOrErrors([
-          ...senders.map(sender => sender.forceFlush?.()),
-          ...sendErrors.splice(0).map(err => Promise.reject(err)),
+          ...senders.map(async sender => sender.forceFlush?.()),
+          ...sendErrors.splice(0).map(async err => Promise.reject(err)),
         ]).then(() => {}),
       shutdown: async () =>
-        PromiseAllOrErrors(senders.map(sender => sender.shutdown?.())).then(
-          () => {},
-        ),
+        PromiseAllOrErrors(
+          senders.map(async sender => sender.shutdown?.()),
+        ).then(() => {}),
       usesJsonObject: hasSenderUsingJsonObj,
     });
   }

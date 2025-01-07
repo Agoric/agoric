@@ -249,7 +249,7 @@ export const makeStartInstance = (
           privateArgs: newPrivateArgs,
         };
 
-        return E.when(getFreshZcfBundleCap(), bCap =>
+        return E.when(getFreshZcfBundleCap(), async bCap =>
           E(state.adminNode).upgrade(bCap, { vatParameters }),
         );
       },
@@ -263,7 +263,7 @@ export const makeStartInstance = (
           privateArgs: newPrivateArgs,
         };
         state.contractBundleCap = newContractBundleCap;
-        return E.when(getFreshZcfBundleCap(), bCap =>
+        return E.when(getFreshZcfBundleCap(), async bCap =>
           E(state.adminNode).upgrade(bCap, { vatParameters }),
         );
       },

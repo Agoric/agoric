@@ -86,7 +86,7 @@ const startContract = async (
   );
 
   const opInvs = await Promise.all(
-    [...Array(operatorQty).keys()].map(opIx =>
+    [...Array(operatorQty).keys()].map(async opIx =>
       E(startKit.creatorFacet).makeOperatorInvitation(`operator-${opIx}`),
     ),
   );
@@ -248,7 +248,7 @@ const makeOracleOperator = async (
   return harden({
     watch: () => {
       void observeIteration(subscribeEach(txSubscriber), {
-        updateState: ({ evidence, isRisk }) => {
+        updateState: async ({ evidence, isRisk }) => {
           if (!active) {
             return;
           }
@@ -258,7 +258,7 @@ const makeOracleOperator = async (
               evidence,
               isRisk ? { risksIdentified: ['RISK1'] } : {},
             ),
-            inv =>
+            async inv =>
               E.when(E(E(zoe).offer(inv)).getOfferResult(), res => {
                 t.is(res, 'inert; nothing should be expected from this offer');
                 done += 1;
@@ -322,8 +322,8 @@ const makeLP = async (
       const payments = { USDC: await E(usdcPurse).withdraw(give.USDC) };
       const payout = await E(zoe)
         .offer(toDeposit, proposal, payments)
-        .then(seat => E(seat).getPayout('PoolShare'))
-        .then(pmt => E(sharePurse).deposit(pmt))
+        .then(async seat => E(seat).getPayout('PoolShare'))
+        .then(async pmt => E(sharePurse).deposit(pmt))
         .then(a => a as Amount<'nat'>);
       t.log(name, 'deposit payout', ...logAmt(payout));
       t.true(isGTE(payout, proposal.want.PoolShare));
@@ -350,8 +350,10 @@ const makeLP = async (
       const toWithdraw = await E(publicFacet).makeWithdrawInvitation();
       const usdcPmt = await E(sharePurse)
         .withdraw(proposal.give.PoolShare)
-        .then(pmt => E(zoe).offer(toWithdraw, proposal, { PoolShare: pmt }))
-        .then(seat => E(seat).getPayout('USDC'));
+        .then(async pmt =>
+          E(zoe).offer(toWithdraw, proposal, { PoolShare: pmt }),
+        )
+        .then(async seat => E(seat).getPayout('USDC'));
       const amt = await E(usdcPurse).deposit(usdcPmt);
       t.log(name, 'withdraw payout', ...logAmt(amt));
       t.true(isGTE(amt, proposal.want.USDC));

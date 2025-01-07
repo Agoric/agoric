@@ -200,7 +200,7 @@ export const makeOnewayPriceAuthorityKit = opts => {
           amountOutLimit = coercedAmountOutLimit;
           void fireTriggers(createQuote);
         },
-        getPromise: () => triggerPK.promise,
+        getPromise: async () => triggerPK.promise,
       });
 
       /** @type {PriceQuoteTrigger} */

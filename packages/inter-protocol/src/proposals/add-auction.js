@@ -189,7 +189,7 @@ export const addAuction = async (
   const allIssuers = await E(zoe).getIssuers(legacyKit.instance);
   const { Bid: _istIssuer, ...auctionIssuers } = allIssuers;
   await Promise.all(
-    Object.keys(auctionIssuers).map(kwd =>
+    Object.keys(auctionIssuers).map(async kwd =>
       E(governedCreatorFacet).addBrand(
         /** @type {Issuer<'nat'>} */ (auctionIssuers[kwd]),
         kwd,

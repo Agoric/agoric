@@ -58,7 +58,8 @@ const GAS_ADJUSTMENT = '1.2';
  * @param {number} ms
  * @returns {Promise<void>}
  */
-const delay = ms => new Promise(resolve => setTimeout(() => resolve(), ms));
+const delay = async ms =>
+  new Promise(resolve => setTimeout(() => resolve(), ms));
 
 export default async function startMain(progname, rawArgs, powers, opts) {
   const { anylogger, fs, spawn, now, process } = powers;
@@ -95,10 +96,10 @@ export default async function startMain(progname, rawArgs, powers, opts) {
   let keysSpawn;
   if (!opts.dockerTag) {
     const { cosmosHelper } = getSDKBinaries(sdkPrefixes);
-    keysSpawn = (args, ...rest) =>
+    keysSpawn = async (args, ...rest) =>
       pspawn(cosmosHelper, [`--home=_agstate/keys`, ...args], ...rest);
   } else {
-    keysSpawn = (args, ...rest) =>
+    keysSpawn = async (args, ...rest) =>
       pspawn(
         'docker',
         [
@@ -279,10 +280,10 @@ export default async function startMain(progname, rawArgs, powers, opts) {
     /** @type {(args: string[], spawnOpts?: Parameters<typeof pspawn>[2], dockerArgs?: string[]) => ReturnType<pspawn>} */
     let chainSpawn;
     if (!popts.dockerTag) {
-      chainSpawn = (args, spawnOpts) =>
+      chainSpawn = async (args, spawnOpts) =>
         pspawn(cosmosChain, [...args, `--home=${serverDir}`], spawnOpts);
     } else {
-      chainSpawn = (args, spawnOpts, dockerArgs = []) =>
+      chainSpawn = async (args, spawnOpts, dockerArgs = []) =>
         pspawn(
           'docker',
           [
@@ -485,9 +486,9 @@ export default async function startMain(progname, rawArgs, powers, opts) {
     /** @type {(args: string[], spawnOpts?: Parameters<typeof pspawn>[2], dockerArgs?: string[]) => ReturnType<pspawn>} */
     let soloSpawn;
     if (!popts.dockerTag) {
-      soloSpawn = (args, spawnOpts) => pspawn(agSolo, args, spawnOpts);
+      soloSpawn = async (args, spawnOpts) => pspawn(agSolo, args, spawnOpts);
     } else {
-      soloSpawn = (args, spawnOpts, dockerArgs = []) =>
+      soloSpawn = async (args, spawnOpts, dockerArgs = []) =>
         pspawn(
           'docker',
           [
@@ -705,7 +706,7 @@ export default async function startMain(progname, rawArgs, powers, opts) {
       await rmVerbose(serverDir);
     }
 
-    const setupRun = (...bonusArgs) =>
+    const setupRun = async (...bonusArgs) =>
       pspawn('docker', [
         'run',
         `-p127.0.0.1:${HOST_PORT}:${port}`,
@@ -732,7 +733,7 @@ export default async function startMain(progname, rawArgs, powers, opts) {
       await rmVerbose(serverDir);
     }
 
-    const setupRun = (...bonusArgs) =>
+    const setupRun = async (...bonusArgs) =>
       pspawn(agSolo, [`--webport=${port}`, ...bonusArgs], {
         env: { ...pspawnEnv, AG_SOLO_BASEDIR: serverDir },
       });

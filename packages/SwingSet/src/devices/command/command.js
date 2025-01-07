@@ -9,7 +9,7 @@ export default function buildCommand(broadcastCallback) {
   let nextCount = 0n;
   const responses = new Map();
 
-  function inboundCommand(obj) {
+  async function inboundCommand(obj) {
     // deliver the JSON-serializable object to the registered handler, and
     // return a promise that fires with a JSON-serializable object in
     // response

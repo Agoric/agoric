@@ -52,7 +52,7 @@ export const provideEscrowStorage = baggage => {
 
   /** @type {WithdrawPayments} */
   const withdrawPayments = allocation =>
-    objectMap(allocation, amount =>
+    objectMap(allocation, async amount =>
       E(brandToPurse.get(amount.brand)).withdraw(amount),
     );
 
@@ -64,9 +64,9 @@ export const provideEscrowStorage = baggage => {
    * @param {Amount} amount
    * @returns {Promise<Amount>}
    */
-  const doDepositPayment = (paymentP, amount) => {
+  const doDepositPayment = async (paymentP, amount) => {
     const purse = brandToPurse.get(amount.brand);
-    return E.when(paymentP, payment => E(purse).deposit(payment, amount));
+    return E.when(paymentP, async payment => E(purse).deposit(payment, amount));
   };
 
   // Proposal is cleaned, but payments are not
@@ -96,7 +96,7 @@ export const provideEscrowStorage = baggage => {
     // offer safety and payout liveness are still meaningful as long
     // as issuers are well-behaved. For more, see
     // https://github.com/Agoric/agoric-sdk/issues/1271
-    const depositPs = objectMap(give, (amount, keyword) => {
+    const depositPs = objectMap(give, async (amount, keyword) => {
       payments[keyword] !== undefined ||
         Fail`The ${q(
           keyword,

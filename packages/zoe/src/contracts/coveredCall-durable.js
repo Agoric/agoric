@@ -58,7 +58,7 @@ const start = async (zcf, _privateArgs, instanceBaggage) => {
   );
 
   /** @type {OfferHandler} */
-  const makeOption = sellSeat => {
+  const makeOption = async sellSeat => {
     mustMatch(
       sellSeat.getProposal(),
       M.splitRecord({ exit: { afterDeadline: M.any() } }),

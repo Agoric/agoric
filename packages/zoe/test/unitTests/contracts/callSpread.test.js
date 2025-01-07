@@ -20,7 +20,7 @@ const fundedCallSpread = `${dirname}/../../../src/contracts/callSpread/fundedCal
 const pricedCallSpread = `${dirname}/../../../src/contracts/callSpread/pricedCallSpread.js`;
 const simpleExchange = `${dirname}/../../../src/contracts/simpleExchange.js`;
 
-const makeTestPriceAuthority = (brands, priceList, timer) =>
+const makeTestPriceAuthority = async (brands, priceList, timer) =>
   makeFakePriceAuthority({
     actualBrandIn: brands.get('simoleans'),
     actualBrandOut: brands.get('moola'),

@@ -156,7 +156,7 @@ test('makeNotifierFromSubscriber(fails) - getUpdateSince', async t => {
     [1, 2, 4, 8, 16, 32],
     'only the last of values published between iteration steps should be observed',
   );
-  await t.throwsAsync(() => notifier.getUpdateSince(), { is: failure });
+  await t.throwsAsync(async () => notifier.getUpdateSince(), { is: failure });
 });
 
 test('makeNotifierKit - getUpdateSince timing', async t => {
@@ -247,7 +247,7 @@ test('makeNotifierFromSubscriber - updateCount validation', async t => {
     conclusionValue: 'done',
   });
   const notifier = makeNotifierFromSubscriber(subscriber);
-  await t.throwsAsync(() => notifier.getUpdateSince(1n));
+  await t.throwsAsync(async () => notifier.getUpdateSince(1n));
 });
 
 test('makeNotifierFromSubscriber - getUpdateSince() result identity', async t => {

@@ -178,7 +178,7 @@ harden(extractPowers);
  * @param {Record<string, Record<string, unknown>>} opts.manifest
  * @param {(name: string, permit: Record<string, unknown>) => unknown} opts.makeConfig
  */
-export const runModuleBehaviors = ({
+export const runModuleBehaviors = async ({
   allPowers,
   behaviors,
   manifest,
@@ -221,7 +221,7 @@ export const makePromiseSpaceForNameHub = (nameAdmin, log = noop) => {
         logHooks.onAddKey(name);
       },
       onResolve: (name, valueP) => {
-        void E.when(valueP, value => E(nameAdmin).update(name, value));
+        void E.when(valueP, async value => E(nameAdmin).update(name, value));
       },
       onReset: name => {
         void E(nameAdmin).delete(name);
@@ -361,7 +361,7 @@ export const makeVatSpace = (
   const consume = new Proxy(
     {},
     {
-      get: (_target, name, _rx) => {
+      get: async (_target, name, _rx) => {
         assert.typeof(name, 'string');
         return provideAsync(name, createVatByName).then(vat => {
           if (!durableStore.has(name)) {

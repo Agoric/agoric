@@ -102,7 +102,7 @@ const makeEProxyHandler = (recipient, HandledPromise, unwrap) =>
         }[propertyKey],
       );
     },
-    apply: (_target, _thisArg, argArray = []) => {
+    apply: async (_target, _thisArg, argArray = []) => {
       if (onSend && onSend.shouldBreakpoint(recipient, undefined)) {
         // eslint-disable-next-line no-debugger
         debugger; // LOOK UP THE STACK
@@ -194,11 +194,11 @@ const makeEGetProxyHandler = (x, HandledPromise, unwrap) =>
   harden({
     ...baseFreezableProxyHandler,
     has: (_target, _prop) => true,
-    get: (_target, prop) => HandledPromise.get(unwrap(x), prop),
+    get: async (_target, prop) => HandledPromise.get(unwrap(x), prop),
   });
 
 /** @param {any} x */
-const resolve = x => HandledPromise.resolve(x);
+const resolve = async x => HandledPromise.resolve(x);
 
 /**
  * @template [A={}]
@@ -257,7 +257,7 @@ const makeE = (HandledPromise, powers = {}) => {
          * @returns {Promise<Awaited<T>>} handled promise for x
          * @readonly
          */
-        resolve: x => resolve(unwrap(x)),
+        resolve: async x => resolve(unwrap(x)),
 
         /**
          * E.sendOnly returns a proxy similar to E, but for which the results
@@ -289,7 +289,7 @@ const makeE = (HandledPromise, powers = {}) => {
          * @returns {Promise<TResult1 | TResult2>}
          * @readonly
          */
-        when: (x, onfulfilled, onrejected) => {
+        when: async (x, onfulfilled, onrejected) => {
           const unwrapped = resolve(unwrap(x));
           if (onfulfilled == null && onrejected == null) {
             return unwrapped;

@@ -131,7 +131,7 @@ const start = zcf => {
      *
      * @returns {Promise<Payment>}
      */
-    makeRemoveInventoryInvitation: () => {
+    makeRemoveInventoryInvitation: async () => {
       return zcf.makeInvitation(removeInventory, 'removeInventory');
     },
     makeQuote,

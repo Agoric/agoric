@@ -50,7 +50,7 @@ export const withAmountUtils = kit => {
 /**
  * @param {ERef<StoredFacet>} subscription
  */
-export const subscriptionKey = subscription => {
+export const subscriptionKey = async subscription => {
   return E(subscription)
     .getStoreKey()
     .then(storeKey => {
@@ -163,7 +163,7 @@ export const makeMockTestSpace = async log => {
  * }>} hasTopics
  * @param {string} subscriberName
  */
-export const topicPath = (hasTopics, subscriberName) => {
+export const topicPath = async (hasTopics, subscriberName) => {
   return E(hasTopics)
     .getPublicTopics()
     .then(subscribers => subscribers[subscriberName])

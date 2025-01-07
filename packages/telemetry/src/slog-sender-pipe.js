@@ -60,7 +60,7 @@ export const makeSlogSender = async opts => {
      * @template {{type: string}} T
      * @param {T} msg
      */
-    msg =>
+    async msg =>
       /** @type {Promise<void>} */ (
         new Promise((resolve, reject) => {
           cp.send(msg, err => {

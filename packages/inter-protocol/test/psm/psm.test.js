@@ -379,7 +379,7 @@ test('limit is for minted', async t => {
   const giveTooMuch = anchor.make(MINT_LIMIT);
   const seat1 = await driver.swapAnchorForMintedSeat(giveTooMuch);
   await t.throwsAsync(
-    () => E(seat1).getOfferResult(),
+    async () => E(seat1).getOfferResult(),
     {
       message: 'Request would exceed mint limit',
     },
@@ -662,7 +662,7 @@ test('wrong give giveMintedInvitation', async t => {
   const { publicFacet } = await makePsmDriver(t);
   const giveAnchor = anchor.units(200);
   await t.throwsAsync(
-    () =>
+    async () =>
       E(zoe).offer(
         E(publicFacet).makeGiveMintedInvitation(),
         harden({ give: { In: giveAnchor } }),
@@ -691,7 +691,7 @@ test('wrong give wantMintedInvitation', async t => {
     zoe,
   });
   await t.throwsAsync(
-    () =>
+    async () =>
       E(zoe).offer(
         E(publicFacet).makeWantMintedInvitation(),
         harden({ give: { In: giveIST } }),
@@ -710,7 +710,7 @@ test('extra give wantMintedInvitation', async t => {
   const giveAnchor = anchor.units(200);
   const mint = NonNullish(anchor.mint);
   await t.throwsAsync(
-    () =>
+    async () =>
       E(zoe).offer(
         E(publicFacet).makeWantMintedInvitation(),
         harden({ give: { In: giveAnchor, Extra: giveAnchor } }),
@@ -814,12 +814,12 @@ test('restore PSM: startPSM with previous metrics, params', async t => {
 
   // Run code under test
   await Promise.all([
-    ...anchorAssets.map(anchorOptions =>
+    ...anchorAssets.map(async anchorOptions =>
       makeAnchorAsset(powers, {
         options: { anchorOptions },
       }),
     ),
-    ...anchorAssets.map(anchorOptions =>
+    ...anchorAssets.map(async anchorOptions =>
       startPSM(powers, {
         options: { anchorOptions },
       }),

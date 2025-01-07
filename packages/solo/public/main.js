@@ -240,7 +240,7 @@ function run() {
         setNextHistNum(res.highestHistory + 1);
         // console.debug(`nextHistNum is now ${nextHistNum}`, res);
       })
-      .then(_ => call({ type: 'rebroadcastHistory' }))
+      .then(async _ => call({ type: 'rebroadcastHistory' }))
       .catch(_ => ws.close());
   });
 
@@ -324,7 +324,7 @@ run();
 // Display version information, if possible.
 const fetches = [];
 const fgr = fetch('/git-revision.txt')
-  .then(resp => {
+  .then(async resp => {
     if (resp.status < 200 || resp.status >= 300) {
       throw Error(`status ${resp.status}`);
     }
@@ -340,7 +340,7 @@ const fgr = fetch('/git-revision.txt')
 fetches.push(fgr);
 
 const fpj = fetch('/package.json')
-  .then(resp => resp.json())
+  .then(async resp => resp.json())
   .catch(e => {
     console.log('Cannot fetch /package.json', e);
     return {};

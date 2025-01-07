@@ -11,7 +11,7 @@ import { openJSONStore } from './json-store.js';
  * @param {BufferEncoding} [opts.stringBase]
  * @param {number} [opts.byteLength]
  */
-export function generateAccessToken({
+export async function generateAccessToken({
   stringBase = 'base64url',
   byteLength = 48,
 } = {}) {

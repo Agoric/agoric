@@ -130,8 +130,11 @@ export const prepareContractGovernorKit = (baggage, powers) => {
             trace('setupApiGovernance');
             apiGovernance = governedNames.length
               ? // @ts-expect-error FIXME
-                setupApiGovernance(governedApis, governedNames, timer, () =>
-                  this.facets.helper.getUpdatedPoserFacet(),
+                setupApiGovernance(
+                  governedApis,
+                  governedNames,
+                  timer,
+                  async () => this.facets.helper.getUpdatedPoserFacet(),
                 )
               : {
                   // if we aren't governing APIs, voteOnApiInvocation shouldn't be called
@@ -149,7 +152,7 @@ export const prepareContractGovernorKit = (baggage, powers) => {
             const { creatorFacet } = this.state;
             filterGovernance = setupFilterGovernance(
               timer,
-              () => this.facets.helper.getUpdatedPoserFacet(),
+              async () => this.facets.helper.getUpdatedPoserFacet(),
               creatorFacet,
             );
           }
@@ -160,10 +163,10 @@ export const prepareContractGovernorKit = (baggage, powers) => {
             const { timer } = powers;
             const { creatorFacet, instance } = this.state;
             paramGovernance = setupParamGovernance(
-              () => E(creatorFacet).getParamMgrRetriever(),
+              async () => E(creatorFacet).getParamMgrRetriever(),
               instance,
               timer,
-              () => this.facets.helper.getUpdatedPoserFacet(),
+              async () => this.facets.helper.getUpdatedPoserFacet(),
             );
           }
           return paramGovernance;
@@ -247,7 +250,9 @@ export const prepareContractGovernorKit = (baggage, powers) => {
             helper.provideParamGovernance(),
           ];
           const checks = await Promise.all(
-            validators.map(validate => E(validate.createdQuestion)(counter)),
+            validators.map(async validate =>
+              E(validate.createdQuestion)(counter),
+            ),
           );
 
           checks.some(Boolean) ||

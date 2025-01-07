@@ -12,9 +12,9 @@ import { makeBorrowInvitation } from './borrow.js';
 // already exited with their loan.)
 
 /** @type {MakeLendInvitation} */
-export const makeLendInvitation = (zcf, config) => {
+export const makeLendInvitation = async (zcf, config) => {
   /** @type {OfferHandler} */
-  const lend = lenderSeat => {
+  const lend = async lenderSeat => {
     // Lender will want the interest earned from the loan + their
     // refund or the results of the liquidation. If the price of
     // collateral drops before we get the chance to liquidate, the

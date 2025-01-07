@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { bundlePaths, hashPaths } from './paths.js';
 
-const read = (name, path) => {
+const read = async (name, path) => {
   return fs.promises.readFile(path, { encoding: 'utf-8' }).catch(err => {
     console.error(`unable to read lockdown ${name} at ${path}`);
     console.error(`perhaps run 'yarn build' in @agoric/xsnap-lockdown`);
@@ -27,5 +27,5 @@ const getBundle = async debug => {
   return read('bundle', path).then(bundleString => JSON.parse(bundleString));
 };
 
-export const getLockdownBundle = () => getBundle(false);
-export const getDebugLockdownBundle = () => getBundle(true);
+export const getLockdownBundle = async () => getBundle(false);
+export const getDebugLockdownBundle = async () => getBundle(true);

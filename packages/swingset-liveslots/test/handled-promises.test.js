@@ -174,7 +174,7 @@ test('past-incarnation watched promises', async t => {
   const nextPImport = () => (lastPImport += 1);
   const nextPExport = () => (lastPExport += 1);
   /** @type {typeof rawDispatch} */
-  const dispatchMessage = (...args) => {
+  const dispatchMessage = async (...args) => {
     dispatches += 1;
     return rawDispatch(...args);
   };

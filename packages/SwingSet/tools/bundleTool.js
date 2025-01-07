@@ -32,7 +32,7 @@ const providedCaches = new Map();
  * @param {number} [pid]
  * @returns {Promise<BundleCache>}
  */
-export const provideBundleCache = (dest, options, loadModule, pid) => {
+export const provideBundleCache = async (dest, options, loadModule, pid) => {
   const uniqueDest = [dest, options.format, options.dev].join('-');
   // store the promise instead of awaiting to prevent a race
   let bundleCache = providedCaches.get(uniqueDest);
@@ -48,5 +48,5 @@ harden(provideBundleCache);
  * @param {string} dest
  * @returns {Promise<BundleCache>}
  */
-export const unsafeMakeBundleCache = dest =>
-  makeNodeBundleCache(dest, {}, s => import(s));
+export const unsafeMakeBundleCache = async dest =>
+  makeNodeBundleCache(dest, {}, async s => import(s));

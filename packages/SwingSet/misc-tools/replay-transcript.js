@@ -367,7 +367,7 @@ async function replay(transcriptFile) {
 
   const updateWorkersSynced = () => {
     const stepsCompleted = Promise.all(
-      workers.map(({ stepCompleted }) => stepCompleted),
+      workers.map(async ({ stepCompleted }) => stepCompleted),
     );
     const newWorkersSynced = stepsCompleted.then(() => {
       if (workersSynced === newWorkersSynced) {

@@ -66,7 +66,7 @@ export const makeVatOptionRecorder = (kernelKeeper, bundleHandler) => {
    * @param {import('../types-external.js').StaticVatOptions} staticOptions
    * @returns {Promise<void>}
    */
-  const recordStatic = (vatID, source, staticOptions) => {
+  const recordStatic = async (vatID, source, staticOptions) => {
     const options = { ...staticOptions, meterID: undefined };
     return record(vatID, source, options);
   };
@@ -81,7 +81,7 @@ export const makeVatOptionRecorder = (kernelKeeper, bundleHandler) => {
    * @param {import('../types-internal.js').InternalDynamicVatOptions} dynamicOptions
    * @returns {Promise<void>}
    */
-  const recordDynamic = (vatID, source, dynamicOptions) => {
+  const recordDynamic = async (vatID, source, dynamicOptions) => {
     const options = { ...dynamicOptions, enableDisavow: false };
     return record(vatID, source, options);
   };

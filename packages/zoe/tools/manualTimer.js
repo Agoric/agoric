@@ -101,7 +101,7 @@ export const buildZoeManualTimer = (
   const toRT = rt =>
     TimeMath.coerceRelativeTimeRecord(rt, timerService.getTimerBrand());
 
-  const tick = msg => {
+  const tick = async msg => {
     const oldTime = timerService.getCurrentTimestamp();
     const newTime = TimeMath.addAbsRel(oldTime, toRT(timeStepValue));
     timerService.advanceTo(TimeMath.absValue(newTime), msg);

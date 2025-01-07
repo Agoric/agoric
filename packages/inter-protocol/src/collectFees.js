@@ -11,7 +11,12 @@ import { atomicTransfer } from '@agoric/zoe/src/contractSupport/index.js';
  * @param {string} keyword
  * @returns {Promise<Invitation<string>>}
  */
-export const makeCollectFeesInvitation = (zcf, feeSeat, feeBrand, keyword) => {
+export const makeCollectFeesInvitation = async (
+  zcf,
+  feeSeat,
+  feeBrand,
+  keyword,
+) => {
   const collectFees = seat => {
     const amount = feeSeat.getAmountAllocated(keyword, feeBrand);
     atomicTransfer(zcf, feeSeat, seat, { [keyword]: amount }, { Fee: amount });

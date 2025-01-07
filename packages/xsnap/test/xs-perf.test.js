@@ -21,7 +21,7 @@ const shape = obj => fromEntries(entries(obj).map(([p, v]) => [p, typeof v]));
 test('meter details', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   const result = await vat.evaluate(`
   let m = new Map();
   let s1 = new Set();
@@ -90,7 +90,7 @@ test.skip('meter timestamps', async t => {
   }
   const opts = { ...options(io), handleCommand };
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   addTimestamp('kern send delivery');
   const result = await vat.evaluate(
     `let send = msg => issueCommand(new TextEncoder().encode(msg).buffer); send('1'); send('2')`,
@@ -142,9 +142,9 @@ test.skip('meter timestamps', async t => {
 test('isReady does not compute / allocate', async t => {
   const opts = options(io);
   const vat1 = await xsnap(opts);
-  t.teardown(() => vat1.terminate());
+  t.teardown(async () => vat1.terminate());
   const vat2 = await xsnap(opts);
-  t.teardown(() => vat2.terminate());
+  t.teardown(async () => vat2.terminate());
 
   await vat1.evaluate('null');
   const { meterUsage: m1 } = await vat1.evaluate('null');
@@ -163,7 +163,7 @@ test('isReady does not compute / allocate', async t => {
 test('metering regex - REDOS', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   // Java Classname Evil Regex
   // https://en.wikipedia.org/wiki/ReDoS
   // http://www.owasp.org/index.php/OWASP_Validation_Regex_Repository
@@ -177,7 +177,7 @@ test('metering regex - REDOS', async t => {
 test('meter details are still available with no limit', async t => {
   const opts = options(io);
   const vat = await xsnap({ ...opts, meteringLimit: 0 });
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   const result = await vat.evaluate(`
   for (ix = 0; ix < 200; ix++) {
   }
@@ -195,7 +195,7 @@ test('meter details are still available with no limit', async t => {
 test('high resolution timer', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   await vat.evaluate(`
       const send = it => issueCommand(new TextEncoder().encode(JSON.stringify(it)).buffer);
 
@@ -210,7 +210,7 @@ test('high resolution timer', async t => {
 test('metering can be switched off / on at run-time', async t => {
   const opts = options(io);
   const vat = await xsnap(opts);
-  t.teardown(() => vat.terminate());
+  t.teardown(async () => vat.terminate());
   const {
     meterUsage: { compute: noUnMeteredCompute },
   } = await vat.evaluate(`

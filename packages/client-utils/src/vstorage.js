@@ -11,16 +11,19 @@
  */
 export const makeVStorage = ({ fetch }, config) => {
   /** @param {string} path */
-  const getJSON = path => {
+  const getJSON = async path => {
     const url = config.rpcAddrs[0] + path;
     // console.warn('fetching', url);
-    return fetch(url, { keepalive: true }).then(res => res.json());
+    return fetch(url, { keepalive: true }).then(async res => res.json());
   };
   // height=0 is the same as omitting height and implies the highest block
   const url = (path = 'published', { kind = 'children', height = 0 } = {}) =>
     `/abci_query?path=%22/custom/vstorage/${kind}/${path}%22&height=${height}`;
 
-  const readStorage = (path = 'published', { kind = 'children', height = 0 }) =>
+  const readStorage = async (
+    path = 'published',
+    { kind = 'children', height = 0 },
+  ) =>
     getJSON(url(path, { kind, height }))
       .catch(err => {
         throw Error(`cannot read ${kind} of ${path}: ${err.message}`);

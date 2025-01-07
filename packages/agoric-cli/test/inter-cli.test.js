@@ -176,7 +176,7 @@ const makeProcess = (t, keyring, out) => {
 
   /** @type {typeof setTimeout} */
   // @ts-expect-error mock
-  const setTimeout = (f, _ms) => Promise.resolve().then(_ => f());
+  const setTimeout = async (f, _ms) => Promise.resolve().then(_ => f());
 
   return {
     env: {},

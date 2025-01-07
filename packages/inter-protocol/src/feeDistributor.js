@@ -51,7 +51,7 @@ harden(meta);
 export const makeContractFeeCollector = (zoe, creatorFacet) => {
   /** @type {FeeCollector} */
   return Far('feeCollector', {
-    collectFees: () => {
+    collectFees: async () => {
       const invitation = E(creatorFacet).makeCollectFeesInvitation();
       const collectFeesSeat = E(zoe).offer(invitation, undefined, undefined);
       return E(collectFeesSeat).getPayout('Fee');
@@ -78,7 +78,7 @@ export const startDistributing = (
   collectionInterval = 1n,
 ) => {
   const timeObserver = {
-    updateState: _ =>
+    updateState: async _ =>
       schedulePayments().catch(e => {
         console.error('failed with', e);
         throw e;
@@ -187,7 +187,7 @@ export const sharePayment = async (
 
   // Send each nonempty payment to the corresponding destination.
   await Promise.all(
-    destinedAmountEntries.map(([destination], i) =>
+    destinedAmountEntries.map(async ([destination], i) =>
       E(destination).pushPayment(sharedPayment[i], issuer),
     ),
   );
@@ -213,7 +213,7 @@ export const makeFeeDistributor = (feeIssuer, terms) => {
   const collectors = makeScalarSetStore();
 
   /** @param {Payment<'nat'>} payment */
-  const distributeFees = payment =>
+  const distributeFees = async payment =>
     sharePayment(payment, feeIssuer, shareConfig);
 
   const schedulePayments = async () => {
@@ -221,7 +221,7 @@ export const makeFeeDistributor = (feeIssuer, terms) => {
       return;
     }
     await Promise.all(
-      [...collectors.values()].map(collector =>
+      [...collectors.values()].map(async collector =>
         E(collector).collectFees().then(distributeFees),
       ),
     );

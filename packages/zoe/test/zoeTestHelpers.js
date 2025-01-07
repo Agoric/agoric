@@ -3,7 +3,7 @@ import { E } from '@endo/eventual-send';
 
 import { AmountMath, assertValueGetHelpers } from '@agoric/ertp';
 
-export const assertAmountsEqual = (t, amount, expected, label = '') => {
+export const assertAmountsEqual = async (t, amount, expected, label = '') => {
   harden(amount);
   harden(expected);
   const l = label ? `${label} ` : '';
@@ -56,7 +56,7 @@ export const assertPayoutDeposit = (t, payout, purse, amount) => {
   return payout.then(payment => {
     E(purse)
       .deposit(payment)
-      .then(payoutAmount =>
+      .then(async payoutAmount =>
         assertAmountsEqual(
           t,
           payoutAmount,

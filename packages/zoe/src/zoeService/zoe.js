@@ -91,7 +91,7 @@ const makeDurableZoeKit = ({
   );
 
   // guarantee that vatAdminSvcP has been defined.
-  const getActualVatAdminSvcP = () => {
+  const getActualVatAdminSvcP = async () => {
     if (!vatAdminSvc) {
       throw Fail`createZCFVat did not get bundleCap`;
     }
@@ -99,7 +99,7 @@ const makeDurableZoeKit = ({
   };
 
   /** @type {GetBundleCapForID} */
-  const getBundleCapForID = bundleID => {
+  const getBundleCapForID = async bundleID => {
     return E(getActualVatAdminSvcP()).waitForBundleCap(bundleID);
   };
 
@@ -110,7 +110,7 @@ const makeDurableZoeKit = ({
   // This method contains the power to create a new ZCF Vat, and must
   // be closely held. vatAdminSvc is even more powerful - any vat can
   // be created. We severely restrict access to vatAdminSvc for this reason.
-  const createZCFVat = (contractBundleCap, contractLabel) => {
+  const createZCFVat = async (contractBundleCap, contractLabel) => {
     zcfBundleCap || Fail`createZCFVat did not get bundleCap`;
     const name =
       contractLabel &&

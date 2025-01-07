@@ -74,7 +74,7 @@ test.before(async t => {
   t.context = await makeZoeTestContext(t);
 });
 
-test.after.always(t => t.context.shutdown?.());
+test.after.always(async t => t.context.shutdown?.());
 
 test('run restart-vats proposal', async t => {
   const { controller, buildProposal, evalProposal, zoeDriver } = t.context;

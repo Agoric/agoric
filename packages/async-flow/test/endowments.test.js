@@ -102,7 +102,7 @@ const testEndowmentPlay = async (t, zone, gen, isDurable) => {
     return Far(`${iface} guest wrapper`, forwardingMethods(hRem));
   };
 
-  const makeGuestForHostVow = hVow => {
+  const makeGuestForHostVow = async hVow => {
     return when(hVow);
   };
 

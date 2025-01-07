@@ -61,7 +61,7 @@ export const start = async (zcf, privateArgs, baggage) => {
 
   trace('awaiting feeMint');
   const { feeMint } = await provideAll(baggage, {
-    feeMint: () => zcf.registerFeeMint('Fee', privateArgs.feeMintAccess),
+    feeMint: async () => zcf.registerFeeMint('Fee', privateArgs.feeMintAccess),
   });
 
   const makeAssetReserveKit = await prepareAssetReserveKit(baggage, {

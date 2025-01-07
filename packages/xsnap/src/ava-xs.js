@@ -11,7 +11,7 @@ import bundleSource from '@endo/bundle-source';
 import { main, makeBundleResolve } from './avaXS.js';
 
 Promise.resolve()
-  .then(_ =>
+  .then(async _ =>
     main(process.argv.slice(2), {
       bundleSource,
       spawn,

@@ -351,7 +351,7 @@ export const prepareVaultManagerKit = (
           const { facets } = this;
           const { collateralBrand, debtBrand } = this.state;
           return zcf.makeInvitation(
-            seat => this.facets.self.makeVaultKit(seat),
+            async seat => this.facets.self.makeVaultKit(seat),
             facets.manager.scopeDescription('MakeVault'),
             undefined,
             M.splitRecord({
@@ -407,7 +407,7 @@ export const prepareVaultManagerKit = (
 
           trace('helper.start() starting observe periodNotifier');
           void observeNotifier(periodNotifier, {
-            updateState: updateTime =>
+            updateState: async updateTime =>
               facets.helper
                 .chargeAllVaults(updateTime)
                 .catch(e =>
@@ -569,7 +569,7 @@ export const prepareVaultManagerKit = (
           trace('Sending to reserve: ', penalty);
 
           // don't wait for response
-          void E.when(invitation, invite => {
+          void E.when(invitation, async invite => {
             const proposal = { give: { Collateral: penalty } };
             return offerTo(
               zcf,
@@ -627,7 +627,8 @@ export const prepareVaultManagerKit = (
 
           E.when(
             factoryPowers.getShortfallReporter(),
-            reporter => E(reporter).increaseLiquidationShortfall(shortfall),
+            async reporter =>
+              E(reporter).increaseLiquidationShortfall(shortfall),
             err =>
               console.error(
                 '🛠️ getShortfallReporter() failed during liquidation; repair by updating governance',
@@ -1211,7 +1212,7 @@ export const prepareVaultManagerKit = (
 
           const { userSeatPromise, deposited } = await E.when(
             E(auctionPF).makeDepositInvitation(),
-            depositInvitation =>
+            async depositInvitation =>
               offerTo(
                 zcf,
                 depositInvitation,
