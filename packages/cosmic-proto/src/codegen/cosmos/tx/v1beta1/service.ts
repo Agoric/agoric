@@ -20,8 +20,10 @@ import {
 } from '../../../tendermint/types/types.js';
 import { Block, type BlockSDKType } from '../../../tendermint/types/block.js';
 import { BinaryReader, BinaryWriter } from '../../../binary.js';
-import { isSet, bytesFromBase64, base64FromBytes } from '../../../helpers.js';
+import { isSet } from '../../../helpers.js';
 import { type JsonSafe } from '../../../json-safe.js';
+import { encodeBase64 as bytesFromBase64 } from '@endo/base64';
+import { decodeBase64 as base64FromBytes } from '@endo/base64';
 /** OrderBy defines the sorting order */
 export enum OrderBy {
   /** ORDER_BY_UNSPECIFIED - ORDER_BY_UNSPECIFIED specifies an unknown sorting order. OrderBy defaults to ASC in this case. */

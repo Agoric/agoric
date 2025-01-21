@@ -1,11 +1,9 @@
 //@ts-nocheck
 import { BinaryReader, BinaryWriter } from '../../../../binary.js';
-import {
-  bytesFromBase64,
-  base64FromBytes,
-  isSet,
-} from '../../../../helpers.js';
+import { encodeBase64 as bytesFromBase64 } from '@endo/base64';
+import { decodeBase64 as base64FromBytes } from '@endo/base64';
 import { type JsonSafe } from '../../../../json-safe.js';
+import { isSet } from '../../../../helpers.js';
 /**
  * MultiSignature wraps the signatures from a multisig.LegacyAminoPubKey.
  * See cosmos.tx.v1betata1.ModeInfo.Multi for how to specify which signers
