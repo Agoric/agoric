@@ -10,8 +10,8 @@ import {
   type DurationSDKType,
 } from '../../../google/protobuf/duration.js';
 import { BinaryReader, BinaryWriter } from '../../../binary.js';
+import { Decimal } from '../../../decimals.js';
 import {
-  Decimal,
   isSet,
   fromJsonTimestamp,
   fromTimestamp,

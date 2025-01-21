@@ -6,7 +6,8 @@ import {
   type CoinSDKType,
 } from '../../base/v1beta1/coin.js';
 import { BinaryReader, BinaryWriter } from '../../../binary.js';
-import { Decimal, isSet } from '../../../helpers.js';
+import { Decimal } from '../../../decimals.js';
+import { isSet } from '../../../helpers.js';
 import { type JsonSafe } from '../../../json-safe.js';
 /** Params defines the set of params for the distribution module. */
 export interface Params {
