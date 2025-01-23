@@ -192,6 +192,27 @@ func terminateGovernorCoreProposal(upgradeName string) (vm.CoreProposalStep, err
 	)
 }
 
+func terminateAuctioneersCoreProposal(upgradeName string) (vm.CoreProposalStep, error) {
+	// targets is a slice of "$boardID:$instanceKitLabel" strings.
+	var targets []string
+	switch getVariantFromUpgradeName(upgradeName) {
+	case "EMERYNET":
+		targets = []string{
+			"board04149:auctioneer",   // auctioneer v39, governor v38
+			"board0501277:auctioneer", // auctioneer v665, governor v664
+		}
+	default:
+		return nil, nil
+	}
+
+	return buildProposalStepWithArgs(
+		"@agoric/builders/scripts/vats/terminate-governed-instance.js",
+		// Request `defaultProposalBuilder(powers, targets)`.
+		"defaultProposalBuilder",
+		[]any{targets},
+	)
+}
+
 // func upgradeMintHolderCoreProposal(upgradeName string) (vm.CoreProposalStep, error) {
 // 	variant := getVariantFromUpgradeName(upgradeName)
 
@@ -312,6 +333,13 @@ func upgrade18Handler(app *GaiaApp, targetUpgrade string) func(sdk.Context, upgr
 				return nil, err
 			} else if terminateOldGovernor != nil {
 				CoreProposalSteps = append(CoreProposalSteps, terminateOldGovernor)
+			}
+
+			terminateAuctioneers, err := terminateAuctioneersCoreProposal(targetUpgrade)
+			if err != nil {
+				return nil, err
+			} else if terminateAuctioneers != nil {
+				CoreProposalSteps = append(CoreProposalSteps, terminateAuctioneers)
 			}
 		}
 
