@@ -1,0 +1,43 @@
+ub = unencumbered balance (purse "currentAmount")
+eb = encumbered balance (total payments in recovery set)
+fb = full balance = eb + ub (orch acct balance)
+
+s = source
+d = dest
+
+ertp withdraw(a)
+  ub -= a
+  eb += a
+  fb unchanged
+
+ertp deposit(a)
+  sub unchanged
+  seb -= a
+  sfb -= a
+  once transfer succeeds
+    dub += a
+    deb unchanged
+    dfb += a
+  once transfer fails
+    sub += a
+    seb unchanged from above
+    sfb += a (net sfb unchanged)
+
+ertp burn(a) (like a successful deposit to dev/null)
+  ub unchanged
+  eb -= a
+  fb -= a
+
+ertp reclaim(a), like a successful self.deposit(a)
+  ub += a
+  eb -= a
+  fb unchanged
+
+mintTo(d, a), like succeed case of transfer
+  dub += a
+  deb unchanged
+  dfb += a
+
+if orch account can be independently spent from
+  ub can go negative, if fb < eb
+  payments can fail to be deposited

@@ -48,6 +48,7 @@
     "@agoric/zone": "^0.2.2",
     "@endo/base64": "^1.0.9",
     "@endo/errors": "^1.2.8",
+    "@endo/eventual-send": "^1.2.8",
     "@endo/far": "^1.1.9",
     "@endo/marshal": "^1.6.2",
     "@endo/patterns": "^1.4.7",
