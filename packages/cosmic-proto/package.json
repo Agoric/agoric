@@ -150,7 +150,7 @@
   "devDependencies": {
     "@agoric/cosmos": "^0.34.1",
     "@ava/typescript": "^4.1.0",
-    "@cosmology/telescope": "https://gitpkg.vercel.app/agoric-labs/telescope/packages/telescope?8d2c2f6ba637a5578eead09a7368dc41c262a9d0",
+    "@cosmology/telescope": "^1.11.9",
     "@endo/bundle-source": "^3.5.0",
     "@endo/import-bundle": "^1.3.2",
     "@endo/ses-ava": "^1.2.8",

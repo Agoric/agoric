@@ -4,7 +4,9 @@ import {
   type PacketSDKType,
 } from '../../ibc/core/channel/v1/channel.js';
 import { BinaryReader, BinaryWriter } from '../../binary.js';
-import { isSet, bytesFromBase64, base64FromBytes } from '../../helpers.js';
+import { isSet } from '../../helpers.js';
+import { encodeBase64 as bytesFromBase64 } from '@endo/base64';
+import { decodeBase64 as base64FromBytes } from '@endo/base64';
 import { type JsonSafe } from '../../json-safe.js';
 /** MsgSendPacket is an SDK message for sending an outgoing IBC packet */
 export interface MsgSendPacket {

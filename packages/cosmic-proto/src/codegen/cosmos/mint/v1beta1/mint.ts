@@ -1,6 +1,7 @@
 //@ts-nocheck
 import { BinaryReader, BinaryWriter } from '../../../binary.js';
-import { Decimal, isSet } from '../../../helpers.js';
+import { Decimal } from '../../../decimals.js';
+import { isSet } from '../../../helpers.js';
 import { type JsonSafe } from '../../../json-safe.js';
 /** Minter represents the minting state. */
 export interface Minter {

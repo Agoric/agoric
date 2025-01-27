@@ -110,6 +110,10 @@ telescope({
         // customTypes: {
         //   useCosmosSDKDec: true,
         // },
+        customTypes: {
+          base64Lib: '@endo/base64',
+          useEnhancedDecimal: true,
+        },
       },
     },
     aminoEncoding: {

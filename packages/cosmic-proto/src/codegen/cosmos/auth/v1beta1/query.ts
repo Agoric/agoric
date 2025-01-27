@@ -15,8 +15,10 @@ import {
   type ModuleAccountSDKType,
 } from './auth.js';
 import { BinaryReader, BinaryWriter } from '../../../binary.js';
-import { isSet, bytesFromBase64, base64FromBytes } from '../../../helpers.js';
+import { isSet } from '../../../helpers.js';
 import { type JsonSafe } from '../../../json-safe.js';
+import { encodeBase64 as bytesFromBase64 } from '@endo/base64';
+import { decodeBase64 as base64FromBytes } from '@endo/base64';
 /**
  * QueryAccountsRequest is the request type for the Query/Accounts RPC method.
  *

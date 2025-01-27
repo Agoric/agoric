@@ -10,15 +10,11 @@ import {
   type DurationSDKType,
 } from '../../../google/protobuf/duration.js';
 import { BinaryReader, BinaryWriter } from '../../../binary.js';
-import {
-  Decimal,
-  isSet,
-  fromJsonTimestamp,
-  fromTimestamp,
-  bytesFromBase64,
-  base64FromBytes,
-} from '../../../helpers.js';
+import { Decimal } from '../../../decimals.js';
+import { isSet, fromJsonTimestamp, fromTimestamp } from '../../../helpers.js';
 import { type JsonSafe } from '../../../json-safe.js';
+import { encodeBase64 as bytesFromBase64 } from '@endo/base64';
+import { decodeBase64 as base64FromBytes } from '@endo/base64';
 /** VoteOption enumerates the valid vote options for a given governance proposal. */
 export enum VoteOption {
   /** VOTE_OPTION_UNSPECIFIED - VOTE_OPTION_UNSPECIFIED defines a no-op vote option. */

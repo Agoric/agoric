@@ -7,7 +7,9 @@ import {
 } from './upgrade.js';
 import { BinaryReader, BinaryWriter } from '../../../binary.js';
 import { type JsonSafe } from '../../../json-safe.js';
-import { isSet, bytesFromBase64, base64FromBytes } from '../../../helpers.js';
+import { isSet } from '../../../helpers.js';
+import { encodeBase64 as bytesFromBase64 } from '@endo/base64';
+import { decodeBase64 as base64FromBytes } from '@endo/base64';
 /**
  * QueryCurrentPlanRequest is the request type for the Query/CurrentPlan RPC
  * method.
