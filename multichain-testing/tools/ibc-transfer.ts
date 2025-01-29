@@ -115,7 +115,7 @@ export const makeIBCTransferMsg = (
     Number(msgTransfer.timeoutTimestamp),
     fee,
     msgTransfer.memo,
-  ];
+  ] as const;
 };
 
 export const createFundedWalletAndClient = async (
@@ -173,9 +173,12 @@ export const makeFundAndTransfer = (
       useChain,
     );
     console.log('Transfer Args:', transferArgs);
-    // TODO #9200 `sendIbcTokens` does not support `memo`
-    // @ts-expect-error spread argument for concise code
-    const txRes = await client.sendIbcTokens(...transferArgs);
+    const txRes = await retryUntilCondition(
+      // TODO #9200 `sendIbcTokens` does not support `memo`
+      () => client.sendIbcTokens(...transferArgs),
+      tx => tx.code === 0,
+      `Send IBC tokens to ${address}`,
+    );
     if (txRes && txRes.code !== 0) {
       console.error(txRes);
       throw Error(`failed to ibc transfer funds to ${chainName}`);

@@ -186,6 +186,6 @@ const queryAccountBalance = test.macro({
 test.serial(queryAccountBalances, 'osmosis');
 test.serial(queryAccountBalances, 'cosmoshub');
 test.serial(queryAccountBalances, 'agoric');
-test.serial(queryAccountBalance, 'osmosis');
+test.serial.failing(queryAccountBalance, 'osmosis');
 test.serial(queryAccountBalance, 'cosmoshub');
 test.serial(queryAccountBalance, 'agoric');

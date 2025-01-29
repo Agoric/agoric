@@ -14,10 +14,14 @@ import (
 )
 
 type AddressRole string
+type PacketOrigin string
 
 const (
 	RoleSender   AddressRole = "Sender"
 	RoleReceiver AddressRole = "Receiver"
+
+	PacketSrc PacketOrigin = "src"
+	PacketDst PacketOrigin = "dst"
 
 	AddressHookVersion     = 0
 	BaseAddressLengthBytes = 2
@@ -192,11 +196,15 @@ func ExtractBaseAddressFromPacket(cdc codec.Codec, packet ibcexported.PacketI, r
 		return target, nil
 	}
 
-	// Create a new packet with the new transfer packet data.
-	// Re-serialize the packet data with the base addresses.
-	newData, err := cdc.MarshalJSON(newTransferData)
-	if err != nil {
-		return target, err
+	// Create new packet data from the new transfer data.
+	var newData []byte
+	if *newTransferData == transferData {
+		// The transfer data properties were not modified, so we can reuse the
+		// original packet data.
+		newData = bytes.Clone(packet.GetData())
+	} else {
+		// Re-serialize the packet data with the base addresses.
+		newData = newTransferData.GetBytes()
 	}
 
 	// Create the new packet.

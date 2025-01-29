@@ -39,6 +39,9 @@ const initializeCircularBuffer = async (bufferFile, circularBufferSize) => {
     }
     throw e;
   });
+
+  // Use the default size if not provided and file doesn't exist.
+  circularBufferSize = circularBufferSize || stbuf?.size || DEFAULT_CBUF_SIZE;
   const arenaSize = BigInt(circularBufferSize - I_ARENA_START);
 
   if (stbuf && stbuf.size >= I_ARENA_START) {

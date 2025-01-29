@@ -98,10 +98,15 @@ const makeBlockTool = ({ rpc, delay }) => {
  * @param {string} [opts.chainId]
  * @param {string} [opts.installer]
  * @param {string} [opts.bundleId]
+ * @param {RetryUntilCondition} opts.retryUntilCondition
  */
 const installBundle = async (fullPath, opts) => {
   const { id, agd, progress = console.log } = opts;
-  const { chainId = 'agoriclocal', installer = 'faucet' } = opts;
+  const {
+    chainId = 'agoriclocal',
+    installer = 'faucet',
+    retryUntilCondition,
+  } = opts;
   const from = await agd.lookup(installer);
   // const explainDelay = (ms, info) => {
   //   progress('follow', { ...info, delay: ms / 1000 }, '...');
@@ -109,9 +114,15 @@ const installBundle = async (fullPath, opts) => {
   // };
   // const updates = follow('bundles', { delay: explainDelay });
   // await updates.next();
-  const tx = await agd.tx(
-    ['swingset', 'install-bundle', `@${fullPath}`, '--gas', 'auto'],
-    { from, chainId, yes: true },
+  const tx = await retryUntilCondition(
+    () =>
+      agd.tx(['swingset', 'install-bundle', `@${fullPath}`, '--gas', 'auto'], {
+        from,
+        chainId,
+        yes: true,
+      }),
+    result => !!result?.txhash,
+    `install bundle ${fullPath}`,
   );
   assert(tx);
 
@@ -458,7 +469,7 @@ const runCoreEval = async (
  * @param {string} [io.rpcAddress]
  * @param {string} [io.apiAddress]
  * @param {(...parts: string[]) => string} [io.join]
- * * @param {RetryUntilCondition} [io.retryUntilCondition]
+ * @param {RetryUntilCondition} [io.retryUntilCondition]
  */
 export const makeE2ETools = async (
   log,
@@ -509,6 +520,7 @@ export const makeE2ETools = async (
         delay,
         // bundleId: getBundleId(bundle),
         bundleId: undefined,
+        retryUntilCondition,
       });
       progress({
         // name,

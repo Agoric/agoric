@@ -56,13 +56,13 @@ const makeTestContext = async t => {
   t.log('setupTestKeys:', wallets);
 
   // provision oracle wallets first so invitation deposits don't fail
-  const oracleWds = await Promise.all(
-    keys(oracleMnemonics).map(n =>
-      provisionSmartWallet(wallets[n], {
-        BLD: 100n,
-      }),
-    ),
-  );
+  const oracleWds: Awaited<ReturnType<typeof provisionSmartWallet>>[] = [];
+  for await (const n of keys(oracleMnemonics)) {
+    const wd = await provisionSmartWallet(wallets[n], {
+      BLD: 100n,
+    });
+    oracleWds.push(wd);
+  }
 
   // calculate denomHash and channelId for privateArgs / builder opts
   const { getTransferChannelId, toDenomHash } = makeDenomTools(chainInfo);
@@ -258,7 +258,7 @@ const advanceAndSettleScenario = test.macro({
       blockHash:
         '0x90d7343e04f8160892e94f02d6a9b9f255663ed0ac34caca98544c8143fee665',
       blockNumber: 21037663n,
-      txHash: `0xc81bc6105b60a234c7c50ac17816ebcd5561d366df8bf3be59ff3875527617${makeRandomDigits(makeRandomNumber(), 2n)}`,
+      txHash: `0xc81bc6105b60a234c7c50ac17816ebcd5561d366df8bf3be59ff387${makeRandomDigits(makeRandomNumber(), 9n)}`,
       tx: {
         amount: mintAmt,
         forwardingAddress: userForwardingAddr,

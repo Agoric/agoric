@@ -160,7 +160,11 @@ func (im IBCMiddleware) WriteAcknowledgement(
 	packet exported.PacketI,
 	ack exported.Acknowledgement,
 ) error {
-	return im.vtransferKeeper.InterceptWriteAcknowledgement(ctx, chanCap, packet, ack)
+	syncAck, origPacket := im.vtransferKeeper.InterceptWriteAcknowledgement(ctx, chanCap, packet, ack)
+	if syncAck != nil {
+		return im.vtransferKeeper.WriteAcknowledgement(ctx, chanCap, origPacket, syncAck)
+	}
+	return nil
 }
 
 ///////////////////////////////////

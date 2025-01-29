@@ -20,6 +20,13 @@ stop: stop-forward delete
 .PHONY: clean
 clean: stop clean-kind
 
+# To support a debug cycle like:
+#  make stop rebuild start && yarn test:main test/ibc-transfers.ts
+.PHONY: rebuild
+rebuild:
+	$(MAKE) -C ../packages/deployment docker-build-sdk TAG=dev
+	kind load docker-image ghcr.io/agoric/agoric-sdk:dev --name $(KIND_CLUSTER)
+
 ###############################################################################
 ###                          Dependency check                               ###
 ###############################################################################

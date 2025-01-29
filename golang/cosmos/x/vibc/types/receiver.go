@@ -15,7 +15,7 @@ import (
 
 var (
 	_ vm.PortHandler           = (*Receiver)(nil)
-	_ exported.Acknowledgement = (*rawAcknowledgement)(nil)
+	_ exported.Acknowledgement = (*RawAcknowledgement)(nil)
 )
 
 type ReceiverImpl interface {
@@ -38,7 +38,7 @@ func NewReceiver(impl ReceiverImpl) Receiver {
 	}
 }
 
-type portMessage struct { // comes from swingset's IBC handler
+type PortMessage struct { // comes from swingset's IBC handler
 	Type              string              `json:"type"` // IBC_METHOD
 	Method            string              `json:"method"`
 	Packet            channeltypes.Packet `json:"packet"`
@@ -71,15 +71,21 @@ func orderToString(order channeltypes.Order) string {
 	}
 }
 
-type rawAcknowledgement struct {
+type RawAcknowledgement struct {
 	data []byte
 }
 
-func (r rawAcknowledgement) Acknowledgement() []byte {
+func NewRawAcknowledgement(data []byte) RawAcknowledgement {
+	return RawAcknowledgement{
+		data: data,
+	}
+}
+
+func (r RawAcknowledgement) Acknowledgement() []byte {
 	return r.data
 }
 
-func (r rawAcknowledgement) Success() bool {
+func (r RawAcknowledgement) Success() bool {
 	return true
 }
 
@@ -94,7 +100,7 @@ func (ir Receiver) Receive(cctx context.Context, jsonRequest string) (jsonReply 
 	ctx := sdk.UnwrapSDKContext(cctx)
 	impl := ir.impl
 
-	msg := new(portMessage)
+	msg := new(PortMessage)
 	err = json.Unmarshal([]byte(jsonRequest), &msg)
 	if err != nil {
 		return "", err
@@ -137,7 +143,7 @@ func (ir Receiver) Receive(cctx context.Context, jsonRequest string) (jsonReply 
 		)
 
 	case "receiveExecuted":
-		ack := rawAcknowledgement{
+		ack := RawAcknowledgement{
 			data: msg.Ack,
 		}
 		err = impl.ReceiveWriteAcknowledgement(ctx, msg.Packet, ack)

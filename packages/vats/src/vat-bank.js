@@ -42,12 +42,12 @@ const BridgeChannelI = M.interface('BridgeChannel', {
 
 /**
  * @typedef {Guarded<{
- *   update: (value: string, nonce?: string) => void;
+ *   update: (value: string, nonce?: string | number) => void;
  * }>} BalanceUpdater
  */
 
 const BalanceUpdaterI = M.interface('BalanceUpdater', {
-  update: M.call(M.string()).optional(M.string()).returns(),
+  update: M.call(M.string()).optional(M.or(M.number(), M.string())).returns(),
 });
 
 /**

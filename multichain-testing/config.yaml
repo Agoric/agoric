@@ -34,9 +34,20 @@ chains:
       memory: 4Gi
   - id: osmosislocal
     name: osmosis
+    image: ghcr.io/cosmology-tech/starship/osmosis:v28.0.0
     numValidators: 1
     genesis:
       app_state:
+        feemarket:
+          params:
+            min_base_gas_price: '0.000000000000000000'
+            enabled: true
+            fee_denom: 'uosmo'
+        globalfee:
+          params:
+            minimum_gas_prices:
+              - denom: 'uosmo'
+                amount: '0'
         staking:
           params:
             unbonding_time: '2m'
@@ -65,9 +76,20 @@ chains:
       memory: 1Gi
   - id: cosmoshublocal
     name: cosmoshub
+    image: ghcr.io/cosmology-tech/starship/gaia:v21.0.1
     numValidators: 1
     genesis:
       app_state:
+        feemarket:
+          params:
+            min_base_gas_price: '0.000000000000000000'
+            enabled: true
+            fee_denom: 'uatom'
+        globalfee:
+          params:
+            minimum_gas_prices:
+              - denom: 'uatom'
+                amount: '0'
         staking:
           params:
             unbonding_time: '2m'
@@ -91,25 +113,30 @@ chains:
 relayers:
   - name: osmosis-cosmoshub
     type: hermes
+    image: ghcr.io/cosmology-tech/starship/hermes:1.10.5
     replicas: 1
     chains:
       - osmosislocal
       - cosmoshublocal
   - name: agoric-osmosis
     type: hermes
+    image: ghcr.io/cosmology-tech/starship/hermes:1.10.5
     replicas: 1
     chains:
       - agoriclocal
       - osmosislocal
   - name: agoric-cosmoshub
     type: hermes
+    image: ghcr.io/cosmology-tech/starship/hermes:1.10.5
     replicas: 1
     chains:
       - agoriclocal
       - cosmoshublocal
 
 explorer:
-  enabled: false
+  enabled: true
+  ports:
+    rest: 8080
 
 registry:
   enabled: true
