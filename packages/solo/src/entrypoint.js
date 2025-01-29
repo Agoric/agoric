@@ -13,7 +13,7 @@ import process from 'process';
 import path from 'path';
 
 // Configure logs.
-import '@agoric/cosmic-swingset/src/anylogger-agoric.js';
+import '@agoric/cosmic-swingset/src/anylogger-agd.js';
 import solo from './main.js';
 
 const baseprog = path.basename(process.argv[1]);

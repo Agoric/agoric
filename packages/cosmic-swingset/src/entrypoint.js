@@ -11,7 +11,7 @@ import os from 'os';
 import path from 'path';
 import process from 'process';
 
-import './anylogger-agoric.js';
+import './anylogger-agd.js';
 import anylogger from 'anylogger';
 import main from './chain-main.js';
 

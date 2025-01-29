@@ -8,10 +8,17 @@ const sleep = timeoutMs =>
 
 test('get telemetry providers', async t => {
   const logged = [];
+  const mockMethod =
+    level =>
+    (...args) => {
+      logged.push([level, ...args]);
+    };
   const mockConsole = {
-    warn: (...args) => {
-      logged.push(args);
-    },
+    debug: mockMethod('debug'),
+    log: mockMethod('log'),
+    info: mockMethod('info'),
+    warn: mockMethod('warn'),
+    error: mockMethod('error'),
   };
   const providers = getTelemetryProviders({ console: mockConsole, env: {} });
   t.is(providers.metricsProvider, undefined);
@@ -31,6 +38,6 @@ test('get telemetry providers', async t => {
   t.deepEqual(logged, []);
   await sleep(250);
   t.deepEqual(logged, [
-    ['Prometheus scrape endpoint: http://0.0.0.0:9393/metrics'],
+    ['warn', 'Prometheus scrape endpoint: http://0.0.0.0:9393/metrics'],
   ]);
 });

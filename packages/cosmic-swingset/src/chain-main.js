@@ -38,6 +38,7 @@ import {
   makeArchiveSnapshot,
   makeArchiveTranscript,
 } from '@agoric/swing-store';
+import anylogger from 'anylogger';
 import {
   makeBufferedStorage,
   makeReadCachingStorage,
@@ -54,6 +55,10 @@ import {
   performStateSyncImport,
   validateImporterOptions,
 } from './import-kernel-db.js';
+
+import { setLogFormat } from './anylogger-agd.js';
+
+const console = anylogger('chain-main');
 
 const ignore = () => {};
 
@@ -184,6 +189,8 @@ export default async function main(
     'home',
     `${homedir}/.ag-chain-cosmos`,
   );
+  const logFormat = processValue.getFlag('log_format', 'plain');
+  setLogFormat(logFormat);
   const stateDBDir = `${cosmosHome}/data/agoric`;
   fs.mkdirSync(stateDBDir, { recursive: true });
 
@@ -455,6 +462,7 @@ export default async function main(
 
     const slogSender = await makeSlogSender({
       stateDir: stateDBDir,
+      console: anylogger('slog-sender'),
       env,
       serviceName: TELEMETRY_SERVICE_NAME,
     });

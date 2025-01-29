@@ -1,3 +1,4 @@
+/* global globalThis */
 import path from 'path';
 import tmp from 'tmp';
 import { PromiseAllOrErrors } from '@agoric/internal';
@@ -22,7 +23,12 @@ const filterTruthy = arr => /** @type {any[]} */ (arr.filter(Boolean));
  * @type {import('./index.js').MakeSlogSender}
  */
 export const makeSlogSender = async (opts = {}) => {
-  const { env = {}, stateDir: stateDirOption, ...otherOpts } = opts;
+  const {
+    env = {},
+    console = globalThis.console,
+    stateDir: stateDirOption,
+    ...otherOpts
+  } = opts;
   const {
     SLOGSENDER = DEFAULT_SLOGSENDER_MODULE,
     SLOGSENDER_AGENT = DEFAULT_SLOGSENDER_AGENT,

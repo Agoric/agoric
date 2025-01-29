@@ -1,4 +1,5 @@
 /* eslint-env node */
+/* global globalThis */
 import { logs, SeverityNumber } from '@opentelemetry/api-logs';
 import { OTLPLogExporter } from '@opentelemetry/exporter-logs-otlp-http';
 import { Resource } from '@opentelemetry/resources';
@@ -16,8 +17,13 @@ const FILE_ENCODING = 'utf8';
 
 /**
  * @param {string} filePath
+ * @param {object} [powers]
+ * @param {import('./index.js').MakeSlogSenderCommonOptions['console']} [powers.console]
  */
-export const getContextFilePersistenceUtils = filePath => {
+export const getContextFilePersistenceUtils = (
+  filePath,
+  { console = globalThis.console } = {},
+) => {
   console.warn(`Using file ${filePath} for slogger context`);
 
   return {
@@ -51,6 +57,7 @@ export const getContextFilePersistenceUtils = filePath => {
  */
 export const makeSlogSender = async options => {
   const { CHAIN_ID, OTEL_EXPORTER_OTLP_ENDPOINT } = options.env || {};
+  const { console = globalThis.console } = options;
   if (!(OTEL_EXPORTER_OTLP_ENDPOINT && options.stateDir))
     return console.error(
       'Ignoring invocation of slogger "context-aware-slog" without the presence of "OTEL_EXPORTER_OTLP_ENDPOINT" and "stateDir"',
@@ -71,6 +78,7 @@ export const makeSlogSender = async options => {
   const persistenceUtils = getContextFilePersistenceUtils(
     process.env.SLOG_CONTEXT_FILE_PATH ||
       `${options.stateDir}/${DEFAULT_CONTEXT_FILE}`,
+    { console: options.console },
   );
 
   const contextualSlogProcessor = makeContextualSlogProcessor(

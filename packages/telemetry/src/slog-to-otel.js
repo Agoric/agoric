@@ -1,3 +1,4 @@
+/* global globalThis */
 import otel, { SpanStatusCode } from '@opentelemetry/api';
 
 import { Fail, q } from '@endo/errors';
@@ -78,8 +79,10 @@ export const floatSecondsToHiRes = sFloat => {
 /**
  * @param {import('@opentelemetry/api').Tracer} tracer
  * @param {Record<string, any>} [overrideAttrs]
+ * @param {import('./index.js').MakeSlogSenderOptions} [powers]
  */
-export const makeSlogToOtelKit = (tracer, overrideAttrs = {}) => {
+export const makeSlogToOtelKit = (tracer, overrideAttrs = {}, powers = {}) => {
+  const { console = globalThis.console } = powers;
   let now;
   let nowFloat;
   /** @type {Record<string, any>} */

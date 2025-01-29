@@ -1,4 +1,5 @@
 /* eslint-env node */
+/* global globalThis */
 
 import { makeFsStreamWriter } from '@agoric/internal/src/node/fs-stream.js';
 import { makeContextualSlogProcessor } from './context-aware-slog.js';
@@ -9,6 +10,7 @@ import { serializeSlogObj } from './serialize-slog-obj.js';
  */
 export const makeSlogSender = async options => {
   const { CHAIN_ID, CONTEXTUAL_SLOGFILE } = options.env || {};
+  const { console = globalThis.console } = options;
   if (!CONTEXTUAL_SLOGFILE)
     return console.warn(
       'Ignoring invocation of slogger "context-aware-slog-file" without the presence of "CONTEXTUAL_SLOGFILE"',

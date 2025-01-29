@@ -20,6 +20,7 @@ export * from './make-slog-sender.js';
  * @typedef {MakeSlogSenderCommonOptions & Record<string, unknown>} MakeSlogSenderOptions
  * @typedef {object} MakeSlogSenderCommonOptions
  * @property {Record<string, string | undefined>} [env]
+ * @property {Pick<Console, 'debug' | 'log' | 'info' | 'warn' | 'error'>} [console]
  * @property {string} [stateDir]
  * @property {string} [serviceName]
  */
@@ -28,11 +29,16 @@ export * from './make-slog-sender.js';
  * @param {SlogSender} [slogSender]
  * @param {object} [options]
  * @param {Record<string, string | undefined>} [options.env]
- * @param {(...args: any[]) => void} [options.log]
+ * @param {MakeSlogSenderCommonOptions['console']} [options.console]
+ * @param {(...args) => void} [options.log]
  */
 export const tryFlushSlogSender = async (
   slogSender,
-  { env = {}, log } = {},
+  {
+    env = {},
+    console = globalThis.console,
+    log = (...args) => console.warn(...args),
+  } = {},
 ) => {
   await Promise.resolve(slogSender?.forceFlush?.()).catch(err => {
     log?.('Failed to flush slog sender', err);
@@ -81,7 +87,7 @@ export const getResourceAttributes = ({
 
 /**
  * @typedef {object} Powers
- * @property {{ warn: Console['warn'] }} console
+ * @property {MakeSlogSenderCommonOptions['console']} console
  * @property {NodeJS.ProcessEnv} env
  * @property {import('@opentelemetry/sdk-metrics').View[]} views
  * @property {string} [serviceName]
