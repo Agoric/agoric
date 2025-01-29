@@ -1,8 +1,11 @@
 ---
-name: Work Item
-about: A unit of work that (maybe) needs to be done
+name: Feature
+about: A request, idea, or new functionality
 title: ''
+# legacy classification using labels
 labels: 'enhancement'
+# new native Issue Type https://github.com/orgs/community/discussions/148715
+type: 'feature'
 assignees: ''
 
 ---
