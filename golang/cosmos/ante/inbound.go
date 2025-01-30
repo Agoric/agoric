@@ -1,11 +1,10 @@
 package ante
 
 import (
-	"github.com/armon/go-metrics"
-
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/hashicorp/go-metrics"
 
 	"github.com/Agoric/agoric-sdk/golang/cosmos/vm"
 	swingtypes "github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/types"
@@ -104,7 +103,10 @@ func (ia inboundAnte) isPriorityMessage(ctx sdk.Context, msg sdk.Msg) (bool, err
 // Look up the limit from the swingset state queue sizes: from QueueInboundMempool
 // if we're running CheckTx (for the hysteresis described above), otherwise QueueAllowed.
 func (ia inboundAnte) allowedInbound(ctx sdk.Context) (int32, error) {
-	state := ia.sk.GetState(ctx)
+	state, err := ia.sk.GetState(ctx)
+	if err != nil {
+		return 0, err
+	}
 	entry := swingtypes.QueueInbound
 	if ctx.IsCheckTx() {
 		entry = swingtypes.QueueInboundMempool

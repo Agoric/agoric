@@ -4,24 +4,26 @@ import (
 	"context"
 	"encoding/json"
 
+	"cosmossdk.io/errors"
+	sdkioerrors "cosmossdk.io/errors"
+	"cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	capabilitykeeper "github.com/cosmos/cosmos-sdk/x/capability/keeper"
-	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
+	capabilitykeeper "github.com/cosmos/ibc-go/modules/capability/keeper"
+	capabilitytypes "github.com/cosmos/ibc-go/modules/capability/types"
 
 	"github.com/Agoric/agoric-sdk/golang/cosmos/types"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/vm"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/vibc"
 	vibctypes "github.com/Agoric/agoric-sdk/golang/cosmos/x/vibc/types"
 
-	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
-	porttypes "github.com/cosmos/ibc-go/v6/modules/core/05-port/types"
-	host "github.com/cosmos/ibc-go/v6/modules/core/24-host"
-	ibcexported "github.com/cosmos/ibc-go/v6/modules/core/exported"
+	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
+	porttypes "github.com/cosmos/ibc-go/v8/modules/core/05-port/types"
+	host "github.com/cosmos/ibc-go/v8/modules/core/24-host"
+	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 )
 
 var _ porttypes.ICS4Wrapper = (*Keeper)(nil)
@@ -124,7 +126,7 @@ func (k Keeper) InterceptOnRecvPacket(ctx sdk.Context, ibcModule porttypes.IBCMo
 	capName := host.ChannelCapabilityPath(portID, channelID)
 	chanCap, ok := k.vibcKeeper.GetCapability(ctx, capName)
 	if !ok {
-		err := sdkerrors.Wrapf(channeltypes.ErrChannelCapabilityNotFound, "could not retrieve channel capability at: %s", capName)
+		err := errors.Wrapf(channeltypes.ErrChannelCapabilityNotFound, "could not retrieve channel capability at: %s", capName)
 		return channeltypes.NewErrorAcknowledgement(err)
 	}
 	// Give the VM a chance to write (or override) the ack.
@@ -230,7 +232,7 @@ func (k Keeper) targetIsWatched(ctx sdk.Context, target string) bool {
 func (k Keeper) GetWatchedAddresses(ctx sdk.Context) ([]sdk.AccAddress, error) {
 	addresses := make([]sdk.AccAddress, 0)
 	prefixStore := prefix.NewStore(ctx.KVStore(k.key), []byte(watchedAddressStoreKeyPrefix))
-	iterator := sdk.KVStorePrefixIterator(prefixStore, []byte{})
+	iterator := storetypes.KVStorePrefixIterator(prefixStore, []byte{})
 	defer iterator.Close()
 	for ; iterator.Valid(); iterator.Next() {
 		addr, err := sdk.AccAddressFromBech32(string(iterator.Key()))
@@ -277,7 +279,7 @@ func (k Keeper) Receive(cctx context.Context, jsonRequest string) (jsonReply str
 	case "BRIDGE_TARGET_UNREGISTER":
 		prefixStore.Delete([]byte(msg.Target))
 	default:
-		return "", sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unknown action type: %s", msg.Type)
+		return "", sdkioerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unknown action type: %s", msg.Type)
 	}
 	return "true", nil
 }

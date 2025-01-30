@@ -7,15 +7,15 @@ import (
 	"testing"
 	"text/template"
 
+	"cosmossdk.io/log"
 	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/require"
 
+	dbm "github.com/cosmos/cosmos-db"
 	"github.com/cosmos/cosmos-sdk/server"
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	serverconfig "github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
-	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
 
 	app "github.com/Agoric/agoric-sdk/golang/cosmos/app"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/daemon/cmd"
@@ -25,9 +25,8 @@ func TestRootCmdConfig(t *testing.T) {
 
 	rootCmd, _ := cmd.NewRootCmd(nil)
 	rootCmd.SetArgs([]string{
-		"config",          // Test the config cmd
-		"keyring-backend", // key
-		"test",            // value
+		"keys", //
+		"list", //
 	})
 
 	require.NoError(t, svrcmd.Execute(rootCmd, "", app.DefaultNodeHome))
@@ -45,7 +44,6 @@ func TestCLIFlags(t *testing.T) {
 		"cpu-profile":           "",
 		"db_backend":            "",
 		"db_dir":                "",
-		"fast_sync":             "",
 		"genesis_hash":          "",
 		"grpc-only":             "",
 		"halt-height":           "",
@@ -53,7 +51,6 @@ func TestCLIFlags(t *testing.T) {
 		"home":                  "",
 		"iavl-cache-size":       "",
 		"iavl-disable-fastnode": "",
-		"iavl-lazy-loading":     "",
 		"index-events":          "",
 		"inter-block-cache":     "",
 		"inv-check-period":      "",
@@ -69,7 +66,10 @@ func TestCLIFlags(t *testing.T) {
 		"trace-store":           "",
 		"transport":             "",
 		"unsafe-skip-upgrades":  "",
-		"with-tendermint":       "",
+		"with-comet":            "",
+
+		"query-gas-limit": "",
+		"shutdown-grace":  "",
 
 		"api.address":              "",
 		"api.enable":               "",
@@ -84,9 +84,7 @@ func TestCLIFlags(t *testing.T) {
 		"consensus.create_empty_blocks_interval": "",
 		"consensus.double_sign_check_height":     "",
 
-		"grpc-web.address":            "",
-		"grpc-web.enable":             "",
-		"grpc-web.enable-unsafe-cors": "",
+		"grpc-web.enable": "",
 
 		"grpc.address":           "",
 		"grpc.enable":            "",
@@ -101,34 +99,14 @@ func TestCLIFlags(t *testing.T) {
 		"p2p.seed_mode":              "",
 		"p2p.seeds":                  "",
 		"p2p.unconditional_peer_ids": "",
-		"p2p.upnp":                   "",
 
 		"rpc.grpc_laddr":  "",
 		"rpc.laddr":       "",
 		"rpc.pprof_laddr": "",
 		"rpc.unsafe":      "",
 
-		"rosetta.address":               "",
-		"rosetta.blockchain":            "",
-		"rosetta.denom-to-suggest":      "",
-		"rosetta.enable-fee-suggestion": "",
-		"rosetta.enable":                "",
-		"rosetta.gas-to-suggest":        "",
-		"rosetta.network":               "",
-		"rosetta.offline":               "",
-		"rosetta.retries":               "",
-
 		"state-sync.snapshot-interval":    "",
 		"state-sync.snapshot-keep-recent": "",
-
-		"store.streamers": "",
-
-		"streamers.file.fsync":              "",
-		"streamers.file.keys":               "",
-		"streamers.file.output-metadata":    "",
-		"streamers.file.prefix":             "",
-		"streamers.file.stop-node-on-error": "",
-		"streamers.file.write_dir":          "",
 
 		"telemetry.enable-hostname-label":     "",
 		"telemetry.enable-hostname":           "",
@@ -137,6 +115,16 @@ func TestCLIFlags(t *testing.T) {
 		"telemetry.global-labels":             "",
 		"telemetry.prometheus-retention-time": "",
 		"telemetry.service-name":              "",
+		"telemetry.datadog-hostname":          "",
+		"telemetry.statsd-addr":               "",
+
+		"telemetry.metrics-sink": "",
+
+		"mempool.max-txs": "",
+
+		"streaming.abci.plugin":           "",
+		"streaming.abci.keys":             "",
+		"streaming.abci.stop-node-on-err": "",
 	}
 	unknownFlagNames := []string{}
 	missingFlagNames := map[string]bool{}

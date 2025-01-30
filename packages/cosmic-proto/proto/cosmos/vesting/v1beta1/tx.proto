@@ -5,13 +5,15 @@ import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
 import "cosmos_proto/cosmos.proto";
 import "cosmos/vesting/v1beta1/vesting.proto";
-
 import "cosmos/msg/v1/msg.proto";
+import "amino/amino.proto";
 
 option go_package = "github.com/cosmos/cosmos-sdk/x/auth/vesting/types";
 
 // Msg defines the bank Msg service.
 service Msg {
+  option (cosmos.msg.v1.service) = true;
+
   // CreateVestingAccount defines a method that enables creating a vesting
   // account.
   rpc CreateVestingAccount(MsgCreateVestingAccount) returns (MsgCreateVestingAccountResponse);
@@ -25,11 +27,14 @@ service Msg {
   //
   // Since: cosmos-sdk 0.46
   rpc CreatePeriodicVestingAccount(MsgCreatePeriodicVestingAccount) returns (MsgCreatePeriodicVestingAccountResponse);
+
   // CreateClawbackVestingAccount defines a method that enables creating a
   // vesting account that is subject to clawback.
   rpc CreateClawbackVestingAccount(MsgCreateClawbackVestingAccount) returns (MsgCreateClawbackVestingAccountResponse);
+
   // Clawback removes the unvested tokens from a ClawbackVestingAccount.
   rpc Clawback(MsgClawback) returns (MsgClawbackResponse);
+
   // ReturnGrants returns vesting grants to the funder.
   rpc ReturnGrants(MsgReturnGrants) returns (MsgReturnGrantsResponse);
 }
@@ -38,69 +43,29 @@ service Msg {
 // account.
 message MsgCreateVestingAccount {
   option (cosmos.msg.v1.signer) = "from_address";
+  option (amino.name)           = "cosmos-sdk/MsgCreateVestingAccount";
 
   option (gogoproto.equal) = true;
 
   string   from_address                    = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   string   to_address                      = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
-  repeated cosmos.base.v1beta1.Coin amount = 3
-      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"];
+  repeated cosmos.base.v1beta1.Coin amount = 3 [
+    (gogoproto.nullable)     = false,
+    (amino.dont_omitempty)   = true,
+    (amino.encoding)         = "legacy_coins",
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
 
   // end of vesting as unix time (in seconds).
   int64 end_time = 4;
   bool  delayed  = 5;
+  bool  merge    = 6;
 }
-
-// MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount response type.
-message MsgCreateVestingAccountResponse {}
-
-// MsgCreatePermanentLockedAccount defines a message that enables creating a permanent
-// locked account.
-//
-// Since: cosmos-sdk 0.46
-message MsgCreatePermanentLockedAccount {
-  option (gogoproto.equal) = true;
-
-  string   from_address                    = 1 [(gogoproto.moretags) = "yaml:\"from_address\""];
-  string   to_address                      = 2 [(gogoproto.moretags) = "yaml:\"to_address\""];
-  repeated cosmos.base.v1beta1.Coin amount = 3
-      [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"];
-}
-
-// MsgCreatePermanentLockedAccountResponse defines the Msg/CreatePermanentLockedAccount response type.
-//
-// Since: cosmos-sdk 0.46
-message MsgCreatePermanentLockedAccountResponse {}
-
-// MsgCreateVestingAccount defines a message that enables creating a vesting
-// account.
-//
-// Since: cosmos-sdk 0.46
-message MsgCreatePeriodicVestingAccount {
-  option (cosmos.msg.v1.signer) = "from_address";
-
-  option (gogoproto.equal) = false;
-
-  string          from_address    = 1;
-  string          to_address      = 2;
-  // start of vesting as unix time (in seconds).
-  int64           start_time      = 3;
-  repeated Period vesting_periods = 4 [(gogoproto.nullable) = false];
-  // If true, merge this new grant into an existing PeriodicVestingAccount,
-  // or create it if it does not exist. If false, creates a new account,
-  // or fails if an account already exists
-  bool merge = 5;
-}
-
-// MsgCreateVestingAccountResponse defines the Msg/CreatePeriodicVestingAccount
-// response type.
-//
-// Since: cosmos-sdk 0.46
-message MsgCreatePeriodicVestingAccountResponse {}
-
 // MsgCreateClawbackVestingAccount defines a message that enables creating a ClawbackVestingAccount.
 message MsgCreateClawbackVestingAccount {
-  option (gogoproto.equal) = false;
+  option (cosmos.msg.v1.signer) = "from_address";
+  option (amino.name)           = "cosmos-sdk/MsgCreateClawbackVestingAccount";
+  option (gogoproto.equal)      = false;
 
   // Address of the account providing the funds, which must also sign the request.
   string from_address = 1 [(gogoproto.moretags) = "yaml:\"from_address\""];
@@ -118,18 +83,73 @@ message MsgCreateClawbackVestingAccount {
   bool merge = 6;
 }
 
+// MsgCreateVestingAccountResponse defines the Msg/CreateVestingAccount response type.
+message MsgCreateVestingAccountResponse {}
+
+// MsgCreatePermanentLockedAccount defines a message that enables creating a permanent
+// locked account.
+//
+// Since: cosmos-sdk 0.46
+message MsgCreatePermanentLockedAccount {
+  option (cosmos.msg.v1.signer) = "from_address";
+  option (amino.name)           = "cosmos-sdk/MsgCreatePermLockedAccount";
+  option (gogoproto.equal)      = true;
+
+  string   from_address                    = 1 [(gogoproto.moretags) = "yaml:\"from_address\""];
+  string   to_address                      = 2 [(gogoproto.moretags) = "yaml:\"to_address\""];
+  repeated cosmos.base.v1beta1.Coin amount = 3 [
+    (gogoproto.nullable)     = false,
+    (amino.dont_omitempty)   = true,
+    (amino.encoding)         = "legacy_coins",
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}
+
+// MsgCreatePermanentLockedAccountResponse defines the Msg/CreatePermanentLockedAccount response type.
+//
+// Since: cosmos-sdk 0.46
+message MsgCreatePermanentLockedAccountResponse {}
+
+// MsgCreateVestingAccount defines a message that enables creating a vesting
+// account.
+//
+// Since: cosmos-sdk 0.46
+message MsgCreatePeriodicVestingAccount {
+  option (cosmos.msg.v1.signer) = "from_address";
+  option (amino.name)           = "cosmos-sdk/MsgCreatePeriodVestAccount";
+
+  option (gogoproto.equal) = false;
+
+  string from_address = 1;
+  string to_address   = 2;
+  // start of vesting as unix time (in seconds).
+  int64           start_time      = 3;
+  repeated Period vesting_periods = 4 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  bool            merge           = 5;
+}
+
+// MsgCreateVestingAccountResponse defines the Msg/CreatePeriodicVestingAccount
+// response type.
+//
+// Since: cosmos-sdk 0.46
+message MsgCreatePeriodicVestingAccountResponse {}
+
 // MsgCreateClawbackVestingAccountResponse defines the MsgCreateClawbackVestingAccount response type.
 message MsgCreateClawbackVestingAccountResponse {}
 
 // MsgClawback defines a message that removes unvested tokens from a ClawbackVestingAccount.
 message MsgClawback {
+  option (cosmos.msg.v1.signer) = "from_address";
+  option (amino.name)           = "cosmos-sdk/MsgMsgClawback";
+
+  string from_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
   // funder_address is the address which funded the account
-  string funder_address = 1;
+  string funder_address = 2;
   // address is the address of the ClawbackVestingAccount to claw back from.
-  string address = 2;
+  string address = 3;
   // dest_address specifies where the clawed-back tokens should be transferred.
   // If empty, the tokens will be transferred back to the original funder of the account.
-  string dest_address = 3;
+  string dest_address = 4;
 }
 
 // MsgClawbackResponse defines the MsgClawback response type.
@@ -141,8 +161,12 @@ message MsgClawbackResponse {}
 // some vested assets have been transferred out of the account. Currently only applies to
 // ClawbackVesting accounts.
 message MsgReturnGrants {
+  option (cosmos.msg.v1.signer) = "from_address";
+  option (amino.name)           = "cosmos-sdk/MsgReturnGrants";
   // address is the address of the grantee account returning the grant.
-  string address = 1;
+
+  string from_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string address      = 2;
 }
 
 // MsgReturnGrantsResponse defines the ReturnGrants response type.

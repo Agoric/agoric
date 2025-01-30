@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/vbank/types"
+	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 func NewGenesisState() *types.GenesisState {
@@ -35,9 +35,13 @@ func InitGenesis(ctx sdk.Context, keeper Keeper, data *types.GenesisState) []abc
 	return []abci.ValidatorUpdate{}
 }
 
-func ExportGenesis(ctx sdk.Context, k Keeper) *types.GenesisState {
+func ExportGenesis(ctx sdk.Context, k Keeper) (*types.GenesisState, error) {
 	var gs types.GenesisState
 	gs.Params = k.GetParams(ctx)
-	gs.State = k.GetState(ctx)
-	return &gs
+	state, err := k.GetState(ctx)
+	if err != nil {
+		return nil, err
+	}
+	gs.State = state
+	return &gs, nil
 }

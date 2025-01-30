@@ -1,26 +1,30 @@
 package vbank
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"reflect"
 	"sort"
 	"testing"
 
+	"cosmossdk.io/log"
+	sdkmath "cosmossdk.io/math"
+	"cosmossdk.io/store"
+	storemetrics "cosmossdk.io/store/metrics"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/app/params"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/vm"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/vbank/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	abci "github.com/cometbft/cometbft/abci/types"
+	"github.com/cometbft/cometbft/crypto/secp256k1"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
+	dbm "github.com/cosmos/cosmos-db"
+	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
-	abci "github.com/tendermint/tendermint/abci/types"
-	"github.com/tendermint/tendermint/crypto/secp256k1"
-	"github.com/tendermint/tendermint/libs/log"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
-	dbm "github.com/tendermint/tm-db"
 )
 
 var (
@@ -203,12 +207,12 @@ func (b *mockBank) record(s string) {
 	b.calls = append(b.calls, s)
 }
 
-func (b *mockBank) BurnCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {
+func (b *mockBank) BurnCoins(ctx context.Context, moduleName string, amt sdk.Coins) error {
 	b.record(fmt.Sprintf("BurnCoins %s %v", moduleName, amt))
 	return nil
 }
 
-func (b *mockBank) GetAllBalances(ctx sdk.Context, addr sdk.AccAddress) sdk.Coins {
+func (b *mockBank) GetAllBalances(ctx context.Context, addr sdk.AccAddress) sdk.Coins {
 	b.record(fmt.Sprintf("GetAllBalances %s", addr))
 	balances, ok := b.balances[addr.String()]
 	if !ok {
@@ -217,31 +221,31 @@ func (b *mockBank) GetAllBalances(ctx sdk.Context, addr sdk.AccAddress) sdk.Coin
 	return balances
 }
 
-func (b *mockBank) GetBalance(ctx sdk.Context, addr sdk.AccAddress, denom string) sdk.Coin {
+func (b *mockBank) GetBalance(ctx context.Context, addr sdk.AccAddress, denom string) sdk.Coin {
 	b.record(fmt.Sprintf("GetBalance %s %s", addr, denom))
-	amount := sdk.ZeroInt()
+	amount := sdkmath.ZeroInt()
 	if balances, ok := b.balances[addr.String()]; ok {
 		amount = balances.AmountOf(denom)
 	}
 	return sdk.NewCoin(denom, amount)
 }
 
-func (b *mockBank) MintCoins(ctx sdk.Context, moduleName string, amt sdk.Coins) error {
+func (b *mockBank) MintCoins(ctx context.Context, moduleName string, amt sdk.Coins) error {
 	b.record(fmt.Sprintf("MintCoins %s %s", moduleName, amt))
 	return nil
 }
 
-func (b *mockBank) SendCoinsFromAccountToModule(ctx sdk.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error {
+func (b *mockBank) SendCoinsFromAccountToModule(ctx context.Context, senderAddr sdk.AccAddress, recipientModule string, amt sdk.Coins) error {
 	b.record(fmt.Sprintf("SendCoinsFromAccountToModule %s %s %s", senderAddr, recipientModule, amt))
 	return nil
 }
 
-func (b *mockBank) SendCoinsFromModuleToAccount(ctx sdk.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error {
+func (b *mockBank) SendCoinsFromModuleToAccount(ctx context.Context, senderModule string, recipientAddr sdk.AccAddress, amt sdk.Coins) error {
 	b.record(fmt.Sprintf("SendCoinsFromModuleToAccount %s %s %s", senderModule, recipientAddr, amt))
 	return nil
 }
 
-func (b *mockBank) SendCoinsFromModuleToModule(ctx sdk.Context, senderModule, recipientModule string, amt sdk.Coins) error {
+func (b *mockBank) SendCoinsFromModuleToModule(ctx context.Context, senderModule, recipientModule string, amt sdk.Coins) error {
 	b.record(fmt.Sprintf("SendCoinsFromModuleToModule %s %s %s", senderModule, recipientModule, amt))
 	return nil
 }
@@ -254,15 +258,17 @@ func makeTestKit(account types.AccountKeeper, bank types.BankKeeper) (Keeper, sd
 		return nil
 	}
 
-	paramsTStoreKey := sdk.NewTransientStoreKey(paramstypes.TStoreKey)
-	paramsStoreKey := sdk.NewKVStoreKey(paramstypes.StoreKey)
+	paramsTStoreKey := storetypes.NewTransientStoreKey(paramstypes.TStoreKey)
+	paramsStoreKey := storetypes.NewKVStoreKey(paramstypes.StoreKey)
 	pk := paramskeeper.NewKeeper(cdc, encodingConfig.Amino, paramsStoreKey, paramsTStoreKey)
 
 	subspace := pk.Subspace(types.ModuleName)
-	keeper := NewKeeper(cdc, vbankStoreKey, subspace, account, bank, "feeCollectorName", pushAction)
+
+	keeper := NewKeeper(cdc, runtime.NewKVStoreService(vbankStoreKey), subspace, account, bank, "feeCollectorName", pushAction)
 
 	db := dbm.NewMemDB()
-	ms := store.NewCommitMultiStore(db)
+	logger := log.NewNopLogger()
+	ms := store.NewCommitMultiStore(db, logger, storemetrics.NewNoOpMetrics())
 	ms.MountStoreWithDB(vbankStoreKey, storetypes.StoreTypeIAVL, db)
 	ms.MountStoreWithDB(paramsStoreKey, storetypes.StoreTypeIAVL, db)
 	ms.MountStoreWithDB(paramsTStoreKey, storetypes.StoreTypeTransient, db)
@@ -416,7 +422,7 @@ func Test_Receive_GiveToRewardDistributor(t *testing.T) {
 			feeDenom:      "yoctoquatloos",
 			wantMintCoins: "123456789123456789123456789yoctoquatloos",
 			wantRate: sdk.NewCoins(
-				sdk.NewCoin("yoctoquatloos", sdk.NewInt(123456789123456789).MulRaw(1000).AddRaw(124)),
+				sdk.NewCoin("yoctoquatloos", sdkmath.NewInt(123456789123456789).MulRaw(1000).AddRaw(124)),
 			),
 		},
 		{
@@ -427,7 +433,7 @@ func Test_Receive_GiveToRewardDistributor(t *testing.T) {
 			feeDenom:      "yoctoquatloos",
 			wantMintCoins: "123456789123456789123456789yoctoquatloos",
 			wantRate: sdk.NewCoins(
-				sdk.NewCoin("yoctoquatloos", sdk.NewInt(123456789123456789).MulRaw(1000).AddRaw(124)),
+				sdk.NewCoin("yoctoquatloos", sdkmath.NewInt(123456789123456789).MulRaw(1000).AddRaw(124)),
 			),
 		},
 	}
@@ -461,8 +467,11 @@ func Test_Receive_GiveToRewardDistributor(t *testing.T) {
 			if err := keeper.DistributeRewards(ctx); err != nil {
 				t.Errorf("got error = %v", err)
 			}
-			state := keeper.GetState(ctx)
-			if !state.RewardBlockAmount.IsEqual(tt.wantRate) {
+			state, err := keeper.GetState(ctx)
+			if err != nil {
+				panic(err)
+			}
+			if !state.RewardBlockAmount.Equal(tt.wantRate) {
 				t.Errorf("got rate %v, want %v", state.RewardBlockAmount, tt.wantRate)
 			}
 		})
@@ -525,7 +534,7 @@ func Test_EndBlock_Events(t *testing.T) {
 	}
 	keeper, ctx := makeTestKit(acct, bank)
 	// Turn off rewards.
-	keeper.SetParams(ctx, types.Params{PerEpochRewardFraction: sdk.ZeroDec(), AllowedMonitoringAccounts: []string{"*"}})
+	keeper.SetParams(ctx, types.Params{PerEpochRewardFraction: sdkmath.LegacyZeroDec(), AllowedMonitoringAccounts: []string{"*"}})
 	msgsSent := []string{}
 	keeper.PushAction = func(ctx sdk.Context, action vm.Action) error {
 		bz, err := json.Marshal(action)
@@ -541,39 +550,43 @@ func Test_EndBlock_Events(t *testing.T) {
 		{
 			Type: "coin_received",
 			Attributes: []abci.EventAttribute{
-				{Key: []byte("receiver"), Value: []byte(addr1)},
-				{Key: []byte("amount"), Value: []byte("500ubld,600urun,700ushmoo")},
+				{Key: "receiver", Value: addr1},
+				{Key: "amount", Value: "500ubld,600urun,700ushmoo"},
 			},
 		},
 		{
 			Type: "coin_spent",
 			Attributes: []abci.EventAttribute{
-				{Key: []byte("spender"), Value: []byte(addr2)},
-				{Key: []byte("amount"), Value: []byte("500ubld,600urun,700ushmoo")},
-				{Key: []byte("other"), Value: []byte(addr3)},
+				{Key: "spender", Value: addr2},
+				{Key: "amount", Value: "500ubld,600urun,700ushmoo"},
+				{Key: "other", Value: addr3},
 			},
 		},
 		{
 			Type: "something_else",
 			Attributes: []abci.EventAttribute{
-				{Key: []byte("receiver"), Value: []byte(addr4)},
-				{Key: []byte("spender"), Value: []byte(addr4)},
-				{Key: []byte("amount"), Value: []byte("500ubld,600urun,700ushmoo")},
+				{Key: "receiver", Value: addr4},
+				{Key: "spender", Value: addr4},
+				{Key: "amount", Value: "500ubld,600urun,700ushmoo"},
 			},
 		},
 		{
 			Type: "non_modaccount",
 			Attributes: []abci.EventAttribute{
-				{Key: []byte("receiver"), Value: []byte(addr3)},
-				{Key: []byte("spender"), Value: []byte(addr4)},
-				{Key: []byte("amount"), Value: []byte("100ubld")},
+				{Key: "receiver", Value: addr3},
+				{Key: "spender", Value: addr4},
+				{Key: "amount", Value: "100ubld"},
 			},
 		},
 	}
-	em := sdk.NewEventManagerWithHistory(events)
+	sdkEvents := make(sdk.Events, len(events))
+	for i, e := range events {
+		sdkEvents[i] = sdk.Event(e)
+	}
+	em := sdk.NewEventManagerWithHistory(sdkEvents)
 	ctx = ctx.WithEventManager(em)
 
-	updates := am.EndBlock(ctx, abci.RequestEndBlock{})
+	updates := am.EndBlock(ctx)
 	if len(updates) != 0 {
 		t.Errorf("EndBlock() got %+v, want empty", updates)
 	}
@@ -714,10 +727,10 @@ func Test_EndBlock_Rewards(t *testing.T) {
 			keeper.SetParams(ctx, types.Params{
 				RewardEpochDurationBlocks: 3,
 				RewardSmoothingBlocks:     1,
-				PerEpochRewardFraction:    sdk.OneDec(),
+				PerEpochRewardFraction:    sdkmath.LegacyOneDec(),
 			})
 
-			updates := am.EndBlock(ctx, abci.RequestEndBlock{})
+			updates := am.EndBlock(ctx)
 			if len(updates) != 0 {
 				t.Errorf("EndBlock() got %+v, want empty", updates)
 			}
@@ -726,8 +739,12 @@ func Test_EndBlock_Rewards(t *testing.T) {
 				t.Errorf("got messages sent = %v, want empty", msgsSent)
 			}
 
-			state = keeper.GetState(ctx)
-			if !state.RewardPool.IsEqual(tt.wantPool) {
+			var err error
+			state, err = keeper.GetState(ctx)
+			if err != nil {
+				panic(err)
+			}
+			if !state.RewardPool.Equal(tt.wantPool) {
 				t.Errorf("got pool %v, want %v", state.RewardPool, tt.wantPool)
 			}
 
@@ -752,7 +769,7 @@ type mockAuthKeeper struct {
 	modAddrs map[string]string
 }
 
-func (ma mockAuthKeeper) GetModuleAccount(ctx sdk.Context, name string) authtypes.ModuleAccountI {
+func (ma mockAuthKeeper) GetModuleAccount(ctx context.Context, name string) sdk.ModuleAccountI {
 	addr, ok := ma.modAddrs[name]
 	if !ok {
 		return nil
@@ -764,7 +781,7 @@ func (ma mockAuthKeeper) GetModuleAccount(ctx sdk.Context, name string) authtype
 	return acct.(authtypes.ModuleAccountI)
 }
 
-func (ma mockAuthKeeper) GetAccount(ctx sdk.Context, addr sdk.AccAddress) authtypes.AccountI {
+func (ma mockAuthKeeper) GetAccount(ctx context.Context, addr sdk.AccAddress) sdk.AccountI {
 	// fmt.Printf("GetAccount %s\n", addr.String())
 	return ma.accounts[addr.String()]
 }

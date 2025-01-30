@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 
 	"github.com/Agoric/agoric-sdk/golang/cosmos/vm"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/types"
@@ -32,7 +32,7 @@ type afterCommitBlockAction struct {
 	*vm.ActionHeader `actionType:"AFTER_COMMIT_BLOCK"`
 }
 
-func BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock, keeper Keeper) error {
+func BeginBlock(ctx sdk.Context, keeper Keeper) error {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 
 	action := beginBlockAction{
@@ -53,7 +53,7 @@ func BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock, keeper Keeper) erro
 var endBlockHeight int64
 var endBlockTime int64
 
-func EndBlock(ctx sdk.Context, req abci.RequestEndBlock, keeper Keeper) ([]abci.ValidatorUpdate, error) {
+func EndBlock(ctx sdk.Context, keeper Keeper) ([]abci.ValidatorUpdate, error) {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyEndBlocker)
 
 	action := endBlockAction{}

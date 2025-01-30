@@ -1,20 +1,16 @@
 package keeper
 
 import (
+	"cosmossdk.io/core/store"
 	"encoding/json"
 	"errors"
 	"fmt"
 	stdlog "log"
 	"math"
 
+	"cosmossdk.io/log"
 	sdkmath "cosmossdk.io/math"
-
-	"github.com/tendermint/tendermint/libs/log"
-
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/store/prefix"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -53,9 +49,9 @@ const (
 
 // Keeper maintains the link to data vstorage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	storeKey   storetypes.StoreKey
-	cdc        codec.Codec
-	paramSpace paramtypes.Subspace
+	storeService store.KVStoreService
+	cdc          codec.Codec
+	paramSpace   paramtypes.Subspace
 
 	accountKeeper    types.AccountKeeper
 	bankKeeper       bankkeeper.Keeper
@@ -71,7 +67,7 @@ var _ ante.SwingsetKeeper = &Keeper{}
 
 // NewKeeper creates a new IBC transfer Keeper instance
 func NewKeeper(
-	cdc codec.Codec, key storetypes.StoreKey, paramSpace paramtypes.Subspace,
+	cdc codec.Codec, storeService store.KVStoreService, paramSpace paramtypes.Subspace,
 	accountKeeper types.AccountKeeper, bankKeeper bankkeeper.Keeper,
 	vstorageKeeper vstoragekeeper.Keeper, feeCollectorName string,
 	callToController func(ctx sdk.Context, str string) (string, error),
@@ -83,7 +79,7 @@ func NewKeeper(
 	}
 
 	return Keeper{
-		storeKey:         key,
+		storeService:     storeService,
 		cdc:              cdc,
 		paramSpace:       paramSpace,
 		accountKeeper:    accountKeeper,
@@ -117,11 +113,11 @@ func (k Keeper) pushAction(ctx sdk.Context, inboundQueuePath string, action vm.A
 	if err != nil {
 		return err
 	}
-	txHash, txHashOk := ctx.Context().Value(baseapp.TxHashContextKey).(string)
+	txHash, txHashOk := ctx.Context().Value(sdk.ContextKey("tx-hash")).(string)
 	if !txHashOk {
 		txHash = "unknown"
 	}
-	msgIdx, msgIdxOk := ctx.Context().Value(baseapp.TxMsgIdxContextKey).(int)
+	msgIdx, msgIdxOk := ctx.Context().Value(sdk.ContextKey("tx-msg-idx")).(int)
 	if !txHashOk || !msgIdxOk {
 		stdlog.Printf("error while extracting context for action %q\n", action)
 	}
@@ -153,25 +149,32 @@ func (k Keeper) PushHighPriorityAction(ctx sdk.Context, action vm.Action) error 
 
 func (k Keeper) IsHighPriorityAddress(ctx sdk.Context, addr sdk.AccAddress) (bool, error) {
 	path := StoragePathHighPrioritySenders + "." + addr.String()
-	return k.vstorageKeeper.HasEntry(ctx, path), nil
+	hasEntry, err := k.vstorageKeeper.HasEntry(ctx, path)
+	if err != nil {
+		return false, err
+	}
+	return hasEntry, nil
 }
 
 // GetSmartWalletState returns the provision state of the smart wallet for the account address
-func (k Keeper) GetSmartWalletState(ctx sdk.Context, addr sdk.AccAddress) types.SmartWalletState {
+func (k Keeper) GetSmartWalletState(ctx sdk.Context, addr sdk.AccAddress) (types.SmartWalletState, error) {
 	// walletStoragePath is path of `walletStorageNode` constructed in
 	// `provideSmartWallet` from packages/smart-wallet/src/walletFactory.js
 	walletStoragePath := StoragePathCustom + "." + WalletStoragePathSegment + "." + addr.String()
 
 	// TODO: implement a pending provision state
-	if k.vstorageKeeper.HasEntry(ctx, walletStoragePath) {
-		return types.SmartWalletStateProvisioned
+	hasEntry, err := k.vstorageKeeper.HasEntry(ctx, walletStoragePath)
+	if err != nil {
+		return types.SmartWalletStateNone, err
 	}
-
-	return types.SmartWalletStateNone
+	if hasEntry {
+		return types.SmartWalletStateProvisioned, nil
+	}
+	return types.SmartWalletStateNone, nil
 }
 
 func (k Keeper) InboundQueueLength(ctx sdk.Context) (int32, error) {
-	size := sdk.NewInt(0)
+	size := sdkmath.NewInt(0)
 
 	highPriorityQueueLength, err := k.vstorageKeeper.GetQueueLength(ctx, StoragePathHighPriorityQueue)
 	if err != nil {
@@ -219,7 +222,10 @@ func (k Keeper) UpdateQueueAllowed(ctx sdk.Context) error {
 		inboundMempoolQueueAllowed = inboundMempoolQueueMax - inboundQueueSize
 	}
 
-	state := k.GetState(ctx)
+	state, err := k.GetState(ctx)
+	if err != nil {
+		return err
+	}
 	state.QueueAllowed = []types.QueueSize{
 		{Key: types.QueueInbound, Size_: inboundQueueAllowed},
 		{Key: types.QueueInboundMempool, Size_: inboundMempoolQueueAllowed},
@@ -257,18 +263,25 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramSpace.SetParamSet(ctx, &params)
 }
 
-func (k Keeper) GetState(ctx sdk.Context) types.State {
-	store := ctx.KVStore(k.storeKey)
-	bz := store.Get([]byte(stateKey))
+func (k Keeper) GetState(ctx sdk.Context) (types.State, error) {
+	s := k.storeService.OpenKVStore(ctx)
+	bz, err := s.Get([]byte(stateKey))
+	if err != nil {
+		return types.State{}, err
+	}
 	state := types.State{}
 	k.cdc.MustUnmarshal(bz, &state)
-	return state
+	return state, nil
 }
 
-func (k Keeper) SetState(ctx sdk.Context, state types.State) {
-	store := ctx.KVStore(k.storeKey)
+func (k Keeper) SetState(ctx sdk.Context, state types.State) error {
+	s := k.storeService.OpenKVStore(ctx)
 	bz := k.cdc.MustMarshal(&state)
-	store.Set([]byte(stateKey), bz)
+	err := s.Set([]byte(stateKey), bz)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // GetBeansPerUnit returns a map taken from the current SwingSet parameters from
@@ -288,13 +301,16 @@ func getBeansOwingPathForAddress(addr sdk.AccAddress) string {
 
 // GetBeansOwing returns the number of beans that the given address owes to
 // the FeeAccount but has not yet paid.
-func (k Keeper) GetBeansOwing(ctx sdk.Context, addr sdk.AccAddress) sdkmath.Uint {
+func (k Keeper) GetBeansOwing(ctx sdk.Context, addr sdk.AccAddress) (sdkmath.Uint, error) {
 	path := getBeansOwingPathForAddress(addr)
-	entry := k.vstorageKeeper.GetEntry(ctx, path)
-	if !entry.HasValue() {
-		return sdkmath.ZeroUint()
+	entry, err := k.vstorageKeeper.GetEntry(ctx, path)
+	if err != nil {
+		return sdkmath.ZeroUint(), err
 	}
-	return sdkmath.NewUintFromString(entry.StringValue())
+	if !entry.HasValue() {
+		return sdkmath.ZeroUint(), nil
+	}
+	return sdkmath.NewUintFromString(entry.StringValue()), nil
 }
 
 // SetBeansOwing sets the number of beans that the given address owes to the
@@ -313,7 +329,10 @@ func (k Keeper) ChargeBeans(
 	addr sdk.AccAddress,
 	beans sdkmath.Uint,
 ) error {
-	wasOwing := k.GetBeansOwing(ctx, addr)
+	wasOwing, err := k.GetBeansOwing(ctx, addr)
+	if err != nil {
+		return err
+	}
 	nowOwing := wasOwing.Add(beans)
 
 	// Actually debit immediately in integer multiples of the minimum debit, since
@@ -323,8 +342,8 @@ func (k Keeper) ChargeBeans(
 	beansToDebit := nowOwing.Sub(remainderOwing)
 
 	// Convert the debit to coins.
-	beansPerFeeUnitDec := sdk.NewDecFromBigInt(beansPerUnit[types.BeansPerFeeUnit].BigInt())
-	beansToDebitDec := sdk.NewDecFromBigInt(beansToDebit.BigInt())
+	beansPerFeeUnitDec := sdkmath.LegacyNewDecFromBigInt(beansPerUnit[types.BeansPerFeeUnit].BigInt())
+	beansToDebitDec := sdkmath.LegacyNewDecFromBigInt(beansToDebit.BigInt())
 	feeUnitPrice := k.GetParams(ctx).FeeUnitPrice
 	feeDecCoins := sdk.NewDecCoinsFromCoins(feeUnitPrice...).MulDec(beansToDebitDec).QuoDec(beansPerFeeUnitDec)
 
@@ -427,20 +446,23 @@ func (k Keeper) ChargeForProvisioning(ctx sdk.Context, submitter, addr sdk.AccAd
 }
 
 // GetEgress gets the entire egress struct for a peer
-func (k Keeper) GetEgress(ctx sdk.Context, addr sdk.AccAddress) types.Egress {
+func (k Keeper) GetEgress(ctx sdk.Context, addr sdk.AccAddress) (types.Egress, error) {
 	path := StoragePathEgress + "." + addr.String()
-	entry := k.vstorageKeeper.GetEntry(ctx, path)
+	entry, err := k.vstorageKeeper.GetEntry(ctx, path)
+	if err != nil {
+		return types.Egress{}, err
+	}
 	if !entry.HasValue() {
-		return types.Egress{}
+		return types.Egress{}, nil
 	}
 
 	var egress types.Egress
-	err := json.Unmarshal([]byte(entry.StringValue()), &egress)
+	err = json.Unmarshal([]byte(entry.StringValue()), &egress)
 	if err != nil {
 		panic(err)
 	}
 
-	return egress
+	return egress, nil
 }
 
 // SetEgress sets the egress struct for a peer, and ensures its account exists
@@ -477,9 +499,13 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 }
 
 // GetMailbox gets the entire mailbox struct for a peer
-func (k Keeper) GetMailbox(ctx sdk.Context, peer string) string {
+func (k Keeper) GetMailbox(ctx sdk.Context, peer string) (string, error) {
 	path := StoragePathMailbox + "." + peer
-	return k.vstorageKeeper.GetEntry(ctx, path).StringValue()
+	entry, err := k.vstorageKeeper.GetEntry(ctx, path)
+	if err != nil {
+		return "", err
+	}
+	return entry.StringValue(), nil
 }
 
 // SetMailbox sets the entire mailbox struct for a peer
@@ -489,9 +515,9 @@ func (k Keeper) SetMailbox(ctx sdk.Context, peer string, mailbox string) {
 	k.vstorageKeeper.LegacySetStorageAndNotify(ctx, agoric.NewKVEntry(path, mailbox))
 }
 
-func (k Keeper) GetSwingStore(ctx sdk.Context) sdk.KVStore {
-	store := ctx.KVStore(k.storeKey)
-	return prefix.NewStore(store, []byte(swingStoreKeyPrefix))
+func (k Keeper) GetSwingStore(ctx sdk.Context) store.KVStore {
+	s := k.storeService.OpenKVStore(ctx)
+	return s
 }
 
 func (k Keeper) PathToEncodedKey(path string) []byte {

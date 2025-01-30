@@ -5,13 +5,14 @@ import (
 	"reflect"
 	"testing"
 
+	"cosmossdk.io/log"
+	"cosmossdk.io/store"
+	storemetrics "cosmossdk.io/store/metrics"
+	prefixstore "cosmossdk.io/store/prefix"
+	storetypes "cosmossdk.io/store/types"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/types"
-	"github.com/cosmos/cosmos-sdk/store"
-	prefixstore "github.com/cosmos/cosmos-sdk/store/prefix"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	dbm "github.com/cosmos/cosmos-db"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	dbm "github.com/tendermint/tm-db"
 )
 
 func mkcoin(denom string) func(amt int64) sdk.Coin {
@@ -182,7 +183,7 @@ func Test_calculateFees(t *testing.T) {
 				t.Errorf("calculateFees() error = %v, want %v", err, tt.errMsg)
 				return
 			}
-			if !got.IsEqual(tt.want) {
+			if !got.Equal(tt.want) {
 				t.Errorf("calculateFees() = %v, want %v", got, tt.want)
 			}
 		})
@@ -193,9 +194,10 @@ var (
 	swingsetStoreKey = storetypes.NewKVStoreKey(types.StoreKey)
 )
 
-func makeTestStore() sdk.KVStore {
+func makeTestStore() storetypes.KVStore {
 	db := dbm.NewMemDB()
-	ms := store.NewCommitMultiStore(db)
+	logger := log.NewNopLogger()
+	ms := store.NewCommitMultiStore(db, logger, storemetrics.NewNoOpMetrics())
 	ms.MountStoreWithDB(swingsetStoreKey, storetypes.StoreTypeIAVL, db)
 	err := ms.LoadLatestVersion()
 	if err != nil {

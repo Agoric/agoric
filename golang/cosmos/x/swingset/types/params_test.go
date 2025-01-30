@@ -4,6 +4,7 @@ import (
 	"reflect"
 	"testing"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -37,44 +38,44 @@ func TestAddStorageBeanCost(t *testing.T) {
 		},
 		{
 			name: "already_only_different",
-			in:   []beans{NewStringBeans(BeansPerStorageByte, sdk.NewUint(123))},
-			want: []beans{NewStringBeans(BeansPerStorageByte, sdk.NewUint(123))},
+			in:   []beans{NewStringBeans(BeansPerStorageByte, sdkmath.NewUint(123))},
+			want: []beans{NewStringBeans(BeansPerStorageByte, sdkmath.NewUint(123))},
 		},
 		{
 			name: "already_same",
 			in: []beans{
-				NewStringBeans("foo", sdk.NewUint(123)),
+				NewStringBeans("foo", sdkmath.NewUint(123)),
 				defaultStorageCost,
-				NewStringBeans("bar", sdk.NewUint(456)),
+				NewStringBeans("bar", sdkmath.NewUint(456)),
 			},
 			want: []beans{
-				NewStringBeans("foo", sdk.NewUint(123)),
+				NewStringBeans("foo", sdkmath.NewUint(123)),
 				defaultStorageCost,
-				NewStringBeans("bar", sdk.NewUint(456)),
+				NewStringBeans("bar", sdkmath.NewUint(456)),
 			},
 		},
 		{
 			name: "already_different",
 			in: []beans{
-				NewStringBeans("foo", sdk.NewUint(123)),
-				NewStringBeans(BeansPerStorageByte, sdk.NewUint(789)),
-				NewStringBeans("bar", sdk.NewUint(456)),
+				NewStringBeans("foo", sdkmath.NewUint(123)),
+				NewStringBeans(BeansPerStorageByte, sdkmath.NewUint(789)),
+				NewStringBeans("bar", sdkmath.NewUint(456)),
 			},
 			want: []beans{
-				NewStringBeans("foo", sdk.NewUint(123)),
-				NewStringBeans(BeansPerStorageByte, sdk.NewUint(789)),
-				NewStringBeans("bar", sdk.NewUint(456)),
+				NewStringBeans("foo", sdkmath.NewUint(123)),
+				NewStringBeans(BeansPerStorageByte, sdkmath.NewUint(789)),
+				NewStringBeans("bar", sdkmath.NewUint(456)),
 			},
 		},
 		{
 			name: "missing",
 			in: []beans{
-				NewStringBeans("foo", sdk.NewUint(123)),
-				NewStringBeans("bar", sdk.NewUint(456)),
+				NewStringBeans("foo", sdkmath.NewUint(123)),
+				NewStringBeans("bar", sdkmath.NewUint(456)),
 			},
 			want: []beans{
-				NewStringBeans("foo", sdk.NewUint(123)),
-				NewStringBeans("bar", sdk.NewUint(456)),
+				NewStringBeans("foo", sdkmath.NewUint(123)),
+				NewStringBeans("bar", sdkmath.NewUint(456)),
 				defaultStorageCost,
 			},
 		},
@@ -118,17 +119,17 @@ func TestUpdateParamsFromEmpty(t *testing.T) {
 
 func TestUpdateParamsFromExisting(t *testing.T) {
 	defaultBeansPerUnit := DefaultBeansPerUnit()
-	customBeansPerUnit := NewStringBeans("foo", sdk.NewUint(1))
+	customBeansPerUnit := NewStringBeans("foo", sdkmath.NewUint(1))
 	customPowerFlagFee := NewPowerFlagFee("bar", sdk.NewCoins(sdk.NewInt64Coin("baz", 2)))
 	customQueueSize := NewQueueSize("qux", int32(3))
-	customVatCleanup := UintMapEntry{"corge", sdk.NewUint(4)}
+	customVatCleanup := UintMapEntry{"corge", sdkmath.NewUint(4)}
 	in := Params{
 		BeansPerUnit:       append([]StringBeans{customBeansPerUnit}, defaultBeansPerUnit[2:4]...),
 		BootstrapVatConfig: "",
 		FeeUnitPrice:       sdk.NewCoins(sdk.NewInt64Coin("denom", 789)),
 		PowerFlagFees:      []PowerFlagFee{customPowerFlagFee},
 		QueueMax:           []QueueSize{NewQueueSize(QueueInbound, int32(10)), customQueueSize},
-		VatCleanupBudget:   []UintMapEntry{customVatCleanup, UintMapEntry{VatCleanupDefault, sdk.NewUint(10)}},
+		VatCleanupBudget:   []UintMapEntry{customVatCleanup, UintMapEntry{VatCleanupDefault, sdkmath.NewUint(10)}},
 	}
 	want := Params{
 		BeansPerUnit:       append(append(in.BeansPerUnit, defaultBeansPerUnit[0:2]...), defaultBeansPerUnit[4:]...),
@@ -161,7 +162,7 @@ func TestValidateParams(t *testing.T) {
 		t.Errorf("unexpected ValidateBasic() error with default params: %v", err)
 	}
 
-	customVatCleanup := UintMapEntry{"corge", sdk.NewUint(4)}
+	customVatCleanup := UintMapEntry{"corge", sdkmath.NewUint(4)}
 	params.VatCleanupBudget = append(params.VatCleanupBudget, customVatCleanup)
 	err = params.ValidateBasic()
 	if err != nil {

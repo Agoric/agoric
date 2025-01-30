@@ -6,9 +6,9 @@ import (
 	"fmt"
 
 	"github.com/Agoric/agoric-sdk/golang/cosmos/vm"
-	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
+	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 
-	"github.com/cosmos/ibc-go/v6/modules/core/exported"
+	"github.com/cosmos/ibc-go/v8/modules/core/exported"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

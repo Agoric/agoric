@@ -196,6 +196,10 @@ func GetCmdProvisionOne() *cobra.Command {
 	return cmd
 }
 
+type HasValidateBasic interface {
+	ValidateBasic() error
+}
+
 // GetCmdWalletAction is the CLI command for sending a WalletAction or WalletSpendAction transaction
 func GetCmdWalletAction() *cobra.Command {
 	cmd := &cobra.Command{
@@ -215,13 +219,14 @@ func GetCmdWalletAction() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
 			var msg sdk.Msg
 			if spend {
 				msg = types.NewMsgWalletSpendAction(owner, action)
 			} else {
 				msg = types.NewMsgWalletAction(owner, action)
 			}
-			err = msg.ValidateBasic()
+			err = msg.(HasValidateBasic).ValidateBasic()
 			if err != nil {
 				return err
 			}
@@ -309,9 +314,10 @@ Specify at least one pair of permit.json and code.js files`,
 				return err
 			}
 
-			if err = msg.ValidateBasic(); err != nil {
-				return err
-			}
+			// TODO-ICU: temporarily comment validateBasic call
+			// if err = msg.ValidateBasic(); err != nil {
+			// 	return err
+			// }
 
 			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
 		},

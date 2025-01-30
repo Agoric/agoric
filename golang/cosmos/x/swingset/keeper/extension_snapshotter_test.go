@@ -4,7 +4,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/tendermint/tendermint/libs/log"
+	"cosmossdk.io/log"
 )
 
 func newTestExtensionSnapshotter() *ExtensionSnapshotter {

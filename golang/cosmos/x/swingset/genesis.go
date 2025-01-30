@@ -10,6 +10,8 @@ import (
 	"io"
 	"strings"
 
+	"cosmossdk.io/core/store"
+
 	agoric "github.com/Agoric/agoric-sdk/golang/cosmos/types"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/keeper"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/types"
@@ -77,8 +79,9 @@ func InitGenesis(ctx sdk.Context, k Keeper, swingStoreExportsHandler *SwingStore
 			swingStore.Set([]byte(entry.Key), []byte(entry.Value))
 		}
 		getExportDataReader = func() (agoric.KVEntryReader, error) {
-			exportDataIterator := swingStore.Iterator(nil, nil)
-			return agoric.NewKVIteratorReader(exportDataIterator), nil
+			// exportDataIterator, err := swingStore.Iterator(nil, nil)
+			panic(fmt.Errorf("failed to iterate over swing-store export data: %s", err))
+			// return agoric.NewKVIteratorReader(exportDataIterator), nil
 		}
 	} else {
 		hashParts := strings.SplitN(data.SwingStoreExportDataHash, ":", 2)
@@ -151,9 +154,11 @@ func ExportGenesis(
 	swingStoreExportDir string,
 	swingStoreExportMode string,
 ) *types.GenesisState {
+	state, _ := k.GetState(ctx)
+
 	gs := &types.GenesisState{
 		Params:               k.GetParams(ctx),
-		State:                k.GetState(ctx),
+		State:                state,
 		SwingStoreExportData: nil,
 	}
 
@@ -204,7 +209,7 @@ func ExportGenesis(
 type swingStoreGenesisEventHandler struct {
 	exportDir      string
 	snapshotHeight uint64
-	swingStore     sdk.KVStore
+	swingStore     store.KVStore
 	hasher         hash.Hash
 	exportMode     string
 }
@@ -222,7 +227,10 @@ func (eventHandler swingStoreGenesisEventHandler) OnExportRetrieved(provider kee
 
 	artifactsProvider := keeper.SwingStoreExportProvider{
 		GetExportDataReader: func() (agoric.KVEntryReader, error) {
-			exportDataIterator := eventHandler.swingStore.Iterator(nil, nil)
+			exportDataIterator, err := eventHandler.swingStore.Iterator(nil, nil)
+			if err != nil {
+				return nil, err
+			}
 			kvReader := agoric.NewKVIteratorReader(exportDataIterator)
 			eventHandler.hasher.Reset()
 			encoder := json.NewEncoder(eventHandler.hasher)

@@ -93,7 +93,10 @@ func checkSmartWalletProvisioned(
 	beansPerUnit map[string]sdkmath.Uint,
 	addr sdk.AccAddress,
 ) error {
-	walletState := keeper.GetSmartWalletState(ctx, addr)
+	walletState, err := keeper.GetSmartWalletState(ctx, addr)
+	if err != nil {
+		return err
+	}
 
 	switch walletState {
 	case SmartWalletStateProvisioned:

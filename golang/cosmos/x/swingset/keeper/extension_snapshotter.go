@@ -7,11 +7,11 @@ import (
 	"io"
 	"math"
 
+	"cosmossdk.io/log"
+	snapshots "cosmossdk.io/store/snapshots/types"
 	agoric "github.com/Agoric/agoric-sdk/golang/cosmos/types"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
-	snapshots "github.com/cosmos/cosmos-sdk/snapshots/types"
-	"github.com/tendermint/tendermint/libs/log"
 )
 
 // This module implements a Cosmos ExtensionSnapshotter to capture and restore
@@ -79,7 +79,7 @@ func NewExtensionSnapshotter(
 ) *ExtensionSnapshotter {
 	return &ExtensionSnapshotter{
 		isConfigured:                            func() bool { return app.SnapshotManager() != nil },
-		takeAppSnapshot:                         app.Snapshot,
+		takeAppSnapshot:                         app.SnapshotManager().SnapshotIfApplicable,
 		logger:                                  app.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName), "submodule", "extension snapshotter"),
 		swingStoreExportsHandler:                swingStoreExportsHandler,
 		getSwingStoreExportDataShadowCopyReader: getSwingStoreExportDataShadowCopyReader,

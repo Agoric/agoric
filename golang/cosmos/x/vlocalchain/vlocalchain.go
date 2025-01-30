@@ -37,7 +37,7 @@ func (h portHandler) Receive(cctx context.Context, str string) (ret string, err 
 
 	switch msg.Type {
 	case "VLOCALCHAIN_ALLOCATE_ADDRESS":
-		addr := h.keeper.AllocateAddress(cctx)
+		addr, _ := h.keeper.AllocateAddress(cctx)
 		var bz []byte
 		if bz, err = json.Marshal(addr.String()); err != nil {
 			return

@@ -16,8 +16,8 @@ import (
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
+	abci "github.com/cometbft/cometbft/abci/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 // type check to ensure the interface is properly implemented
@@ -29,6 +29,12 @@ var (
 // app module Basics object
 type AppModuleBasic struct {
 }
+
+// IsAppModule implements the appmodule.AppModule interface.
+func (am AppModule) IsAppModule() {}
+
+// IsOnePerModuleType is a marker function just indicates that this is a one-per-module type.
+func (am AppModule) IsOnePerModuleType() {}
 
 func (AppModuleBasic) Name() string {
 	return ModuleName
@@ -115,19 +121,6 @@ func (am *AppModule) SetSwingStoreExportDir(dir string) {
 
 func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {}
 
-func (am AppModule) Route() sdk.Route {
-	return sdk.NewRoute(types.RouterKey, NewHandler(am.keeper))
-}
-
-func (am AppModule) QuerierRoute() string {
-	return ModuleName
-}
-
-// LegacyQuerierHandler returns the sdk.Querier for deployment module
-func (am AppModule) LegacyQuerierHandler(legacyQuerierCdc *codec.LegacyAmino) sdk.Querier {
-	return keeper.NewQuerier(am.keeper, legacyQuerierCdc)
-}
-
 func (am AppModule) RegisterServices(cfg module.Configurator) {
 	types.RegisterMsgServer(cfg.MsgServer(), keeper.NewMsgServerImpl(am.keeper))
 	querier := keeper.Querier{Keeper: am.keeper}
@@ -141,17 +134,17 @@ func (am AppModule) RegisterServices(cfg module.Configurator) {
 
 func (AppModule) ConsensusVersion() uint64 { return 2 }
 
-func (am AppModule) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) {
+func (am AppModule) BeginBlock(ctx sdk.Context) {
 	am.ensureControllerInited(ctx)
 
-	err := BeginBlock(ctx, req, am.keeper)
+	err := BeginBlock(ctx, am.keeper)
 	if err != nil {
 		fmt.Println("BeginBlock error:", err)
 	}
 }
 
-func (am AppModule) EndBlock(ctx sdk.Context, req abci.RequestEndBlock) []abci.ValidatorUpdate {
-	valUpdate, err := EndBlock(ctx, req, am.keeper)
+func (am AppModule) EndBlock(ctx sdk.Context) []abci.ValidatorUpdate {
+	valUpdate, err := EndBlock(ctx, am.keeper)
 	if err != nil {
 		fmt.Println("EndBlock error:", err)
 	}

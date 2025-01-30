@@ -10,10 +10,10 @@ import (
 	"regexp"
 
 	sdkioerrors "cosmossdk.io/errors"
+	"cosmossdk.io/log"
 	agoric "github.com/Agoric/agoric-sdk/golang/cosmos/types"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/vm"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/types"
-	"github.com/tendermint/tendermint/libs/log"
 )
 
 // This module abstracts the generation and handling of swing-store exports,

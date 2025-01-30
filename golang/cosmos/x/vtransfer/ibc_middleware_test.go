@@ -9,27 +9,29 @@ import (
 	"testing"
 	"text/template"
 
+	"cosmossdk.io/log"
+	"cosmossdk.io/store"
 	app "github.com/Agoric/agoric-sdk/golang/cosmos/app"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/vm"
-	"github.com/cosmos/cosmos-sdk/store"
+	dbm "github.com/cosmos/cosmos-db"
 	"github.com/stretchr/testify/suite"
-	"github.com/tendermint/tendermint/libs/log"
-	dbm "github.com/tendermint/tm-db"
 
 	"github.com/Agoric/agoric-sdk/golang/cosmos/types"
 	swingsettesting "github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/testing"
 	swingsettypes "github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/types"
 	vibckeeper "github.com/Agoric/agoric-sdk/golang/cosmos/x/vibc/keeper"
 
+	sdkmath "cosmossdk.io/math"
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 	"github.com/cosmos/cosmos-sdk/baseapp"
+	simtestutil "github.com/cosmos/cosmos-sdk/testutil/sims"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	ibctransfertypes "github.com/cosmos/ibc-go/v6/modules/apps/transfer/types"
-	channeltypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
-	ibctesting "github.com/cosmos/ibc-go/v6/testing"
-	"github.com/cosmos/ibc-go/v6/testing/simapp"
-	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
+	simcli "github.com/cosmos/cosmos-sdk/x/simulation/client/cli"
+	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
+	channeltypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
+	ibctesting "github.com/cosmos/ibc-go/v8/testing"
 )
 
 type IntegrationTestSuite struct {
@@ -79,8 +81,8 @@ func SetupAgoricTestingApp(instance int) TestingAppMaker {
 			jsonReply = `true`
 			return jsonReply, nil
 		}
-		appd := app.NewAgoricApp(mockController, vm.NewAgdServer(), log.TestingLogger(), db, nil,
-			true, map[int64]bool{}, app.DefaultNodeHome, simapp.FlagPeriodValue, encCdc, simapp.EmptyAppOptions{}, interBlockCacheOpt())
+		appd := app.NewAgoricApp(mockController, vm.NewAgdServer(), log.NewNopLogger(), db, nil,
+			true, map[int64]bool{}, app.DefaultNodeHome, simcli.FlagPeriodValue, encCdc, simtestutil.EmptyAppOptions{}, interBlockCacheOpt())
 		genesisState := app.NewDefaultGenesisState()
 
 		t := template.Must(template.New("").Parse(`
@@ -150,7 +152,7 @@ func (s *IntegrationTestSuite) SetupTest() {
 
 		balance := banktypes.Balance{
 			Address: chain.SenderAccount.GetAddress().String(),
-			Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100000000000000))),
+			Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdkmath.NewInt(100000000000000))),
 		}
 
 		// create application and override files in the IBC test chain
@@ -279,7 +281,7 @@ func (s *IntegrationTestSuite) TransferFromSourceChain(
 	data ibctransfertypes.FungibleTokenPacketData,
 	src, dst *ibctesting.Endpoint,
 ) (channeltypes.Packet, error) {
-	tokenAmt, ok := sdk.NewIntFromString(data.Amount)
+	tokenAmt, ok := sdkmath.NewIntFromString(data.Amount)
 	s.Require().True(ok)
 
 	timeoutHeight := srcChain.GetTimeoutHeight()
@@ -305,11 +307,11 @@ func (s *IntegrationTestSuite) TransferFromSourceChain(
 
 func (s *IntegrationTestSuite) mintToAddress(chain *ibctesting.TestChain, addr sdk.AccAddress, denom, amount string) {
 	app := s.GetApp(chain)
-	tokenAmt, ok := sdk.NewIntFromString(amount)
+	tokenAmt, ok := sdkmath.NewIntFromString(amount)
 	s.Require().True(ok)
 	intAmt, err := strconv.ParseInt(amount, 10, 64)
 	s.Require().NoError(err)
-	coins := sdk.NewCoins(sdk.NewCoin(denom, tokenAmt.Mul(sdk.NewInt(intAmt))))
+	coins := sdk.NewCoins(sdk.NewCoin(denom, tokenAmt.Mul(sdkmath.NewInt(intAmt))))
 	err = app.BankKeeper.MintCoins(chain.GetContext(), ibctransfertypes.ModuleName, coins)
 	s.Require().NoError(err)
 	err = app.BankKeeper.SendCoinsFromModuleToAccount(chain.GetContext(), ibctransfertypes.ModuleName, addr, coins)

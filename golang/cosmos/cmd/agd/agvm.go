@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/tendermint/tendermint/libs/log"
+	"cosmossdk.io/log"
 )
 
 // NewVMCommand creates a new OS command to run the Agoric VM.  It sets up the

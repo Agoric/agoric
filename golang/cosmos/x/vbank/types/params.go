@@ -5,6 +5,7 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -31,7 +32,7 @@ func DefaultParams() Params {
 	return Params{
 		RewardEpochDurationBlocks: 0,
 		RewardSmoothingBlocks:     1,
-		PerEpochRewardFraction:    sdk.OneDec(),
+		PerEpochRewardFraction:    sdkmath.LegacyOneDec(),
 		AllowedMonitoringAccounts: []string{provisionAddress.String()},
 	}
 }
@@ -141,7 +142,7 @@ func validateRewardEpochDurationBlocks(i interface{}) error {
 }
 
 func validatePerEpochRewardFraction(i interface{}) error {
-	v, ok := i.(sdk.Dec)
+	v, ok := i.(sdkmath.LegacyDec)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
@@ -150,7 +151,7 @@ func validatePerEpochRewardFraction(i interface{}) error {
 		return fmt.Errorf("per epoch reward fraction must be nonnegative: %s", v)
 	}
 
-	if v.GT(sdk.OneDec()) {
+	if v.GT(sdkmath.LegacyOneDec()) {
 		return fmt.Errorf("per epoch reward fraction must be less than or equal to one: %s", v)
 	}
 

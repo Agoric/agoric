@@ -114,7 +114,7 @@ message StringBeans {
 
   // The actual bean value.
   string beans = 2 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Uint",
+    (gogoproto.customtype) = "cosmossdk.io/math.Uint",
     (gogoproto.nullable) = false
   ];
 }
@@ -149,7 +149,7 @@ message UintMapEntry {
   option (gogoproto.equal) = true;
   string key = 1;
   string value = 2 [
-    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Uint",
+    (gogoproto.customtype) = "cosmossdk.io/math.Uint",
     (gogoproto.nullable) = false
   ];
 }

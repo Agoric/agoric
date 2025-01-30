@@ -1,8 +1,8 @@
 package keeper
 
 import (
+	"cosmossdk.io/core/store"
 	"github.com/cosmos/cosmos-sdk/codec"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/vbank/types"
@@ -15,9 +15,9 @@ const stateKey string = "state"
 
 // Keeper maintains the link to data storage and exposes getter/setter methods for the various parts of the state machine
 type Keeper struct {
-	storeKey   storetypes.StoreKey
-	cdc        codec.Codec
-	paramSpace paramtypes.Subspace
+	storService store.KVStoreService
+	cdc         codec.Codec
+	paramSpace  paramtypes.Subspace
 
 	accountKeeper         types.AccountKeeper
 	bankKeeper            types.BankKeeper
@@ -27,7 +27,7 @@ type Keeper struct {
 
 // NewKeeper creates a new vbank Keeper instance
 func NewKeeper(
-	cdc codec.Codec, key storetypes.StoreKey, paramSpace paramtypes.Subspace,
+	cdc codec.Codec, storeService store.KVStoreService, paramSpace paramtypes.Subspace,
 	accountKeeper types.AccountKeeper, bankKeeper types.BankKeeper,
 	rewardDistributorName string,
 	pushAction vm.ActionPusher,
@@ -39,7 +39,7 @@ func NewKeeper(
 	}
 
 	return Keeper{
-		storeKey:              key,
+		storService:           storeService,
 		cdc:                   cdc,
 		paramSpace:            paramSpace,
 		accountKeeper:         accountKeeper,
@@ -101,23 +101,36 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 	k.paramSpace.SetParamSet(ctx, &params)
 }
 
-func (k Keeper) GetState(ctx sdk.Context) types.State {
-	store := ctx.KVStore(k.storeKey)
-	bz := store.Get([]byte(stateKey))
+func (k Keeper) GetState(ctx sdk.Context) (types.State, error) {
+	s := k.storService.OpenKVStore(ctx)
+	bz, err := s.Get([]byte(stateKey))
+	if err != nil {
+		return types.State{}, err
+	}
 	state := types.State{}
 	k.cdc.MustUnmarshal(bz, &state)
-	return state
+	return state, nil
 }
 
-func (k Keeper) SetState(ctx sdk.Context, state types.State) {
-	store := ctx.KVStore(k.storeKey)
+func (k Keeper) SetState(ctx sdk.Context, state types.State) error {
+	s := k.storService.OpenKVStore(ctx)
 	bz := k.cdc.MustMarshal(&state)
-	store.Set([]byte(stateKey), bz)
+	err := s.Set([]byte(stateKey), bz)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (k Keeper) GetNextSequence(ctx sdk.Context) uint64 {
-	state := k.GetState(ctx)
+func (k Keeper) GetNextSequence(ctx sdk.Context) (uint64, error) {
+	state, err := k.GetState(ctx)
+	if err != nil {
+		return 0, err
+	}
 	state.LastSequence = state.GetLastSequence() + 1
-	k.SetState(ctx, state)
-	return state.LastSequence
+	err = k.SetState(ctx, state)
+	if err != nil {
+		return 0, err
+	}
+	return state.LastSequence, nil
 }

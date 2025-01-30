@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
-	chanTypes "github.com/cosmos/ibc-go/v6/modules/core/04-channel/types"
+	chanTypes "github.com/cosmos/ibc-go/v8/modules/core/04-channel/types"
 )
 
 const RouterKey = ModuleName // this was defined in your key.go file

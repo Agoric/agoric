@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"sync"
 
+	storetypes "cosmossdk.io/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -45,7 +46,7 @@ func (s *AgdServer) SetControllerContext(ctx sdk.Context) func() {
 	// own meter usage.
 	s.mtx.Lock()
 	defer s.mtx.Unlock()
-	s.currentCtx = sdk.WrapSDKContext(ctx.WithGasMeter(sdk.NewInfiniteGasMeter()))
+	s.currentCtx = sdk.WrapSDKContext(ctx.WithGasMeter(storetypes.NewInfiniteGasMeter()))
 	return func() {
 		s.mtx.Lock()
 		defer s.mtx.Unlock()

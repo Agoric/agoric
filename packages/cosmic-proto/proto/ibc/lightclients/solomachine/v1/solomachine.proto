@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package ibc.lightclients.solomachine.v1;
 
-option go_package = "github.com/cosmos/ibc-go/v6/modules/core/02-client/legacy/v100";
+option go_package = "github.com/cosmos/ibc-go/v8/modules/core/02-client/legacy/v100";
 
+import "gogoproto/gogo.proto";
 import "ibc/core/connection/v1/connection.proto";
 import "ibc/core/channel/v1/channel.proto";
-import "gogoproto/gogo.proto";
 import "google/protobuf/any.proto";
 
 // ClientState defines a solo machine client that tracks the current consensus

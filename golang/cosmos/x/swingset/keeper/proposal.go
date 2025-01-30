@@ -7,7 +7,6 @@ import (
 
 	"github.com/Agoric/agoric-sdk/golang/cosmos/vm"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/types"
-	"github.com/cosmos/cosmos-sdk/baseapp"
 )
 
 type coreEvalAction struct {
@@ -26,7 +25,7 @@ func (k Keeper) CoreEvalProposal(ctx sdk.Context, p *types.CoreEvalProposal) err
 	// synthesize unique context information.
 	// We use a fixed placeholder value for the txHash context. We use `0` for the message
 	// index which assumes there is a single proposal per block.
-	ctx = ctx.WithContext(context.WithValue(ctx.Context(), baseapp.TxHashContextKey, "x/gov"))
-	ctx = ctx.WithContext(context.WithValue(ctx.Context(), baseapp.TxMsgIdxContextKey, 0))
+	ctx = ctx.WithContext(context.WithValue(ctx.Context(), sdk.ContextKey("tx-hash"), "x/gov"))
+	ctx = ctx.WithContext(context.WithValue(ctx.Context(), sdk.ContextKey("tx-msg-idx"), 0))
 	return k.PushHighPriorityAction(ctx, action)
 }

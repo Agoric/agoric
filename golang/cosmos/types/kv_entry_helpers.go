@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"io"
 
+	storetypes "cosmossdk.io/store/types"
 	swingsettypes "github.com/Agoric/agoric-sdk/golang/cosmos/x/swingset/types"
 	vstoragetypes "github.com/Agoric/agoric-sdk/golang/cosmos/x/vstorage/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // These helpers facilitate handling KVEntry streams, in particular for the
@@ -63,11 +63,11 @@ var _ KVEntryReader = &kvIteratorReader{}
 
 // kvIteratorReader is a KVEntryReader backed by an sdk.Iterator
 type kvIteratorReader struct {
-	iter sdk.Iterator
+	iter storetypes.Iterator
 }
 
 // NewKVIteratorReader returns a KVEntryReader backed by an sdk.Iterator.
-func NewKVIteratorReader(iter sdk.Iterator) KVEntryReader {
+func NewKVIteratorReader(iter storetypes.Iterator) KVEntryReader {
 	return &kvIteratorReader{
 		iter: iter,
 	}

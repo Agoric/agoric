@@ -1,6 +1,7 @@
 package types
 
 import (
+	sdkmath "cosmossdk.io/math"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -42,28 +43,28 @@ const (
 )
 
 var (
-	DefaultBeansPerXsnapComputron = sdk.NewUint(100)
+	DefaultBeansPerXsnapComputron = sdkmath.NewUint(100)
 
 	// DefaultBeansPerBlockComputeLimit is how many computron beans we allow
 	// before starting a new block.  Some analysis (#3459) suggests this leads to
 	// about 2/3rds utilization, based on 5 sec voting time and up to 10 sec of
 	// computation.
-	DefaultBeansPerBlockComputeLimit = sdk.NewUint(8000000).Mul(DefaultBeansPerXsnapComputron)
+	DefaultBeansPerBlockComputeLimit = sdkmath.NewUint(8000000).Mul(DefaultBeansPerXsnapComputron)
 	// observed: 0.385 sec
-	DefaultBeansPerVatCreation = sdk.NewUint(300000).Mul(DefaultBeansPerXsnapComputron)
+	DefaultBeansPerVatCreation = sdkmath.NewUint(300000).Mul(DefaultBeansPerXsnapComputron)
 
 	// Fees are denominated in this unit.
 	DefaultFeeUnitPrice = sdk.NewCoins(sdk.NewInt64Coin("uist", 1_000_000)) // $1
 
 	// TODO: create the cost model we want, and update these to be more principled.
 	// These defaults currently make deploying an ag-solo cost less than $1.00.
-	DefaultBeansPerFeeUnit              = sdk.NewUint(1_000_000_000_000)                  // $1
-	DefaultBeansPerInboundTx            = DefaultBeansPerFeeUnit.Quo(sdk.NewUint(100))    // $0.01
-	DefaultBeansPerMessage              = DefaultBeansPerFeeUnit.Quo(sdk.NewUint(1_000))  // $0.001
-	DefaultBeansPerMessageByte          = DefaultBeansPerFeeUnit.Quo(sdk.NewUint(50_000)) // $0.00002
-	DefaultBeansPerMinFeeDebit          = DefaultBeansPerFeeUnit.Quo(sdk.NewUint(5))      // $0.2
-	DefaultBeansPerStorageByte          = DefaultBeansPerFeeUnit.Quo(sdk.NewUint(500))    // $0.002
-	DefaultBeansPerSmartWalletProvision = DefaultBeansPerFeeUnit                          // $1
+	DefaultBeansPerFeeUnit              = sdkmath.NewUint(1_000_000_000_000)                  // $1
+	DefaultBeansPerInboundTx            = DefaultBeansPerFeeUnit.Quo(sdkmath.NewUint(100))    // $0.01
+	DefaultBeansPerMessage              = DefaultBeansPerFeeUnit.Quo(sdkmath.NewUint(1_000))  // $0.001
+	DefaultBeansPerMessageByte          = DefaultBeansPerFeeUnit.Quo(sdkmath.NewUint(50_000)) // $0.00002
+	DefaultBeansPerMinFeeDebit          = DefaultBeansPerFeeUnit.Quo(sdkmath.NewUint(5))      // $0.2
+	DefaultBeansPerStorageByte          = DefaultBeansPerFeeUnit.Quo(sdkmath.NewUint(500))    // $0.002
+	DefaultBeansPerSmartWalletProvision = DefaultBeansPerFeeUnit                              // $1
 
 	DefaultBootstrapVatConfig = "@agoric/vm-config/decentral-core-config.json"
 
@@ -76,11 +77,11 @@ var (
 		NewQueueSize(QueueInbound, DefaultInboundQueueMax),
 	}
 
-	DefaultVatCleanupDefault = sdk.NewUint(5)
+	DefaultVatCleanupDefault = sdkmath.NewUint(5)
 	// DefaultVatCleanupExports     = DefaultVatCleanupDefault
 	// DefaultVatCleanupImports     = DefaultVatCleanupDefault
 	// DefaultVatCleanupPromises    = DefaultVatCleanupDefault
-	DefaultVatCleanupKv = sdk.NewUint(50)
+	DefaultVatCleanupKv = sdkmath.NewUint(50)
 	// DefaultVatCleanupSnapshots   = DefaultVatCleanupDefault
 	// DefaultVatCleanupTranscripts = DefaultVatCleanupDefault
 	DefaultVatCleanupBudget = []UintMapEntry{

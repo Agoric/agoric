@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	storetypes "cosmossdk.io/store/types"
 )
 
 func toKVEntryIdentity(entry KVEntry) (KVEntry, error) {
@@ -99,7 +99,7 @@ type kvEntryReaderIterator struct {
 
 // newKVEntryReaderIterator creates an iterator over a KVEntryReader.
 // KVEntry keys and values are reported as []byte from the reader in order.
-func newKVEntryReaderIterator(reader KVEntryReader) sdk.Iterator {
+func newKVEntryReaderIterator(reader KVEntryReader) storetypes.Iterator {
 	iter := &kvEntryReaderIterator{
 		reader: reader,
 	}

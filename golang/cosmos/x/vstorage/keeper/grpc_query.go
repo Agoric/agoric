@@ -32,7 +32,10 @@ func (k Querier) Data(c context.Context, req *types.QueryDataRequest) (*types.Qu
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	entry := k.GetEntry(ctx, req.Path)
+	entry, err := k.GetEntry(ctx, req.Path)
+	if err != nil {
+		return nil, status.Error(codes.FailedPrecondition, err.Error())
+	}
 
 	return &types.QueryDataResponse{
 		Value: entry.StringValue(),
@@ -198,7 +201,10 @@ func (k Querier) CapData(c context.Context, req *types.QueryCapDataRequest) (*ty
 	}
 
 	// Read data, auto-upgrading a standalone value to a single-value StreamCell.
-	entry := k.GetEntry(ctx, req.Path)
+	entry, err := k.GetEntry(ctx, req.Path)
+	if err != nil {
+		return nil, status.Error(codes.FailedPrecondition, err.Error())
+	}
 	if !entry.HasValue() {
 		return nil, status.Error(codes.FailedPrecondition, "no data")
 	}
@@ -256,7 +262,10 @@ func (k Querier) Children(c context.Context, req *types.QueryChildrenRequest) (*
 	}
 	ctx := sdk.UnwrapSDKContext(c)
 
-	children := k.GetChildren(ctx, req.Path)
+	children, err := k.GetChildren(ctx, req.Path)
+	if err != nil {
+		return nil, status.Error(codes.FailedPrecondition, err.Error())
+	}
 
 	return &types.QueryChildrenResponse{
 		Children: children.Children,

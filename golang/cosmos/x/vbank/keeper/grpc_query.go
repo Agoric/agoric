@@ -21,7 +21,10 @@ func (k Keeper) Params(c context.Context, req *types.QueryParamsRequest) (*types
 // State queries state of distribution module
 func (k Keeper) State(c context.Context, req *types.QueryStateRequest) (*types.QueryStateResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	state := k.GetState(ctx)
+	state, err := k.GetState(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	return &types.QueryStateResponse{State: state}, nil
 }

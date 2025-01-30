@@ -12,7 +12,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/tx"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	"github.com/gogo/protobuf/proto"
+	"github.com/cosmos/gogoproto/proto"
+	protov2 "google.golang.org/protobuf/proto"
 )
 
 func TestInboundAnteHandle(t *testing.T) {
@@ -159,6 +160,12 @@ func TestInboundAnteHandle(t *testing.T) {
 	}
 }
 
+type testTx struct {
+	tx.Tx
+}
+
+func (tx testTx) GetMsgsV2() ([]protov2.Message, error) { return nil, nil }
+
 func makeTestTx(msgs ...proto.Message) sdk.Tx {
 	wrappedMsgs := make([]*types.Any, len(msgs))
 	for i, m := range msgs {
@@ -168,9 +175,11 @@ func makeTestTx(msgs ...proto.Message) sdk.Tx {
 		}
 		wrappedMsgs[i] = any
 	}
-	return &tx.Tx{
-		Body: &tx.TxBody{
-			Messages: wrappedMsgs,
+	return &testTx{
+		Tx: tx.Tx{
+			Body: &tx.TxBody{
+				Messages: wrappedMsgs,
+			},
 		},
 	}
 }
@@ -195,16 +204,16 @@ func (msk mockSwingsetKeeper) InboundQueueLength(ctx sdk.Context) (int32, error)
 	return msk.inboundQueueLength, msk.inboundQueueLengthErr
 }
 
-func (msk mockSwingsetKeeper) GetState(ctx sdk.Context) swingtypes.State {
+func (msk mockSwingsetKeeper) GetState(ctx sdk.Context) (swingtypes.State, error) {
 	if msk.emptyQueueAllowed {
-		return swingtypes.State{}
+		return swingtypes.State{}, nil
 	}
 	return swingtypes.State{
 		QueueAllowed: []swingtypes.QueueSize{
 			swingtypes.NewQueueSize(swingtypes.QueueInbound, msk.inboundLimit),
 			swingtypes.NewQueueSize(swingtypes.QueueInboundMempool, msk.mempoolLimit),
 		},
-	}
+	}, nil
 }
 
 func (msk mockSwingsetKeeper) IsHighPriorityAddress(ctx sdk.Context, addr sdk.AccAddress) (bool, error) {
@@ -219,7 +228,7 @@ func (msk mockSwingsetKeeper) ChargeBeans(ctx sdk.Context, beansPerUnit map[stri
 	return fmt.Errorf("not implemented")
 }
 
-func (msk mockSwingsetKeeper) GetSmartWalletState(ctx sdk.Context, addr sdk.AccAddress) swingtypes.SmartWalletState {
+func (msk mockSwingsetKeeper) GetSmartWalletState(ctx sdk.Context, addr sdk.AccAddress) (swingtypes.SmartWalletState, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 

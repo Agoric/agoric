@@ -6,12 +6,13 @@ import (
 	sdkioerrors "cosmossdk.io/errors"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/vm"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/vibc/types"
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 // NewHandler returns a handler for "vibc" type messages.
-func NewHandler(keeper Keeper, bankKeeper types.BankKeeper) sdk.Handler {
+func NewHandler(keeper Keeper, bankKeeper types.BankKeeper) baseapp.MsgServiceHandler {
 	return func(ctx sdk.Context, msg sdk.Msg) (*sdk.Result, error) {
 		switch msg := msg.(type) {
 		case *MsgSendPacket:

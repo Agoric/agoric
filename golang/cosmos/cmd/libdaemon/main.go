@@ -16,7 +16,7 @@ import (
 	"os"
 	"path/filepath"
 
-	log "github.com/tendermint/tendermint/libs/log"
+	log "cosmossdk.io/log"
 
 	gaia "github.com/Agoric/agoric-sdk/golang/cosmos/app"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/daemon"

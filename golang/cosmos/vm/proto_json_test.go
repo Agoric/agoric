@@ -46,7 +46,7 @@ func TestProtoJSONMarshal(t *testing.T) {
 		{
 			"MsgDelegate",
 			func() interface{} {
-				return stakingtypes.NewMsgDelegate(accAddr, valAddr, coin)
+				return stakingtypes.NewMsgDelegate(accAddr.String(), valAddr.String(), coin)
 			},
 			`{"delegatorAddress":"cosmos1qy352eufjjmc9c","validatorAddress":"cosmosvaloper1npm9gvss52mlmk","amount":{"denom":"uatom","amount":"1234567"}}`,
 		},

@@ -4,7 +4,7 @@ import (
 	"github.com/Agoric/agoric-sdk/golang/cosmos/x/vstorage/types"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
-	"github.com/gogo/protobuf/proto"
+	"github.com/cosmos/gogoproto/proto"
 	"github.com/spf13/cobra"
 )
 

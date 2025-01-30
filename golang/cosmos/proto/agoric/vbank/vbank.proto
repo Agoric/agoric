@@ -23,7 +23,7 @@ message Params {
     // per-block distribution.
     string per_epoch_reward_fraction = 2 [
       (gogoproto.moretags)   = "yaml:\"discrete_epoch_reward_fraction\"",
-      (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+      (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
       (gogoproto.nullable)   = false
     ];
 

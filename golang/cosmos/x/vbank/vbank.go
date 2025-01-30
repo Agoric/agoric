@@ -7,8 +7,8 @@ import (
 	stdlog "log"
 	"sort"
 
+	sdkmath "cosmossdk.io/math"
 	"github.com/Agoric/agoric-sdk/golang/cosmos/vm"
-	"github.com/cosmos/cosmos-sdk/baseapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
@@ -82,7 +82,7 @@ func getBalanceUpdate(ctx sdk.Context, keeper Keeper, addressToUpdate map[string
 		return nil
 	}
 
-	nonce := keeper.GetNextSequence(ctx)
+	nonce, _ := keeper.GetNextSequence(ctx)
 	event := VbankBalanceUpdate{
 		Nonce:   nonce,
 		Updated: make([]VbankSingleBalanceUpdate, 0, nentries),
@@ -157,7 +157,7 @@ func (ch portHandler) Receive(cctx context.Context, str string) (ret string, err
 		if err = sdk.ValidateDenom(msg.Denom); err != nil {
 			return "", fmt.Errorf("invalid denom %s: %s", msg.Denom, err)
 		}
-		value, ok := sdk.NewIntFromString(msg.Amount)
+		value, ok := sdkmath.NewIntFromString(msg.Amount)
 		if !ok {
 			return "", fmt.Errorf("cannot convert %s to int", msg.Amount)
 		}
@@ -185,7 +185,7 @@ func (ch portHandler) Receive(cctx context.Context, str string) (ret string, err
 		if err = sdk.ValidateDenom(msg.Denom); err != nil {
 			return "", fmt.Errorf("invalid denom %s: %s", msg.Denom, err)
 		}
-		value, ok := sdk.NewIntFromString(msg.Amount)
+		value, ok := sdkmath.NewIntFromString(msg.Amount)
 		if !ok {
 			return "", fmt.Errorf("cannot convert %s to int", msg.Amount)
 		}
@@ -206,7 +206,7 @@ func (ch portHandler) Receive(cctx context.Context, str string) (ret string, err
 		}
 
 	case "VBANK_GIVE_TO_REWARD_DISTRIBUTOR":
-		value, ok := sdk.NewIntFromString(msg.Amount)
+		value, ok := sdkmath.NewIntFromString(msg.Amount)
 		if !ok {
 			return "", fmt.Errorf("cannot convert %s to int", msg.Amount)
 		}
@@ -214,7 +214,10 @@ func (ch portHandler) Receive(cctx context.Context, str string) (ret string, err
 		if err := keeper.StoreRewardCoins(ctx, coins); err != nil {
 			return "", fmt.Errorf("cannot store reward %s coins: %s", coins.Sort().String(), err)
 		}
-		state := keeper.GetState(ctx)
+		state, err := keeper.GetState(ctx)
+		if err != nil {
+			return "", err
+		}
 		state.RewardPool = state.RewardPool.Add(coins...)
 		keeper.SetState(ctx, state)
 		// We don't supply the module balance, since the controller shouldn't know.
@@ -244,7 +247,7 @@ func (am AppModule) PushAction(ctx sdk.Context, action vm.Action) error {
 	// synthesize unique context information.
 	// We use a fixed placeholder value for the txHash context, and can simply use `0` for the
 	// message index as there is only one such action per block.
-	ctx = ctx.WithContext(context.WithValue(ctx.Context(), baseapp.TxHashContextKey, "x/vbank"))
-	ctx = ctx.WithContext(context.WithValue(ctx.Context(), baseapp.TxMsgIdxContextKey, 0))
+	ctx = ctx.WithContext(context.WithValue(ctx.Context(), sdk.ContextKey("tx-hash"), "x/vbank"))
+	ctx = ctx.WithContext(context.WithValue(ctx.Context(), sdk.ContextKey("tx-msg-idx"), 0))
 	return am.keeper.PushAction(ctx, action)
 }
