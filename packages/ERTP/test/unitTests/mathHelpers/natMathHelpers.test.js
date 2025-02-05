@@ -13,15 +13,13 @@ test('natMathHelpers make', t => {
   t.deepEqual(m.make(mockBrand, 4n), { brand: mockBrand, value: 4n });
   // @ts-expect-error deliberate invalid arguments for testing
   t.throws(() => m.make(mockBrand, 4), {
-    message:
-      'value 4 must be a bigint, copySet, copyBag, or an array, not "number"',
+    message: 'value 4 must be an AmountValue, not "number"',
   });
   t.throws(
     // @ts-expect-error deliberate invalid arguments for testing
     () => m.make(mockBrand, 'abc'),
     {
-      message:
-        'value "abc" must be a bigint, copySet, copyBag, or an array, not "string"',
+      message: 'value "abc" must be an AmountValue, not "string"',
     },
     `'abc' is not a nat`,
   );
@@ -29,8 +27,7 @@ test('natMathHelpers make', t => {
     // @ts-expect-error deliberate invalid arguments for testing
     () => m.make(mockBrand, -1),
     {
-      message:
-        'value -1 must be a bigint, copySet, copyBag, or an array, not "number"',
+      message: 'value -1 must be an AmountValue, not "number"',
     },
     `- 1 is not a valid Nat`,
   );
@@ -101,8 +98,7 @@ test('natMathHelpers getValue', t => {
   t.is(m.getValue(mockBrand, m.make(mockBrand, 4n)), 4n);
   // @ts-expect-error deliberate invalid arguments for testing
   t.throws(() => m.getValue(mockBrand, m.make(mockBrand, 4)), {
-    message:
-      'value 4 must be a bigint, copySet, copyBag, or an array, not "number"',
+    message: 'value 4 must be an AmountValue, not "number"',
   });
 });
 
@@ -157,8 +153,7 @@ test('natMathHelpers isEmpty', t => {
     // @ts-expect-error deliberate invalid arguments for testing
     () => m.isEmpty(harden({ brand: mockBrand, value: 'abc' })),
     {
-      message:
-        'value "abc" must be a bigint, copySet, copyBag, or an array, not "string"',
+      message: 'value "abc" must be an AmountValue, not "string"',
     },
     `isEmpty('abc') throws because it cannot be coerced`,
   );

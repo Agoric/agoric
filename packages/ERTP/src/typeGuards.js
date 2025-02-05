@@ -2,7 +2,7 @@
 
 import { M, matches, getInterfaceGuardPayload } from '@endo/patterns';
 /**
- * @import {AmountValue, Ratio} from './types.js'
+ * @import {AmountValue, Amount, AmountValueHasBound, AmountValueBound, AmountBound, Ratio} from './types.js'
  * @import {TypedPattern} from '@agoric/internal'
  */
 
@@ -68,6 +68,10 @@ const SetValueShape = M.arrayOf(M.key());
  */
 const CopyBagValueShape = M.bag();
 
+/**
+ * @see {AmountValue}
+ * @see {AssetValueForKind}
+ */
 const AmountValueShape = M.or(
   NatValueShape,
   CopySetValueShape,
@@ -75,6 +79,7 @@ const AmountValueShape = M.or(
   CopyBagValueShape,
 );
 
+/** @see {Amount} */
 export const AmountShape = { brand: BrandShape, value: AmountValueShape };
 harden(AmountShape);
 
@@ -90,6 +95,22 @@ harden(AmountShape);
  * `AmountShape` pattern above.
  */
 export const AmountPatternShape = M.pattern();
+
+/** @see {AmountValueHasBound} */
+export const AmountValueHasBoundShape = M.tagged(
+  'match:has',
+  M.splitArray([M.pattern(), M.nat()], [M.record()]),
+);
+
+/** @see {AmountValueBound} */
+const AmountValueBoundShape = M.or(AmountValueShape, AmountValueHasBoundShape);
+
+/** @see {AmountBound} */
+export const AmountBoundShape = {
+  brand: BrandShape,
+  value: AmountValueBoundShape,
+};
+harden(AmountBoundShape);
 
 /** @type {TypedPattern<Ratio>} */
 export const RatioShape = { numerator: AmountShape, denominator: AmountShape };

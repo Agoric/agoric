@@ -20,8 +20,7 @@ test('set with strings make', t => {
     // @ts-expect-error deliberate invalid arguments for testing
     () => m.make(mockBrand, 'abc'),
     {
-      message:
-        'value "abc" must be a bigint, copySet, copyBag, or an array, not "string"',
+      message: 'value "abc" must be an AmountValue, not "string"',
     },
     `'abc' is not a valid string array`,
   );
@@ -46,8 +45,7 @@ test('set with strings coerce', t => {
     // @ts-expect-error deliberate invalid arguments for testing
     () => m.coerce(mockBrand, harden({ brand: mockBrand, value: '6' })),
     {
-      message:
-        'value "6" must be a bigint, copySet, copyBag, or an array, not "string"',
+      message: 'value "6" must be an AmountValue, not "string"',
     },
     `'6' is not a valid array`,
   );

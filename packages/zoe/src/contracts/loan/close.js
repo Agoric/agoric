@@ -31,6 +31,7 @@ export const makeCloseLoanInvitation = (zcf, config) => {
     const debt = getDebt();
 
     // All debt must be repaid.
+    // @ts-expect-error cast?
     AmountMath.isGTE(repaid, debt) ||
       Fail`Not enough Loan assets have been repaid.  ${debt} is required, but only ${repaid} was repaid.`;
 

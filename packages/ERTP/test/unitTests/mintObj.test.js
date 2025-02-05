@@ -124,9 +124,9 @@ test('non-fungible tokens example', async t => {
     mint: balletTicketMint,
     issuer: balletTicketIssuer,
     brand,
-  } = /**
-   * @type {IssuerKit<'set', { seat: number; show: string; start: string }>}
-   */ (makeIssuerKit('Agoric Ballet Opera tickets', AssetKind.SET));
+  } = /** @type {IssuerKit<'set', { seat: number; show: string; start: string }>} */ (
+    makeIssuerKit('Agoric Ballet Opera tickets', AssetKind.SET)
+  );
 
   const startDateString = new Date(2020, 1, 17, 20, 30).toISOString();
 

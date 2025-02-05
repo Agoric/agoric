@@ -3,7 +3,10 @@
 import { Fail } from '@endo/errors';
 import { Nat, isNat } from '@endo/nat';
 
-/** @import {MathHelpers, NatValue} from '../types.js' */
+/**
+ * @import {Key} from '@endo/patterns'
+ * @import {MathHelpers, NatValue} from '../types.js'
+ */
 
 const empty = 0n;
 
@@ -16,7 +19,10 @@ const empty = 0n;
  * smallest whole unit such that the `natMathHelpers` never deals with
  * fractional parts.
  *
- * @type {MathHelpers<NatValue>}
+ * For this 'nat' asset kind, the rightBound is always a bigint, since a a
+ * fungible number has no "elements" to match against an elementPattern.
+ *
+ * @type {MathHelpers<'nat', Key, NatValue>}
  */
 export const natMathHelpers = harden({
   doCoerce: nat => {
@@ -27,9 +33,11 @@ export const natMathHelpers = harden({
   },
   doMakeEmpty: () => empty,
   doIsEmpty: nat => nat === empty,
-  doIsGTE: (left, right) => left >= right,
+  doIsGTE: (left, rightBound) =>
+    left >= /** @type {bigint} */ (/** @type {unknown} */ (rightBound)),
   doIsEqual: (left, right) => left === right,
   // BigInts don't observably overflow
   doAdd: (left, right) => left + right,
-  doSubtract: (left, right) => Nat(left - right),
+  doSubtract: (left, rightBound) =>
+    Nat(left - /** @type {bigint} */ (/** @type {unknown} */ (rightBound))),
 });
