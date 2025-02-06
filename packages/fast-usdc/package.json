@@ -27,7 +27,7 @@
     "@agoric/vats": "^0.15.1",
     "@agoric/zone": "^0.2.2",
     "@fast-check/ava": "^2.0.1",
-    "ava": "^5.3.0",
+    "ava": "^6.2.0",
     "c8": "^10.1.2",
     "execa": "9.1.0",
     "ts-blank-space": "^0.4.4"

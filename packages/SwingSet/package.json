@@ -65,7 +65,7 @@
   },
   "peerDependencies": {
     "@agoric/xsnap": "^0.14.2",
-    "ava": "^5.3.0"
+    "ava": "^6.2.0"
   },
   "files": [
     "bin/vat",

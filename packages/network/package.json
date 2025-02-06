@@ -37,7 +37,7 @@
     "@agoric/vow": "^0.1.0",
     "@agoric/zone": "^0.2.2",
     "@endo/bundle-source": "^3.5.1",
-    "ava": "^5.3.0",
+    "ava": "^6.2.0",
     "c8": "^10.1.2"
   },
   "exports": {

@@ -52,7 +52,7 @@
     "@agoric/swing-store": "^0.9.1",
     "@agoric/swingset-liveslots": "^0.10.2",
     "@agoric/time": "^0.3.2",
-    "ava": "^5.3.0",
+    "ava": "^6.2.0",
     "c8": "^10.1.2"
   },
   "files": [
