@@ -18,6 +18,7 @@ import type {
   KnownChains,
   LocalAccountMethods,
   ICQQueryFunction,
+  NobleMethods,
 } from './types.js';
 import type { ResolvedContinuingOfferResult } from './utils/zoe-tools.js';
 
@@ -98,13 +99,14 @@ export type AccountIdArg = AccountId | CosmosChainAddress;
  *
  * The methods available depend on the chain and its capabilities.
  */
-export type OrchestrationAccount<CI extends ChainInfo> =
-  OrchestrationAccountCommon &
-    (CI extends CosmosChainInfo
-      ? CI['chainId'] extends `agoric${string}`
-        ? LocalAccountMethods
+export type OrchestrationAccount<CI extends ChainInfo> = OrchestrationAccountCommon &
+  (CI extends CosmosChainInfo
+    ? CI['chainId'] extends `agoric${string}`
+      ? LocalAccountMethods
+      : CI['chainId'] extends `noble${string}`
+        ? CosmosChainAccountMethods<CI> & NobleMethods
         : CosmosChainAccountMethods<CI>
-      : object);
+    : object);
 
 /**
  * An object for access the core functions of a remote chain.
