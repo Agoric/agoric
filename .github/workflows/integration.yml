@@ -59,7 +59,7 @@ jobs:
       # Prerequisites
       - uses: ./.github/actions/restore-node
         with:
-          node-version: 18.18
+          node-version: 20.x
           keep-endo: 'true'
 
       # Select a branch of the
@@ -135,8 +135,7 @@ jobs:
           path: ./agoric-sdk
       - uses: ./agoric-sdk/.github/actions/restore-node
         with:
-          # XXX loadgen not compatible with 18.19 https://github.com/Agoric/agoric-sdk/pull/8365#issuecomment-1848003597
-          node-version: 18.18
+          node-version: 20.x
           path: ./agoric-sdk
           # Forces xsnap to initialize all memory to random data, which increases
           # the chances the content of snapshots may deviate between validators
@@ -259,7 +258,7 @@ jobs:
         working-directory: packages/deployment
       - uses: ./.github/actions/restore-node
         with:
-          node-version: '18.x'
+          node-version: 20.x
           # Rebuilding the SDK image with resolved endo packages is not currently supported
           # and since we can't build core eval submissions from the SDK using a newer endo,
           # simply ignore any endo branch integration (this means we don't have full coverage)
