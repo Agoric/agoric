@@ -34,13 +34,15 @@ export const contract = async (_zcf, _privateArgs, zone, tools) => {
   const { orchestrateAll } = tools;
   const { makeHookAccount, makePosition } = orchestrateAll(flows, {});
 
+  const { when } = tools.vowTools;
+
   const tap = zone.makeOnce('tapPosition', _key => {
     console.log('making tap');
     return zone.exo('tap', interfaceTODO, {
       /** @param {VTransferIBCEvent} event */
       async receiveUpcall(event) {
         console.log(event);
-        return makePosition(); // TODO: vow handling?
+        return when(makePosition());
       },
     });
   });
@@ -48,8 +50,6 @@ export const contract = async (_zcf, _privateArgs, zone, tools) => {
   const hookAccountV = zone.makeOnce('hookAccount', _key =>
     makeHookAccount(tap),
   );
-
-  const { when } = tools.vowTools;
 
   return {
     publicFacet: zone.exo('MyPub', interfaceTODO, {
