@@ -1,6 +1,5 @@
 import { NonNullish } from '@agoric/internal';
 import { makeError, q } from '@endo/errors';
-import { ethers } from 'ethers';
 
 /**
  * @import {GuestInterface, GuestOf} from '@agoric/async-flow';
@@ -26,47 +25,6 @@ const channels = {
 };
 
 /**
- * Generates a contract call payload for an EVM-based contract.
- *
- * @param {Object} params - The parameters for encoding the contract call.
- * @param {string} params.evmContractAddress - The address of the EVM contract
- *   to call.
- * @param {string} params.functionSelector - The function selector of the
- *   contract method.
- * @param {string} params.encodedArgs - The ABI-encoded arguments for the
- *   contract method.
- * @param {number} params.deadline
- * @param {number} params.nonce - A unique identifier for the transaction.
- * @returns {number[]} The encoded contract call payload as an array of numbers.
- */
-const getContractInvocationPayload = ({
-  evmContractAddress,
-  functionSelector,
-  encodedArgs,
-  deadline,
-  nonce,
-}) => {
-  const LOGIC_CALL_MSG_ID = 0;
-
-  const abiCoder = new ethers.utils.AbiCoder();
-
-  const payload = abiCoder.encode(
-    ['uint256', 'address', 'uint256', 'uint256', 'bytes'],
-    [
-      LOGIC_CALL_MSG_ID,
-      evmContractAddress,
-      nonce,
-      deadline,
-      ethers.utils.hexlify(
-        ethers.utils.concat([functionSelector, encodedArgs]),
-      ),
-    ],
-  );
-
-  return Array.from(ethers.utils.arrayify(payload));
-};
-
-/**
  * @satisfies {OrchestrationFlow}
  * @param {Orchestrator} orch
  * @param {object} ctx
@@ -79,13 +37,7 @@ const getContractInvocationPayload = ({
  *   type: number;
  *   destinationEVMChain: string;
  *   gasAmount: number;
- *   contractInvocationDetails: {
- *     evmContractAddress: string;
- *     functionSelector: string;
- *     encodedArgs: string;
- *     nonce: number;
- *     deadline: number;
- *   };
+ *   contractInvocationPayload: number[];
  * }} offerArgs
  */
 export const sendIt = async (
@@ -99,17 +51,10 @@ export const sendIt = async (
     type,
     destinationEVMChain,
     gasAmount,
-    contractInvocationDetails,
+    contractInvocationPayload,
   } = offerArgs;
 
-  const { evmContractAddress, functionSelector, encodedArgs, nonce, deadline } =
-    contractInvocationDetails;
-
-  void log(`offer args`);
-  void log(`evmContractAddress:${evmContractAddress}`);
-  void log(`functionSelector:${functionSelector}`);
-  void log(`encodedArgs:${encodedArgs}`);
-  void log(`nonce:${nonce}`);
+  void log(`initiating sendIt`);
 
   const { give } = seat.getProposal();
   const [[_kw, amt]] = entries(give);
@@ -137,16 +82,7 @@ export const sendIt = async (
 
   void log(`completed transfer to localAccount`);
 
-  const payload =
-    type === 1 || type === 2
-      ? getContractInvocationPayload({
-          evmContractAddress,
-          functionSelector,
-          encodedArgs,
-          nonce,
-          deadline,
-        })
-      : null;
+  const payload = type === 1 || type === 2 ? contractInvocationPayload : null;
 
   void log(`payload received`);
 

@@ -72,13 +72,7 @@ test('start axelarGmp and send an offer', async t => {
       type: 1,
       destinationEVMChain: 'ethereum',
       gasAmount: 33,
-      contractInvocationDetails: {
-        evmContractAddress: 'anyContract',
-        functionSelector: 'fnSelector',
-        encodedArgs: 'args',
-        nonce: 25,
-        deadline: 3444,
-      },
+      contractInvocationPayload: [1, 0, 0, 1, 1],
     },
   });
 
@@ -87,11 +81,7 @@ test('start axelarGmp and send an offer', async t => {
 
   // This log shows the flow started, but didn't get past the IBC Transfer settlement
   t.deepEqual(getLogged(), [
-    'offer args',
-    'evmContractAddress:anyContract',
-    'functionSelector:fnSelector',
-    'encodedArgs:args',
-    'nonce:25',
+    'initiating sendIt',
     'got info for denoms: ibc/FE98AAD68F02F03565E9FA39A5E627946699B2B07115889ED812D8BA639576A9, ibc/toyatom, ibc/toyusdc, ubld, uist',
     'got info for chain: osmosis-1',
     'completed transfer to localAccount',
