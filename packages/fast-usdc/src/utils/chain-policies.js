@@ -19,6 +19,9 @@ export const ChainPolicies = /** @type {const} */ ({
     },
     Base: {
       attenuatedCttpBridgeAddresses: [
+        // Contract Name: ERC1967Proxy
+        // Submitted for verification at basescan.org on 2024-06-21
+        // https://basescan.org/address/0xb6615b2662b35fc3533f8479002e62d0523341de#code
         '0xB6615B2662b35fc3533F8479002e62D0523341De',
       ],
       cctpTokenMessengerAddress: '0x1682Ae6375C4E4A97e4B583BC394c861A46D8962',
@@ -33,6 +36,9 @@ export const ChainPolicies = /** @type {const} */ ({
     },
     Ethereum: {
       attenuatedCttpBridgeAddresses: [
+        // Contract Name: ERC1967Proxy
+        // Submitted for verification at Etherscan.io on 2024-06-21
+        // https://etherscan.io/address/0xbc8552339da68eb65c8b88b414b5854e0e366cfc#code
         '0xBC8552339dA68EB65C8b88B414B5854E0E366cFc',
       ],
       cctpTokenMessengerAddress: '0xBd3fa81B58Ba92a82136038B25aDec7066af3155',
