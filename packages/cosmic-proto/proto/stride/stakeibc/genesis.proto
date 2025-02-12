@@ -1,0 +1,21 @@
+syntax = "proto3";
+package stride.stakeibc;
+
+import "gogoproto/gogo.proto";
+import "stride/stakeibc/params.proto";
+import "stride/stakeibc/host_zone.proto";
+import "stride/stakeibc/epoch_tracker.proto";
+import "stride/stakeibc/trade_route.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/stakeibc/types";
+
+// GenesisState defines the stakeibc module's genesis state.
+message GenesisState {
+  Params params = 1 [ (gogoproto.nullable) = false ];
+  string port_id = 2;
+  repeated HostZone host_zone_list = 5 [ (gogoproto.nullable) = false ];
+  repeated EpochTracker epoch_tracker_list = 10
+      [ (gogoproto.nullable) = false ];
+  repeated TradeRoute trade_routes = 12 [ (gogoproto.nullable) = false ];
+  reserved 3, 4, 6, 9, 11;
+}

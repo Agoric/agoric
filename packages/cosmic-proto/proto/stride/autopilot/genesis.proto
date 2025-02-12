@@ -1,0 +1,16 @@
+syntax = "proto3";
+package stride.autopilot;
+
+import "gogoproto/gogo.proto";
+import "stride/autopilot/params.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/autopilot/types";
+
+// GenesisState defines the claim module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1 [
+    (gogoproto.moretags) = "yaml:\"params\"",
+    (gogoproto.nullable) = false
+  ];
+}

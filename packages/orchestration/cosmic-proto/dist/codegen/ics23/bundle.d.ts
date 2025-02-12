@@ -1,0 +1,154 @@
+import * as _124 from '../proofs.js';
+export declare const ics23: {
+    hashOpFromJSON(object: any): _124.HashOp;
+    hashOpToJSON(object: _124.HashOp): string;
+    lengthOpFromJSON(object: any): _124.LengthOp;
+    lengthOpToJSON(object: _124.LengthOp): string;
+    HashOp: typeof _124.HashOp;
+    HashOpSDKType: typeof _124.HashOp;
+    LengthOp: typeof _124.LengthOp;
+    LengthOpSDKType: typeof _124.LengthOp;
+    ExistenceProof: {
+        typeUrl: string;
+        encode(message: _124.ExistenceProof, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.ExistenceProof;
+        fromJSON(object: any): _124.ExistenceProof;
+        toJSON(message: _124.ExistenceProof): import("../json-safe.js").JsonSafe<_124.ExistenceProof>;
+        fromPartial(object: Partial<_124.ExistenceProof>): _124.ExistenceProof;
+        fromProtoMsg(message: _124.ExistenceProofProtoMsg): _124.ExistenceProof;
+        toProto(message: _124.ExistenceProof): Uint8Array;
+        toProtoMsg(message: _124.ExistenceProof): _124.ExistenceProofProtoMsg;
+    };
+    NonExistenceProof: {
+        typeUrl: string;
+        encode(message: _124.NonExistenceProof, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.NonExistenceProof;
+        fromJSON(object: any): _124.NonExistenceProof;
+        toJSON(message: _124.NonExistenceProof): import("../json-safe.js").JsonSafe<_124.NonExistenceProof>;
+        fromPartial(object: Partial<_124.NonExistenceProof>): _124.NonExistenceProof;
+        fromProtoMsg(message: _124.NonExistenceProofProtoMsg): _124.NonExistenceProof;
+        toProto(message: _124.NonExistenceProof): Uint8Array;
+        toProtoMsg(message: _124.NonExistenceProof): _124.NonExistenceProofProtoMsg;
+    };
+    CommitmentProof: {
+        typeUrl: string;
+        encode(message: _124.CommitmentProof, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.CommitmentProof;
+        fromJSON(object: any): _124.CommitmentProof;
+        toJSON(message: _124.CommitmentProof): import("../json-safe.js").JsonSafe<_124.CommitmentProof>;
+        fromPartial(object: Partial<_124.CommitmentProof>): _124.CommitmentProof;
+        fromProtoMsg(message: _124.CommitmentProofProtoMsg): _124.CommitmentProof;
+        toProto(message: _124.CommitmentProof): Uint8Array;
+        toProtoMsg(message: _124.CommitmentProof): _124.CommitmentProofProtoMsg;
+    };
+    LeafOp: {
+        typeUrl: string;
+        encode(message: _124.LeafOp, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.LeafOp;
+        fromJSON(object: any): _124.LeafOp;
+        toJSON(message: _124.LeafOp): import("../json-safe.js").JsonSafe<_124.LeafOp>;
+        fromPartial(object: Partial<_124.LeafOp>): _124.LeafOp;
+        fromProtoMsg(message: _124.LeafOpProtoMsg): _124.LeafOp;
+        toProto(message: _124.LeafOp): Uint8Array;
+        toProtoMsg(message: _124.LeafOp): _124.LeafOpProtoMsg;
+    };
+    InnerOp: {
+        typeUrl: string;
+        encode(message: _124.InnerOp, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.InnerOp;
+        fromJSON(object: any): _124.InnerOp;
+        toJSON(message: _124.InnerOp): import("../json-safe.js").JsonSafe<_124.InnerOp>;
+        fromPartial(object: Partial<_124.InnerOp>): _124.InnerOp;
+        fromProtoMsg(message: _124.InnerOpProtoMsg): _124.InnerOp;
+        toProto(message: _124.InnerOp): Uint8Array;
+        toProtoMsg(message: _124.InnerOp): _124.InnerOpProtoMsg;
+    };
+    ProofSpec: {
+        typeUrl: string;
+        encode(message: _124.ProofSpec, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.ProofSpec;
+        fromJSON(object: any): _124.ProofSpec;
+        toJSON(message: _124.ProofSpec): import("../json-safe.js").JsonSafe<_124.ProofSpec>;
+        fromPartial(object: Partial<_124.ProofSpec>): _124.ProofSpec;
+        fromProtoMsg(message: _124.ProofSpecProtoMsg): _124.ProofSpec;
+        toProto(message: _124.ProofSpec): Uint8Array;
+        toProtoMsg(message: _124.ProofSpec): _124.ProofSpecProtoMsg;
+    };
+    InnerSpec: {
+        typeUrl: string;
+        encode(message: _124.InnerSpec, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.InnerSpec;
+        fromJSON(object: any): _124.InnerSpec;
+        toJSON(message: _124.InnerSpec): import("../json-safe.js").JsonSafe<_124.InnerSpec>;
+        fromPartial(object: Partial<_124.InnerSpec>): _124.InnerSpec;
+        fromProtoMsg(message: _124.InnerSpecProtoMsg): _124.InnerSpec;
+        toProto(message: _124.InnerSpec): Uint8Array;
+        toProtoMsg(message: _124.InnerSpec): _124.InnerSpecProtoMsg;
+    };
+    BatchProof: {
+        typeUrl: string;
+        encode(message: _124.BatchProof, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.BatchProof;
+        fromJSON(object: any): _124.BatchProof;
+        toJSON(message: _124.BatchProof): import("../json-safe.js").JsonSafe<_124.BatchProof>;
+        fromPartial(object: Partial<_124.BatchProof>): _124.BatchProof;
+        fromProtoMsg(message: _124.BatchProofProtoMsg): _124.BatchProof;
+        toProto(message: _124.BatchProof): Uint8Array;
+        toProtoMsg(message: _124.BatchProof): _124.BatchProofProtoMsg;
+    };
+    BatchEntry: {
+        typeUrl: string;
+        encode(message: _124.BatchEntry, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.BatchEntry;
+        fromJSON(object: any): _124.BatchEntry;
+        toJSON(message: _124.BatchEntry): import("../json-safe.js").JsonSafe<_124.BatchEntry>;
+        fromPartial(object: Partial<_124.BatchEntry>): _124.BatchEntry;
+        fromProtoMsg(message: _124.BatchEntryProtoMsg): _124.BatchEntry;
+        toProto(message: _124.BatchEntry): Uint8Array;
+        toProtoMsg(message: _124.BatchEntry): _124.BatchEntryProtoMsg;
+    };
+    CompressedBatchProof: {
+        typeUrl: string;
+        encode(message: _124.CompressedBatchProof, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.CompressedBatchProof;
+        fromJSON(object: any): _124.CompressedBatchProof;
+        toJSON(message: _124.CompressedBatchProof): import("../json-safe.js").JsonSafe<_124.CompressedBatchProof>;
+        fromPartial(object: Partial<_124.CompressedBatchProof>): _124.CompressedBatchProof;
+        fromProtoMsg(message: _124.CompressedBatchProofProtoMsg): _124.CompressedBatchProof;
+        toProto(message: _124.CompressedBatchProof): Uint8Array;
+        toProtoMsg(message: _124.CompressedBatchProof): _124.CompressedBatchProofProtoMsg;
+    };
+    CompressedBatchEntry: {
+        typeUrl: string;
+        encode(message: _124.CompressedBatchEntry, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.CompressedBatchEntry;
+        fromJSON(object: any): _124.CompressedBatchEntry;
+        toJSON(message: _124.CompressedBatchEntry): import("../json-safe.js").JsonSafe<_124.CompressedBatchEntry>;
+        fromPartial(object: Partial<_124.CompressedBatchEntry>): _124.CompressedBatchEntry;
+        fromProtoMsg(message: _124.CompressedBatchEntryProtoMsg): _124.CompressedBatchEntry;
+        toProto(message: _124.CompressedBatchEntry): Uint8Array;
+        toProtoMsg(message: _124.CompressedBatchEntry): _124.CompressedBatchEntryProtoMsg;
+    };
+    CompressedExistenceProof: {
+        typeUrl: string;
+        encode(message: _124.CompressedExistenceProof, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.CompressedExistenceProof;
+        fromJSON(object: any): _124.CompressedExistenceProof;
+        toJSON(message: _124.CompressedExistenceProof): import("../json-safe.js").JsonSafe<_124.CompressedExistenceProof>;
+        fromPartial(object: Partial<_124.CompressedExistenceProof>): _124.CompressedExistenceProof;
+        fromProtoMsg(message: _124.CompressedExistenceProofProtoMsg): _124.CompressedExistenceProof;
+        toProto(message: _124.CompressedExistenceProof): Uint8Array;
+        toProtoMsg(message: _124.CompressedExistenceProof): _124.CompressedExistenceProofProtoMsg;
+    };
+    CompressedNonExistenceProof: {
+        typeUrl: string;
+        encode(message: _124.CompressedNonExistenceProof, writer?: import("../binary.js").BinaryWriter): import("../binary.js").BinaryWriter;
+        decode(input: import("../binary.js").BinaryReader | Uint8Array, length?: number): _124.CompressedNonExistenceProof;
+        fromJSON(object: any): _124.CompressedNonExistenceProof;
+        toJSON(message: _124.CompressedNonExistenceProof): import("../json-safe.js").JsonSafe<_124.CompressedNonExistenceProof>;
+        fromPartial(object: Partial<_124.CompressedNonExistenceProof>): _124.CompressedNonExistenceProof;
+        fromProtoMsg(message: _124.CompressedNonExistenceProofProtoMsg): _124.CompressedNonExistenceProof;
+        toProto(message: _124.CompressedNonExistenceProof): Uint8Array;
+        toProtoMsg(message: _124.CompressedNonExistenceProof): _124.CompressedNonExistenceProofProtoMsg;
+    };
+};

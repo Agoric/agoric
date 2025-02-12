@@ -1,0 +1,17 @@
+syntax = "proto3";
+package stride.icacallbacks;
+
+import "gogoproto/gogo.proto";
+import "stride/icacallbacks/params.proto";
+import "stride/icacallbacks/callback_data.proto";
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/icacallbacks/types";
+
+// GenesisState defines the icacallbacks module's genesis state.
+message GenesisState {
+  Params params = 1 [ (gogoproto.nullable) = false ];
+  string port_id = 2;
+  repeated CallbackData callback_data_list = 3 [ (gogoproto.nullable) = false ];
+  // this line is used by starport scaffolding # genesis/proto/state
+}

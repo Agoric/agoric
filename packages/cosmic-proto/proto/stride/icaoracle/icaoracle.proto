@@ -1,0 +1,42 @@
+syntax = "proto3";
+package stride.icaoracle;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/icaoracle/types";
+
+// Oracle structure stores context about the CW oracle sitting a different chain
+message Oracle {
+  string chain_id = 1;
+  string connection_id = 2;
+  string channel_id = 3;
+  string port_id = 4;
+  string ica_address = 5;
+  string contract_address = 6;
+  bool active = 7;
+}
+
+// MetricStatus indicates whether the Metric update ICA has been sent
+enum MetricStatus {
+  METRIC_STATUS_UNSPECIFIED = 0
+      [ (gogoproto.enumvalue_customname) = "UNSPECIFIED" ];
+  METRIC_STATUS_QUEUED = 1 [ (gogoproto.enumvalue_customname) = "QUEUED" ];
+  METRIC_STATUS_IN_PROGRESS = 2
+      [ (gogoproto.enumvalue_customname) = "IN_PROGRESS" ];
+}
+
+// Metric structure stores a generic metric using a key value structure
+// along with additional context
+message Metric {
+  string key = 1;
+  string value = 2;
+  string metric_type = 3;
+  int64 update_time = 4;
+  int64 block_height = 5;
+  string attributes = 6;
+  string destination_oracle = 7;
+  MetricStatus status = 8;
+}
+
+// Attributes associated with a RedemptionRate metric update
+message RedemptionRateAttributes { string sttoken_denom = 1; }

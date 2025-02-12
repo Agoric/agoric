@@ -1,0 +1,170 @@
+
+syntax = "proto3";
+package stride.airdrop;
+
+import "stride/airdrop/airdrop.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "cosmos_proto/cosmos.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/airdrop/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Queries the configuration for a given airdrop
+  rpc Airdrop(QueryAirdropRequest) returns (QueryAirdropResponse) {
+    option (google.api.http).get = "/Stride-Labs/stride/airdrop/airdrop/{id}";
+  }
+
+  // Queries all airdrop configurations
+  rpc AllAirdrops(QueryAllAirdropsRequest) returns (QueryAllAirdropsResponse) {
+    option (google.api.http).get = "/Stride-Labs/stride/airdrop/airdrops";
+  }
+
+  // Queries the allocation for a given user for an airdrop
+  rpc UserAllocation(QueryUserAllocationRequest)
+      returns (QueryUserAllocationResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/airdrop/user_allocation/{airdrop_id}/{address}";
+  }
+
+  // Queries the allocations for a given user across all airdrops
+  rpc UserAllocations(QueryUserAllocationsRequest)
+      returns (QueryUserAllocationsResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/airdrop/user_allocations/{address}";
+  }
+
+  // Queries all allocations across all addresses
+  rpc AllAllocations(QueryAllAllocationsRequest)
+      returns (QueryAllAllocationsResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/airdrop/all_allocations/{airdrop_id}";
+  }
+
+  // Queries the state of an address for an airdrop including the claim type,
+  // amount claimed so far, and unclaimed amount
+  rpc UserSummary(QueryUserSummaryRequest) returns (QueryUserSummaryResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/airdrop/user_summary/{airdrop_id}/{address}";
+  }
+}
+
+// Airdrop
+message QueryAirdropRequest { string id = 1; };
+message QueryAirdropResponse {
+  // Airdrop ID
+  string id = 1;
+
+  // Denom used when distributing rewards
+  string reward_denom = 2;
+
+  // The first date that claiming begins and rewards are distributed
+  google.protobuf.Timestamp distribution_start_date = 3
+      [ (gogoproto.stdtime) = true ];
+
+  // The last date for rewards to be distributed. Immediately after this date
+  // the rewards can no longer be claimed, but rewards have not been clawed back
+  // yet
+  google.protobuf.Timestamp distribution_end_date = 4
+      [ (gogoproto.stdtime) = true ];
+
+  // Date with which the rewards are clawed back (occurs after the distribution
+  // end date)
+  google.protobuf.Timestamp clawback_date = 5 [ (gogoproto.stdtime) = true ];
+
+  // Deadline for the user to make a decision on their claim type
+  google.protobuf.Timestamp claim_type_deadline_date = 6
+      [ (gogoproto.stdtime) = true ];
+
+  // Penalty for claiming rewards early - e.g. 0.5 means claiming early will
+  // result in losing 50% of rewards
+  string early_claim_penalty = 7 [
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+
+  // Account that holds the total reward balance and distributes to users
+  string distributor_address = 8
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // Admin account with permissions to add or update allocations
+  string allocator_address = 9
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // Admin account with permissions to link addresseses
+  string linker_address = 10 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // The current date index into the airdrop array
+  int64 current_date_index = 11;
+
+  // The length of the airdrop (i.e. number of periods in the airdrop array)
+  int64 airdrop_length = 12;
+}
+
+// Airdrops
+message QueryAllAirdropsRequest {};
+message QueryAllAirdropsResponse {
+  repeated Airdrop airdrops = 1 [ (gogoproto.nullable) = false ];
+}
+
+// UserAllocation
+message QueryUserAllocationRequest {
+  string airdrop_id = 1;
+  string address = 2 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+};
+message QueryUserAllocationResponse { UserAllocation user_allocation = 1; }
+
+// UserAllocations
+message QueryUserAllocationsRequest {
+  string address = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+};
+message QueryUserAllocationsResponse {
+  repeated UserAllocation user_allocations = 1 [ (gogoproto.nullable) = false ];
+}
+
+// AllAllocations
+message QueryAllAllocationsRequest {
+  string airdrop_id = 1;
+  cosmos.base.query.v1beta1.PageRequest pagination = 2;
+};
+message QueryAllAllocationsResponse {
+  repeated UserAllocation allocations = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// UserSummary
+message QueryUserSummaryRequest {
+  string airdrop_id = 1;
+  string address = 2 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+};
+message QueryUserSummaryResponse {
+  // The claim type (claim daily or claim early)
+  string claim_type = 1;
+
+  // The total rewards claimed so far
+  string claimed = 2 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"
+  ];
+
+  // The total rewards forfeited (in the case of claiming early)
+  string forfeited = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"
+  ];
+
+  // The total rewards remaining
+  string remaining = 4 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"
+  ];
+
+  // The total rewards that can be claimed right now
+  string claimable = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int"
+  ];
+}

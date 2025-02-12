@@ -1,0 +1,166 @@
+syntax = "proto3";
+package stride.claim;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "stride/claim/claim.proto";
+import "stride/claim/params.proto";
+import "stride/vesting/vesting.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/claim/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  rpc DistributorAccountBalance(QueryDistributorAccountBalanceRequest)
+      returns (QueryDistributorAccountBalanceResponse) {
+    option (google.api.http).get = "/claim/module_account_balance";
+  }
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/claim/params";
+  }
+  rpc ClaimRecord(QueryClaimRecordRequest) returns (QueryClaimRecordResponse) {
+    option (google.api.http).get = "/claim/claim_record/{address}";
+  }
+  rpc ClaimableForAction(QueryClaimableForActionRequest)
+      returns (QueryClaimableForActionResponse) {
+    option (google.api.http).get =
+        "/claim/claimable_for_action/{address}/{action}";
+  }
+  rpc TotalClaimable(QueryTotalClaimableRequest)
+      returns (QueryTotalClaimableResponse) {
+    option (google.api.http).get = "/claim/total_claimable/{address}";
+  }
+  rpc UserVestings(QueryUserVestingsRequest)
+      returns (QueryUserVestingsResponse) {
+    option (google.api.http).get = "/claim/user_vestings/{address}";
+  }
+  rpc ClaimStatus(QueryClaimStatusRequest) returns (QueryClaimStatusResponse) {
+    option (google.api.http).get = "/claim/claim_status/{address}";
+  }
+  rpc ClaimMetadata(QueryClaimMetadataRequest)
+      returns (QueryClaimMetadataResponse) {
+    option (google.api.http).get = "/claim/claim_metadata";
+  }
+}
+
+message ClaimStatus {
+  string airdrop_identifier = 1;
+  bool claimed = 2;
+}
+message QueryClaimStatusRequest {
+  string address = 1 [ (gogoproto.moretags) = "yaml:\"address\"" ];
+}
+message QueryClaimStatusResponse {
+  repeated ClaimStatus claim_status = 1 [
+    (gogoproto.moretags) = "yaml:\"claim_status\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message ClaimMetadata {
+  string airdrop_identifier = 1;
+  string current_round = 2;
+  google.protobuf.Timestamp current_round_start = 3 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"current_round_start\""
+  ];
+  google.protobuf.Timestamp current_round_end = 4 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"current_round_end\""
+  ];
+}
+message QueryClaimMetadataRequest {}
+message QueryClaimMetadataResponse {
+  repeated ClaimMetadata claim_metadata = 1 [
+    (gogoproto.moretags) = "yaml:\"claim_metadata\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryDistributorAccountBalanceRequest {
+  string airdrop_identifier = 1
+      [ (gogoproto.moretags) = "yaml:\"airdrop_identifier\"" ];
+}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryDistributorAccountBalanceResponse {
+  // params defines the parameters of the module.
+  repeated cosmos.base.v1beta1.Coin distributor_account_balance = 1 [
+    (gogoproto.moretags) = "yaml:\"distributor_account_balance\"",
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params defines the parameters of the module.
+  Params params = 1 [ (gogoproto.nullable) = false ];
+}
+
+message QueryClaimRecordRequest {
+  string airdrop_identifier = 1
+      [ (gogoproto.moretags) = "yaml:\"airdrop_identifier\"" ];
+  string address = 2 [ (gogoproto.moretags) = "yaml:\"address\"" ];
+}
+
+message QueryClaimRecordResponse {
+  ClaimRecord claim_record = 1 [
+    (gogoproto.moretags) = "yaml:\"claim_record\"",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message QueryClaimableForActionRequest {
+  string airdrop_identifier = 1
+      [ (gogoproto.moretags) = "yaml:\"airdrop_identifier\"" ];
+  string address = 2 [ (gogoproto.moretags) = "yaml:\"address\"" ];
+  Action action = 3 [ (gogoproto.moretags) = "yaml:\"action\"" ];
+}
+
+message QueryClaimableForActionResponse {
+  repeated cosmos.base.v1beta1.Coin coins = 1 [
+    (gogoproto.moretags) = "yaml:\"coins\"",
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}
+
+message QueryTotalClaimableRequest {
+  string airdrop_identifier = 1
+      [ (gogoproto.moretags) = "yaml:\"airdrop_identifier\"" ];
+  string address = 2 [ (gogoproto.moretags) = "yaml:\"address\"" ];
+  bool include_claimed = 3;
+}
+
+message QueryTotalClaimableResponse {
+  repeated cosmos.base.v1beta1.Coin coins = 1 [
+    (gogoproto.moretags) = "yaml:\"coins\"",
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+}
+
+message QueryUserVestingsRequest {
+  string address = 1 [ (gogoproto.moretags) = "yaml:\"address\"" ];
+}
+
+message QueryUserVestingsResponse {
+  repeated cosmos.base.v1beta1.Coin spendable_coins = 3 [
+    (gogoproto.moretags) = "yaml:\"spendable_coins\"",
+    (gogoproto.nullable) = false,
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"
+  ];
+  repeated stride.vesting.Period periods = 1 [
+    (gogoproto.moretags) = "yaml:\"periods\"",
+    (gogoproto.nullable) = false
+  ];
+}

@@ -53,6 +53,7 @@ export const chainNames = [
   'terra2',
   'titan',
   'umee',
+  'elys'
 ];
 
 const client = new ChainRegistryClient({

@@ -1,0 +1,13 @@
+syntax = "proto3";
+package stride.icacallbacks;
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/icacallbacks/types";
+
+message CallbackData {
+  string callback_key = 1;
+  string port_id = 2;
+  string channel_id = 3;
+  uint64 sequence = 4;
+  string callback_id = 5;
+  bytes callback_args = 6;
+}

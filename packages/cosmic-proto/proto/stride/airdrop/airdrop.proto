@@ -1,0 +1,119 @@
+syntax = "proto3";
+package stride.airdrop;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/airdrop/types";
+
+// Airdrop module parameters
+message Params {
+  // The number of seconds between each element in the allocations array
+  // In practice this is always 24 hours, but it's customizable for testing
+  int64 period_length_seconds = 1;
+}
+
+// ClaimType enum represents the possible claim types for a user getting an
+// airdrop
+enum ClaimType {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // CLAIM_DAILY indicates that the airdrop rewards are accumulated daily
+  // A user can claim daily up front and change their decision within the
+  // deadline window
+  // This type is assigned to the user by default when their allocations are
+  // added
+  CLAIM_DAILY = 0;
+  // CLAIM_EARLY indicates that the airdrop rewards have been claimed early,
+  // with half going to the user and half being clawed back
+  CLAIM_EARLY = 1;
+}
+
+// UserAllocation tracks the status of an allocation for a user on a specific
+// airdrop
+message UserAllocation {
+  // ID of the airdrop
+  string airdrop_id = 1;
+
+  // Address of the account that is receiving the airdrop allocation
+  // The address does not have to be a stride address - but non-stride addresses
+  // must be linked and merged into a stride address before claiming
+  string address = 2 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // The total amount of tokens that have already been claimed
+  string claimed = 3 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // The total amount of tokens that have been forfeited by the user for
+  // claiming early
+  string forfeited = 4 [
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // The current state of allocations for this airdrop
+  //
+  // Ex 1:
+  //   Day 0: {claimed:0, allocations:[10,10,10]}
+  //   *MsgClaim*
+  //   Day 1: {claimed:10, allocations:[0,10,10]}
+  //   *MsgClaim*
+  //   Day 2: {claimed:20, allocations:[0,0,10]}
+  //
+  // Ex 2:
+  //   Day 0: {claimed:0, allocations:[10,10,10]}
+  //   *MsgClaimEarly*
+  //   Day 1: {claimed:15, forfeited:15, allocations:[0,0,0]}
+  repeated string allocations = 5 [
+    (gogoproto.nullable) = false,
+    (gogoproto.customtype) = "cosmossdk.io/math.Int"
+  ];
+}
+
+// Airdrop track the aggregate unbondings across an epoch
+message Airdrop {
+  // Airdrop ID
+  string id = 1;
+
+  // Denom used when distributing rewards
+  string reward_denom = 2;
+
+  // The first date that claiming begins and rewards are distributed
+  google.protobuf.Timestamp distribution_start_date = 3
+      [ (gogoproto.stdtime) = true ];
+
+  // The last date for rewards to be distributed. Immediately after this date
+  // the rewards can no longer be claimed, but rewards have not been clawed back
+  // yet
+  google.protobuf.Timestamp distribution_end_date = 4
+      [ (gogoproto.stdtime) = true ];
+
+  // Date with which the rewards are clawed back (occurs after the distribution
+  // end date)
+  google.protobuf.Timestamp clawback_date = 5 [ (gogoproto.stdtime) = true ];
+
+  // Deadline for the user to make a decision on their claim type
+  google.protobuf.Timestamp claim_type_deadline_date = 6
+      [ (gogoproto.stdtime) = true ];
+
+  // Penalty for claiming rewards early - e.g. 0.5 means claiming early will
+  // result in losing 50% of rewards
+  string early_claim_penalty = 7 [
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+
+  // Account that holds the total reward balance and distributes to users
+  string distributor_address = 8
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // Admin account with permissions to add or update allocations
+  string allocator_address = 9
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+
+  // Admin account with permissions to link addresseses
+  string linker_address = 10 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+}

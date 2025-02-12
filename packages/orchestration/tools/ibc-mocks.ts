@@ -199,7 +199,7 @@ export const buildVTransferEvent = ({
   target = LOCALCHAIN_DEFAULT_ADDRESS,
   amount = 10n,
   denom = 'uatom',
-  destinationChannel = 'channel-0' as IBCChannelID,
+  destinationChannel = 'channel-5' as IBCChannelID,
   sourceChannel = 'channel-405' as IBCChannelID,
   sequence = 0n,
 }: BuildVTransferEventParams = {}): VTransferIBCEvent => ({

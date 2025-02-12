@@ -1,0 +1,23 @@
+syntax = "proto3";
+package stride.icaoracle;
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/icaoracle/types";
+
+// InstanitateOracleContract is the contract-specific instantiate message
+message MsgInstantiateOracleContract {
+  string admin_address = 1;
+  string transfer_channel_id = 2;
+}
+
+// ExecuteContractPostMetric is the contract-specific metric update message
+message MsgExecuteContractPostMetric { MsgPostMetric post_metric = 1; }
+
+// Body of PostMetric contract message
+message MsgPostMetric {
+  string key = 1;
+  string value = 2;
+  string metric_type = 3;
+  int64 update_time = 4;
+  int64 block_height = 5;
+  string attributes = 6;
+}

@@ -1,0 +1,74 @@
+syntax = "proto3";
+package stride.epochs;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "stride/epochs/genesis.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/epochs/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // EpochInfos provide running epochInfos
+  rpc EpochInfos(QueryEpochsInfoRequest) returns (QueryEpochsInfoResponse) {
+    option (google.api.http).get = "/Stridelabs/stride/epochs";
+  }
+  // CurrentEpoch provide current epoch of specified identifier
+  rpc CurrentEpoch(QueryCurrentEpochRequest)
+      returns (QueryCurrentEpochResponse) {
+    option (google.api.http).get = "/Stridelabs/stride/epochs/current_epoch";
+  }
+  // CurrentEpoch provide current epoch of specified identifier
+  rpc EpochInfo(QueryEpochInfoRequest) returns (QueryEpochInfoResponse) {
+    option (google.api.http).get = "/Stridelabs/stride/epochs/epoch_info";
+  }
+}
+
+message QueryEpochsInfoRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryEpochsInfoResponse {
+  repeated EpochInfo epochs = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryCurrentEpochRequest { string identifier = 1; }
+message QueryCurrentEpochResponse { int64 current_epoch = 1; }
+
+message QueryEpochInfoRequest { string identifier = 1; }
+message QueryEpochInfoResponse {
+  EpochInfo epoch = 1 [ (gogoproto.nullable) = false ];
+}
+
+// syntax = "proto3";
+// package stride.epochs;
+
+// import "gogoproto/gogo.proto";
+// import "google/api/annotations.proto";
+// import "cosmos/base/query/v1beta1/pagination.proto";
+// import "epochs/params.proto";
+// // this line is used by starport scaffolding # 1
+
+// option go_package = "github.com/Stride-Labs/stride/v25/x/epochs/types";
+
+// // Query defines the gRPC querier service.
+// service Query {
+//   // Parameters queries the parameters of the module.
+//   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+//     option (google.api.http).get = "/Stridelabs/stride/epochs/params";
+//   }
+//   // this line is used by starport scaffolding # 2
+// }
+
+// // QueryParamsRequest is request type for the Query/Params RPC method.
+// message QueryParamsRequest {}
+
+// // QueryParamsResponse is response type for the Query/Params RPC method.
+// message QueryParamsResponse {
+//   // params holds all the parameters of this module.
+//   Params params = 1 [(gogoproto.nullable) = false];
+// }
+
+// // this line is used by starport scaffolding # 3

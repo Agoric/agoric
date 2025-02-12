@@ -1,0 +1,15 @@
+syntax = "proto3";
+package stride.autopilot;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/autopilot/types";
+
+// Params defines the parameters for the module.
+// next id: 1
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  // optionally, turn off each module
+  bool stakeibc_active = 1;
+  bool claim_active = 2;
+}

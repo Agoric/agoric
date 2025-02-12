@@ -1,0 +1,129 @@
+syntax = "proto3";
+package stride.records;
+
+import "cosmos/base/v1beta1/coin.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/records/types";
+
+message UserRedemptionRecord {
+  string id = 1; // {chain_id}.{epoch}.{receiver}
+  string receiver = 3;
+  string native_token_amount = 4 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string denom = 5;
+  string host_zone_id = 6;
+  uint64 epoch_number = 7;
+  bool claim_is_pending = 8;
+  reserved 2;
+  string st_token_amount = 9 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+message DepositRecord {
+  uint64 id = 1;
+  string amount = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string denom = 3;
+  string host_zone_id = 4;
+  enum Status {
+    // in transfer queue to be sent to the delegation ICA
+    TRANSFER_QUEUE = 0;
+    // transfer in progress (IBC packet sent, ack not received)
+    TRANSFER_IN_PROGRESS = 2;
+    // in staking queue on delegation ICA
+    DELEGATION_QUEUE = 1;
+    // staking in progress (ICA packet sent, ack not received)
+    DELEGATION_IN_PROGRESS = 3;
+  }
+  enum Source {
+    STRIDE = 0;
+    WITHDRAWAL_ICA = 1;
+  }
+  Status status = 6;
+  uint64 deposit_epoch_number = 7;
+  Source source = 8;
+  uint64 delegation_txs_in_progress = 9;
+
+  reserved 5;
+}
+
+message HostZoneUnbonding {
+  enum Status {
+    // tokens bonded on delegate account
+    UNBONDING_QUEUE = 0;
+    // unbonding ICA has been submitted
+    UNBONDING_IN_PROGRESS = 3;
+    // unbonding ICA failed for at least one batch and need to be retried
+    UNBONDING_RETRY_QUEUE = 5;
+    // unbonding completed on delegate account
+    EXIT_TRANSFER_QUEUE = 1;
+    // redemption sweep has been submitted
+    EXIT_TRANSFER_IN_PROGRESS = 4;
+    // transfer success
+    CLAIMABLE = 2;
+  }
+  string st_token_amount = 1 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string native_token_amount = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string st_tokens_to_burn = 8 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string native_tokens_to_unbond = 9 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string claimable_native_tokens = 10 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  uint64 undelegation_txs_in_progress = 11;
+  string denom = 3;
+  string host_zone_id = 4;
+  uint64 unbonding_time = 5;
+  Status status = 6;
+  repeated string user_redemption_records = 7;
+}
+
+message EpochUnbondingRecord {
+  uint64 epoch_number = 1;
+  repeated HostZoneUnbonding host_zone_unbondings = 3;
+  reserved 2;
+}
+
+message LSMTokenDeposit {
+  enum Status {
+    DEPOSIT_PENDING = 0;
+    TRANSFER_QUEUE = 1;
+    TRANSFER_IN_PROGRESS = 2;
+    TRANSFER_FAILED = 3;
+    DETOKENIZATION_QUEUE = 4;
+    DETOKENIZATION_IN_PROGRESS = 5;
+    DETOKENIZATION_FAILED = 6;
+  }
+
+  string deposit_id = 1;
+  string chain_id = 2;
+  string denom = 3;
+  string ibc_denom = 4;
+  string staker_address = 5;
+  string validator_address = 6;
+  string amount = 7 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  cosmos.base.v1beta1.Coin st_token = 8 [ (gogoproto.nullable) = false ];
+  Status status = 9;
+}

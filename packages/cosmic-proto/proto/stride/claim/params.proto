@@ -1,0 +1,41 @@
+syntax = "proto3";
+package stride.claim;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/claim/types";
+
+// Params defines the claim module's parameters.
+message Params { repeated Airdrop airdrops = 1; }
+
+message Airdrop {
+  string airdrop_identifier = 1
+      [ (gogoproto.moretags) = "yaml:\"airdrop_identifier\"" ];
+  string chain_id = 7;
+  // seconds
+  google.protobuf.Timestamp airdrop_start_time = 2 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false,
+    (gogoproto.moretags) = "yaml:\"airdrop_start_time\""
+  ];
+  // seconds
+  google.protobuf.Duration airdrop_duration = 3 [
+    (gogoproto.nullable) = false,
+    (gogoproto.stdduration) = true,
+    (gogoproto.jsontag) = "airdrop_duration,omitempty",
+    (gogoproto.moretags) = "yaml:\"airdrop_duration\""
+  ];
+  // denom of claimable asset
+  string claim_denom = 4;
+  // airdrop distribution account
+  string distributor_address = 5;
+  // ustrd tokens claimed so far in the current period
+  string claimed_so_far = 6 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  // indicates the airdrop should be claimed via autopilot
+  bool autopilot_enabled = 8;
+}

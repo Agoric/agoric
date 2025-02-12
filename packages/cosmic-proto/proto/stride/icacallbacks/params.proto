@@ -1,0 +1,9 @@
+syntax = "proto3";
+package stride.icacallbacks;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/icacallbacks/types";
+
+// Params defines the parameters for the module.
+message Params { option (gogoproto.goproto_stringer) = false; }

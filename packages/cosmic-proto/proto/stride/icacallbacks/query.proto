@@ -1,0 +1,60 @@
+syntax = "proto3";
+package stride.icacallbacks;
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "stride/icacallbacks/params.proto";
+import "stride/icacallbacks/callback_data.proto";
+// this line is used by starport scaffolding # 1
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/icacallbacks/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/Stride-Labs/stride/icacallbacks/params";
+  }
+  // Queries a CallbackData by index.
+  rpc CallbackData(QueryGetCallbackDataRequest)
+      returns (QueryGetCallbackDataResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/icacallbacks/callback_data/{callback_key}";
+  }
+
+  // Queries a list of CallbackData items.
+  rpc CallbackDataAll(QueryAllCallbackDataRequest)
+      returns (QueryAllCallbackDataResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/icacallbacks/callback_data";
+  }
+
+  // this line is used by starport scaffolding # 2
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [ (gogoproto.nullable) = false ];
+}
+
+message QueryGetCallbackDataRequest { string callback_key = 1; }
+
+message QueryGetCallbackDataResponse {
+  CallbackData callback_data = 1 [ (gogoproto.nullable) = false ];
+}
+
+message QueryAllCallbackDataRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllCallbackDataResponse {
+  repeated CallbackData callback_data = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// this line is used by starport scaffolding # 3

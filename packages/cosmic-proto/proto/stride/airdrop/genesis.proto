@@ -1,0 +1,28 @@
+syntax = "proto3";
+package stride.airdrop;
+
+import "gogoproto/gogo.proto";
+import "stride/airdrop/airdrop.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/airdrop/types";
+
+// GenesisState defines the airdrop module's genesis state.
+message GenesisState {
+  // Module parameters
+  Params params = 1 [
+    (gogoproto.moretags) = "yaml:\"params\"",
+    (gogoproto.nullable) = false
+  ];
+
+  // All airdrop config records
+  repeated Airdrop airdrops = 2 [
+    (gogoproto.moretags) = "yaml:\"airdrops\"",
+    (gogoproto.nullable) = false
+  ];
+
+  // All allocation records across all airdrops
+  repeated UserAllocation user_allocations = 3 [
+    (gogoproto.moretags) = "yaml:\"user_allocations\"",
+    (gogoproto.nullable) = false
+  ];
+}

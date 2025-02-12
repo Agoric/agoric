@@ -1,0 +1,21 @@
+syntax = "proto3";
+package stride.interchainquery.v1;
+
+import "stride/interchainquery/v1/genesis.proto";
+import "google/api/annotations.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/interchainquery/types";
+
+service QueryService {
+  rpc PendingQueries(QueryPendingQueriesRequest)
+      returns (QueryPendingQueriesResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/interchainquery/pending_queries";
+  }
+}
+
+message QueryPendingQueriesRequest {}
+message QueryPendingQueriesResponse {
+  repeated Query pending_queries = 1 [ (gogoproto.nullable) = false ];
+}

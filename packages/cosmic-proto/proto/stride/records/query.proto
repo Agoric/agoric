@@ -1,0 +1,185 @@
+syntax = "proto3";
+package stride.records;
+
+import "stride/records/records.proto";
+import "stride/records/params.proto";
+
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/records/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/StrideLabs/stride/records/params";
+  }
+  // Queries a UserRedemptionRecord by id.
+  rpc UserRedemptionRecord(QueryGetUserRedemptionRecordRequest)
+      returns (QueryGetUserRedemptionRecordResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/records/user_redemption_record/{id}";
+  }
+
+  // Queries a list of UserRedemptionRecord items.
+  rpc UserRedemptionRecordAll(QueryAllUserRedemptionRecordRequest)
+      returns (QueryAllUserRedemptionRecordResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/records/user_redemption_record";
+  }
+
+  // Queries a list of UserRedemptionRecord items by chainId / userId pair.
+  rpc UserRedemptionRecordForUser(QueryAllUserRedemptionRecordForUserRequest)
+      returns (QueryAllUserRedemptionRecordForUserResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/records/user_redemption_record_for_user/"
+        "{chain_id}/{day}/{address}/{limit}";
+  }
+
+  // Queries a EpochUnbondingRecord by id.
+  rpc EpochUnbondingRecord(QueryGetEpochUnbondingRecordRequest)
+      returns (QueryGetEpochUnbondingRecordResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/records/epoch_unbonding_record/{epoch_number}";
+  }
+
+  // Queries a list of EpochUnbondingRecord items.
+  rpc EpochUnbondingRecordAll(QueryAllEpochUnbondingRecordRequest)
+      returns (QueryAllEpochUnbondingRecordResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/records/epoch_unbonding_record";
+  }
+
+  // Queries a DepositRecord by id.
+  rpc DepositRecord(QueryGetDepositRecordRequest)
+      returns (QueryGetDepositRecordResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/records/deposit_record/{id}";
+  }
+
+  // Queries a list of DepositRecord items.
+  rpc DepositRecordAll(QueryAllDepositRecordRequest)
+      returns (QueryAllDepositRecordResponse) {
+    option (google.api.http).get = "/Stride-Labs/stride/records/deposit_record";
+  }
+
+  // Queries a list of DepositRecord items for a given host zone
+  rpc DepositRecordByHost(QueryDepositRecordByHostRequest)
+      returns (QueryDepositRecordByHostResponse) {
+    option (google.api.http).get = "/Stride-Labs/stride/records/"
+                                   "deposit_record_by_host_zone/{host_zone_id}";
+  }
+
+  // Queries the existing LSMTokenDeposits for one specific deposit
+  rpc LSMDeposit(QueryLSMDepositRequest) returns (QueryLSMDepositResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/stakeibc/lsm_deposit/{chain_id}/{denom}";
+  }
+
+  // Queries the existing LSMTokenDeposits for all which match filters
+  //   intended use:
+  //   ...stakeibc/lsm_deposits?chain_id=X&validator_address=Y&status=Z
+  rpc LSMDeposits(QueryLSMDepositsRequest) returns (QueryLSMDepositsResponse) {
+    option (google.api.http).get = "/Stride-Labs/stride/stakeibc/lsm_deposits";
+  }
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [ (gogoproto.nullable) = false ];
+}
+
+message QueryGetDepositRecordRequest { uint64 id = 1; }
+
+message QueryGetDepositRecordResponse {
+  DepositRecord deposit_record = 1 [ (gogoproto.nullable) = false ];
+}
+
+message QueryAllDepositRecordRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllDepositRecordResponse {
+  repeated DepositRecord deposit_record = 1 [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryDepositRecordByHostRequest { string host_zone_id = 1; }
+
+message QueryDepositRecordByHostResponse {
+  repeated DepositRecord deposit_record = 1 [ (gogoproto.nullable) = false ];
+}
+
+message QueryGetUserRedemptionRecordRequest { string id = 1; }
+
+message QueryGetUserRedemptionRecordResponse {
+  UserRedemptionRecord user_redemption_record = 1
+      [ (gogoproto.nullable) = false ];
+}
+
+message QueryAllUserRedemptionRecordRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllUserRedemptionRecordResponse {
+  repeated UserRedemptionRecord user_redemption_record = 1
+      [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// Query UserRedemptionRecords by chainId / userId pair
+message QueryAllUserRedemptionRecordForUserRequest {
+  string chain_id = 1;
+  uint64 day = 2;
+  string address = 3;
+  uint64 limit = 4;
+  cosmos.base.query.v1beta1.PageRequest pagination = 5;
+}
+
+message QueryAllUserRedemptionRecordForUserResponse {
+  repeated UserRedemptionRecord user_redemption_record = 1
+      [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryGetEpochUnbondingRecordRequest { uint64 epoch_number = 1; }
+
+message QueryGetEpochUnbondingRecordResponse {
+  EpochUnbondingRecord epoch_unbonding_record = 1
+      [ (gogoproto.nullable) = false ];
+}
+
+message QueryAllEpochUnbondingRecordRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+message QueryAllEpochUnbondingRecordResponse {
+  repeated EpochUnbondingRecord epoch_unbonding_record = 1
+      [ (gogoproto.nullable) = false ];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryLSMDepositRequest {
+  string chain_id = 1;
+  string denom = 2;
+}
+
+message QueryLSMDepositResponse {
+  LSMTokenDeposit deposit = 1 [ (gogoproto.nullable) = false ];
+}
+
+message QueryLSMDepositsRequest {
+  string chain_id = 1;
+  string validator_address = 2;
+  string status = 3;
+}
+
+message QueryLSMDepositsResponse {
+  repeated LSMTokenDeposit deposits = 1 [ (gogoproto.nullable) = false ];
+}

@@ -1,0 +1,66 @@
+syntax = "proto3";
+package stride.icaoracle;
+
+import "stride/icaoracle/icaoracle.proto";
+import "google/api/annotations.proto";
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/icaoracle/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Query a specific oracle
+  rpc Oracle(QueryOracleRequest) returns (QueryOracleResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/icaoracle/oracle/{chain_id}";
+  }
+
+  // Query all oracles
+  rpc AllOracles(QueryAllOraclesRequest) returns (QueryAllOraclesResponse) {
+    option (google.api.http).get = "/Stride-Labs/stride/icaoracle/oracles";
+  }
+
+  // Query oracles with active ffilter:
+  // - /oracles/by_active?active=true
+  // - /oracles/by_active?active=false
+  rpc ActiveOracles(QueryActiveOraclesRequest)
+      returns (QueryActiveOraclesResponse) {
+    option (google.api.http).get =
+        "/Stride-Labs/stride/icaoracle/oracles/by_active";
+  }
+
+  // Query metrics with optional filters
+  //
+  // Ex:
+  // - /metrics
+  // - /metrics?metric_key=X
+  // - /metrics?oracle_chain_id=Y
+  rpc Metrics(QueryMetricsRequest) returns (QueryMetricsResponse) {
+    option (google.api.http).get = "/Stride-Labs/stride/icaoracle/metrics";
+  }
+}
+
+// Query's a specific oracle
+message QueryOracleRequest { string chain_id = 1; }
+message QueryOracleResponse { Oracle oracle = 1; }
+
+// Query's all oracle's
+message QueryAllOraclesRequest {}
+message QueryAllOraclesResponse {
+  repeated Oracle oracles = 1 [ (gogoproto.nullable) = false ];
+}
+
+// Query's all oracle with a filter for whether they're active
+message QueryActiveOraclesRequest { bool active = 1; }
+message QueryActiveOraclesResponse {
+  repeated Oracle oracles = 1 [ (gogoproto.nullable) = false ];
+}
+
+// Query's metric's with optional filters
+message QueryMetricsRequest {
+  string metric_key = 1;
+  string oracle_chain_id = 2;
+}
+message QueryMetricsResponse {
+  repeated Metric metrics = 1 [ (gogoproto.nullable) = false ];
+}

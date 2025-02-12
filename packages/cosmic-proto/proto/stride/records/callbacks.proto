@@ -1,0 +1,10 @@
+syntax = "proto3";
+package stride.records;
+
+import "stride/records/records.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/records/types";
+
+message TransferCallback { uint64 deposit_record_id = 1; }
+
+message TransferLSMTokenCallback { LSMTokenDeposit deposit = 1; }

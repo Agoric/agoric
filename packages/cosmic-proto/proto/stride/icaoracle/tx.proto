@@ -1,0 +1,81 @@
+syntax = "proto3";
+package stride.icaoracle;
+
+import "cosmos_proto/cosmos.proto";
+import "cosmos/msg/v1/msg.proto";
+import "amino/amino.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/icaoracle/types";
+
+// Msg defines the Msg service.
+service Msg {
+  // Adds a new oracle given a provided connection
+  rpc AddOracle(MsgAddOracle) returns (MsgAddOracleResponse);
+  // Instantiates an Oracle CW contract
+  rpc InstantiateOracle(MsgInstantiateOracle)
+      returns (MsgInstantiateOracleResponse);
+  // Restores the oracle ICA channel after a closure
+  rpc RestoreOracleICA(MsgRestoreOracleICA)
+      returns (MsgRestoreOracleICAResponse);
+  // Toggle's whether an oracle is active and should receive metric updates
+  rpc ToggleOracle(MsgToggleOracle) returns (MsgToggleOracleResponse);
+  // Removes an oracle completely
+  rpc RemoveOracle(MsgRemoveOracle) returns (MsgRemoveOracleResponse);
+}
+
+// Adds a new oracle
+message MsgAddOracle {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "stride/x/icaoracle/MsgAddOracle";
+
+  string creator = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string connection_id = 2;
+}
+message MsgAddOracleResponse {}
+
+// Instantiates the oracle's CW contract
+message MsgInstantiateOracle {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "stride/x/icaoracle/MsgInstantiateOracle";
+
+  string creator = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string oracle_chain_id = 2;
+  uint64 contract_code_id = 3;
+  string transfer_channel_on_oracle = 4;
+}
+message MsgInstantiateOracleResponse {}
+
+// Restore's a closed ICA channel for a given oracle
+message MsgRestoreOracleICA {
+  option (cosmos.msg.v1.signer) = "creator";
+  option (amino.name) = "stride/x/icaoracle/MsgRestoreOracleICA";
+
+  string creator = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string oracle_chain_id = 2;
+}
+message MsgRestoreOracleICAResponse {}
+
+// Toggle's whether an oracle is active and should receive metric updates
+message MsgToggleOracle {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name) = "stride/x/icaoracle/MsgToggleOracle";
+
+  // authority is the address that controls the module (defaults to x/gov unless
+  // overwritten).
+  string authority = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string oracle_chain_id = 2;
+  bool active = 3;
+}
+message MsgToggleOracleResponse {}
+
+// Removes an oracle completely
+message MsgRemoveOracle {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name) = "stride/x/icaoracle/MsgRemoveOracle";
+
+  // authority is the address that controls the module (defaults to x/gov unless
+  // overwritten).
+  string authority = 1 [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  string oracle_chain_id = 2;
+}
+message MsgRemoveOracleResponse {}

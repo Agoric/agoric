@@ -1,0 +1,140 @@
+syntax = "proto3";
+package stride.stakeibc;
+
+import "stride/stakeibc/validator.proto";
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/stakeibc/types";
+
+// CommunityPoolRebate stores the size of the community pool liquid stake
+// (denominated in stTokens) and the rebate rate as a decimal
+message CommunityPoolRebate {
+  // Rebate percentage as a decimal (e.g. 0.2 for 20%)
+  string rebate_rate = 1 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  // Number of stTokens received from the community pool liquid stake
+  string liquid_staked_st_token_amount = 2 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// Core data structure to track liquid staking zones
+message HostZone {
+  // Chain ID of the host zone
+  string chain_id = 1;
+  // Bech32 prefix of host zone's address
+  string bech32prefix = 17;
+  // ConnectionID from Stride to the host zone (ID is on the stride side)
+  string connection_id = 2;
+  // Transfer Channel ID from Stride to the host zone (ID is on the stride side)
+  string transfer_channel_id = 12;
+  // ibc denom of the host zone's native token on stride
+  string ibc_denom = 8;
+  // native denom on host zone
+  string host_denom = 9;
+  // The unbonding period in days (e.g. 21)
+  uint64 unbonding_period = 26;
+  // List of validators that are delegated to
+  repeated Validator validators = 3;
+  // Address that custodies native tokens during a liquid stake
+  string deposit_address = 18
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // ICA Address on the host zone responsible for collecting rewards
+  string withdrawal_ica_address = 22
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // ICA Address on the host zone responsible for commission
+  string fee_ica_address = 23
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // ICA Address on the host zone responsible for staking and unstaking
+  string delegation_ica_address = 24
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // ICA Address that receives unstaked tokens after they've finished unbonding
+  string redemption_ica_address = 25
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // ICA Address that receives tokens from a community pool to liquid stake or
+  // redeem In the case of a liquid stake, the community pool deposits native
+  // tokens In the case of a redemption, the community pool deposits stTokens
+  string community_pool_deposit_ica_address = 30
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // ICA Address that distributes tokens back to the community pool during a
+  // community pool liquid stake or redeem In the case of a liquid stake, the
+  // return address sends back stTokens In the case of a redemption, the return
+  // address sends back native tokens
+  string community_pool_return_ica_address = 31
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // Module account on Stride that receives native tokens from the deposit ICA
+  // and liquid stakes them
+  string community_pool_stake_holding_address = 32
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // Module account on Stride that receives stTokens from the deposit ICA and
+  // redeems them
+  string community_pool_redeem_holding_address = 33
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // Optional community pool address to send tokens to after a community pool
+  // liquid stake or redemption If this address is empty, the tokens are sent to
+  // the main community pool
+  string community_pool_treasury_address = 35
+      [ (cosmos_proto.scalar) = "cosmos.AddressString" ];
+  // The total delegated balance on the host zone
+  string total_delegations = 13 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  // The redemption rate from the previous epoch
+  string last_redemption_rate = 10 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  // The current redemption rate
+  string redemption_rate = 11 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  // The min outer redemption rate bound - controlled only be governance
+  // The min inner bound cannot exceed this bound
+  string min_redemption_rate = 20 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  // The max outer redemption rate bound - controlled only be governance
+  // The max inner bound cannot exceed this bound
+  string max_redemption_rate = 21 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  // The min minner redemption rate bound - controlled by the admin
+  // If the redemption rate exceeds this bound, the host zone is halted
+  string min_inner_redemption_rate = 28 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  // The max minner redemption rate bound - controlled by the admin
+  // If the redemption rate exceeds this bound, the host zone is halted
+  string max_inner_redemption_rate = 29 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  // The max number of messages that can be sent in a delegation
+  // or undelegation ICA tx
+  uint64 max_messages_per_ica_tx = 36;
+  // Indicates whether redemptions are allowed through this module
+  bool redemptions_enabled = 37;
+  // An optional fee rebate
+  // If there is no rebate for the host zone, this will be nil
+  CommunityPoolRebate community_pool_rebate = 34;
+  // A boolean indicating whether the chain has LSM enabled
+  bool lsm_liquid_stake_enabled = 27;
+  // A boolean indicating whether the chain is currently halted
+  bool halted = 19;
+  reserved 4, 5, 6, 7, 14, 15, 16;
+}

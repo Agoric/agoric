@@ -1,0 +1,106 @@
+syntax = "proto3";
+package stride.stakeibc;
+
+import "gogoproto/gogo.proto";
+import "stride/stakeibc/ica_account.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/stakeibc/types";
+
+// Deprecated, this configuration is no longer needed since swaps
+// are executed off-chain via authz
+//
+// Stores pool information needed to execute the swap along a trade route
+message TradeConfig {
+  option deprecated = true;
+
+  // Currently Osmosis is the only trade chain so this is an osmosis pool id
+  uint64 pool_id = 1;
+
+  // Spot price in the pool to convert the reward denom to the host denom
+  // output_tokens = swap_price * input tokens
+  // This value may be slightly stale as it is updated by an ICQ
+  string swap_price = 2 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+  // unix time in seconds that the price was last updated
+  uint64 price_update_timestamp = 3;
+
+  // Threshold defining the percentage of tokens that could be lost in the trade
+  // This captures both the loss from slippage and from a stale price on stride
+  // 0.05 means the output from the trade can be no less than a 5% deviation
+  // from the current value
+  string max_allowed_swap_loss_rate = 4 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Dec",
+    (gogoproto.nullable) = false
+  ];
+
+  // min and max set boundaries of reward denom on trade chain we will swap
+  // min also decides when reward token transfers are worth it (transfer fees)
+  string min_swap_amount = 5 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+  string max_swap_amount = 6 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// TradeRoute represents a round trip including info on transfer and how to do
+// the swap. It makes the assumption that the reward token is always foreign to
+// the host so therefore the first two hops are to unwind the ibc denom enroute
+// to the trade chain and the last hop is the return so funds start/end in the
+// withdrawl ICA on hostZone
+// The structure is key'd on reward denom and host denom in their native forms
+// (i.e. reward_denom_on_reward_zone and host_denom_on_host_zone)
+message TradeRoute {
+  // ibc denom for the reward on the host zone
+  string reward_denom_on_host_zone = 1;
+  // should be the native denom for the reward chain
+  string reward_denom_on_reward_zone = 2;
+  // ibc denom of the reward on the trade chain, input to the swap
+  string reward_denom_on_trade_zone = 3;
+  // ibc of the host denom on the trade chain, output from the swap
+  string host_denom_on_trade_zone = 4;
+  // should be the same as the native host denom on the host chain
+  string host_denom_on_host_zone = 5;
+
+  // ICAAccount on the host zone with the reward tokens
+  // This is the same as the host zone withdrawal ICA account
+  ICAAccount host_account = 6 [ (gogoproto.nullable) = false ];
+  // ICAAccount on the reward zone that is acts as the intermediate
+  // receiver of the transfer from host zone to trade zone
+  ICAAccount reward_account = 7 [ (gogoproto.nullable) = false ];
+  // ICAAccount responsible for executing the swap of reward
+  // tokens for host tokens
+  ICAAccount trade_account = 8 [ (gogoproto.nullable) = false ];
+
+  // Channel responsible for the transfer of reward tokens from the host
+  // zone to the reward zone. This is the channel ID on the host zone side
+  string host_to_reward_channel_id = 9;
+  // Channel responsible for the transfer of reward tokens from the reward
+  // zone to the trade zone. This is the channel ID on the reward zone side
+  string reward_to_trade_channel_id = 10;
+  // Channel responsible for the transfer of host tokens from the trade
+  // zone, back to the host zone. This is the channel ID on the trade zone side
+  string trade_to_host_channel_id = 11;
+
+  // Minimum amount of reward token that must be accumulated before
+  // the tokens are transferred to the trade ICA
+  string min_transfer_amount = 13 [
+    (gogoproto.customtype) = "github.com/cosmos/cosmos-sdk/types.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // Deprecated, the trades are now executed off-chain via authz
+  // so the trade configuration is no longer needed
+  //
+  // specifies the configuration needed to execute the swap
+  // such as pool_id, slippage, min trade amount, etc.
+  TradeConfig trade_config = 12
+      [ deprecated = true, (gogoproto.nullable) = false ];
+}

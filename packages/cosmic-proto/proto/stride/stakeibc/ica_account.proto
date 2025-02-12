@@ -1,0 +1,22 @@
+syntax = "proto3";
+package stride.stakeibc;
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/stakeibc/types";
+
+enum ICAAccountType {
+  DELEGATION = 0;
+  FEE = 1;
+  WITHDRAWAL = 2;
+  REDEMPTION = 3;
+  COMMUNITY_POOL_DEPOSIT = 4;
+  COMMUNITY_POOL_RETURN = 5;
+  CONVERTER_UNWIND = 6;
+  CONVERTER_TRADE = 7;
+}
+
+message ICAAccount {
+  string chain_id = 1;
+  ICAAccountType type = 2;
+  string connection_id = 3;
+  string address = 4;
+}

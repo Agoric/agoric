@@ -1,0 +1,15 @@
+syntax = "proto3";
+package stride.icaoracle;
+
+import "stride/icaoracle/icaoracle.proto";
+
+option go_package = "github.com/Stride-Labs/stride/v25/x/icaoracle/types";
+
+// Callback data for instantiating an oracle
+message InstantiateOracleCallback { string oracle_chain_id = 1; }
+
+// Callback data for updating a value in the oracle
+message UpdateOracleCallback {
+  string oracle_chain_id = 1;
+  Metric metric = 2;
+}
