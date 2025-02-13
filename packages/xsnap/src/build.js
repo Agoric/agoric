@@ -170,13 +170,11 @@ const makeSubmodule = (path, repoUrl, { git }) => {
 /**
  * @param {SubmoduleDescriptor[]} submodules
  * @param {{
- *   spawn: typeof import('child_process').spawn,
+ *   git: ReturnType<typeof makeCLI>,
  *   stdout: typeof process.stdout,
  * }} io
  */
-const showEnv = async (submodules, { spawn, stdout }) => {
-  const git = makeCLI('git', { spawn });
-
+const showEnv = async (submodules, { git, stdout }) => {
   await null;
   for (const desc of submodules) {
     const { path, envPrefix } = desc;
@@ -200,12 +198,10 @@ const showEnv = async (submodules, { spawn, stdout }) => {
  * @param {SubmoduleDescriptor[]} submodules
  * @param {{
  *   fs: Pick<typeof import('fs'), 'existsSync' | 'rmdirSync'>,
- *   spawn: typeof import('child_process').spawn,
+ *   git: ReturnType<typeof makeCLI>,
  * }} io
  */
-const updateSubmodules = async (submodules, { fs, spawn }) => {
-  const git = makeCLI('git', { spawn });
-
+const updateSubmodules = async (submodules, { fs, git }) => {
   await null;
   for (const { url, path, commitHash } of submodules) {
     const submodule = makeSubmodule(path, url, { git });
@@ -233,10 +229,10 @@ const updateSubmodules = async (submodules, { fs, spawn }) => {
  * @param {{
  *   fs: Pick<typeof import('fs'), 'existsSync'> &
  *     Pick<typeof import('fs').promises, 'readFile' | 'writeFile'>,
- *   spawn: typeof import('child_process').spawn,
+ *   make: ReturnType<typeof makeCLI>,
  * }} io
  */
-const buildXsnap = async (platform, force, { fs, spawn }) => {
+const buildXsnap = async (platform, force, { fs, make }) => {
   const pjson = await fs.readFile(asset('../package.json'), 'utf-8');
   const pkg = JSON.parse(pjson);
 
@@ -255,7 +251,6 @@ const buildXsnap = async (platform, force, { fs, spawn }) => {
     await fs.writeFile(configEnvFile, expectedConfigEnvs);
   }
 
-  const make = makeCLI(platform.make || 'make', { spawn });
   for (const goal of ModdableSDK.buildGoals) {
     await make.run(
       [
@@ -297,6 +292,9 @@ async function main(args, { env, stdout, spawn, fs, os }) {
     throw Error(`xsnap does not support OS ${osType}`);
   }
 
+  const git = makeCLI('git', { spawn });
+  const make = makeCLI(platform.make || 'make', { spawn });
+
   // When changing/adding entries here, make sure to search the whole project
   // for `@@AGORIC_DOCKER_SUBMODULES@@`
   const submodules = [
@@ -336,13 +334,13 @@ async function main(args, { env, stdout, spawn, fs, os }) {
     if (!isWorkingCopy) {
       throw Error('XSnap requires a working copy and git to --show-env');
     }
-    await showEnv(submodules, { spawn, stdout });
+    await showEnv(submodules, { git, stdout });
     return;
   }
 
   // Fetch/update source files via `git submodule` as appropriate.
   if (isWorkingCopy) {
-    await updateSubmodules(submodules, { fs, spawn });
+    await updateSubmodules(submodules, { fs, git });
   }
 
   // If we now have source files, (re)build from them.
@@ -355,7 +353,7 @@ async function main(args, { env, stdout, spawn, fs, os }) {
       isRejected(
         npm.run(['run', '-s', 'check-version'], { cwd: asset('..') }),
       ));
-    await buildXsnap(platform, force, { spawn, fs });
+    await buildXsnap(platform, force, { fs, make });
   } else if (!hasBin) {
     throw Error(
       'XSnap has neither sources nor a pre-built binary. Docker? .dockerignore? npm files?',
