@@ -14,7 +14,7 @@
     "@google-cloud/monitoring": "^4.1.0",
     "@jessie.js/eslint-plugin": "^0.4.2",
     "@types/express": "^4.17.17",
-    "@types/node": "^22.9.0",
+    "@types/node": "~22.9.0",
     "ava": "^5.3.0",
     "c8": "^10.1.2",
     "conventional-changelog-conventionalcommits": "^4.6.0",
