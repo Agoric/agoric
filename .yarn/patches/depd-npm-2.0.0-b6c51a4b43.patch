@@ -1,7 +1,7 @@
-diff --git a/node_modules/depd/index.js b/node_modules/depd/index.js
-index 1bf2fcf..a7d65f6 100644
---- a/node_modules/depd/index.js
-+++ b/node_modules/depd/index.js
+diff --git a/index.js b/index.js
+index 1bf2fcfdeffc984e5ad792eec08744c29d4a4590..a7d65f6716ac10e0f7e0f09d491673f1bea88163 100644
+--- a/index.js
++++ b/index.js
 @@ -1,538 +1 @@
 -/*!
 - * depd

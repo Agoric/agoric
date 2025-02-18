@@ -9009,10 +9009,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"depd@npm:2.0.0, depd@npm:^2.0.0, depd@npm:~2.0.0":
+"depd@npm:2.0.0":
   version: 2.0.0
   resolution: "depd@npm:2.0.0"
   checksum: 10c0/58bd06ec20e19529b06f7ad07ddab60e504d9e0faca4bd23079fac2d279c3594334d736508dc350e06e510aba5e22e4594483b3a6562ce7c17dd797f4cc4ad2c
+  languageName: node
+  linkType: hard
+
+"depd@patch:depd@npm%3A2.0.0#~/.yarn/patches/depd-npm-2.0.0-b6c51a4b43.patch":
+  version: 2.0.0
+  resolution: "depd@patch:depd@npm%3A2.0.0#~/.yarn/patches/depd-npm-2.0.0-b6c51a4b43.patch::version=2.0.0&hash=7e0c72"
+  checksum: 10c0/2eae648986104ff44db6c1234453f23a382b15652d9cafcaf8bb51430ff22f5ba091406b98f3713c1575460ba280b7e5682e3755a74811a43bc6bcff1db2aaf6
   languageName: node
   linkType: hard
 
