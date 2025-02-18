@@ -2770,7 +2770,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chain-registry/client@npm:^1.47.4":
+"@chain-registry/client@npm:1.47.4":
   version: 1.47.4
   resolution: "@chain-registry/client@npm:1.47.4"
   dependencies:
@@ -2779,6 +2779,18 @@ __metadata:
     bfs-path: "npm:^1.0.2"
     cross-fetch: "npm:^3.1.5"
   checksum: 10c0/dcd96f52fbeaf628939523d8dfa795cd711b64f7788f1b7da508250adfc47b278626518c34b7b03c324860a95d4e4244aa048d7a967564fd9984e7d277e43e43
+  languageName: node
+  linkType: hard
+
+"@chain-registry/client@patch:@chain-registry/client@npm%3A1.47.4#~/.yarn/patches/@chain-registry-client-npm-1.47.4-e1f663239f.patch":
+  version: 1.47.4
+  resolution: "@chain-registry/client@patch:@chain-registry/client@npm%3A1.47.4#~/.yarn/patches/@chain-registry-client-npm-1.47.4-e1f663239f.patch::version=1.47.4&hash=4f0eb9"
+  dependencies:
+    "@chain-registry/types": "npm:^0.44.4"
+    "@chain-registry/utils": "npm:^1.45.4"
+    bfs-path: "npm:^1.0.2"
+    cross-fetch: "npm:^3.1.5"
+  checksum: 10c0/9463184ba6c8b8aeff1026c964a37172a60577d0987858eb2f3cc0bfca6623ff8ce67dd703b3d3953ce436bd9753f06c34ce46e8122fd18fba8d05ba9242b5ac
   languageName: node
   linkType: hard
 

@@ -74,6 +74,7 @@
   },
   "resolutions": {
     "@agoric/wallet-ui@0.1.3-solo.0": "patch:@agoric/wallet-ui@npm%3A0.1.3-solo.0#~/.yarn/patches/@agoric-wallet-ui-npm-0.1.3-solo.0-00666f4b09.patch",
+    "@chain-registry/client@^1.47.4": "patch:@chain-registry/client@npm%3A1.47.4#~/.yarn/patches/@chain-registry-client-npm-1.47.4-e1f663239f.patch",
     "@lerna/conventional-commits@npm:5.6.2": "patch:@lerna/conventional-commits@npm%3A5.6.2#~/.yarn/patches/@lerna-conventional-commits-npm-5.6.2-a373ba4bc0.patch",
     "ava@npm:5.3.1": "patch:ava@npm%3A5.3.1#~/.yarn/patches/ava-npm-5.3.1-e4c2e237f7.patch",
     "axios@npm:^1.6.0": "patch:axios@npm%3A1.6.7#~/.yarn/patches/axios-npm-1.6.7-d7b9974d1b.patch",
