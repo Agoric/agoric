@@ -1,7 +1,7 @@
-diff --git a/node_modules/axios/dist/node/axios.cjs b/node_modules/axios/dist/node/axios.cjs
-index 9099d87..7104f6e 100644
---- a/node_modules/axios/dist/node/axios.cjs
-+++ b/node_modules/axios/dist/node/axios.cjs
+diff --git a/dist/node/axios.cjs b/dist/node/axios.cjs
+index 9099d870682546f7b5a213a19459723817ec571a..7104f6eebdcf18ce84142699427d31f5b0a2f211 100644
+--- a/dist/node/axios.cjs
++++ b/dist/node/axios.cjs
 @@ -370,9 +370,9 @@ function merge(/* obj1, obj2, obj3, ... */) {
  const extend = (a, b, thisArg, {allOwnKeys}= {}) => {
    forEach(b, (val, key) => {
