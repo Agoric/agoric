@@ -71,5 +71,8 @@
       "packages/*/test/**/*.test.*"
     ],
     "timeout": "30m"
+  },
+  "resolutions": {
+    "ava@npm:5.3.1": "patch:ava@npm%3A5.3.1#~/.yarn/patches/ava-npm-5.3.1-e4c2e237f7.patch"
   }
 }
