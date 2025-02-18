@@ -8053,13 +8053,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chardet@npm:^0.4.0":
-  version: 0.4.2
-  resolution: "chardet@npm:0.4.2"
-  checksum: 10c0/287fff1609301b1a9e8dc9730271af7aa24187a8e224d23b8c3eb88cb7c0e8ceb962905377e36947bc07edb69afd188903f4924cc6bd0bd4e7703d498505b70d
-  languageName: node
-  linkType: hard
-
 "chardet@npm:^0.7.0":
   version: 0.7.0
   resolution: "chardet@npm:0.7.0"
@@ -10345,18 +10338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"external-editor@npm:^2.0.4":
-  version: 2.2.0
-  resolution: "external-editor@npm:2.2.0"
-  dependencies:
-    chardet: "npm:^0.4.0"
-    iconv-lite: "npm:^0.4.17"
-    tmp: "npm:^0.0.33"
-  checksum: 10c0/5440df6ab809467485b3b15557d301e9fa3dda2892d6eaddd036ea337e0ced3e369c319507a123e34749cfce89c51f891848d249c713f54bcfaf95296663ff49
-  languageName: node
-  linkType: hard
-
-"external-editor@npm:^3.0.3":
+"external-editor@npm:3.1.0":
   version: 3.1.0
   resolution: "external-editor@npm:3.1.0"
   dependencies:
@@ -10364,6 +10346,17 @@ __metadata:
     iconv-lite: "npm:^0.4.24"
     tmp: "npm:^0.0.33"
   checksum: 10c0/c98f1ba3efdfa3c561db4447ff366a6adb5c1e2581462522c56a18bf90dfe4da382f9cd1feee3e330108c3595a854b218272539f311ba1b3298f841eb0fbf339
+  languageName: node
+  linkType: hard
+
+"external-editor@patch:external-editor@npm%3A3.1.0#~/.yarn/patches/external-editor-npm-3.1.0-878e7807af.patch":
+  version: 3.1.0
+  resolution: "external-editor@patch:external-editor@npm%3A3.1.0#~/.yarn/patches/external-editor-npm-3.1.0-878e7807af.patch::version=3.1.0&hash=f18fd8"
+  dependencies:
+    chardet: "npm:^0.7.0"
+    iconv-lite: "npm:^0.4.24"
+    tmp: "npm:^0.0.33"
+  checksum: 10c0/064beed369137ab618c7d474d20f4f74fc08ed5aaae8c2fa2c666b5dcffe63fe27286ef8847c98ec5a5a291c8e7158044db6be40bf346dad2cf6d3bf7501a41c
   languageName: node
   linkType: hard
 
@@ -11708,7 +11701,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:^0.4.17, iconv-lite@npm:^0.4.24":
+"iconv-lite@npm:^0.4.24":
   version: 0.4.24
   resolution: "iconv-lite@npm:0.4.24"
   dependencies:
