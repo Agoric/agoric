@@ -4893,6 +4893,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lerna/version@patch:@lerna/version@npm%3A5.6.2#~/.yarn/patches/@lerna-version-npm-5.6.2-ce2d9cb2f5.patch":
+  version: 5.6.2
+  resolution: "@lerna/version@patch:@lerna/version@npm%3A5.6.2#~/.yarn/patches/@lerna-version-npm-5.6.2-ce2d9cb2f5.patch::version=5.6.2&hash=b04c7c"
+  dependencies:
+    "@lerna/check-working-tree": "npm:5.6.2"
+    "@lerna/child-process": "npm:5.6.2"
+    "@lerna/collect-updates": "npm:5.6.2"
+    "@lerna/command": "npm:5.6.2"
+    "@lerna/conventional-commits": "npm:5.6.2"
+    "@lerna/github-client": "npm:5.6.2"
+    "@lerna/gitlab-client": "npm:5.6.2"
+    "@lerna/output": "npm:5.6.2"
+    "@lerna/prerelease-id-from-version": "npm:5.6.2"
+    "@lerna/prompt": "npm:5.6.2"
+    "@lerna/run-lifecycle": "npm:5.6.2"
+    "@lerna/run-topologically": "npm:5.6.2"
+    "@lerna/temp-write": "npm:5.6.2"
+    "@lerna/validation-error": "npm:5.6.2"
+    "@nrwl/devkit": "npm:>=14.8.1 < 16"
+    chalk: "npm:^4.1.0"
+    dedent: "npm:^0.7.0"
+    load-json-file: "npm:^6.2.0"
+    minimatch: "npm:^3.0.4"
+    npmlog: "npm:^6.0.2"
+    p-map: "npm:^4.0.0"
+    p-pipe: "npm:^3.1.0"
+    p-reduce: "npm:^2.1.0"
+    p-waterfall: "npm:^2.1.1"
+    semver: "npm:^7.3.4"
+    slash: "npm:^3.0.0"
+    write-json-file: "npm:^4.3.0"
+  checksum: 10c0/4467fe9196e8c2c0a15f358b4bc49ee57d9d5a3ed9e483f274054eb5d39d48425ae2d29160f4fd7aad8ada85b6ee5dddc5f61971c7ea2d613083a98375c1f114
+  languageName: node
+  linkType: hard
+
 "@lerna/write-log-file@npm:5.6.2":
   version: 5.6.2
   resolution: "@lerna/write-log-file@npm:5.6.2"
