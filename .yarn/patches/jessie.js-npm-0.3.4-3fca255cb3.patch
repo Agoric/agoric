@@ -1,7 +1,7 @@
-diff --git a/node_modules/jessie.js/package.json b/node_modules/jessie.js/package.json
-index 24f0881..da02cf8 100644
---- a/node_modules/jessie.js/package.json
-+++ b/node_modules/jessie.js/package.json
+diff --git a/package.json b/package.json
+index 24f0881b49673958fecf30c0c2cc83181a918231..da02cf83dc5442a1b0a25d660882bd15a594dba6 100644
+--- a/package.json
++++ b/package.json
 @@ -16,10 +16,6 @@
    },
    "main": "./src/main.js",

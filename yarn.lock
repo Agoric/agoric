@@ -12733,12 +12733,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jessie.js@npm:^0.3.4":
+"jessie.js@npm:0.3.4":
   version: 0.3.4
   resolution: "jessie.js@npm:0.3.4"
   dependencies:
     "@endo/far": "npm:^1.0.0"
   checksum: 10c0/853ab3f8a0e30df11742882f5e11479d1303033a5a203a247d8ffbf4c6f3f3d4bcbefa53084ae4632e6ab106e348f23dc988280486cbeaaf5d16487fa3d40e96
+  languageName: node
+  linkType: hard
+
+"jessie.js@patch:jessie.js@npm%3A0.3.4#~/.yarn/patches/jessie.js-npm-0.3.4-3fca255cb3.patch":
+  version: 0.3.4
+  resolution: "jessie.js@patch:jessie.js@npm%3A0.3.4#~/.yarn/patches/jessie.js-npm-0.3.4-3fca255cb3.patch::version=0.3.4&hash=00100a"
+  dependencies:
+    "@endo/far": "npm:^1.0.0"
+  checksum: 10c0/d73e7f36430fc95aa7673c848b26343fa84017da0e4677efd3a5deeea382aa96ef27c3f01cf0f8f11316bdbfc9aac787a2fc86539625e64b7bbc899e262e20e3
   languageName: node
   linkType: hard
 
@@ -16026,7 +16035,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"protobufjs@npm:^6.8.8":
+"protobufjs@npm:6.11.4":
   version: 6.11.4
   resolution: "protobufjs@npm:6.11.4"
   dependencies:
