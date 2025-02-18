@@ -73,6 +73,7 @@
     "timeout": "30m"
   },
   "resolutions": {
+    "@lerna/conventional-commits@npm:5.6.2": "patch:@lerna/conventional-commits@npm%3A5.6.2#~/.yarn/patches/@lerna-conventional-commits-npm-5.6.2-a373ba4bc0.patch",
     "ava@npm:5.3.1": "patch:ava@npm%3A5.3.1#~/.yarn/patches/ava-npm-5.3.1-e4c2e237f7.patch"
   }
 }

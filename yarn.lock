@@ -4251,6 +4251,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lerna/conventional-commits@patch:@lerna/conventional-commits@npm%3A5.6.2#~/.yarn/patches/@lerna-conventional-commits-npm-5.6.2-a373ba4bc0.patch":
+  version: 5.6.2
+  resolution: "@lerna/conventional-commits@patch:@lerna/conventional-commits@npm%3A5.6.2#~/.yarn/patches/@lerna-conventional-commits-npm-5.6.2-a373ba4bc0.patch::version=5.6.2&hash=b68734"
+  dependencies:
+    "@lerna/validation-error": "npm:5.6.2"
+    conventional-changelog-angular: "npm:^5.0.12"
+    conventional-changelog-core: "npm:^4.2.4"
+    conventional-recommended-bump: "npm:^6.1.0"
+    fs-extra: "npm:^9.1.0"
+    get-stream: "npm:^6.0.0"
+    npm-package-arg: "npm:8.1.1"
+    npmlog: "npm:^6.0.2"
+    pify: "npm:^5.0.0"
+    semver: "npm:^7.3.4"
+  checksum: 10c0/81b4c1550d0222a0109b57acdd1858112f2a0e889d47dbdac22cd49ea45dd8b32e0e95f9b140bbb0da4b2856c8cba1200dc5a208e3d79fe0e8dbe509115830c0
+  languageName: node
+  linkType: hard
+
 "@lerna/create-symlink@npm:5.6.2":
   version: 5.6.2
   resolution: "@lerna/create-symlink@npm:5.6.2"

@@ -1,7 +1,7 @@
-diff --git a/node_modules/@lerna/conventional-commits/lib/recommend-version.js b/node_modules/@lerna/conventional-commits/lib/recommend-version.js
-index a982adf..453ef14 100644
---- a/node_modules/@lerna/conventional-commits/lib/recommend-version.js
-+++ b/node_modules/@lerna/conventional-commits/lib/recommend-version.js
+diff --git a/lib/recommend-version.js b/lib/recommend-version.js
+index a982adfc92b52fe15987336390fa618afe83574e..88574c12c35ea60a582f48e6e395ad3da87c0130 100644
+--- a/lib/recommend-version.js
++++ b/lib/recommend-version.js
 @@ -58,6 +58,15 @@ function recommendVersion(pkg, type, { changelogPreset, rootPath, tagPrefix, pre
          // we still need to bump _something_ because lerna saw a change here
          let releaseType = data.releaseType || "patch";
@@ -14,7 +14,7 @@ index a982adf..453ef14 100644
 +            releaseType = "patch";
 +          }
 +        }
-+
++        
          if (prereleaseId) {
            const shouldBump = shouldBumpPrerelease(releaseType, pkg.version);
            const prereleaseType = shouldBump ? `pre${releaseType}` : "prerelease";
