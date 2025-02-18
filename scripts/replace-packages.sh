@@ -34,6 +34,3 @@ npm query .workspace | jq -r '.[].location' | while read -r dir; do
   popd
 done
 popd
-
-# Best-effort application of patches.
-yarn patch-package

@@ -62,7 +62,7 @@
     "test": "yarn lerna run --no-bail test",
     "test:xs": "yarn workspaces foreach --all run test:xs",
     "build": "yarn workspaces foreach --all run build && scripts/agd-builder.sh stamp yarn-built",
-    "postinstall": "patch-package && scripts/agd-builder.sh stamp yarn-installed",
+    "postinstall": "scripts/agd-builder.sh stamp yarn-installed",
     "build-ts": "tsc --build tsconfig.build.json",
     "build-xs-worker": "cd packages/xs-vat-worker && yarn build:xs-lin"
   },
@@ -71,8 +71,5 @@
       "packages/*/test/**/*.test.*"
     ],
     "timeout": "30m"
-  },
-  "dependencies": {
-    "patch-package": "^8.0.0"
   }
 }
