@@ -1152,6 +1152,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@agoric/wallet-ui@patch:@agoric/wallet-ui@npm%3A0.1.3-solo.0#~/.yarn/patches/@agoric-wallet-ui-npm-0.1.3-solo.0-00666f4b09.patch":
+  version: 0.1.3-solo.0
+  resolution: "@agoric/wallet-ui@patch:@agoric/wallet-ui@npm%3A0.1.3-solo.0#~/.yarn/patches/@agoric-wallet-ui-npm-0.1.3-solo.0-00666f4b09.patch::version=0.1.3-solo.0&hash=7291e0"
+  checksum: 10c0/09570ccac3aebec77bebc46442c200e25880a23adc5c0dcd11cb9db76589cd670aaa7730babbe98e7f40e25355a5ffccf00c32e489a7fa8cc37ee17aa3d9bb68
+  languageName: node
+  linkType: hard
+
 "@agoric/wallet@npm:^0.18.3, @agoric/wallet@workspace:packages/wallet":
   version: 0.0.0-use.local
   resolution: "@agoric/wallet@workspace:packages/wallet"
