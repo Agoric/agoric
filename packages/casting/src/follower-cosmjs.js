@@ -217,14 +217,13 @@ export const makeCosmjsFollower = (
   };
 
   /**
+   * @deprecated no longer supported https://github.com/cosmos/cosmjs/pull/1623
    * @param {number} [height]
    * @returns {Promise<QueryStoreResponse>}
    */
   const getProvenDataAtHeight = async height => {
-    return retryGetPrefixedData(async (endpoint, storeName, storeSubkey) => {
-      const queryClient = await provideQueryClient(endpoint);
-      return E(queryClient).queryStoreVerified(storeName, storeSubkey, height);
-    });
+    console.error('getProvenDataAtHeight', height, 'is no longer supported');
+    throw makeError(X`Verified queries are no longer supported`);
   };
 
   /**

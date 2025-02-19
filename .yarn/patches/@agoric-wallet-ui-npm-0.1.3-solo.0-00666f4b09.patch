@@ -1,7 +1,7 @@
-diff --git a/node_modules/@agoric/wallet-ui/build/static/js/477.36027d30.chunk.js b/node_modules/@agoric/wallet-ui/build/static/js/477.36027d30.chunk.js
-index f6c325f..bc4f3d6 100644
---- a/node_modules/@agoric/wallet-ui/build/static/js/477.36027d30.chunk.js
-+++ b/node_modules/@agoric/wallet-ui/build/static/js/477.36027d30.chunk.js
+diff --git a/build/static/js/477.36027d30.chunk.js b/build/static/js/477.36027d30.chunk.js
+index f6c325f573d874eed5f4ea0ab459529dccd02d11..0104001d5d2383ff10bd5e372b3c9c825e21cefb 100644
+--- a/build/static/js/477.36027d30.chunk.js
++++ b/build/static/js/477.36027d30.chunk.js
 @@ -5,7 +5,7 @@
            @message=${n}
            @error=${e.onError}

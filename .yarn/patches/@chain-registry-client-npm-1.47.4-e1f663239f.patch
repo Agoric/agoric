@@ -1,7 +1,7 @@
-diff --git a/node_modules/@chain-registry/client/fetcher.js b/node_modules/@chain-registry/client/fetcher.js
-index 92177df..d4d9883 100644
---- a/node_modules/@chain-registry/client/fetcher.js
-+++ b/node_modules/@chain-registry/client/fetcher.js
+diff --git a/fetcher.js b/fetcher.js
+index 92177df8344ada3341357141f79ab282a335c3a0..d4d9883bcf7eb0d5ca3c3e7b093e8179c128bb75 100644
+--- a/fetcher.js
++++ b/fetcher.js
 @@ -8,6 +8,7 @@ const utils_1 = require("@chain-registry/utils");
  const bfs_path_1 = require("bfs-path");
  const cross_fetch_1 = __importDefault(require("cross-fetch"));

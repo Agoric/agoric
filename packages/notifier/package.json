@@ -9,15 +9,15 @@
   },
   "scripts": {
     "build": "exit 0",
-    "prepack": "tsc --build tsconfig.build.json",
+    "prepack": "yarn run -T tsc --build tsconfig.build.json",
     "postpack": "git clean -f '*.d.ts*' '*.tsbuildinfo'",
     "test": "ava",
     "test:c8": "c8 --all $C8_OPTIONS ava",
     "test:xs": "exit 0",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint": "run-s --continue-on-error lint:*",
-    "lint:eslint": "eslint .",
-    "lint:types": "tsc"
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
+    "lint:eslint": "yarn run -T eslint .",
+    "lint:types": "yarn run -T tsc"
   },
   "repository": {
     "type": "git",
@@ -33,9 +33,9 @@
   },
   "homepage": "https://github.com/Agoric/agoric-sdk#readme",
   "dependencies": {
-    "@endo/errors": "^1.2.9",
     "@agoric/internal": "^0.3.2",
     "@agoric/vat-data": "^0.5.2",
+    "@endo/errors": "^1.2.9",
     "@endo/far": "^1.1.10",
     "@endo/marshal": "^1.6.3",
     "@endo/patterns": "^1.4.8",
@@ -43,8 +43,8 @@
   },
   "devDependencies": {
     "@agoric/kmarshal": "^0.1.0",
-    "@agoric/swingset-liveslots": "^0.10.2",
     "@agoric/swing-store": "^0.9.1",
+    "@agoric/swingset-liveslots": "^0.10.2",
     "@agoric/swingset-vat": "^0.32.2",
     "@endo/init": "^1.1.8",
     "@endo/ses-ava": "^1.2.9",

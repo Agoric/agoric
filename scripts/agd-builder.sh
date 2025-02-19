@@ -201,9 +201,7 @@ $do_not_build || (
     test -z "$src" || {
       echo "At least $src is newer than node_modules"
       rm -f "$STAMPS/yarn-built"
-      # Ignore engines since we already checked officially supported versions above
-      # UNTIL https://github.com/Agoric/agoric-sdk/issues/9622
-      lazy_yarn install --ignore-engines
+      lazy_yarn install
     }
 
     stamp=$STAMPS/yarn-built

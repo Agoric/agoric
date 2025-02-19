@@ -123,10 +123,6 @@ integrationTest() {
       # Install on demand. "legacy-peer-deps" like above.
       persistVar AGORIC_CMD "[\"npx\",\"--legacy-peer-deps\",\"agoric@$DISTTAG\"]"
       ;;
-    *)
-      yarn global add "agoric@$DISTTAG"
-      persistVar AGORIC_CMD "[\"$(yarn global bin)/agoric\"]"
-      ;;
   esac
 
   test -z "${DISTTAG-}" || {

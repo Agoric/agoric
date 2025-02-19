@@ -1,7 +1,7 @@
-diff --git a/node_modules/rxjs/dist/cjs/internal/util/createErrorClass.js b/node_modules/rxjs/dist/cjs/internal/util/createErrorClass.js
-index 98a6e52..af7d91a 100644
---- a/node_modules/rxjs/dist/cjs/internal/util/createErrorClass.js
-+++ b/node_modules/rxjs/dist/cjs/internal/util/createErrorClass.js
+diff --git a/dist/cjs/internal/util/createErrorClass.js b/dist/cjs/internal/util/createErrorClass.js
+index 98a6e524761d34e2de07c4b0a4c44ceaf878938c..815dd259c0df118754179f2be0cba7c3b814fdbb 100644
+--- a/dist/cjs/internal/util/createErrorClass.js
++++ b/dist/cjs/internal/util/createErrorClass.js
 @@ -7,8 +7,18 @@ function createErrorClass(createImpl) {
          instance.stack = new Error().stack;
      };

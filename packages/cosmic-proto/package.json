@@ -153,7 +153,7 @@
     "codegen": "./update-protos.sh && node scripts/codegen.cjs",
     "prepare": "npm run build",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint": "run-s --continue-on-error lint:*",
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
     "lint:types": "tsc",
     "lint:eslint": "eslint .",
     "test": "ava",
@@ -180,10 +180,6 @@
     "@endo/init": "^1.1.8",
     "bech32": "^2.0.0",
     "query-string": "^9.1.1"
-  },
-  "resolutions": {
-    "**/axios": "^1.6.7",
-    "**/protobufjs": "^7.2.4"
   },
   "ava": {
     "typescript": {

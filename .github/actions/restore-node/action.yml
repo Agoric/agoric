@@ -157,14 +157,6 @@ runs:
         fi
         yarn install
 
-        # Verify there are no warnings about the applied patches.
-        # This isn't strictly necessary but it avoids distracting messages for developers.
-        if yarn patch-package 2>&1 | tee /dev/stderr | grep -qi "warning"; then
-          echo "Error: 'warning' detected applying patches. Please address the warnings before proceeding."
-          echo "If the patch applied cleanly and all tests pass, you can forward a patch with 'yarn patch-package'."
-          exit 1
-        fi
-
         # In the event that the package.json has been modified by Endo
         # replacements, we need to have a yarn-installed timestamp that
         # corresponds to the unmodified package.json.  As long as we don't

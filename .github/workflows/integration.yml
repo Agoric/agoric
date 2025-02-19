@@ -46,7 +46,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        cli: [link-cli/yarn, registry/yarn, registry/npm, registry/npx]
+        cli: [link-cli/yarn, registry/npm, registry/npx]
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4

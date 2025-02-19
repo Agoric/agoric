@@ -1,7 +1,7 @@
-diff --git a/node_modules/external-editor/main/errors/CreateFileError.js b/node_modules/external-editor/main/errors/CreateFileError.js
-index 7faa34c..7b49f68 100644
---- a/node_modules/external-editor/main/errors/CreateFileError.js
-+++ b/node_modules/external-editor/main/errors/CreateFileError.js
+diff --git a/main/errors/CreateFileError.js b/main/errors/CreateFileError.js
+index 7faa34c82c779015a8263c462eee4ceaac954a36..7b49f685d1fb74c305f087b3323aee7b4bf5e279 100644
+--- a/main/errors/CreateFileError.js
++++ b/main/errors/CreateFileError.js
 @@ -14,7 +14,14 @@ var __extends = (this && this.__extends) || (function () {
      };
      return function (d, b) {
@@ -18,10 +18,10 @@ index 7faa34c..7b49f68 100644
          d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
      };
  })();
-diff --git a/node_modules/external-editor/main/errors/LaunchEditorError.js b/node_modules/external-editor/main/errors/LaunchEditorError.js
-index 85a164e..217f192 100644
---- a/node_modules/external-editor/main/errors/LaunchEditorError.js
-+++ b/node_modules/external-editor/main/errors/LaunchEditorError.js
+diff --git a/main/errors/LaunchEditorError.js b/main/errors/LaunchEditorError.js
+index 85a164e7a8fa8627162e9aecf62d52511e89a6e6..217f192848616aa52e6e6a55d551a90efb9bb3ce 100644
+--- a/main/errors/LaunchEditorError.js
++++ b/main/errors/LaunchEditorError.js
 @@ -14,7 +14,14 @@ var __extends = (this && this.__extends) || (function () {
      };
      return function (d, b) {
@@ -38,10 +38,10 @@ index 85a164e..217f192 100644
          d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
      };
  })();
-diff --git a/node_modules/external-editor/main/errors/ReadFileError.js b/node_modules/external-editor/main/errors/ReadFileError.js
-index 69e0513..e53e584 100644
---- a/node_modules/external-editor/main/errors/ReadFileError.js
-+++ b/node_modules/external-editor/main/errors/ReadFileError.js
+diff --git a/main/errors/ReadFileError.js b/main/errors/ReadFileError.js
+index 69e0513627ac0db23a76490b825321b9ccb82cbb..e53e5845689bb25191d65ea40a264cc453411768 100644
+--- a/main/errors/ReadFileError.js
++++ b/main/errors/ReadFileError.js
 @@ -14,7 +14,18 @@ var __extends = (this && this.__extends) || (function () {
      };
      return function (d, b) {
@@ -62,10 +62,10 @@ index 69e0513..e53e584 100644
          d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
      };
  })();
-diff --git a/node_modules/external-editor/main/errors/RemoveFileError.js b/node_modules/external-editor/main/errors/RemoveFileError.js
-index 23d266f..86e228e 100644
---- a/node_modules/external-editor/main/errors/RemoveFileError.js
-+++ b/node_modules/external-editor/main/errors/RemoveFileError.js
+diff --git a/main/errors/RemoveFileError.js b/main/errors/RemoveFileError.js
+index 23d266f248cb46ee920527f639a3f07e1b5eaa7e..86e228ec25cf668f8500a7bf777019b3b3609bff 100644
+--- a/main/errors/RemoveFileError.js
++++ b/main/errors/RemoveFileError.js
 @@ -14,7 +14,18 @@ var __extends = (this && this.__extends) || (function () {
      };
      return function (d, b) {

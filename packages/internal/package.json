@@ -9,20 +9,20 @@
   },
   "scripts": {
     "build": "exit 0",
-    "prepack": "tsc --build tsconfig.build.json",
+    "prepack": "yarn run -T tsc --build tsconfig.build.json",
     "postpack": "git clean -f '*.d.ts*' '*.tsbuildinfo'",
     "test": "ava",
     "test:nyc": "exit 0",
     "test:xs": "exit 0",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint": "run-s --continue-on-error lint:*",
-    "lint:eslint": "eslint .",
-    "lint:types": "tsc"
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
+    "lint:eslint": "yarn run -T eslint .",
+    "lint:types": "yarn run -T tsc"
   },
   "dependencies": {
-    "@endo/errors": "^1.2.9",
     "@agoric/base-zone": "^0.1.0",
     "@endo/common": "^1.2.9",
+    "@endo/errors": "^1.2.9",
     "@endo/far": "^1.1.10",
     "@endo/init": "^1.1.8",
     "@endo/marshal": "^1.6.3",

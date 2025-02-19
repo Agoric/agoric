@@ -9,9 +9,9 @@
   "scripts": {
     "build": "node scripts/build-bundle.js",
     "clean": "rm -rf dist",
-    "lint": "run-s --continue-on-error lint:*",
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
     "lint:js": "eslint 'src/**/*.js' 'lib/**/*.js' 'scripts/**/*.js' 'test/**/*.js'",
-    "lint:types": "tsc",
+    "lint:types": "yarn run -T tsc",
     "lint-fix": "eslint --fix 'src/**/*.js' 'lib/**/*.js' 'scripts/**/*.js' 'test/**/*.js'",
     "test": "ava",
     "test:c8": "c8 --all $C8_OPTIONS ava",

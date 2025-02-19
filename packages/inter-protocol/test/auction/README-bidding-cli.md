@@ -63,7 +63,7 @@ Then try `agd version` to confirm.
 #### Add an alias for `agops inter`
 
 ```sh
-alias inter="yarn run --silent agops inter"
+alias inter="yarn run agops inter"
 ```
 
 Then you can just run...

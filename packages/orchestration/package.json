@@ -11,12 +11,12 @@
   "scripts": {
     "build": "exit 0",
     "codegen": "scripts/fetch-chain-info.ts",
-    "prepack": "tsc --build tsconfig.build.json",
+    "prepack": "yarn run -T tsc --build tsconfig.build.json",
     "postpack": "git clean -f '*.d.ts*' '*.tsbuildinfo'",
     "test": "ava",
     "test:c8": "c8 --all $C8_OPTIONS ava",
     "test:xs": "exit 0",
-    "lint": "run-s --continue-on-error lint:*",
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
     "lint:types": "tsc",
     "lint:eslint": "eslint .",
     "lint-fix": "yarn lint:eslint --fix"
@@ -56,8 +56,8 @@
   "devDependencies": {
     "@agoric/swingset-liveslots": "^0.10.2",
     "@chain-registry/client": "^1.47.4",
-    "@cosmjs/amino": "^0.32.3",
-    "@cosmjs/proto-signing": "^0.32.3",
+    "@cosmjs/amino": "^0.33.0",
+    "@cosmjs/proto-signing": "^0.33.0",
     "@endo/bundle-source": "^3.5.1",
     "@endo/import-bundle": "^1.3.3",
     "@endo/ses-ava": "^1.2.9",

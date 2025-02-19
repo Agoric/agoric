@@ -5,8 +5,8 @@
   "type": "module",
   "main": "src/main.js",
   "bin": {
-    "agoric": "src/entrypoint.js",
-    "agops": "src/bin-agops.js"
+    "agops": "src/bin-agops.js",
+    "agoric": "src/entrypoint.js"
   },
   "exports": {
     "./src/entrypoint.js": "./src/entrypoint.js",
@@ -25,9 +25,9 @@
     "test:xs": "exit 0",
     "integration-test": "ava --config .ava-integration-test.config.js",
     "lint-fix": "yarn lint:eslint --fix",
-    "lint": "run-s --continue-on-error lint:*",
-    "lint:types": "tsc",
-    "lint:eslint": "eslint ."
+    "lint": "yarn run -T run-s --continue-on-error 'lint:*'",
+    "lint:types": "yarn run -T tsc",
+    "lint:eslint": "yarn run -T eslint ."
   },
   "devDependencies": {
     "@agoric/cosmic-swingset": "^0.41.3",
@@ -37,7 +37,6 @@
   },
   "dependencies": {
     "@agoric/access-token": "^0.4.21",
-    "@endo/errors": "^1.2.9",
     "@agoric/cache": "^0.3.2",
     "@agoric/casting": "^0.4.2",
     "@agoric/client-utils": "^0.1.0",
@@ -54,15 +53,16 @@
     "@agoric/zoe": "^0.26.2",
     "@agoric/zone": "^0.2.2",
     "@confio/relayer": "^0.11.3",
-    "@cosmjs/crypto": "^0.32.3",
-    "@cosmjs/encoding": "^0.32.3",
-    "@cosmjs/math": "^0.32.3",
-    "@cosmjs/proto-signing": "^0.32.3",
-    "@cosmjs/stargate": "^0.32.3",
+    "@cosmjs/crypto": "^0.33.0",
+    "@cosmjs/encoding": "^0.33.0",
+    "@cosmjs/math": "^0.33.0",
+    "@cosmjs/proto-signing": "^0.33.0",
+    "@cosmjs/stargate": "^0.33.0",
     "@endo/bundle-source": "^3.5.1",
     "@endo/captp": "^4.4.4",
     "@endo/compartment-mapper": "^1.5.0",
     "@endo/env-options": "^1.1.8",
+    "@endo/errors": "^1.2.9",
     "@endo/far": "^1.1.10",
     "@endo/init": "^1.1.8",
     "@endo/marshal": "^1.6.3",
