@@ -64,7 +64,7 @@ export {};
  * @typedef {object} FollowerOptions
  * @property {null | import('@endo/far').FarRef<Unserializer>} [unserializer]
  * @property {(text: string) => any} [decode]
- * @property {|'none'} [proof] backwards-compatible option that may work again eventually
+ * @property {'strict'|'optimistic'|'none'} [proof]
  * @property {import('@endo/far').FarRef<Crasher>} [crasher]
  */
 
