@@ -364,6 +364,34 @@ test.serial('lp deposits', async t => {
   );
 });
 
+test.serial('reconfigure: fix noble ICA', async t => {
+  const { startContract, commonBuilderOpts } = t.context;
+  const builder =
+    '../packages/builders/scripts/fast-usdc/fast-usdc-reconfigure.build.js';
+
+  const chainInfo = JSON.parse(commonBuilderOpts.chainInfo) as Record<
+    string,
+    CosmosChainInfo
+  >;
+  const { chainId: nobleChainId } = chainInfo.noble;
+  const agoricToNoble = chainInfo.agoric.connections?.[nobleChainId];
+
+  await startContract(
+    contractName,
+    builder,
+    { agoricToNoble: JSON.stringify(agoricToNoble) },
+    { skipInstanceCheck: true },
+  );
+
+  const { vstorageClient, retryUntilCondition } = t.context;
+
+  await retryUntilCondition(
+    () => fastLPQ(vstorageClient).info(),
+    info => 'nobleICA' in info,
+    `${contractName} nobleICA is available`,
+  );
+});
+
 const advanceAndSettleScenario = test.macro({
   title: (_, mintAmt: bigint, eudChain: string) =>
     `advance ${mintAmt} uusdc to ${eudChain} and settle`,
