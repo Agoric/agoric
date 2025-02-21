@@ -395,7 +395,6 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
      */
     registerChain(name, chainInfo) {
       chainInfos.init(name, chainInfo);
-      if (chainInfo.bech32Prefix) {
       chainIdToChainName.init(`${chainInfo.chainId}`, name);
       if ('bech32Prefix' in chainInfo && chainInfo.bech32Prefix) {
         bech32PrefixToChainName.init(chainInfo.bech32Prefix, name);
