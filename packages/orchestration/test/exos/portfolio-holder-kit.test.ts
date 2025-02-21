@@ -24,7 +24,7 @@ test('portfolio holder kit behaviors', async t => {
     },
   });
 
-  const makeTestCOAKit = prepareMakeTestCOAKit(t, common, {
+  const makeTestCOAKit = prepareMakeTestCOAKit(t, common, undefined, {
     zcf: mockZcf,
   });
   const makeTestLOAKit = prepareMakeTestLOAKit(t, common, { zcf: mockZcf });
