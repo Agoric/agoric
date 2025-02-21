@@ -31,7 +31,7 @@ import { decodeProtobufBase64 } from '../tools/protobuf-decoder.js';
 const trace = makeTracer('NetworkFakes');
 
 /**
- * Mimic IBC Channel version negotation
+ * Mimic IBC Channel version negotiation
  *
  * As part of the IBC Channel initialization, the version field is negotiated
  * with the host. `version` is a String or JSON string as determined by the IBC
