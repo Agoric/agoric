@@ -4,6 +4,6 @@
 export type EthChainInfo = Readonly<{
   // XXX consider ~BaseChainInfo type, with `cctpDestinationDomain` + `chainId`
   cctpDestinationDomain?: number;
-  chainId: string;
+  chainId: number;
   allegedName: string;
 }>;

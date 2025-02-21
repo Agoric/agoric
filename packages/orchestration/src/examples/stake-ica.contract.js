@@ -45,7 +45,7 @@ harden(privateArgsShape);
 
 /**
  * @typedef {{
- *   chainId: string;
+ *   chainId: string | number;
  *   hostConnectionId: IBCConnectionID;
  *   controllerConnectionId: IBCConnectionID;
  *   icqEnabled: boolean;
