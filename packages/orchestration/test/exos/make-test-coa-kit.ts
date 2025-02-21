@@ -21,7 +21,6 @@ export const prepareMakeTestCOAKit = (
     bootstrap,
     commonPrivateArgs: { marshaller },
     facadeServices,
-    utils,
   }: EReturn<typeof commonSetup>,
   { noble } = { noble: false },
   { zcf = Far('MockZCF', {}) } = {},
