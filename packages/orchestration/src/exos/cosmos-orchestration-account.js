@@ -65,6 +65,7 @@ import {
 } from '../utils/cosmos.js';
 import { orchestrationAccountMethods } from '../utils/orchestrationAccount.js';
 import { makeTimestampHelper } from '../utils/time.js';
+import { leftPadEthAddressTo32Bytes } from '../utils/address.js';
 
 /**
  * @import {HostOf} from '@agoric/async-flow';
@@ -1144,19 +1145,16 @@ export const prepareCosmosOrchestrationAccountKit = (
             const { helper } = this.facets;
             const { chainAddress } = this.state;
 
-            chainAddress.chainId.startsWith('noble') ||
-              Fail`'depositForBurn' not supported on chain: ${q(chainAddress.chainId)}`;
-
             const { cctpDestinationDomain } = chainHub.getChainInfoByChainId(
               `${destination.chainId}`,
             );
-            if (!cctpDestinationDomain || cctpDestinationDomain !== 0) {
+
+            if (typeof cctpDestinationDomain !== 'number') {
               throw Fail`${q(destination.chainId)} does not have "cctpDestinationDomain" set in ChainInfo`;
             }
 
-            // TODO: logic for encoding solana + evm addresses
             // see https://github.com/circlefin/noble-cctp/blob/master/examples/depositForBurn.ts#L52-L70
-            const mintRecipient = new Uint8Array();
+            const mintRecipient = leftPadEthAddressTo32Bytes(destination.value);
 
             // TODO: do we need to support MsgDepositForBurnWithCaller? It's the
             // same payload, plus `destinationCaller: Uint8Array`.
