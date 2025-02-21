@@ -46,6 +46,7 @@
     "@agoric/vow": "^0.1.0",
     "@agoric/zoe": "^0.26.2",
     "@agoric/zone": "^0.2.2",
+    "@cosmjs/encoding": "^0.32.4",
     "@endo/base64": "^1.0.9",
     "@endo/errors": "^1.2.9",
     "@endo/far": "^1.1.10",

@@ -1,4 +1,5 @@
 import { Fail, q } from '@endo/errors';
+import { fromHex } from '@cosmjs/encoding';
 
 /**
  * @import {IBCConnectionID} from '@agoric/vats';
@@ -141,3 +142,13 @@ export const parseAccountId = partialId => {
   throw Fail`Invalid accountId: ${q(partialId)}`;
 };
 harden(parseAccountId);
+
+// Left pad the mint recipient address with 0's to 32 bytes.
+// standard ETH addresses are 20 bytes, but for ABI data structures and other
+// reasons, 32 bytes are used.
+export const leftPadEthAddressTo32Bytes = rawAddress => {
+  const cleanedAddress = rawAddress.replace(/^0x/, '');
+  const zeroesNeeded = 64 - cleanedAddress.length;
+  const paddedAddress = '0'.repeat(zeroesNeeded) + cleanedAddress;
+  return fromHex(paddedAddress);
+};
