@@ -386,9 +386,10 @@ export const prepareCosmosOrchestrationAccountKit = (
           );
           if (!delegationResponse)
             throw Fail`Result lacked delegationResponse key: ${result}`;
-          const { chainAddress } = this.state;
+          const { chainAddress: chainId } = this.state;
+          const chainIdHolder = { chainId: `${chainId}` };
           return harden(
-            toCosmosDelegationResponse(chainAddress, delegationResponse),
+            toCosmosDelegationResponse(chainIdHolder, delegationResponse),
           );
         },
       },
@@ -403,10 +404,11 @@ export const prepareCosmosOrchestrationAccountKit = (
             QueryDelegatorDelegationsResponse.decode(decodeBase64(result.key));
           if (!delegationResponses)
             throw Fail`Result lacked delegationResponses key: ${result}`;
-          const { chainAddress } = this.state;
+          const { chainAddress: chainId } = this.state;
+          const chainIdHolder = { chainId: `${chainId}` };
           return harden(
             delegationResponses.map(r =>
-              toCosmosDelegationResponse(chainAddress, r),
+              toCosmosDelegationResponse(chainIdHolder, r),
             ),
           );
         },
@@ -495,7 +497,10 @@ export const prepareCosmosOrchestrationAccountKit = (
           const { chainAddress } = this.state;
           return harden({
             rewards: rewards.map(reward => ({
-              validator: toCosmosValidatorAddress(reward, chainAddress.chainId),
+              validator: toCosmosValidatorAddress(
+                reward,
+                `${chainAddress.chainId}`,
+              ),
               reward: reward.reward.map(toTruncatedDenomAmount),
             })),
             total: total.map(toTruncatedDenomAmount),
@@ -922,8 +927,8 @@ export const prepareCosmosOrchestrationAccountKit = (
 
             const connectionInfoV = watch(
               chainHub.getConnectionInfo(
-                this.state.chainAddress.chainId,
-                destination.chainId,
+                `${this.state.chainAddress.chainId}`,
+                `${destination.chainId}`,
               ),
             );
 
@@ -1143,7 +1148,7 @@ export const prepareCosmosOrchestrationAccountKit = (
               Fail`'depositForBurn' not supported on chain: ${q(chainAddress.chainId)}`;
 
             const { cctpDestinationDomain } = chainHub.getChainInfoByChainId(
-              destination.chainId,
+              `${destination.chainId}`,
             );
             if (!cctpDestinationDomain || cctpDestinationDomain !== 0) {
               throw Fail`${q(destination.chainId)} does not have "cctpDestinationDomain" set in ChainInfo`;
@@ -1153,8 +1158,10 @@ export const prepareCosmosOrchestrationAccountKit = (
             // see https://github.com/circlefin/noble-cctp/blob/master/examples/depositForBurn.ts#L52-L70
             const mintRecipient = new Uint8Array();
 
-            // TODO: do we need to support MsgDepositForBurnWithCaller? It's the same payload, plus `destinationCaller: Uint8Array`.
-            // (Functionally, only destinationCaller can call MsgReceive on the destination chain to mint)
+            // TODO: do we need to support MsgDepositForBurnWithCaller? It's the
+            // same payload, plus `destinationCaller: Uint8Array`.
+            // (Functionally, only destinationCaller can call MsgReceive on the
+            // destination chain to mint)
             const msg = MsgDepositForBurn.toProtoMsg({
               amount: helper.amountToCoin(amount)?.amount,
               from: chainAddress.value,
@@ -1166,7 +1173,6 @@ export const prepareCosmosOrchestrationAccountKit = (
 
             return watch(
               E(helper.owned()).executeEncodedTx([Any.toJSON(msg)]),
-              // TODO: do we need a different handler? Is the nonce in the response meaningful?
               this.facets.returnVoidWatcher,
             );
           });

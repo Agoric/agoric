@@ -239,9 +239,9 @@ const ChainHubI = M.interface('ChainHub', {
  * @param {VowTools} vowTools
  */
 export const makeChainHub = (zone, agoricNames, vowTools) => {
-  /** @type {MapStore<string, CosmosChainInfo>} */
+  /** @type {MapStore<string | number, ChainInfo>} */
   const chainInfos = zone.mapStore('chainInfos', {
-    keyShape: M.string(),
+    keyShape: M.or(M.string(), M.number()),
     // TODO: support more than `CosmosChainInfoShape`
     valueShape: CosmosChainInfoShape,
   });
@@ -266,7 +266,7 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
     keyShape: M.string(),
     valueShape: M.string(),
   });
-  /** @type {MapStore<string, string>} */
+  /** @type {MapStore<string | number, string>} */
   const chainIdToChainName = zone.mapStore('chainIdToChainName', {
     keyShape: M.string(),
     valueShape: M.string(),
@@ -396,6 +396,8 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
     registerChain(name, chainInfo) {
       chainInfos.init(name, chainInfo);
       if (chainInfo.bech32Prefix) {
+      chainIdToChainName.init(`${chainInfo.chainId}`, name);
+      if ('bech32Prefix' in chainInfo && chainInfo.bech32Prefix) {
         bech32PrefixToChainName.init(chainInfo.bech32Prefix, name);
       }
     },
@@ -415,7 +417,7 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
       return lookupChainInfo(chainName);
     },
     /**
-     * @param {string} chainId
+     * @param {string | number} chainId
      */
     getChainInfoByChainId(chainId) {
       // Either from registerChain or memoized remote lookup()
@@ -428,14 +430,14 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
       );
     },
     /**
-     * @param {string} primaryChainId
-     * @param {string} counterpartyChainId
+     * @param {string | number} primaryChainId
+     * @param {string | number} counterpartyChainId
      * @param {IBCConnectionInfo} connectionInfo from primary to counterparty
      */
     registerConnection(primaryChainId, counterpartyChainId, connectionInfo) {
       const [key, normalized] = normalizeConnectionInfo(
-        primaryChainId,
-        counterpartyChainId,
+        `${primaryChainId}`,
+        `${counterpartyChainId}`,
         connectionInfo,
       );
       connectionInfos.init(key, normalized);
