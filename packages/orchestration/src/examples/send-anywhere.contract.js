@@ -5,8 +5,9 @@ import { prepareChainHubAdmin } from '../exos/chain-hub-admin.js';
 import { AnyNatAmountShape } from '../typeGuards.js';
 import { withOrchestration } from '../utils/start-helper.js';
 import { registerChainsAndAssets } from '../utils/chain-hub-helper.js';
-import * as flows from './send-anywhere.flows.js';
 import * as sharedFlows from './shared.flows.js';
+
+import * as cctpFlows from './send-cctp.flows.js';
 
 /**
  * @import {Remote, Vow} from '@agoric/vow';
@@ -40,7 +41,7 @@ export const contract = async (
   zcf,
   privateArgs,
   zone,
-  { chainHub, orchestrateAll, vowTools, zoeTools },
+  { chainHub, orchestrate, vowTools, zoeTools },
 ) => {
   const creatorFacet = prepareChainHubAdmin(zone, chainHub);
 
@@ -49,7 +50,10 @@ export const contract = async (
   /** @type {(msg: string) => Vow<void>} */
   const log = msg => vowTools.watch(E(logNode).setValue(msg));
 
-  const { makeLocalAccount } = orchestrateAll(sharedFlows, {});
+  // XXX why can't we do both at once?
+  const makeLocalAccount = orchestrate('f1', {}, sharedFlows.makeLocalAccount);
+  const makeNobleAccount = orchestrate('f2', {}, cctpFlows.makeNobleAccount);
+
   /**
    * Setup a shared local account for use in async-flow functions. Typically,
    * exo initState functions need to resolve synchronously, but `makeOnce`
@@ -62,13 +66,19 @@ export const contract = async (
   const sharedLocalAccountP = zone.makeOnce('localAccount', () =>
     makeLocalAccount(),
   );
-
+  const nobleAccountP = zone.makeOnce('nobleAccount', () => makeNobleAccount());
   // orchestrate uses the names on orchestrationFns to do a "prepare" of the associated behavior
-  const orchFns = orchestrateAll(flows, {
-    log,
-    sharedLocalAccountP,
-    zoeTools,
-  });
+  const sendByCCTP = orchestrate(
+    'sendByCCTP',
+    {
+      log,
+      sharedLocalAccountP,
+      nobleAccountP,
+      zoeTools,
+    },
+    // @ts-expect-error deprecated, but alternative is TBD.
+    cctpFlows.sendByCCTP,
+  );
 
   const publicFacet = zone.exo(
     'Send PF',
@@ -78,7 +88,7 @@ export const contract = async (
     {
       makeSendInvitation() {
         return zcf.makeInvitation(
-          orchFns.sendIt,
+          sendByCCTP,
           'send',
           undefined,
           M.splitRecord({ give: SingleNatAmountRecord }),

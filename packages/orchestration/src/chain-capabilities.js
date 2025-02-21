@@ -57,12 +57,18 @@ const IcaEnabled = /** @type {const} */ ({
 });
 harden(IcaEnabled);
 
+const cctpDomains = /** @type {const} */ ({
+  noble: 4,
+});
+harden(cctpDomains);
+
 /**
  * @param {Record<string, CosmosChainInfo>} chainInfo
  * @param {{
  *   PfmEnabled: Record<string, boolean>;
  *   IcqEnabled: Record<string, boolean>;
  *   IcaEnabled: Record<string, boolean>;
+ *   cctpDomains: Record<string, number>;
  * }} [opts]
  */
 export const withChainCapabilities = (
@@ -71,6 +77,7 @@ export const withChainCapabilities = (
     PfmEnabled,
     IcqEnabled,
     IcaEnabled,
+    cctpDomains,
   },
 ) => {
   return objectMap(chainInfo, (info, name) => ({
@@ -78,5 +85,6 @@ export const withChainCapabilities = (
     pfmEnabled: !!opts.PfmEnabled[name],
     icqEnabled: !!opts.IcqEnabled[name],
     icaEnabled: !!opts.IcqEnabled[name],
+    ...(cctpDomains[name] ? { cctpDestinationDomain: cctpDomains[name] } : {}),
   }));
 };
