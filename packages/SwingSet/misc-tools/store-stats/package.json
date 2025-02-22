@@ -1,0 +1,27 @@
+{
+  "name": "store-stats",
+  "version": "0.0.1",
+  "main": "src/index.js",
+  "author": "Agoric",
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "exit 0",
+    "test": "ava --verbose"
+  },
+  "files": [
+    "src/**/*.js",
+    "test/**/*.js"
+  ],
+  "dependencies": {
+    "ava": "^5.3.1",
+    "better-sqlite3": "^8.4.0",
+    "hot-shots": "^10.0.0",
+    "sqlite3": "^5.1.6"
+  },
+  "ava": {
+    "files": [
+      "test/**/test-*.js"
+    ]
+  }
+}
