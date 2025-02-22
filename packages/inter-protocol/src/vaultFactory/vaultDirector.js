@@ -190,7 +190,30 @@ const prepareVaultDirector = (
     }
   };
 
-  const factoryPowers = Far('vault factory powers', {
+  /**
+   * Merge the manager and director params, and override return types as helpful
+   *
+   * @param {Brand} brand
+   */
+  const makeBrandParamManager = brand => {
+    const vaultParamManager = vaultParamManagers.get(brand);
+    return Far('vault manager param manager', {
+      // merge director and manager params
+      ...directorParamManager.readonly(),
+      ...vaultParamManager.readonly(),
+      // redeclare these getters as to specify the kind of the Amount
+      getMinInitialDebt: /** @type {() => Amount<'nat'>} */ (
+        directorParamManager.readonly().getMinInitialDebt
+      ),
+      getDebtLimit: /** @type {() => Amount<'nat'>} */ (
+        vaultParamManager.readonly().getDebtLimit
+      ),
+    });
+  };
+  /** @type {WeakMap<Brand, ReturnType<typeof makeBrandParamManager>>} */
+  const brandParamManagers = new WeakMap();
+
+  const factoryPowers = {
     /**
      * Get read-only params for this manager and its director. This grants all
      * managers access to params from all managers. It's not POLA but it's a
@@ -200,19 +223,13 @@ const prepareVaultDirector = (
      * @param {Brand} brand
      */
     getGovernedParams: brand => {
-      const vaultParamManager = vaultParamManagers.get(brand);
-      return Far('vault manager param manager', {
-        // merge director and manager params
-        ...directorParamManager.readonly(),
-        ...vaultParamManager.readonly(),
-        // redeclare these getters as to specify the kind of the Amount
-        getMinInitialDebt: /** @type {() => Amount<'nat'>} */ (
-          directorParamManager.readonly().getMinInitialDebt
-        ),
-        getDebtLimit: /** @type {() => Amount<'nat'>} */ (
-          vaultParamManager.readonly().getDebtLimit
-        ),
-      });
+      let pm = brandParamManagers.get(brand);
+      if (pm) {
+        return pm;
+      }
+      pm = makeBrandParamManager(brand);
+      brandParamManagers.set(brand, makeBrandParamManager(brand));
+      return pm;
     },
 
     /**
@@ -253,7 +270,8 @@ const prepareVaultDirector = (
     burnDebt: (toBurn, seat) => {
       debtMint.burnLosses(harden({ Minted: toBurn }), seat);
     },
-  });
+  };
+  harden(factoryPowers);
 
   const makeVaultManagerKit = prepareVaultManagerKit(baggage, {
     makeERecorderKit,
@@ -302,9 +320,7 @@ const prepareVaultDirector = (
     baggage,
     'VaultDirector',
     {
-      creator: M.interface('creator', {
-        ...GovernorFacetShape,
-      }),
+      creator: M.interface('creator', GovernorFacetShape),
       machine: M.interface('machine', {
         addVaultType: M.call(IssuerShape, M.string(), M.record()).returns(
           M.promise(),
@@ -371,7 +387,6 @@ const prepareVaultDirector = (
         setOfferFilter: strings => zcf.setOfferFilter(strings),
       },
       machine: {
-        // TODO move this under governance #3924
         /**
          * @param {Issuer<'nat'>} collateralIssuer
          * @param {Keyword} collateralKeyword
