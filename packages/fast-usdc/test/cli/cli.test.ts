@@ -1,5 +1,5 @@
 import test from 'ava';
-import { execa } from 'execa';
+import spawn from 'nano-spawn';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { initProgram } from '../../src/cli/cli.js';
@@ -10,7 +10,7 @@ const CLI_PATH = join(dir, '../../src/cli/bin.js');
 const runCli = async (args: string[]) => {
   await null;
   try {
-    const { stdout } = await execa(CLI_PATH, args);
+    const { stdout } = await spawn(CLI_PATH, args);
     return stdout;
   } catch (error: any) {
     return error.stderr || error.stdout || error.message;

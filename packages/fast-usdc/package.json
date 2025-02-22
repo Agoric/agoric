@@ -29,7 +29,7 @@
     "@fast-check/ava": "^2.0.1",
     "ava": "^5.3.0",
     "c8": "^10.1.2",
-    "execa": "9.1.0",
+    "nano-spawn": "^0.2.0",
     "ts-blank-space": "^0.4.4"
   },
   "dependencies": {
