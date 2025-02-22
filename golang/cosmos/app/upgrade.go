@@ -23,22 +23,11 @@ var upgradeNamesOfThisVersion = []string{
 	"UNRELEASED_REAPPLY",
 }
 
-// isUpgradeNameOfThisVersion returns whether the provided plan name is a
-// known upgrade name of this software version
-func isUpgradeNameOfThisVersion(name string) bool {
-	for _, upgradeName := range upgradeNamesOfThisVersion {
-		if upgradeName == name {
-			return true
-		}
-	}
-	return false
-}
-
 // validUpgradeName is an identity function that asserts the provided name
 // is an upgrade name of this software version. It can be used as a sort of
 // dynamic enum check.
 func validUpgradeName(name string) string {
-	if !isUpgradeNameOfThisVersion(name) {
+	if !slices.Contains(upgradeNamesOfThisVersion, name) {
 		panic(fmt.Errorf("invalid upgrade name: %s", name))
 	}
 	return name
