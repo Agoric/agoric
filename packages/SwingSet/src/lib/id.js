@@ -2,6 +2,9 @@ import { Nat } from '@endo/nat';
 
 import { Fail } from '@endo/errors';
 
+const vatIDPattern = /^v\d+$/;
+const deviceIDPattern = /^d\d+$/;
+
 // Vats are identified by an integer index, which (for typechecking purposes)
 // is encoded as `vNN`. Devices are similarly identified as `dNN`. Both have
 // human-readable names, which are provided to controller.addGenesisVat(),
@@ -22,13 +25,8 @@ import { Fail } from '@endo/errors';
  * @returns {void}
  */
 export function insistVatID(s) {
-  try {
-    typeof s === 'string' || Fail`not a string`;
-    s.startsWith(`v`) || Fail`does not start with 'v'`;
-    Nat(BigInt(s.slice(1)));
-  } catch (e) {
-    Fail`${s} is not a 'vNN'-style VatID: ${e}`;
-  }
+  typeof s === 'string' || Fail`not a string`;
+  vatIDPattern.test(s) || Fail`${s} is not a 'vNN'-style VatID`;
 }
 
 /**
@@ -54,15 +52,10 @@ export function makeVatID(index) {
  * @returns {void}
  */
 export function insistDeviceID(s) {
-  try {
-    if (typeof s !== 'string') {
-      throw Fail`not a string`;
-    }
-    s.startsWith(`d`) || Fail`does not start with 'd'`;
-    Nat(BigInt(s.slice(1)));
-  } catch (e) {
-    Fail`${s} is not a 'dNN'-style DeviceID: ${e}`;
-  }
+  typeof s === 'string' || Fail`not a string`;
+
+  // @ts-expect-error
+  deviceIDPattern.test(s) || Fail`${s} is not a 'dNN'-style DeviceID`;
 }
 
 /**
@@ -74,36 +67,6 @@ export function insistDeviceID(s) {
  */
 export function makeDeviceID(index) {
   return `d${Nat(index)}`;
-}
-
-/**
- * Parse a vat or device ID string into its constituent parts.
- *
- * @param {string} s  The string to be parsed.
- *
- * @returns {{ type: 'vat' | 'device', id: bigint}} an object: {
- *    type: STRING, // 'vat' or 'device', accordingly
- *    id: Nat       // the index
- *  }
- *
- * @throws {Error} if the parameter is not a string or is malformed.
- */
-export function parseVatOrDeviceID(s) {
-  typeof s === 'string' ||
-    Fail`${s} is not a string, so cannot be a VatID/DeviceID`;
-  /** @type {'vat' | 'device' | undefined} */
-  let type;
-  let idSuffix;
-  if (s.startsWith('v')) {
-    type = 'vat';
-    idSuffix = s.slice(1);
-  } else if (s.startsWith('d')) {
-    type = 'device';
-    idSuffix = s.slice(1);
-  } else {
-    throw Fail`${s} is neither a VatID nor a DeviceID`;
-  }
-  return harden({ type, id: Nat(BigInt(idSuffix)) });
 }
 
 export function makeUpgradeID(index) {
