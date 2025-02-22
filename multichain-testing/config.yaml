@@ -34,7 +34,7 @@ chains:
       memory: 4Gi
   - id: osmosislocal
     name: osmosis
-    numValidators: 1
+    numValidators: 2
     genesis:
       app_state:
         staking:
