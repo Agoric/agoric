@@ -278,7 +278,7 @@ export const ZoeStorageManagerIKit = {
     getBundleIDFromInstallation: M.call(InstallationShape).returns(
       M.eref(M.string()),
     ),
-    installBundle: M.call(M.or(InstanceHandleShape, BundleShape))
+    installBundle: M.call(BundleShape)
       .optional(M.string())
       .returns(M.promise()),
     installBundleID: M.call(M.string())
@@ -311,7 +311,7 @@ export const ZoeStorageManagerIKit = {
       InstallationShape,
       M.any(),
       IssuerPKeywordRecordShape,
-      M.or(InstanceHandleShape, BundleShape),
+      InstanceHandleShape,
       M.or(BundleCapShape, BundleShape),
       M.string(),
     ).returns(M.promise()),

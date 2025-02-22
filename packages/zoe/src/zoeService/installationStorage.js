@@ -7,7 +7,6 @@ import {
 } from '@agoric/vat-data';
 import {
   InstallationShape,
-  InstanceHandleShape,
   UnwrappedInstallationShape,
 } from '../typeGuards.js';
 
@@ -80,10 +79,7 @@ export const makeInstallationStorage = (getBundleCapForID, zoeBaggage) => {
 
   const InstallationStorageI = M.interface('InstallationStorage', {
     installBundle: M.call(
-      M.or(
-        InstanceHandleShape,
-        M.recordOf(M.string(), M.string({ stringLengthLimit: Infinity })),
-      ),
+      M.recordOf(M.string(), M.string({ stringLengthLimit: Infinity })),
     )
       .optional(M.string())
       .returns(M.promise()),
