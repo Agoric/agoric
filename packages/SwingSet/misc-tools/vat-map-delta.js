@@ -44,7 +44,7 @@ if (oldData.currentZCF !== newData.currentZCF) {
 const vatIDs = new Set([...keys(oldData.vats), ...keys(newData.vats)]);
 for (const vatID of vatIDs) {
   const oldVatData = oldData.vats[vatID] || {};
-  const newVatData = newData.vats[vatID];
+  const newVatData = newData.vats[vatID] || {};
   const vkeys = new Set([...keys(oldVatData), ...keys(newVatData)]);
   for (const vkey of vkeys) {
     if (vkey === 'endPos') continue;
