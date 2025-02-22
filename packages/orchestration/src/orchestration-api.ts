@@ -193,8 +193,9 @@ export interface OrchestrationAccountCommon {
    * Transfer an amount to another account, typically on another chain.
    * The promise settles when the transfer is complete.
    * @param amount - the amount to transfer. Can be provided as pure data using denoms or as ERTP Amounts.
-   * @param destination - the account to transfer the amount to.
-   * @param [opts] - an optional memo to include with the transfer, which could drive custom PFM behavior, and timeout parameters
+   * @param destination - the account to transfer the amount to. The denom in the destination arg has to be 
+   * registered with `chainHub` via {@link `registerAsset`} API.
+   * @param [opts] - an optional memo to include with the transfer, which could drive custom PFM behavior, and timeout parameters 
    * @returns void
    * @throws {Error} if route is not determinable, asset is not recognized, or
    * the transfer is rejected (insufficient funds, timeout)
