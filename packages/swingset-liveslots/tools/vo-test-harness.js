@@ -5,6 +5,27 @@ import { setupTestLiveslots } from '../test/liveslots-helpers.js';
 // is to to help verify that a VO can be garbage collected and then
 // reloaded from persistent storage while maintaining functionality.
 
+/**
+ * A spy wrapping Ava's t for tests that are testing the harness itself.
+ * @param {import('ava').ExecutionContext} t
+ */
+export const makeSpy = t => {
+  const tSpy = {
+    ...t,
+    fail: msg => {
+      tSpy.failureMessage = msg;
+    },
+    // In Ava 6, assertions throw?
+    falsy: (check, msg) => {
+      if (!check) return;
+      tSpy.falsyMessage = msg;
+    },
+    failureMessage: '',
+    falsyMessage: '',
+  };
+  return tSpy;
+};
+
 // Testing VO swapping with runVOTest:
 //
 // Step 1: import the necessary harness paraphernalia
