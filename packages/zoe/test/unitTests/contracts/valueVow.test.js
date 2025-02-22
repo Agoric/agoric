@@ -4,10 +4,9 @@ import path from 'path';
 
 import { heapVowTools } from '@agoric/vow/vat.js';
 
-import { unsafeMakeBundleCache } from '@agoric/swingset-vat/tools/bundleTool.js';
-import { E } from '@endo/eventual-send';
 import { inspectMapStore } from '@agoric/internal/src/testing-utils.js';
-import { makeZoeForTest, setUpZoeForTest } from '../../../tools/setup-zoe.js';
+import { E } from '@endo/eventual-send';
+import { setUpZoeForTest } from '../../../tools/setup-zoe.js';
 
 /**
  * @import {start as startValueVow} from '../../../src/contracts/valueVow.contract.js';
@@ -18,15 +17,12 @@ const dirname = path.dirname(new URL(import.meta.url).pathname);
 
 const contractFile = `${dirname}/../../../src/contracts/valueVow.contract.js`;
 
-/** @type {import('ava').TestFn<{ installation: Installation<typeof startValueVow>, zoe: ReturnType<typeof makeZoeForTest> }>} */
+/** @type {import('ava').TestFn<{ installation: Installation<typeof startValueVow>, zoe: ZoeService }>} */
 const test = anyTest;
 
 test.before(async t => {
-  const bundleCache = await unsafeMakeBundleCache('bundles');
-  const zoe = makeZoeForTest();
-  const installation = await E(zoe).install(
-    await bundleCache.load(contractFile),
-  );
+  const { bundleAndInstall, zoe } = await setUpZoeForTest();
+  const installation = await bundleAndInstall(contractFile);
 
   t.context = {
     installation,
@@ -38,20 +34,20 @@ test('resolves', async t => {
   const { installation, zoe } = t.context;
   const { publicFacet } = await E(zoe).startInstance(installation);
 
-  const vow = publicFacet.getValue();
-  publicFacet.setValue('some value');
+  const vow = E(publicFacet).getValue();
+  await E(publicFacet).setValue('some value');
   t.is(await heapVowTools.asPromise(vow), 'some value');
 });
 
 test('invitations', async t => {
   const { installation, zoe } = t.context;
   const { publicFacet } = await E(zoe).startInstance(installation);
-  const vow = await (
-    await E(zoe).offer(publicFacet.makeGetterInvitation())
+  const vow = await E(
+    E(zoe).offer(E(publicFacet).makeGetterInvitation()),
   ).getOfferResult();
 
   await E(zoe).offer(
-    publicFacet.makeSetterInvitation(),
+    E(publicFacet).makeSetterInvitation(),
     {},
     {},
     { value: 'hello' },

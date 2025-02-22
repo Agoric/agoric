@@ -1,7 +1,6 @@
-import { E, makeLoopback } from '@endo/captp';
-
+import { provideBundleCache } from '@agoric/swingset-vat/tools/bundleTool.js';
 import { makeScalarBigMapStore } from '@agoric/vat-data';
-import bundleSource from '@endo/bundle-source';
+import { E, makeLoopback } from '@endo/captp';
 import { makeDurableZoeKit } from '../src/zoeService/zoe.js';
 import fakeVatAdmin, { makeFakeVatAdmin } from './fakeVatAdmin.js';
 
@@ -57,11 +56,14 @@ export const setUpZoeForTest = async ({
   );
 
   /**
+   * Load the path from a bundle cache and install it.
+   *
    * @param {string} path
    * @returns {Promise<Installation>}
    */
   const bundleAndInstall = async path => {
-    const bundle = await bundleSource(path);
+    const bundleCache = await provideBundleCache('bundles', {}, s => import(s));
+    const bundle = await bundleCache.load(path);
     const id = `b1-${path}`;
     assert(vatAdminState, 'installBundle called before vatAdminState defined');
     vatAdminState.installBundle(id, bundle);

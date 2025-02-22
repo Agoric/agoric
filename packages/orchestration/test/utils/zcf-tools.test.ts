@@ -3,7 +3,10 @@ import { test as anyTest } from '@agoric/zoe/tools/prepare-test-env-ava.js';
 import { makeIssuerKit } from '@agoric/ertp';
 import { prepareSwingsetVowTools } from '@agoric/vow';
 import { makeFakeVatAdmin } from '@agoric/zoe/tools/fakeVatAdmin.js';
-import { makeZoeKitForTest } from '@agoric/zoe/tools/setup-zoe.js';
+import {
+  makeZoeKitForTest,
+  setUpZoeForTest,
+} from '@agoric/zoe/tools/setup-zoe.js';
 import { makeHeapZone } from '@agoric/zone';
 import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { E, Far, type EReturn } from '@endo/far';
@@ -17,18 +20,14 @@ const contractEntry = nodeRequire.resolve('../fixtures/zcfTester.contract.js');
 const makeTestContext = async () => {
   let testJig;
   const setJig = jig => (testJig = jig);
-  const fakeVatAdmin = makeFakeVatAdmin(setJig);
-  const { zoeService: zoe, feeMintAccess } = makeZoeKitForTest(
-    fakeVatAdmin.admin,
-  );
-
-  const bundleCache = await makeNodeBundleCache('bundles', {}, s => import(s));
-  const contractBundle = await bundleCache.load(contractEntry);
-
-  fakeVatAdmin.vatAdminState.installBundle('b1-contract', contractBundle);
-  const installation = await E(zoe).installBundleID('b1-contract');
-
   const stuff = makeIssuerKit('Stuff');
+
+  const { bundleAndInstall, zoe } = await setUpZoeForTest({
+    setJig,
+  });
+
+  const installation = await bundleAndInstall(contractEntry);
+
   await E(zoe).startInstance(installation, { Stuff: stuff.issuer });
   assert(testJig, 'startInstance did not call back to setTestJig');
 
