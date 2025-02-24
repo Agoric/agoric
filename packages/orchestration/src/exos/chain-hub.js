@@ -203,8 +203,14 @@ export const TransferRouteShape = M.splitRecord(
 
 const ChainHubI = M.interface('ChainHub', {
   registerChain: M.call(M.string(), CosmosChainInfoShape).returns(),
+  updateChain: M.call(M.string(), CosmosChainInfoShape).returns(),
   getChainInfo: M.call(M.string()).returns(VowShape),
   registerConnection: M.call(
+    M.string(),
+    M.string(),
+    IBCConnectionInfoShape,
+  ).returns(),
+  updateConnection: M.call(
     M.string(),
     M.string(),
     IBCConnectionInfoShape,
@@ -212,6 +218,7 @@ const ChainHubI = M.interface('ChainHub', {
   getConnectionInfo: M.call(ChainIdArgShape, ChainIdArgShape).returns(VowShape),
   getChainsAndConnection: M.call(M.string(), M.string()).returns(VowShape),
   registerAsset: M.call(M.string(), DenomDetailShape).returns(),
+  updateAsset: M.call(M.string(), DenomDetailShape).returns(),
   getAsset: M.call(M.string(), M.string()).returns(
     M.or(DenomDetailShape, M.undefined()),
   ),
@@ -374,6 +381,26 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
       }
     },
     /**
+     * Update chain info by completely replacing existing entry
+     *
+     * @param {string} chainName - Name of the chain to update
+     * @param {CosmosChainInfo} chainInfo - New chain info
+     * @throws {Error} If chain not registered
+     */
+    updateChain(chainName, chainInfo) {
+      if (!chainInfos.has(chainName)) {
+        throw makeError(`Chain ${q(chainName)} not registered`);
+      }
+      const oldInfo = chainInfos.get(chainName);
+      if (oldInfo.bech32Prefix) {
+        bech32PrefixToChainName.delete(oldInfo.bech32Prefix);
+      }
+      chainInfos.set(chainName, chainInfo);
+      if (chainInfo.bech32Prefix) {
+        bech32PrefixToChainName.init(chainInfo.bech32Prefix, chainName);
+      }
+    },
+    /**
      * @template {string} K
      * @param {K} chainName
      * @returns {Vow<ActualChainInfo<K>>}
@@ -401,7 +428,28 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
       );
       connectionInfos.init(key, normalized);
     },
-
+    /**
+     * Update connection info by completely replacing existing entry
+     *
+     * @param {string} primaryChainId - ID of primary chain
+     * @param {string} counterpartyChainId - ID of counterparty chain
+     * @param {IBCConnectionInfo} connectionInfo - New connection info
+     * @throws {Error} If connection not registered
+     */
+    updateConnection(primaryChainId, counterpartyChainId, connectionInfo) {
+      const key = connectionKey(primaryChainId, counterpartyChainId);
+      if (!connectionInfos.has(key)) {
+        throw makeError(
+          `Connection ${q(primaryChainId)}<->${q(counterpartyChainId)} not registered`,
+        );
+      }
+      const [_, normalizedInfo] = normalizeConnectionInfo(
+        primaryChainId,
+        counterpartyChainId,
+        connectionInfo,
+      );
+      connectionInfos.set(key, normalizedInfo);
+    },
     /**
      * @param {string | { chainId: string }} primary the primary chain
      * @param {string | { chainId: string }} counter the counterparty chain
@@ -461,6 +509,40 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
         chainName === 'agoric' ||
           Fail`brands only registerable for agoric-held assets`;
         brandDenoms.init(detail.brand, denom);
+      }
+    },
+    /**
+     * Update asset info by completely replacing existing entry
+     *
+     * @param {Denom} denom - Denom on the holding chain
+     * @param {DenomDetail} detail - New asset details
+     * @throws {Error} If asset not registered or referenced chains not
+     *   registered
+     */
+    updateAsset(denom, detail) {
+      const { baseName, brand, chainName } = detail;
+      const denomKey = makeDenomKey(denom, chainName);
+      if (!denomDetails.has(denomKey)) {
+        throw makeError(`Asset ${q(denom)} on ${q(chainName)} not registered`);
+      }
+      const oldDetail = denomDetails.get(denomKey);
+      if (oldDetail.brand) {
+        brandDenoms.delete(oldDetail.brand);
+      }
+
+      if (!chainInfos.has(chainName)) {
+        throw makeError(`Chain ${q(chainName)} not registered`);
+      }
+      if (!chainInfos.has(baseName)) {
+        throw makeError(`Chain ${q(baseName)} not registered`);
+      }
+
+      denomDetails.set(denomKey, detail);
+      if (brand) {
+        if (chainName !== 'agoric') {
+          throw makeError('Brands only registerable for agoric-held assets');
+        }
+        brandDenoms.init(brand, denom);
       }
     },
     /**

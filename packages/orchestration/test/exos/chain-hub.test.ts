@@ -1,7 +1,7 @@
 import '@agoric/swingset-liveslots/tools/prepare-test-env.js';
 import test from '@endo/ses-ava/prepare-endo.js';
 
-import { makeNameHubKit } from '@agoric/vats';
+import { makeNameHubKit, type IBCChannelID } from '@agoric/vats';
 import { prepareSwingsetVowTools } from '@agoric/vow/vat.js';
 import { E } from '@endo/far';
 import { makeIssuerKit } from '@agoric/ertp';
@@ -196,6 +196,213 @@ test('makeChainAddress', async t => {
   t.throws(() => chainHub.makeChainAddress('1notbech32'), {
     message: 'Missing prefix for "1notbech32"',
   });
+});
+
+test('updateChain updates existing chain info and mappings', t => {
+  const { chainHub } = setup();
+
+  const initialInfo = {
+    chainId: 'chain-1',
+    bech32Prefix: 'chain',
+  };
+  const updatedInfo = {
+    ...initialInfo,
+    bech32Prefix: 'newchain',
+  };
+
+  // Register initial chain
+  chainHub.registerChain('testchain', initialInfo);
+
+  // Update chain
+  chainHub.updateChain('testchain', updatedInfo);
+
+  // Verify chain address works with new prefix
+  const address = `${updatedInfo.bech32Prefix}1abc`;
+  const chainAddress = chainHub.makeChainAddress(address);
+  t.deepEqual(chainAddress, {
+    chainId: 'chain-1',
+    value: address,
+    encoding: 'bech32',
+  });
+
+  // Old prefix should not work
+  t.throws(() => chainHub.makeChainAddress(`${initialInfo.bech32Prefix}1abc`), {
+    message: `Chain info not found for bech32Prefix "${initialInfo.bech32Prefix}"`,
+  });
+});
+
+test('updateChain errors on non-existent chain', t => {
+  const { chainHub } = setup();
+
+  t.throws(() => chainHub.updateChain('nonexistent', { chainId: 'test' }), {
+    message: 'Chain "nonexistent" not registered',
+  });
+});
+
+test('updateConnection updates existing connection info', async t => {
+  const { chainHub, vt } = setup();
+
+  const celestia = { chainId: knownChains.celestia.chainId };
+  const neutron = { chainId: knownChains.neutron.chainId };
+  const initialConnection = knownChains.celestia.connections['neutron-1'];
+
+  // Register initial connection
+  chainHub.registerConnection(
+    celestia.chainId,
+    neutron.chainId,
+    initialConnection,
+  );
+
+  // Update with new channel info
+  const updatedConnection = {
+    ...initialConnection,
+    transferChannel: {
+      ...initialConnection.transferChannel,
+      channelId: 'channel-999' as IBCChannelID,
+    },
+  };
+  chainHub.updateConnection(
+    celestia.chainId,
+    neutron.chainId,
+    updatedConnection,
+  );
+
+  // Verify lookup from both directions
+  const forwardInfo = await vt.when(
+    chainHub.getConnectionInfo(celestia.chainId, neutron.chainId),
+  );
+  t.is(forwardInfo.transferChannel.channelId, 'channel-999');
+
+  const reverseInfo = await vt.when(
+    chainHub.getConnectionInfo(neutron.chainId, celestia.chainId),
+  );
+  t.is(
+    reverseInfo.transferChannel.counterPartyChannelId,
+    'channel-999',
+    'reverse direction shows updated channel',
+  );
+});
+
+test('updateConnection errors on non-existent connection', t => {
+  const { chainHub } = setup();
+
+  t.throws(
+    () =>
+      chainHub.updateConnection('chain1', 'chain2', {
+        id: 'connection-0',
+        client_id: '07-tendermint-test',
+        counterparty: {
+          client_id: '07-tendermint-test',
+          connection_id: 'connection-1',
+        },
+        state: 3,
+        transferChannel: {
+          channelId: 'channel-0',
+          portId: 'transfer',
+          counterPartyChannelId: 'channel-1',
+          counterPartyPortId: 'transfer',
+          version: 'ics20-1',
+          state: 3,
+          ordering: 0,
+        },
+      }),
+    { message: 'Connection "chain1"<->"chain2" not registered' },
+  );
+});
+
+test('updateAsset updates existing asset and brand mappings', t => {
+  const { chainHub } = setup();
+
+  // Register chains
+  chainHub.registerChain('chain1', { chainId: 'chain-1', bech32Prefix: 'a' });
+  chainHub.registerChain('chain2', { chainId: 'chain-2', bech32Prefix: 'b' });
+  chainHub.registerChain('agoric', {
+    chainId: 'agoric-3',
+    bech32Prefix: 'agoric',
+  });
+
+  // Create initial asset with brand
+  const tok1 = withAmountUtils(makeIssuerKit('Tok1'));
+  const tok2 = withAmountUtils(makeIssuerKit('Tok2'));
+
+  const initialDetail = {
+    chainName: 'agoric',
+    baseName: 'chain1',
+    baseDenom: 'utok1',
+    brand: tok1.brand,
+  };
+
+  // Register initial asset
+  chainHub.registerAsset('utok1', initialDetail);
+
+  // Update asset with new base chain and brand
+  const updatedDetail = {
+    ...initialDetail,
+    baseName: 'chain2',
+    brand: tok2.brand,
+  };
+
+  chainHub.updateAsset('utok1', updatedDetail);
+
+  // Verify getAsset shows new details
+  t.deepEqual(chainHub.getAsset('utok1', 'agoric'), updatedDetail);
+
+  // Verify brand mappings are updated
+  t.is(chainHub.getDenom(tok1.brand), undefined, 'old brand mapping removed');
+  t.is(chainHub.getDenom(tok2.brand), 'utok1', 'new brand mapping added');
+});
+
+test('updateAsset errors appropriately', t => {
+  const { chainHub } = setup();
+
+  // Register chains
+  chainHub.registerChain('agoric', {
+    chainId: 'agoric-3',
+    bech32Prefix: 'agoric',
+  });
+  chainHub.registerChain('chain1', { chainId: 'chain-1', bech32Prefix: 'c1' });
+
+  const detail = {
+    chainName: 'agoric',
+    baseName: 'chain1',
+    baseDenom: 'utok1',
+  };
+
+  // Register initial asset
+  chainHub.registerAsset('utok1', detail);
+
+  // Error on non-existent asset
+  t.throws(() => chainHub.updateAsset('utok2', detail), {
+    message: 'Asset "utok2" on "agoric" not registered',
+  });
+
+  // Error on non-existent base chain
+  t.throws(
+    () =>
+      chainHub.updateAsset('utok1', {
+        ...detail,
+        baseName: 'nonexistent',
+      }),
+    { message: 'Chain "nonexistent" not registered' },
+  );
+
+  // First register an asset on chain1
+  const tok1 = withAmountUtils(makeIssuerKit('Tok1'));
+  chainHub.registerAsset('utok1', {
+    ...detail,
+    chainName: 'chain1',
+  });
+
+  // Now try to update it with a brand (which should fail)
+  t.throws(
+    () =>
+      chainHub.updateAsset('utok1', {
+        ...detail,
+        chainName: 'chain1',
+        brand: tok1.brand,
+      }),
+    { message: 'Brands only registerable for agoric-held assets' },
+  );
 });
 
 const [uusdcOnAgoric, agDetail] = assetOn(
