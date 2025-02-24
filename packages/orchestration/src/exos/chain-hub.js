@@ -80,11 +80,11 @@ const CHAIN_ID_SEPARATOR = '_';
  * {@link CHAIN_ID_SEPARATOR} in the chain ID so the encoded tuple can be
  * decoded.
  *
- * @param {string} chainId
+ * @param {string | number} chainId
  * @see {@link https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-2.md}
  */
 export const encodeChainId = chainId =>
-  chainId.replaceAll(
+  String(chainId).replaceAll(
     CHAIN_ID_SEPARATOR,
     `${CHAIN_ID_SEPARATOR}${CHAIN_ID_SEPARATOR}`,
   );
@@ -94,8 +94,8 @@ export const encodeChainId = chainId =>
  * vstorage. But only the top level. So we combine the 2 chain ids into 1 key.
  * Connections are directionless, so we sort the ids.
  *
- * @param {string} chainId1
- * @param {string} chainId2
+ * @param {string | number} chainId1
+ * @param {string | number} chainId2
  */
 export const connectionKey = (chainId1, chainId2) => {
   const chainId1Sanitized = encodeChainId(chainId1);
@@ -133,8 +133,8 @@ const reverseConnInfo = connInfo => {
 /**
  * Convert the info to an undirected form.
  *
- * @param {string} primaryChainId
- * @param {string} counterChainId
+ * @param {string | number} primaryChainId
+ * @param {string | number} counterChainId
  * @param {IBCConnectionInfo} directed
  * @returns {[string, IBCConnectionInfo]}
  */
@@ -144,7 +144,7 @@ export const normalizeConnectionInfo = (
   directed,
 ) => {
   const key = connectionKey(primaryChainId, counterChainId);
-  if (primaryChainId < counterChainId) {
+  if (String(primaryChainId) < String(counterChainId)) {
     return [key, directed];
   } else {
     return [key, reverseConnInfo(directed)];
@@ -154,8 +154,8 @@ export const normalizeConnectionInfo = (
 /**
  * Provide a view on the connection from the primary chain's perspective.
  *
- * @param {string} primaryChainId
- * @param {string} counterChainId
+ * @param {string | number} primaryChainId
+ * @param {string | number} counterChainId
  * @param {IBCConnectionInfo} normalized
  */
 const denormalizeConnectionInfo = (
@@ -163,7 +163,7 @@ const denormalizeConnectionInfo = (
   counterChainId,
   normalized,
 ) => {
-  if (primaryChainId < counterChainId) {
+  if (String(primaryChainId) < String(counterChainId)) {
     return normalized;
   } else {
     return reverseConnInfo(normalized);
@@ -174,7 +174,7 @@ const ChainIdArgShape = M.or(
   M.string(),
   M.splitRecord(
     {
-      chainId: M.string(),
+      chainId: M.or(M.string(), M.number()),
     },
     undefined,
     M.any(),
@@ -202,8 +202,10 @@ export const TransferRouteShape = M.splitRecord(
 );
 
 const ChainHubI = M.interface('ChainHub', {
+  // TODO: support more than `CosmosChainInfoShape`
   registerChain: M.call(M.string(), CosmosChainInfoShape).returns(),
   getChainInfo: M.call(M.string()).returns(VowShape),
+  getChainInfoByChainId: M.call(M.string()).returns(VowShape),
   registerConnection: M.call(
     M.string(),
     M.string(),
@@ -238,6 +240,7 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
   /** @type {MapStore<string, CosmosChainInfo>} */
   const chainInfos = zone.mapStore('chainInfos', {
     keyShape: M.string(),
+    // TODO: support more than `CosmosChainInfoShape`
     valueShape: CosmosChainInfoShape,
   });
   /** @type {MapStore<string, IBCConnectionInfo>} */
@@ -261,6 +264,11 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
     keyShape: M.string(),
     valueShape: M.string(),
   });
+  /** @type {MapStore<string | number, string>} */
+  const chainIdToChainName = zone.mapStore('chainIdToChainName', {
+    keyShape: M.or(M.string(), M.number()),
+    valueShape: M.string(),
+  });
 
   /**
    * @param {Denom} denom - from perspective of the src/holding chain
@@ -281,6 +289,7 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
         // TODO consider makeAtomicProvider for vows
         if (!chainInfos.has(chainName)) {
           chainInfos.init(chainName, chainInfo);
+          chainIdToChainName.init(chainInfo.chainId, chainName);
           if (chainInfo.bech32Prefix) {
             bech32PrefixToChainName.init(chainInfo.bech32Prefix, chainName);
           }
@@ -297,8 +306,8 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
     zone,
     'lookupConnectionInfo',
     /**
-     * @param {string} chainId1
-     * @param {string} chainId2
+     * @param {string | number} chainId1
+     * @param {string | number} chainId2
      */
     // eslint-disable-next-line no-restricted-syntax -- TODO more exact rules for vow best practices
     async (chainId1, chainId2) => {
@@ -389,8 +398,21 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
       return lookupChainInfo(chainName);
     },
     /**
-     * @param {string} primaryChainId
-     * @param {string} counterpartyChainId
+     * @param {string | number} chainId
+     */
+    getChainInfoByChainId(chainId) {
+      // Either from registerChain or memoized remote lookup()
+      chainIdToChainName.has(chainId) ||
+        Fail`Chain Info not found for ${q(chainId)}`;
+      const chainName = chainIdToChainName.get(chainId);
+      chainInfos.has(chainName) || Fail`Chain Info not found for ${q(chainId)}`;
+      return /** @type {ActualChainInfo<chainName>} */ (
+        chainInfos.get(chainName)
+      );
+    },
+    /**
+     * @param {string | number} primaryChainId
+     * @param {string | number} counterpartyChainId
      * @param {IBCConnectionInfo} connectionInfo from primary to counterparty
      */
     registerConnection(primaryChainId, counterpartyChainId, connectionInfo) {
@@ -403,13 +425,15 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
     },
 
     /**
-     * @param {string | { chainId: string }} primary the primary chain
-     * @param {string | { chainId: string }} counter the counterparty chain
+     * @param {string | number | { chainId: string | number }} primary the
+     *   primary chain
+     * @param {string | number | { chainId: string | number }} counter the
+     *   counterparty chain
      * @returns {Vow<IBCConnectionInfo>}
      */
     getConnectionInfo(primary, counter) {
-      const primaryId = typeof primary === 'string' ? primary : primary.chainId;
-      const counterId = typeof counter === 'string' ? counter : counter.chainId;
+      const primaryId = typeof primary === 'object' ? primary.chainId : primary;
+      const counterId = typeof counter === 'object' ? counter.chainId : counter;
       const key = connectionKey(primaryId, counterId);
       if (connectionInfos.has(key)) {
         return vowTools.asVow(() =>
@@ -490,6 +514,9 @@ export const makeChainHub = (zone, agoricNames, vowTools) => {
       return undefined;
     },
     /**
+     * Currently, only supports cosmos-sdk chains where we can derive chainId
+     * from `bech32Prefix`
+     *
      * @param {string} address bech32 address
      * @returns {ChainAddress}
      * @throws {Error} if chain info not found for bech32Prefix

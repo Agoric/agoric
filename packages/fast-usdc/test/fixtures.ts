@@ -11,6 +11,9 @@ const mockScenarios = [
   'AGORIC_PLUS_AGORIC',
   'AGORIC_NO_PARAMS',
   'AGORIC_UNKNOWN_EUD',
+  'AGORIC_PLUS_SOLANA',
+  'AGORIC_PLUS_BASE',
+  'AGORIC_PLUS_BASE_NO_CHAIN_ID',
 ] as const;
 
 type MockScenario = (typeof mockScenarios)[number];
@@ -43,6 +46,7 @@ export const MockCctpTxEvidences: Record<
         receiverAddress ||
         encodeAddressHook(settlementAddress.value, {
           EUD: 'osmo183dejcnmkka5dzcu9xw6mywq0p2m5peks28men',
+          CID: 'osmosis-1',
         }),
     },
     chainId: 1,
@@ -65,6 +69,7 @@ export const MockCctpTxEvidences: Record<
         receiverAddress ||
         encodeAddressHook(settlementAddress.value, {
           EUD: 'dydx183dejcnmkka5dzcu9xw6mywq0p2m5peks28men',
+          CID: 'dydx-mainnet-1',
         }),
     },
     chainId: 1,
@@ -87,6 +92,7 @@ export const MockCctpTxEvidences: Record<
         receiverAddress ||
         encodeAddressHook(settlementAddress.value, {
           EUD: 'agoric13rj0cc0hm5ac2nt0sdup2l7gvkx4v9tyvgq3h2',
+          CID: 'agoric-3',
         }),
     },
     chainId: 1,
@@ -127,6 +133,72 @@ export const MockCctpTxEvidences: Record<
         receiverAddress ||
         encodeAddressHook(settlementAddress.value, {
           EUD: 'random1addr',
+          CID: 'random-1',
+        }),
+    },
+    chainId: 1,
+  }),
+  AGORIC_PLUS_SOLANA: (receiverAddress?: string) => ({
+    blockHash:
+      '0x70d7343e04f8160892e94f02d6a9b9f255663ed0ac34caca98544c8143fee699',
+    blockNumber: 21037669n,
+    txHash:
+      '0xaa1bc6105b60a234c7c50ac17816ebcd5561d366df8bf3be59ff387552761799',
+    tx: {
+      amount: 210000000n,
+      forwardingAddress: 'noble1x0ydg69dh6fqvr27xjvp6maqmrldam6yfelyyy',
+      sender: Senders.default,
+    },
+    aux: {
+      forwardingChannel: 'channel-21',
+      recipientAddress:
+        receiverAddress ||
+        encodeAddressHook(settlementAddress.value, {
+          EUD: 'EUdL1XDvkcu7xAE5iack1h6zbR8k6wCebTfmtQGk8fFS',
+          CID: 'solana',
+        }),
+    },
+    chainId: 1,
+  }),
+  AGORIC_PLUS_BASE: (receiverAddress?: string) => ({
+    blockHash:
+      '0x70d7343e04f8160892e94f02d6a9b9f255663ed0ac34caca98544c8143fee699',
+    blockNumber: 21037669n,
+    txHash:
+      '0xba1bc6105b60a234c7c50ac17816ebcd5561d366df8bf3be59ff387552761799',
+    tx: {
+      amount: 210000000n,
+      forwardingAddress: 'noble1x0ydg69dh6fqvr27xjvp6maqmrldam6yfelyyy',
+      sender: Senders.default,
+    },
+    aux: {
+      forwardingChannel: 'channel-21',
+      recipientAddress:
+        receiverAddress ||
+        encodeAddressHook(settlementAddress.value, {
+          EUD: '0xe0d43135EBd2593907F8f56c25ADC1Bf94FCf993',
+          CID: '8453', // integer, but only string permitted
+        }),
+    },
+    chainId: 1,
+  }),
+  AGORIC_PLUS_BASE_NO_CHAIN_ID: (receiverAddress?: string) => ({
+    blockHash:
+      '0x70d7343e04f8160892e94f02d6a9b9f255663ed0ac34caca98544c8143fee699',
+    blockNumber: 21037669n,
+    txHash:
+      '0xba1bc6105b60a234c7c50ac17816ebcd5561d366df8bf3be59ff387552761799',
+    tx: {
+      amount: 210000000n,
+      forwardingAddress: 'noble1x0ydg69dh6fqvr27xjvp6maqmrldam6yfelyyy',
+      sender: Senders.default,
+    },
+    aux: {
+      forwardingChannel: 'channel-21',
+      recipientAddress:
+        receiverAddress ||
+        encodeAddressHook(settlementAddress.value, {
+          EUD: '0xe0d43135EBd2593907F8f56c25ADC1Bf94FCf993',
         }),
     },
     chainId: 1,
@@ -191,6 +263,34 @@ export const MockVTransferEvents: Record<
       receiver:
         recieverAddress ||
         MockCctpTxEvidences.AGORIC_UNKNOWN_EUD().aux.recipientAddress,
+    }),
+  AGORIC_PLUS_SOLANA: (recieverAddress?: string) =>
+    buildVTransferEvent({
+      ...nobleDefaultVTransferParams,
+      amount: MockCctpTxEvidences.AGORIC_PLUS_SOLANA().tx.amount,
+      sender: MockCctpTxEvidences.AGORIC_PLUS_SOLANA().tx.forwardingAddress,
+      receiver:
+        recieverAddress ||
+        MockCctpTxEvidences.AGORIC_PLUS_SOLANA().aux.recipientAddress,
+    }),
+  AGORIC_PLUS_BASE: (recieverAddress?: string) =>
+    buildVTransferEvent({
+      ...nobleDefaultVTransferParams,
+      amount: MockCctpTxEvidences.AGORIC_PLUS_BASE().tx.amount,
+      sender: MockCctpTxEvidences.AGORIC_PLUS_BASE().tx.forwardingAddress,
+      receiver:
+        recieverAddress ||
+        MockCctpTxEvidences.AGORIC_PLUS_BASE().aux.recipientAddress,
+    }),
+  AGORIC_PLUS_BASE_NO_CHAIN_ID: (recieverAddress?: string) =>
+    buildVTransferEvent({
+      ...nobleDefaultVTransferParams,
+      amount: MockCctpTxEvidences.AGORIC_PLUS_BASE_NO_CHAIN_ID().tx.amount,
+      sender:
+        MockCctpTxEvidences.AGORIC_PLUS_BASE_NO_CHAIN_ID().tx.forwardingAddress,
+      receiver:
+        recieverAddress ||
+        MockCctpTxEvidences.AGORIC_PLUS_BASE_NO_CHAIN_ID().aux.recipientAddress,
     }),
 };
 

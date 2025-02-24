@@ -319,4 +319,30 @@ expectNotType<CosmosValidatorAddress>(chainAddr);
   expectType<
     (validator: CosmosValidatorAddress, amount: AmountArg) => Promise<void>
   >(account.delegate);
+
+  expectType<(destination: ChainAddress, amount: AmountArg) => Promise<void>>(
+    // @ts-expect-error `depositForBurn` only available for noble
+    account.depositForBurn,
+  );
+}
+
+// Test NobleAccountMethods
+{
+  type ChainFacade = Chain<
+    CosmosChainInfo & {
+      chainId: 'noble-1';
+    }
+  >;
+  const remoteChain: ChainFacade = null as any;
+  const account = await remoteChain.makeAccount();
+
+  expectType<(destination: ChainAddress, amount: AmountArg) => Promise<void>>(
+    account.depositForBurn,
+  );
+
+  // Verify delegate is not available (no stakingTokens parameter)
+  expectType<
+    (validator: CosmosValidatorAddress, amount: AmountArg) => Promise<void>
+    // @ts-expect-error StakingMethods not available on noble
+  >(account.delegate);
 }

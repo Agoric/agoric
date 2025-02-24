@@ -105,7 +105,7 @@ harden(PendingTxShape);
 /** @type {TypedPattern<AddressHook>} */
 export const AddressHookShape = {
   baseAddress: M.string(),
-  query: { EUD: M.string() },
+  query: M.splitRecord({ EUD: M.string() }, { CID: M.string() }, {}),
 };
 harden(AddressHookShape);
 

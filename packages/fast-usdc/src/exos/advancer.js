@@ -49,6 +49,7 @@ const AdvancerVowCtxShape = M.splitRecord(
     destination: ChainAddressShape,
     forwardingAddress: M.string(),
     txHash: EvmHashShape,
+    toIntermediate: M.opt(M.boolean()),
   },
   { tmpSeat: M.remotable() },
 );
@@ -82,20 +83,44 @@ const AdvancerKitI = harden({
 });
 
 /**
+ * Address hooks only deal in strings, so see if we can parse
+ * chainId to an integer.
+ * @param {string} chainId
+ */
+const formatChainId = chainId => {
+  const asInt = parseInt(chainId, 10);
+  return !Number.isNaN(asInt) ? asInt : chainId;
+};
+
+/**
  * @typedef {{
  *  fullAmount: NatAmount;
  *  advanceAmount: NatAmount;
  *  destination: ChainAddress;
  *  forwardingAddress: NobleAddress;
  *  txHash: EvmHash;
+ *  toIntermediate?: boolean;
  * }} AdvancerVowCtx
  */
+
+/**
+ * @typedef {{
+ *   notifier: import('./settler.js').SettlerKit['notifier'];
+ *   borrower: LiquidityPoolKit['borrower'];
+ *   poolAccount: HostInterface<OrchestrationAccount<{chainId: 'agoric'}>>;
+ *   settlementAddress: ChainAddress;
+ *   intermediateRecipientAddress?: ChainAddress;
+ * }} AdvancerConfig
+ */
+
+/** @typedef {AdvancerConfig & { intermediateRecipient: OrchestrationAccount<{chainId: 'noble-1'}> | undefined }} AdvancerState */
 
 export const stateShape = harden({
   notifier: M.remotable(),
   borrower: M.remotable(),
   poolAccount: M.remotable(),
-  intermediateRecipient: M.opt(ChainAddressShape),
+  intermediateRecipient: M.opt(M.remotable()),
+  intermediateRecipientAddress: M.opt(ChainAddressShape),
   settlementAddress: M.opt(ChainAddressShape),
 });
 
@@ -131,20 +156,17 @@ export const prepareAdvancerKit = (
     'Fast USDC Advancer',
     AdvancerKitI,
     /**
-     * @param {{
-     *   notifier: import('./settler.js').SettlerKit['notifier'];
-     *   borrower: LiquidityPoolKit['borrower'];
-     *   poolAccount: HostInterface<OrchestrationAccount<{chainId: 'agoric'}>>;
-     *   settlementAddress: ChainAddress;
-     *   intermediateRecipient?: ChainAddress;
-     * }} config
+     * @param {AdvancerConfig} config
      */
     config =>
-      harden({
-        ...config,
-        // make sure the state record has this property, perhaps with an undefined value
-        intermediateRecipient: config.intermediateRecipient,
-      }),
+      /** @type {AdvancerState}*/ (
+        harden({
+          ...config,
+          intermediateRecipient: undefined,
+          // make sure the state record has this property, perhaps with an undefined value
+          intermediateRecipientAddress: config.intermediateRecipientAddress,
+        })
+      ),
     {
       advancer: {
         /**
@@ -177,10 +199,19 @@ export const prepareAdvancerKit = (
             if (decoded.baseAddress !== settlementAddress.value) {
               throw Fail`⚠️ baseAddress of address hook ${q(decoded.baseAddress)} does not match the expected address ${q(settlementAddress.value)}`;
             }
-            const { EUD } = /** @type {AddressHook['query']} */ (decoded.query);
-            log(`decoded EUD: ${EUD}`);
-            // throws if the bech32 prefix is not found
-            const destination = chainHub.makeChainAddress(EUD);
+            const { EUD, CID } = /** @type {AddressHook['query']} */ (
+              decoded.query
+            );
+            log(`decoded EUD: ${EUD}, CID: ${CID}`);
+
+            const destination = CID
+              ? harden({
+                  value: EUD,
+                  chainId: formatChainId(CID),
+                  // note: omitting encoding
+                })
+              : // only works for bech32 addrs; throws if prefix is not found in ChainHub
+                chainHub.makeChainAddress(EUD);
 
             const fullAmount = toAmount(evidence.tx.amount);
             const { borrower, notifier, poolAccount } = this.state;
@@ -220,9 +251,16 @@ export const prepareAdvancerKit = (
             statusManager.skipAdvance(evidence, [error.message]);
           }
         },
-        /** @param {ChainAddress} intermediateRecipient */
-        setIntermediateRecipient(intermediateRecipient) {
+        /** 
+         * @param {OrchestrationAccount<{chainId: 'noble-1'}>} intermediateRecipient
+          @param {ChainAddress} intermediateRecipientAddress */
+        setIntermediateRecipient(
+          intermediateRecipient,
+          intermediateRecipientAddress,
+        ) {
           this.state.intermediateRecipient = intermediateRecipient;
+          this.state.intermediateRecipientAddress =
+            intermediateRecipientAddress;
         },
       },
       depositHandler: {
@@ -231,24 +269,50 @@ export const prepareAdvancerKit = (
          * @param {AdvancerVowCtx & { tmpSeat: ZCFSeat }} ctx
          */
         onFulfilled(result, ctx) {
-          const { poolAccount, intermediateRecipient, settlementAddress } =
-            this.state;
+          const {
+            poolAccount,
+            intermediateRecipientAddress,
+            settlementAddress,
+          } = this.state;
           const { destination, advanceAmount, tmpSeat, ...detail } = ctx;
           tmpSeat.exit();
           const amount = harden({
             denom: usdc.denom,
             value: advanceAmount.value,
           });
+
+          // TODO: use destination.chainId to determine if non-cosmos/ibc from ChainInfo
+          // either: ecosystem: 'evm', 'solana', 'cosmos' etc, or maybe assert connections.length?
+          // use absence of encoding: 'bech32' for now
+          const toIntermediate = destination.encoding !== 'bech32';
+
+          if (!intermediateRecipientAddress)
+            throw Fail`no 'intermediateRecipientAddress' found`;
+          const transferDest = toIntermediate
+            ? intermediateRecipientAddress
+            : destination;
+
+          /**
+           * To agoric (`type: local`): use bank/Send
+           * To `type:cosmos`: use .transfer to EUD (PFM might be autogen'ed)
+           * To `type:evm|cosmos`: 1) use .transfer to NobleICA (intermediateRecipient, or a new ICA?)
+           * and 2) call depositForBurn with EUD as destination
+           */
           const transferOrSendV =
             destination.chainId === settlementAddress.chainId
               ? E(poolAccount).send(destination, amount)
-              : E(poolAccount).transfer(destination, amount, {
-                  forwardOpts: { intermediateRecipient },
+              : E(poolAccount).transfer(transferDest, amount, {
+                  forwardOpts: {
+                    intermediateRecipient: intermediateRecipientAddress,
+                  },
                 });
+
           return watch(transferOrSendV, this.facets.transferHandler, {
             destination,
             advanceAmount,
             ...detail,
+            // something to indicate we need to call depositForBurn
+            toIntermediate,
           });
         },
         /**
@@ -283,8 +347,25 @@ export const prepareAdvancerKit = (
          * @param {AdvancerVowCtx} ctx
          */
         onFulfilled(result, ctx) {
-          const { notifier } = this.state;
-          const { advanceAmount, destination, ...detail } = ctx;
+          const { intermediateRecipient, notifier } = this.state;
+          const { advanceAmount, destination, toIntermediate, ...detail } = ctx;
+          if (toIntermediate) {
+            if (!intermediateRecipient)
+              throw Fail`no 'intermediateRecipient' found`;
+            const depositForBurnV = E(intermediateRecipient).depositForBurn(
+              destination,
+              harden({ denom: 'uusdc', value: advanceAmount.value }),
+            );
+            return watch(
+              depositForBurnV,
+              // TODO: worth a separate Settler handler, as $ won't be in the advancer account?
+              this.facets.transferHandler,
+              {
+                ...ctx,
+                toIntermediate: false, // so we don't call depositForBurn twice
+              },
+            );
+          }
           log('Advance succeeded', { advanceAmount, destination });
           // During development, due to a bug, this call threw.
           // The failure was silent (no diagnostics) due to:

@@ -18,6 +18,7 @@ import type {
   KnownChains,
   LocalAccountMethods,
   ICQQueryFunction,
+  NobleMethods,
 } from './types.js';
 import type { ResolvedContinuingOfferResult } from './utils/zoe-tools.js';
 
@@ -58,10 +59,10 @@ export type AmountArg = DenomAmount | Amount<'nat'>;
 /** An address on some blockchain, e.g., cosmos, eth, etc. */
 export type ChainAddress = {
   /** e.g. 1 for Ethereum, agoric-3 for Agoric, cosmoshub-4 for Cosmos */
-  chainId: string;
+  chainId: string | number;
   /** The address value used on-chain */
   value: string;
-  encoding: 'bech32' | 'ethereum';
+  encoding?: 'bech32' | 'hex' | 'base58';
 };
 
 /**
@@ -74,7 +75,9 @@ export type OrchestrationAccount<CI extends ChainInfo> =
     (CI extends CosmosChainInfo
       ? CI['chainId'] extends `agoric${string}`
         ? LocalAccountMethods
-        : CosmosChainAccountMethods<CI>
+        : CI['chainId'] extends `noble${string}`
+          ? CosmosChainAccountMethods<CI> & NobleMethods
+          : CosmosChainAccountMethods<CI>
       : object);
 
 /**

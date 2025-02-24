@@ -143,6 +143,8 @@ export type AddressHook = {
   query: {
     /** end user destination address */
     EUD: string;
+    /** chain id for end user destination. necessary if EUD is not bech32 */
+    CID?: string;
   };
 };
 

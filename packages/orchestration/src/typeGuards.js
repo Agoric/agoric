@@ -86,6 +86,7 @@ export const CosmosChainInfoShape = M.splitRecord(
   },
   {
     bech32Prefix: M.string(),
+    cctpDestinationDomain: M.number(),
     connections: M.record(),
     stakingTokens: M.arrayOf({ denom: M.string() }),
     // UNTIL https://github.com/Agoric/agoric-sdk/issues/9326

@@ -1,5 +1,6 @@
 /** @file Use-object for the owner of a staking account */
 import { toRequestQueryJson } from '@agoric/cosmic-proto';
+import { MsgDepositForBurn } from '@agoric/cosmic-proto/circle/cctp/v1/tx.js';
 import {
   QueryAllBalancesRequest,
   QueryAllBalancesResponse,
@@ -67,7 +68,7 @@ import { makeTimestampHelper } from '../utils/time.js';
 
 /**
  * @import {HostOf} from '@agoric/async-flow';
- * @import {AmountArg, IcaAccount, ChainAddress, CosmosValidatorAddress, ICQConnection, StakingAccountActions, StakingAccountQueries, OrchestrationAccountCommon, CosmosRewardsResponse, IBCConnectionInfo, IBCMsgTransferOptions, ChainHub, CosmosDelegationResponse} from '../types.js';
+ * @import {AmountArg, IcaAccount, ChainAddress, CosmosValidatorAddress, ICQConnection, StakingAccountActions, StakingAccountQueries, OrchestrationAccountCommon, CosmosRewardsResponse, IBCConnectionInfo, IBCMsgTransferOptions, ChainHub, CosmosDelegationResponse, NobleMethods} from '../types.js';
  * @import {RecorderKit, MakeRecorderKit} from '@agoric/zoe/src/contractSupport/recorder.js';
  * @import {Coin} from '@agoric/cosmic-proto/cosmos/base/v1beta1/coin.js';
  * @import {Remote} from '@agoric/internal';
@@ -138,8 +139,15 @@ const stakingAccountQueriesMethods = {
   getRewards: M.call().returns(VowShape),
 };
 
+/** @see {NobleMethods} */
+const nobleMethods = {
+  depositForBurn: M.call(ChainAddressShape, AmountArgShape).returns(VowShape),
+};
+
 /** @see {OrchestrationAccountCommon} */
+// TODO: consider renaming to CosmosOrchAccountHolder
 export const IcaAccountHolderI = M.interface('IcaAccountHolder', {
+  ...nobleMethods,
   ...orchestrationAccountMethods,
   ...stakingAccountActionsMethods,
   ...stakingAccountQueriesMethods,
@@ -205,7 +213,7 @@ export const prepareCosmosOrchestrationAccountKit = (
         amountToCoin: M.call(AmountArgShape).returns(M.record()),
       }),
       returnVoidWatcher: M.interface('returnVoidWatcher', {
-        onFulfilled: M.call(M.or(M.string(), M.record()))
+        onFulfilled: M.call(M.any())
           .optional(M.arrayOf(M.undefined()))
           .returns(M.undefined()),
       }),
@@ -1110,6 +1118,45 @@ export const prepareCosmosOrchestrationAccountKit = (
           return asVow(() =>
             watch(E(this.facets.helper.owned()).executeEncodedTx(msgs, opts)),
           );
+        },
+        /** @type {HostOf<NobleMethods['depositForBurn']>} */
+        depositForBurn(destination, amount) {
+          return asVow(() => {
+            trace('depositForBurn', destination, amount);
+            const { helper } = this.facets;
+            const { chainAddress } = this.state;
+
+            chainAddress.chainId.startsWith('noble') ||
+              Fail`'depositForBurn' not supported on chain: ${q(chainAddress.chainId)}`;
+
+            const { cctpDestinationDomain } = chainHub.getChainInfoByChainId(
+              destination.chainId,
+            );
+            if (!cctpDestinationDomain || cctpDestinationDomain !== 0) {
+              throw Fail`${q(destination.chainId)} does not have "cctpDestinationDomain" set in ChainInfo`;
+            }
+
+            // TODO: logic for encoding solana + evm addresses
+            // see https://github.com/circlefin/noble-cctp/blob/master/examples/depositForBurn.ts#L52-L70
+            const mintRecipient = new Uint8Array();
+
+            // TODO: do we need to support MsgDepositForBurnWithCaller? It's the same payload, plus `destinationCaller: Uint8Array`.
+            // (Functionally, only destinationCaller can call MsgReceive on the destination chain to mint)
+            const msg = MsgDepositForBurn.toProtoMsg({
+              amount: helper.amountToCoin(amount)?.amount,
+              from: chainAddress.value,
+              destinationDomain: cctpDestinationDomain,
+              mintRecipient,
+              // safe to hardcode this constant? maybe best as part of opts bag with a default value?
+              burnToken: 'uusdc',
+            });
+
+            return watch(
+              E(helper.owned()).executeEncodedTx([Any.toJSON(msg)]),
+              // TODO: do we need a different handler? Is the nonce in the response meaningful?
+              this.facets.returnVoidWatcher,
+            );
+          });
         },
       },
     },

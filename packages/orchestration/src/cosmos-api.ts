@@ -91,6 +91,7 @@ export interface CosmosAssetInfo extends Record<string, unknown> {
 export type CosmosChainInfo = Readonly<{
   /** can be used to lookup chainInfo (chainId) from an address value */
   bech32Prefix?: string;
+  cctpDestinationDomain?: number;
   chainId: string;
 
   connections?: Record<string, IBCConnectionInfo>; // chainId or wellKnownName
@@ -294,6 +295,16 @@ export interface IcaAccount extends IcaAccountMethods {
 /** Methods on chains that support Liquid Staking */
 export interface LiquidStakingMethods {
   liquidStake: (amount: AmountArg) => Promise<void>;
+}
+
+export interface NobleMethods {
+  /** burn USDC on Noble and mint on a destination chain via CCTP */
+  depositForBurn: (
+    mintRecipient: ChainAddress,
+    amount: AmountArg, // is bigint better?
+  ) => Promise<void>;
+  // consider including `registerForwardingAccount` (`MsgRegisterAccount`), so a contract can create its own forwarding address
+  // Requires `noble/forwarding` protos: https://github.com/noble-assets/forwarding/blob/main/proto/noble/forwarding/v1/tx.proto
 }
 
 // TODO support StakingAccountQueries
