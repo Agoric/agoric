@@ -299,6 +299,11 @@ export const prepareCosmosOrchestrationAccountKit = (
      * @returns {State}
      */
     ({ chainAddress, localAddress, remoteAddress }, io) => {
+      trace('cosmos orch acct init', {
+        chainAddress,
+        localAddress,
+        remoteAddress,
+      });
       const { storageNode } = io;
       // must be the fully synchronous maker because the kit is held in durable state
       const topicKit = storageNode
