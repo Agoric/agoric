@@ -439,7 +439,8 @@ export const makeLaunchChain = (
       serviceName: TELEMETRY_SERVICE_NAME,
     });
 
-    const slogSender = await (testingOverrides.slogSender ||
+    const providedSlogSender = await testingOverrides.slogSender;
+    const slogSender = await (providedSlogSender ||
       makeSlogSender({
         stateDir: stateDBDir,
         env,
@@ -552,7 +553,12 @@ export const makeLaunchChain = (
       swingsetConfig,
     });
     savedChainSends = s.savedChainSends;
-    return s;
+    const shutdown = async () => {
+      await s.shutdown?.();
+      if (providedSlogSender) return;
+      await slogSender?.shutdown?.();
+    };
+    return { ...s, shutdown };
   };
 
   return launchChain;

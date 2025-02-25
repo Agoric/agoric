@@ -1393,7 +1393,8 @@ export async function launch({
   }
 
   async function shutdown() {
-    return controller.shutdown();
+    await controller.shutdown();
+    await afterCommitWorkDone;
   }
 
   function writeSlogObject(obj) {
