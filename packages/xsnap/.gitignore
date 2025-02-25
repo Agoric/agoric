@@ -3,3 +3,4 @@ build.config.env
 dist
 test/fixture-snap-pool/
 test/fixture-snap-shot.xss
+package
