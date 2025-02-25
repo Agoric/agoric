@@ -23,18 +23,18 @@ const noopFinisher = harden(() => {});
  * will invoke that wrapped finisher.
  *
  * @template {Record<string, Function>} Methods
- * @param {SlogWrappers} wrappers
- * @param {string} msg prefix for warn-level logging about unused callbacks
+ * @param {SlogWrappers} slogCallbacks
+ * @param {string} unusedMsgPrefix prefix for warn-level logging about unused callbacks
  * @param {Methods} methods to wrap
  * @returns {Methods}
  */
-function addSlogCallbacks(wrappers, msg, methods) {
-  const unused = new Set(Object.keys(wrappers));
+function addSlogCallbacks(slogCallbacks, unusedMsgPrefix, methods) {
+  const unused = new Set(Object.keys(slogCallbacks));
   const wrappedMethods = /** @type {typeof methods} */ (
     objectMap(methods, (impl, methodKey) => {
-      const method = /** @type {keyof typeof wrappers} */ (methodKey);
-      unused.delete(method);
-      const wrapper = wrappers[method];
+      const methodName = /** @type {keyof typeof slogCallbacks} */ (methodKey);
+      unused.delete(methodName);
+      const wrapper = slogCallbacks[methodName];
 
       // If there is no registered wrapper, return the implementation directly.
       if (!wrapper) return impl;
@@ -44,7 +44,7 @@ function addSlogCallbacks(wrappers, msg, methods) {
         try {
           // Allow the callback to observe the call synchronously, and replace
           // the implementation's finisher function, but not to throw an exception.
-          const wrapperFinisher = wrapper(method, args, maybeFinisher);
+          const wrapperFinisher = wrapper(methodName, args, maybeFinisher);
           if (typeof maybeFinisher !== 'function') return wrapperFinisher;
 
           // We wrap the finisher in the callback's return value.
@@ -54,12 +54,12 @@ function addSlogCallbacks(wrappers, msg, methods) {
                 ...finishArgs,
               );
             } catch (e) {
-              console.error(`${method} wrapper finisher failed:`, e);
+              console.error(`${methodName} wrapper finisher failed:`, e);
               return maybeFinisher(...finishArgs);
             }
           };
         } catch (e) {
-          console.error(`${method} wrapper failed:`, e);
+          console.error(`${methodName} wrapper failed:`, e);
           return maybeFinisher;
         }
       };
@@ -67,7 +67,7 @@ function addSlogCallbacks(wrappers, msg, methods) {
     })
   );
   if (unused.size) {
-    console.warn(msg, ...[...unused.keys()].sort().map(q));
+    console.warn(unusedMsgPrefix, ...[...unused.keys()].sort().map(q));
   }
   return wrappedMethods;
 }
