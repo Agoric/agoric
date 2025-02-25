@@ -216,7 +216,7 @@ export async function makeSwingsetController(
   const sloggingKernelConsole = makeLimitedConsole(level => {
     return (...args) => {
       kernelConsole[level](...args);
-      writeSlogObject({ type: 'console', source: 'kernel', args });
+      writeSlogObject({ type: 'console', source: 'kernel', level, args });
     };
   });
   writeSlogObject({ type: 'import-kernel-start' });
