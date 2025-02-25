@@ -1,4 +1,5 @@
 import { q } from '@endo/errors';
+import { objectMap } from '@agoric/internal';
 import { makeLimitedConsole } from '@agoric/internal/src/ses-utils.js';
 
 /** @import {LimitedConsole} from '@agoric/internal/src/js-utils.js'; */
@@ -13,7 +14,7 @@ const noopFinisher = harden(() => {});
 /** @typedef {Partial<Record<Exclude<keyof KernelSlog, 'write'>, (methodName: string, args: unknown[], finisher: AnyFinisher) => unknown>>} SlogWrappers */
 
 /**
- * Support composition of asynchronous callbacks that are invoked at the start
+ * Support asynchronous slog callbacks that are invoked at the start
  * of an operation and return either a non-function result or a "finisher"
  * function to be invoked upon operation completion.
  * This maker accepts a collection of wrapper functions that receive the same
@@ -21,21 +22,17 @@ const noopFinisher = harden(() => {});
  * (e.g., its finisher), and are expected to return a finisher of their own that
  * will invoke that wrapped finisher.
  *
+ * @template {Record<string, Function>} Methods
  * @param {SlogWrappers} wrappers
+ * @param {string} msg prefix for warn-level logging about unused callbacks
+ * @param {Methods} methods to wrap
+ * @returns {Methods}
  */
-function makeFinishersKit(wrappers) {
+function addSlogCallbacks(wrappers, msg, methods) {
   const unused = new Set(Object.keys(wrappers));
-  return harden({
-    /**
-     * Robustly wrap a method if a wrapper is defined.
-     *
-     * @template {(...args: unknown[]) => (Finisher | unknown)} F
-     * @template {AnyFinisher} [Finisher=AnyFinisher]
-     * @param {string} method name
-     * @param {F} impl the original implementation
-     * @returns {F} the wrapped method
-     */
-    wrap(method, impl) {
+  const wrappedMethods = /** @type {typeof methods} */ (
+    objectMap(methods, (impl, methodKey) => {
+      const method = /** @type {keyof typeof wrappers} */ (methodKey);
       unused.delete(method);
       const wrapper = wrappers[method];
 
@@ -43,7 +40,7 @@ function makeFinishersKit(wrappers) {
       if (!wrapper) return impl;
 
       const wrapped = (...args) => {
-        const maybeFinisher = /** @type {Finisher} */ (impl(...args));
+        const maybeFinisher = /** @type {AnyFinisher} */ (impl(...args));
         try {
           // Allow the callback to observe the call synchronously, and replace
           // the implementation's finisher function, but not to throw an exception.
@@ -53,7 +50,9 @@ function makeFinishersKit(wrappers) {
           // We wrap the finisher in the callback's return value.
           return (...finishArgs) => {
             try {
-              return /** @type {Finisher} */ (wrapperFinisher)(...finishArgs);
+              return /** @type {AnyFinisher} */ (wrapperFinisher)(
+                ...finishArgs,
+              );
             } catch (e) {
               console.error(`${method} wrapper finisher failed:`, e);
               return maybeFinisher(...finishArgs);
@@ -64,18 +63,13 @@ function makeFinishersKit(wrappers) {
           return maybeFinisher;
         }
       };
-      return /** @type {F} */ (wrapped);
-    },
-    /**
-     * Declare that all wrapping is done.
-     *
-     * @param {string} msg message to display if there are unused wrappers
-     */
-    done(msg = 'Unused wrappers') {
-      if (!unused.size) return;
-      console.warn(msg, ...[...unused.keys()].sort().map(q));
-    },
-  });
+      return /** @type {typeof impl} */ (/** @type {unknown} */ (wrapped));
+    })
+  );
+  if (unused.size) {
+    console.warn(msg, ...[...unused.keys()].sort().map(q));
+  }
+  return wrappedMethods;
 }
 
 export const badConsole = makeLimitedConsole(level => () => {
@@ -89,21 +83,19 @@ export const noopConsole = makeLimitedConsole(_level => () => {});
  * @returns {KernelSlog}
  */
 export function makeDummySlogger(slogCallbacks, dummyConsole = badConsole) {
-  const { wrap, done } = makeFinishersKit(slogCallbacks);
-  const dummySlogger = harden({
-    provideVatSlogger: wrap('provideVatSlogger', () => {
-      return harden({ vatSlog: { delivery: () => noopFinisher } });
-    }),
-    vatConsole: wrap('vatConsole', () => dummyConsole),
-    startup: wrap('startup', () => noopFinisher),
-    delivery: wrap('delivery', () => noopFinisher),
-    syscall: wrap('syscall', () => noopFinisher),
-    changeCList: wrap('changeCList', () => noopFinisher),
-    terminateVat: wrap('terminateVat', () => noopFinisher),
-    write: noopFinisher,
+  const unusedWrapperPrefix =
+    'Unused methods in makeDummySlogger slogCallbacks';
+  const wrappedMethods = addSlogCallbacks(slogCallbacks, unusedWrapperPrefix, {
+    provideVatSlogger: () =>
+      harden({ vatSlog: { delivery: () => noopFinisher } }),
+    vatConsole: () => dummyConsole,
+    startup: () => noopFinisher,
+    delivery: () => noopFinisher,
+    syscall: () => noopFinisher,
+    changeCList: () => noopFinisher,
+    terminateVat: () => noopFinisher,
   });
-  done('Unused makeDummySlogger slogCallbacks method names');
-  return dummySlogger;
+  return harden({ ...wrappedMethods, write: noopFinisher });
 }
 
 /**
@@ -249,29 +241,21 @@ export function makeSlogger(slogCallbacks, writeObj) {
     return { vatSlog, starting: true };
   }
 
-  const { wrap, done } = makeFinishersKit(slogCallbacks);
-  const slogger = harden({
-    provideVatSlogger: wrap('provideVatSlogger', provideVatSlogger),
-    vatConsole: wrap('vatConsole', (vatID, ...args) =>
+  const unusedWrapperPrefix = 'Unused methods in makeSlogger slogCallbacks';
+  const wrappedMethods = addSlogCallbacks(slogCallbacks, unusedWrapperPrefix, {
+    provideVatSlogger,
+    vatConsole: (vatID, ...args) =>
       provideVatSlogger(vatID).vatSlog.vatConsole(...args),
-    ),
-    startup: wrap('startup', (vatID, ...args) =>
+    startup: (vatID, ...args) =>
       provideVatSlogger(vatID).vatSlog.startup(...args),
-    ),
-    delivery: wrap('delivery', (vatID, ...args) =>
+    delivery: (vatID, ...args) =>
       provideVatSlogger(vatID).vatSlog.delivery(...args),
-    ),
-    syscall: wrap('syscall', (vatID, ...args) =>
+    syscall: (vatID, ...args) =>
       provideVatSlogger(vatID).vatSlog.syscall(...args),
-    ),
-    changeCList: wrap('changeCList', (vatID, ...args) =>
+    changeCList: (vatID, ...args) =>
       provideVatSlogger(vatID).vatSlog.changeCList(...args),
-    ),
-    terminateVat: wrap('terminateVat', (vatID, ...args) =>
+    terminateVat: (vatID, ...args) =>
       provideVatSlogger(vatID).vatSlog.terminateVat(...args),
-    ),
-    write: safeWrite,
   });
-  done('Unused makeSlogger slogCallbacks method names');
-  return slogger;
+  return harden({ ...wrappedMethods, write: safeWrite });
 }
