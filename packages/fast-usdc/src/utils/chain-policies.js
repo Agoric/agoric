@@ -9,12 +9,11 @@ export const ChainPolicies = /** @type {const} */ ({
       ],
       cctpTokenMessengerAddress: '0x19330d10D9Cc8751218eaf51E8885D058642E08A',
       chainId: 42161,
-      // TODO confirm confirmations and rateLimits
-      confirmations: 2,
+      confirmations: 96,
       rateLimits: {
-        blockWindow: 20_000_000_000n,
-        blockWindowSize: 10,
-        tx: 10_000_000_000n,
+        blockWindow: 50_000_000_000n,
+        blockWindowSize: 480,
+        tx: 20_000_000_000n,
       },
     },
     Base: {
@@ -23,12 +22,11 @@ export const ChainPolicies = /** @type {const} */ ({
       ],
       cctpTokenMessengerAddress: '0x1682Ae6375C4E4A97e4B583BC394c861A46D8962',
       chainId: 8453,
-      // TODO confirm confirmations and rateLimits
-      confirmations: 2,
+      confirmations: 12,
       rateLimits: {
-        blockWindow: 20_000_000_000n,
-        blockWindowSize: 10,
-        tx: 10_000_000_000n,
+        blockWindow: 50_000_000_000n,
+        blockWindowSize: 60,
+        tx: 20_000_000_000n,
       },
     },
     Ethereum: {
@@ -37,12 +35,11 @@ export const ChainPolicies = /** @type {const} */ ({
       ],
       cctpTokenMessengerAddress: '0xBd3fa81B58Ba92a82136038B25aDec7066af3155',
       chainId: 1,
-      // TODO confirm confirmations and rateLimits
       confirmations: 2,
       rateLimits: {
-        blockWindow: 20_000_000_000n,
+        blockWindow: 50_000_000_000n,
         blockWindowSize: 10,
-        tx: 10_000_000_000n,
+        tx: 20_000_000_000n,
       },
     },
     Optimism: {
@@ -51,12 +48,11 @@ export const ChainPolicies = /** @type {const} */ ({
       ],
       cctpTokenMessengerAddress: '0x2B4069517957735bE00ceE0fadAE88a26365528f',
       chainId: 10,
-      // TODO confirm confirmations and rateLimits
-      confirmations: 2,
+      confirmations: 12,
       rateLimits: {
-        blockWindow: 20_000_000_000n,
-        blockWindowSize: 10,
-        tx: 10_000_000_000n,
+        blockWindow: 50_000_000_000n,
+        blockWindowSize: 60,
+        tx: 20_000_000_000n,
       },
     },
     Polygon: {
@@ -65,12 +61,11 @@ export const ChainPolicies = /** @type {const} */ ({
       ],
       cctpTokenMessengerAddress: '0x9daF8c91AEFAE50b9c0E69629D3F6Ca40cA3B3FE',
       chainId: 137,
-      // TODO confirm confirmations and rateLimits
-      confirmations: 2,
+      confirmations: 12,
       rateLimits: {
-        blockWindow: 20_000_000_000n,
-        blockWindowSize: 10,
-        tx: 10_000_000_000n,
+        blockWindow: 50_000_000_000n,
+        blockWindowSize: 60,
+        tx: 20_000_000_000n,
       },
     },
   },
