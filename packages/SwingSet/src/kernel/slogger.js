@@ -96,7 +96,6 @@ export function makeDummySlogger(slogCallbacks, dummyConsole = badConsole) {
     }),
     vatConsole: wrap('vatConsole', () => dummyConsole),
     startup: wrap('startup', () => noopFinisher),
-    replayVatTranscript: wrap('replayVatTranscript', () => noopFinisher),
     delivery: wrap('delivery', () => noopFinisher),
     syscall: wrap('syscall', () => noopFinisher),
     changeCList: wrap('changeCList', () => noopFinisher),
@@ -250,18 +249,6 @@ export function makeSlogger(slogCallbacks, writeObj) {
     return { vatSlog, starting: true };
   }
 
-  function replayVatTranscript(vatID) {
-    safeWrite({ type: 'replay-transcript-start', vatID });
-    function finish() {
-      safeWrite({ type: 'replay-transcript-finish', vatID });
-    }
-    return harden(finish);
-  }
-
-  // function annotateVat(vatID, data) {
-  //   safeWrite({ type: 'annotate-vat', vatID, data });
-  // }
-
   const { wrap, done } = makeFinishersKit(slogCallbacks);
   const slogger = harden({
     provideVatSlogger: wrap('provideVatSlogger', provideVatSlogger),
@@ -271,8 +258,6 @@ export function makeSlogger(slogCallbacks, writeObj) {
     startup: wrap('startup', (vatID, ...args) =>
       provideVatSlogger(vatID).vatSlog.startup(...args),
     ),
-    // TODO: Remove this seemingly dead code.
-    replayVatTranscript,
     delivery: wrap('delivery', (vatID, ...args) =>
       provideVatSlogger(vatID).vatSlog.delivery(...args),
     ),
