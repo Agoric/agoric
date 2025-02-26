@@ -147,12 +147,7 @@ export const ChainPolicyShape = {
 };
 harden(ChainPolicyShape);
 
-/**
- * @type {TypedPattern<FeedPolicy>}
- *
- * Should be JSON serializable so CLI can specify policy. E.g. no bigint,
- * undefined, remotable, etc.
- */
+/** @type {TypedPattern<FeedPolicy>} */
 export const FeedPolicyShape = M.splitRecord(
   {
     nobleDomainId: M.number(),
