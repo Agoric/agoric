@@ -1,0 +1,31 @@
+{
+  "agoricProposal": {
+    "source": "subdir",
+    "sdk-generate": [
+      "fast-usdc/fast-usdc-reconfigure.build.js submission"
+    ],
+    "type": "/agoric.swingset.CoreEvalProposal"
+  },
+  "type": "module",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@agoric/client-utils": "dev",
+    "@agoric/fast-usdc": "dev",
+    "@agoric/synthetic-chain": "0.5.1",
+    "@endo/init": "^1.1.8",
+    "agoric": "dev",
+    "ava": "^5.3.1"
+  },
+  "ava": {
+    "concurrency": 1,
+    "timeout": "2m",
+    "files": [
+      "test/**/*.test.*",
+      "!submission"
+    ]
+  },
+  "scripts": {
+    "agops": "yarn --cwd /usr/src/agoric-sdk/ --silent agops"
+  },
+  "packageManager": "yarn@4.6.0"
+}
