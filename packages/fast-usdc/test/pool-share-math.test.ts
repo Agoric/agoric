@@ -425,15 +425,8 @@ test('basic repay calculation', t => {
   };
   const encumberedBalance = make(USDC, 200n);
   const poolStats = makeInitialPoolStats();
-  const fromSeatAllocation = amounts;
 
-  const result = repayCalc(
-    shareWorth,
-    fromSeatAllocation,
-    amounts,
-    encumberedBalance,
-    poolStats,
-  );
+  const result = repayCalc(shareWorth, amounts, encumberedBalance, poolStats);
 
   t.deepEqual(
     result.encumberedBalance,
@@ -489,23 +482,13 @@ test('repay fails when principal exceeds encumbered balance', t => {
 
   const fromSeatAllocation = amounts;
 
-  t.throws(
-    () =>
-      repayCalc(
-        shareWorth,
-        fromSeatAllocation,
-        amounts,
-        encumberedBalance,
-        poolStats,
-      ),
-    {
-      message: /Cannot repay. Principal .* exceeds encumberedBalance/,
-    },
-  );
+  t.throws(() => repayCalc(shareWorth, amounts, encumberedBalance, poolStats), {
+    message: /Cannot repay. Principal .* exceeds encumberedBalance/,
+  });
 
   t.notThrows(
     () =>
-      repayCalc(shareWorth, fromSeatAllocation, amounts, make(USDC, 200n), {
+      repayCalc(shareWorth, amounts, make(USDC, 200n), {
         ...makeInitialPoolStats(),
         totalBorrows: make(USDC, 200n),
       }),
@@ -528,24 +511,9 @@ test('repay fails when seat allocation does not equal amounts', t => {
     totalBorrows: make(USDC, 100n),
   };
 
-  const fromSeatAllocation = {
-    ...amounts,
-    ContractFee: make(USDC, 1n),
-  };
-
-  t.throws(
-    () =>
-      repayCalc(
-        shareWorth,
-        fromSeatAllocation,
-        amounts,
-        encumberedBalance,
-        poolStats,
-      ),
-    {
-      message: /Cannot repay. From seat allocation .* does not equal amounts/,
-    },
-  );
+  t.throws(() => repayCalc(shareWorth, amounts, encumberedBalance, poolStats), {
+    message: /Cannot repay. Principal .* exceeds encumberedBalance/,
+  });
 });
 
 test('repay succeeds with no Pool or Contract Fee', t => {
@@ -563,13 +531,7 @@ test('repay succeeds with no Pool or Contract Fee', t => {
     totalBorrows: make(USDC, 100n),
   };
   const fromSeatAllocation = amounts;
-  const actual = repayCalc(
-    shareWorth,
-    fromSeatAllocation,
-    amounts,
-    encumberedBalance,
-    poolStats,
-  );
+  const actual = repayCalc(shareWorth, amounts, encumberedBalance, poolStats);
   t.like(actual, {
     shareWorth,
     encumberedBalance: {

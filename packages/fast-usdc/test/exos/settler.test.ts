@@ -198,8 +198,8 @@ const makeTestContext = async t => {
   };
 
   const repayer = zone.exo('Repayer Mock', undefined, {
-    repay(fromSeat: ZCFSeat, amounts: AmountKeywordRecord) {
-      callLog.push(harden({ method: 'repay', fromSeat, amounts }));
+    repay(sourceTransfer: TransferPart, amounts: AmountKeywordRecord) {
+      callLog.push(harden({ method: 'repay', sourceTransfer, amounts }));
     },
   });
 
@@ -261,8 +261,8 @@ test('happy path: disburse to LPs; StatusManager removes tx', async t => {
 
   t.log('Funds were disbursed to LP.');
   const calls = peekCalls();
-  t.is(calls.length, 3);
-  const [withdraw, rearrange, repay] = calls;
+  t.is(calls.length, 2);
+  const [withdraw, repay] = calls;
 
   t.deepEqual(
     withdraw,
@@ -285,16 +285,6 @@ test('happy path: disburse to LPs; StatusManager removes tx', async t => {
   });
 
   t.like(
-    rearrange,
-    { method: 'atomicRearrange' },
-    '2. settler called atomicRearrange ',
-  );
-  t.is(rearrange.parts.length, 1);
-  const [s1, s2, a1, a2] = rearrange.parts[0];
-  t.is(s1, s2, 'src and dest seat are the same');
-  t.deepEqual([a1, a2], [{ In }, expectedSplit]);
-
-  t.like(
     repay,
     {
       method: 'repay',
@@ -302,7 +292,9 @@ test('happy path: disburse to LPs; StatusManager removes tx', async t => {
     },
     '3. settler called repay() on liquidity pool repayer facet',
   );
-  t.is(repay.fromSeat, s1);
+  t.like(repay.sourceTransfer[2], {
+    In: usdc.units(150),
+  });
 
   t.deepEqual(
     statusManager.lookupPending(

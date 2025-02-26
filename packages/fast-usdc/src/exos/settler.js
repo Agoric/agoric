@@ -6,6 +6,7 @@ import { E } from '@endo/far';
 import { M } from '@endo/patterns';
 
 import { decodeAddressHook } from '@agoric/cosmic-proto/address-hooks.js';
+import { fromOnly } from '@agoric/zoe/src/contractSupport/index.js';
 import { PendingTxStatus } from '../constants.js';
 import { makeFeeTools } from '../utils/fees.js';
 import {
@@ -323,10 +324,8 @@ export const prepareSettler = (
               harden({ In: received }),
             ),
           );
-          zcf.atomicRearrange(
-            harden([[settlingSeat, settlingSeat, { In: received }, split]]),
-          );
-          repayer.repay(settlingSeat, split);
+          const transferPart = fromOnly(settlingSeat, { In: received });
+          repayer.repay(transferPart, split);
           settlingSeat.exit();
 
           // update status manager, marking tx `DISBURSED`
