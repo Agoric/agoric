@@ -209,9 +209,8 @@ const scaleAmount = (frac: number, amount: Amount<'nat'>) => {
 };
 
 // ack: https://stackoverflow.com/a/2901298/7963
-function numberWithCommas(x) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
+const numberWithCommas = x =>
+  x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
 const logAmt = amt => [
   Number(amt.value),
