@@ -1,7 +1,7 @@
 /* global globalThis */
 /** global print */
 
-const { assign, freeze, keys } = Object;
+const { assign, freeze, keys, hasOwn } = Object;
 
 /**
  * deep equal value comparison
@@ -36,12 +36,8 @@ function deepDifference(x, y) {
       };
     }
 
-    const { hasOwnProperty } = Object.prototype;
-    /** @type {(obj: object, prop: string | symbol | number) => boolean} */
-    const hasOwnPropertyOf = (obj, prop) =>
-      Reflect.apply(hasOwnProperty, obj, [prop]);
     for (const prop of Reflect.ownKeys(x)) {
-      if (hasOwnPropertyOf(y, prop)) {
+      if (hasOwn(y, prop)) {
         if (!deepDifference(x[prop], y[prop])) {
           return null;
         }
