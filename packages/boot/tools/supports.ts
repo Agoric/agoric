@@ -55,6 +55,7 @@ import {
 } from '@agoric/cosmic-swingset/src/sim-params.js';
 import { computronCounter } from '@agoric/cosmic-swingset/src/computron-counter.js';
 import { icaMocks, protoMsgMockMap, protoMsgMocks } from './ibc/mocks.js';
+import type { makeArchiveSnapshot } from '@agoric/swing-store';
 
 const trace = makeTracer('BSTSupport', false);
 
@@ -324,6 +325,7 @@ type AckBehaviorType = (typeof AckBehavior)[keyof typeof AckBehavior];
  * @param [options.debugVats]
  * @param [options.defaultManagerType]
  * @param [options.harness]
+ * @param [options.archiveSnapshot]
  */
 export const makeSwingsetTestKit = async (
   log: (..._: any[]) => void,
@@ -338,6 +340,9 @@ export const makeSwingsetTestKit = async (
     debugVats = [] as string[],
     defaultManagerType = 'local' as ManagerType,
     harness = undefined as RunHarness | undefined,
+    archiveSnapshot = undefined as
+      | ReturnType<typeof makeArchiveSnapshot>
+      | undefined,
   } = {},
 ) => {
   console.time('makeBaseSwingsetTestKit');
@@ -347,7 +352,7 @@ export const makeSwingsetTestKit = async (
     discriminator: label,
     defaultManagerType,
   });
-  const swingStore = initSwingStore();
+  const swingStore = initSwingStore(undefined, { archiveSnapshot });
   const { kernelStorage, hostStorage } = swingStore;
   const { fromCapData } = boardSlottingMarshaller(slotToBoardRemote);
 
@@ -739,7 +744,7 @@ export const makeSwingsetHarness = () => {
   const c2b = defaultBeansPerXsnapComputron;
   const beansPerUnit = {
     // see https://cosgov.org/agoric?msgType=parameterChangeProposal&network=main
-    blockComputeLimit: 65_000_000n * c2b,
+    blockComputeLimit: 65_000_000_000n * c2b, // XXX increase block budget for fusd testing
     vatCreation: defaultBeansPerVatCreation,
     xsnapComputron: c2b,
   };

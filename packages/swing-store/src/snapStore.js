@@ -52,8 +52,17 @@ import { buffer } from './util.js';
  *   repairSnapshotRecord: (key: string, value: string) => void,
  * }} SnapStoreInternal
  *
+ * @typedef {object} SnapshotRow
+ * @property {string} vatID
+ * @property {number} snapPos
+ * @property {string} [hash]
+ * @property {number | null} [inUse]
+ * @property {number} uncompressedSize
+ * @property {number} compressedSize
+ *
  * @typedef {{
  *   hasHash: (vatID: string, hash: string) => boolean,
+ *   listAllSnapshots: () => Generator<SnapshotRow,void,any>,
  *   dumpSnapshots: (includeHistorical?: boolean) => {},
  *   deleteSnapshotByHash: (vatID: string, hash: string) => void,
  * }} SnapStoreDebug
@@ -678,6 +687,7 @@ export function makeSnapStore(
   /**
    * debug function to list all snapshots
    *
+   * @returns {Generator<SnapshotRow, void, any>}
    */
   function* listAllSnapshots() {
     yield* sqlListAllSnapshots.iterate();

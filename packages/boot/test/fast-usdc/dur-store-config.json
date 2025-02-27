@@ -1,0 +1,9 @@
+{
+    "bootstrap": "store1",
+    "defaultManagerType": "xs-worker",
+    "vats": {
+        "store1": {
+            "sourceSpec": "./dur-store-usage.js"
+        }
+    }
+}

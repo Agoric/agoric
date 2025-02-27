@@ -160,7 +160,7 @@ export const makeFakeStorageKit = (rootPath, rootOptions) => {
           /** @type {StorageEntry[]} */
           const newEntries = message.args;
           for (const [key, value] of newEntries) {
-            if (value != null) {
+            if (value) {
               data.set(key, value);
             } else {
               data.delete(key);

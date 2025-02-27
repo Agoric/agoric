@@ -1,6 +1,10 @@
 import sys, json, gzip, re, time
 from collections import defaultdict
 from pprint import pprint
+import zipfile
+import base64
+import json
+from io import BytesIO
 
 # python vat-map.py SLOGFILE[.gz] > vat-map.json
 #
@@ -31,6 +35,12 @@ def entrypoint_of_bundle(vatID, bundle):
         source = bundle["source"]
         mo = EPRE.search(source)
         return mo.group(1)
+    elif mf == 'endoZipBase64':
+        zdata = base64.b64decode(bundle["endoZipBase64"])
+        arc = zipfile.ZipFile(BytesIO(zdata))
+        cmap = json.load(arc.open('compartment-map.json'))
+        entry = cmap['entry']
+        return entry['compartment'] + entry['module'].replace('./', '/')
     else:
         print("unknown moduleFormat='%s' in vat %s" % (mf, vatID))
     return None
@@ -57,7 +67,7 @@ with opener(sys.argv[1]) as f:
                 name = None
                 bundle = data["vatSourceBundle"]
                 entrypoint = entrypoint_of_bundle(vatID, bundle)
-                if entrypoint == "packages/zoe/contractFacet.js":
+                if 'zoe' in entrypoint and entrypoint.endswith("/contractFacet.js"):
                     unnamed_zcf_vats.add(vatID)
                     name = "<zcf>"
                 else:
@@ -70,9 +80,10 @@ with opener(sys.argv[1]) as f:
             if vatID in unnamed_zcf_vats:
                 kd = data["kd"]
                 if kd[0] == "message":
-                    method = kd[2]["method"]
+                    import pdb; pdb.set_trace()
+                    method = kd[2]["methargs"]['body'].split('"', 2)[1]
                     if method == "executeContract":
-                        bundle = json.loads(kd[2]["args"]["body"])[0]
+                        bundle = json.loads(kd[2]["methargs"]["body"][1:])[1]
                         entrypoint = entrypoint_of_bundle(vatID, bundle)
                         name = abbreviations.get(entrypoint, entrypoint)
                         vats[vatID]["name"] = name
