@@ -351,12 +351,6 @@ export function main() {
             case 'slot':
               result = pref(slots[val.index]);
               break;
-            case 'symbol':
-              result = `[${val.name}]`;
-              break;
-            case '@@asyncIterator':
-              result = `[Symbol.asyncIterator]`;
-              break;
             case 'error':
               result = `new ${val.name}('${val.message}')`;
               break;
@@ -436,8 +430,6 @@ export function main() {
           default:
             return method;
         }
-      } else if (typeof method === 'symbol') {
-        return `[${method.toString()}]`;
       } else if (method === undefined) {
         return '<funcall>';
       } else if (typeof method === 'object') {
@@ -447,10 +439,6 @@ export function main() {
         const qclass = method['@qclass'];
         if (qclass === 'undefined') {
           return '<funcall>';
-        } else if (qclass === 'symbol') {
-          return `[${method.name}]`;
-        } else if (qclass === '@@asyncIterator') {
-          return `[Symbol.asyncIterator]`;
         } else {
           return '<invalid method type>';
         }

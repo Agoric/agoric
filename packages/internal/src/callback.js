@@ -1,7 +1,7 @@
 // @ts-check
 import { Fail, makeError, q } from '@endo/errors';
 import { E } from '@endo/far';
-import { isObject, isPassableSymbol } from '@endo/marshal';
+import { isObject } from '@endo/marshal';
 import { getInterfaceMethodKeys } from '@endo/patterns';
 
 /** @import {ERef} from '@endo/far' */
@@ -128,8 +128,7 @@ export const makeSyncMethodCallback = (target, methodName, ...bound) => {
   isObject(target) ||
     Fail`sync method callback target must be an object: ${target}`;
   typeof methodName === 'string' ||
-    isPassableSymbol(methodName) ||
-    Fail`method name must be a string or passable symbol: ${methodName}`;
+    Fail`method name must be a string: ${methodName}`;
   /** @type {unknown} */
   const cb = harden({ target, methodName, bound, isSync: true });
   return /** @type {SyncCallback<I>} */ (cb);
@@ -153,8 +152,7 @@ harden(makeSyncMethodCallback);
 export const makeMethodCallback = (target, methodName, ...bound) => {
   isObject(target) || Fail`method callback target must be an object: ${target}`;
   typeof methodName === 'string' ||
-    isPassableSymbol(methodName) ||
-    Fail`method name must be a string or passable symbol: ${methodName}`;
+    Fail`method name must be a string: ${methodName}`;
   /** @type {unknown} */
   const cb = harden({ target, methodName, bound });
   return /** @type {Callback<I>} */ (cb);
@@ -172,9 +170,7 @@ export const isCallback = callback => {
   const { target, methodName, bound } = callback;
   return (
     isObject(target) &&
-    (methodName === undefined ||
-      typeof methodName === 'string' ||
-      isPassableSymbol(methodName)) &&
+    (methodName === undefined || typeof methodName === 'string') &&
     Array.isArray(bound)
   );
 };

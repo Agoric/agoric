@@ -35,10 +35,6 @@ export function legibilizeValue(val, slots, smallcaps) {
             return val.digits;
           case 'slot':
             return `@${slots[val.index]}`;
-          case 'symbol':
-            return `[${val.name}]`;
-          case '@@asyncIterator':
-            return `[Symbol.asyncIterator]`;
           case 'error':
             return `new ${val.name}('${val.message}')`;
           default:
@@ -112,8 +108,6 @@ export function legibilizeMethod(method, smallcaps) {
         default:
           return method;
       }
-    } else if (typeof method === 'symbol') {
-      return `[${method.toString()}]`;
     } else if (method === undefined) {
       return '<funcall>';
     } else if (typeof method === 'object') {
@@ -123,10 +117,6 @@ export function legibilizeMethod(method, smallcaps) {
       const qclass = method['@qclass'];
       if (qclass === 'undefined') {
         return '<funcall>';
-      } else if (qclass === 'symbol') {
-        return `[${method.name}]`;
-      } else if (qclass === '@@asyncIterator') {
-        return `[Symbol.asyncIterator]`;
       } else {
         return '<invalid method type>';
       }

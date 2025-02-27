@@ -163,7 +163,7 @@ export const makeSlogToOtelKit = (tracer, overrideAttrs = {}) => {
   /** @typedef {ReturnType<typeof parseMsg>} ParsedMessage */
   /** @param {import('@agoric/swingset-vat').Message | OldMessage} msg */
   const parseMsg = msg => {
-    /** @type {string | symbol | null} */
+    /** @type {string | null} */
     let method = null;
     /** @type {unknown[]} */
     let args;
@@ -201,10 +201,7 @@ export const makeSlogToOtelKit = (tracer, overrideAttrs = {}) => {
     const sendKind = (sync && 'D') || (result && 'E') || 'SO';
     const prefix = detailsPrefix ? `${detailsPrefix}: ` : '';
     let methodDetail;
-    if (typeof method === 'symbol') {
-      method = String(method);
-      methodDetail = `[${method}]`;
-    } else if (method == null) {
+    if (method == null) {
       methodDetail = '';
     } else {
       methodDetail = `.${method}`;

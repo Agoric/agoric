@@ -140,10 +140,8 @@ export const extract = (template, specimen, path = []) => {
     );
     return new Proxy(target, {
       get: (t, propName) => {
-        if (typeof propName !== 'symbol') {
-          propName in t ||
-            Fail`${q(propName)} not permitted, only ${q(keys(template))}`;
-        }
+        propName in t ||
+          Fail`${q(propName)} not permitted, only ${q(keys(template))}`;
         return t[propName];
       },
     });

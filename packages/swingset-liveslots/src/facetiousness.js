@@ -23,11 +23,7 @@ export function assessFacetiousness(obj) {
     let resultFromProp;
     if (typeof value === 'function') {
       resultFromProp = 'one';
-    } else if (
-      // symbols are not permitted as facet names
-      typeof prop !== 'symbol' &&
-      assessFacetiousness(value) === 'one'
-    ) {
+    } else if (assessFacetiousness(value) === 'one') {
       resultFromProp = 'many';
     } else {
       return 'not';

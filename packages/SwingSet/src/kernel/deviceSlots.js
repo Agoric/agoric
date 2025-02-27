@@ -114,7 +114,7 @@ export function makeDeviceSlots(
     return {
       get(_target, prop) {
         lsdebug(`PreH proxy.get(${String(prop)})`);
-        if (typeof prop !== 'string' && typeof prop !== 'symbol') {
+        if (typeof prop !== 'string') {
           return undefined;
         }
         const p = (...args) => {

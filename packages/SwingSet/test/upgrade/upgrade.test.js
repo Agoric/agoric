@@ -133,6 +133,8 @@ const initKernelForTest = async (t, bundleData, config, options = {}) => {
   };
 };
 
+// Gratuitous change so I can create an otherwise identical PR
+
 const testNullUpgrade = async (t, defaultManagerType) => {
   const config = makeConfigFromPaths('../../tools/bootstrap-relay.js', {
     defaultManagerType,

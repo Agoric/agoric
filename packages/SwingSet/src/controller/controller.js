@@ -403,9 +403,7 @@ export async function makeSwingsetController(
      */
     queueToVatRoot(vatName, method, args = [], resultPolicy = 'ignore') {
       const vatID = kernel.vatNameToID(vatName);
-      if (typeof method !== 'symbol') {
-        assert.typeof(method, 'string');
-      }
+      assert.typeof(method, 'string');
       const kref = kernel.getRootObject(vatID);
       const kpid = kernel.queueToKref(kref, method, args, resultPolicy);
       if (kpid) {
@@ -426,9 +424,7 @@ export async function makeSwingsetController(
     queueToVatObject(target, method, args = [], resultPolicy = 'ignore') {
       const targetKref = krefOf(target);
       assert.typeof(targetKref, 'string');
-      if (typeof method !== 'symbol') {
-        assert.typeof(method, 'string');
-      }
+      assert.typeof(method, 'string');
       const kpid = kernel.queueToKref(targetKref, method, args, resultPolicy);
       if (kpid) {
         kernel.kpRegisterInterest(kpid);
