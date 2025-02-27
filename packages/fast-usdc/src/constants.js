@@ -1,5 +1,5 @@
 /**
- * Status values for FastUSDC.
+ * Status values for FastUSDC. Includes states for advancing and settling.
  *
  * @enum {(typeof TxStatus)[keyof typeof TxStatus]}
  */
@@ -31,7 +31,7 @@ export const TerminalTxStatus = {
 };
 
 /**
- * Status values for the StatusManager.
+ * Status values for the StatusManager while an advance is being processed.
  *
  * @enum {(typeof PendingTxStatus)[keyof typeof PendingTxStatus]}
  */

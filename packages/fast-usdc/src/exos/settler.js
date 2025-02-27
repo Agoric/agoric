@@ -15,6 +15,13 @@ import {
 } from '../type-guards.js';
 
 /**
+ * @file Settler is responsible for monitoring (receiveUpcall) deposits to the
+ * settlementAccount. It either "disburses" funds to the Pool (if funds were
+ * "advance"d to the payee), or "forwards" funds to the payee (if pool funds
+ * were not advanced).
+ */
+
+/**
  * @import {FungibleTokenPacketData} from '@agoric/cosmic-proto/ibc/applications/transfer/v2/packet.js';
  * @import {Amount, Brand, NatValue, Payment} from '@agoric/ertp';
  * @import {AccountId, Denom, OrchestrationAccount, ChainHub, CosmosChainAddress} from '@agoric/orchestration';
@@ -300,6 +307,9 @@ export const prepareSettler = (
       },
       self: {
         /**
+         * The intended payee received an advance from the pool. When the funds
+         * are minted disburse them to the pool.
+         *
          * @param {EvmHash} txHash
          * @param {NatValue} fullValue
          */
@@ -333,6 +343,8 @@ export const prepareSettler = (
           statusManager.disbursed(txHash, split);
         },
         /**
+         * Funds were not advanced. Forward proceeds to the payee directly.
+         *
          * @param {EvmHash} txHash
          * @param {NatValue} fullValue
          * @param {string} EUD

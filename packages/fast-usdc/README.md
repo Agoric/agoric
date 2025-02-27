@@ -59,43 +59,50 @@ sequenceDiagram
 
 # Status Manager
 
-### Pending Advance State Diagram
+### State Diagram
 
-*Transactions are qualified by the OCW and EventFeed before arriving to the Advancer.*
+*Transactions are qualified by the OCW and TransactionFeed before being
+delivered to the Advancer.*
 
-```mermaid
-stateDiagram-v2
-  [*] --> Observed: observe()
-  [*] --> Advancing: advancing()
+The transactionFeed receives attestations from Oracles, records their
+evidence, and when enough oracles agree, (if no risks are identified)
+it publishes the results for the advancer to act on.
 
-  Advancing --> Advanced: advanceOutcome(...true)
-  Advancing --> AdvanceFailed: advanceOutcome(...false)
+The Advancer subscribes (via `handleTransactionEvent`) to events published by
+the transactionFeed. When notified of an appropriate opportunity, it is
+responsible for advancing funds to fastUSDC payees.
 
-  Observed --> [*]: dequeueStatus()
-  Advanced --> [*]: dequeueStatus()
-  AdvanceFailed --> [*]: dequeueStatus()
-
-  note right of [*]
-    After dequeueStatus():
-    Transaction is removed 
-    from pendingTxs store.
-    Settler will .disburse()
-    or .forward()
-  end note
-```
-
-### Complete state diagram (starting from Transaction Feed into Advancer)
+The Settler is responsible for monitoring (via `receiveUpcall`) deposits to the
+settlementAccount. It either `disburse`s funds to the Pool (if funds were
+`advance`d to the payee), or `forwards` funds to the payee (if pool funds
+were not `advance`d).
 
 ```mermaid
 stateDiagram-v2
-  Observed --> AdvanceSkipped : Risks identified
-  Observed --> Advancing : No risks, can advance
-  Observed --> Forwarding : No risks, Mint deposited before advance
-  Forwarding --> Forwarded
-  Advancing --> Advanced
-  Advanced --> Disbursed
-  AdvanceSkipped --> Forwarding : Mint deposited
-  AdvanceFailed --> Forwarding : Mint deposited
-  Advancing --> AdvanceFailed
-  Forwarding --> ForwardFailed
-```
+  [*] --> AdvanceSkipped : Risks identified
+  [*] --> Advancing : No risks, can advance
+  [*] --> Forwarding* : No risks, Mint deposited before advance
+
+  state Advancer  {
+    Advanced
+    AdvanceFailed
+    AdvanceSkipped
+    Advancing
+  }
+  state Settler {
+    Forwarded
+    ForwardFailed
+    Disbursed
+  }
+
+  Forwarding* --> Forwarded : settler.forward() succeeds
+  Advancing --> Advanced : advancer's transferHandler detects success
+  Advanced --> Disbursed : settler.disburse()
+  AdvanceSkipped --> Forwarding* : Mint deposited
+  AdvanceFailed --> Forwarding* : Mint deposited
+  Advancing --> AdvanceFailed : advancer's transferHandler detects failure
+  Forwarding* --> ForwardFailed : settler.forward() fails
+ ```
+
+* There is no actual state for **Forwarding**. It is used here to represent the
+transition from Advancer to Settler

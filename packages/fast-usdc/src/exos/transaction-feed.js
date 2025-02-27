@@ -7,6 +7,12 @@ import { defineInertInvitation } from '../utils/zoe.js';
 import { prepareOperatorKit } from './operator-kit.js';
 
 /**
+ * @file transaction-feed receives attestations from Oracles, records their
+ * evidence, and when enough oracles agree, (if no risks are identified)
+ * publishes the results for the advancer to act on.
+ */
+
+/**
  * @import {Zone} from '@agoric/zone';
  * @import {MapStore} from '@agoric/store';
  * @import {OperatorKit} from './operator-kit.js';

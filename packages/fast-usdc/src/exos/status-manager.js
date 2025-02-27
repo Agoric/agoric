@@ -315,7 +315,10 @@ export const prepareStatusManager = (
       },
 
       /**
-       * Add a new transaction with OBSERVED status
+       * Add a new transaction with OBSERVED status.
+       *
+       * This message isn't currently being sent.
+       *
        * @param {CctpTxEvidence} evidence
        */
       observe(evidence) {

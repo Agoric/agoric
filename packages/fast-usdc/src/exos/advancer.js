@@ -18,6 +18,12 @@ import {
 import { makeFeeTools } from '../utils/fees.js';
 
 /**
+ * @file Advancer subscribes (handleTransactionEvent) to events published by the
+ * transaction feed. When notified of an appropriate opportunity, it is
+ * responsible for advancing funds to fastUSDC payees.
+ */
+
+/**
  * @import {HostInterface} from '@agoric/async-flow';
  * @import {Amount, Brand} from '@agoric/ertp';
  * @import {TypedPattern} from '@agoric/internal'
