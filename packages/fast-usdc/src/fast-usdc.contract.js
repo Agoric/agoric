@@ -67,10 +67,11 @@ harden(meta);
  * @param {ERef<Marshaller>} marshaller
  * @param {FeeConfig} feeConfig
  */
-const publishFeeConfig = async (node, marshaller, feeConfig) => {
+const publishFeeConfig = (node, marshaller, feeConfig) => {
   const feeNode = E(node).makeChildNode(FEE_NODE);
-  const value = await E(marshaller).toCapData(feeConfig);
-  return E(feeNode).setValue(JSON.stringify(value));
+  void E.when(E(marshaller).toCapData(feeConfig), value =>
+    E(feeNode).setValue(JSON.stringify(value)),
+  );
 };
 
 /**
