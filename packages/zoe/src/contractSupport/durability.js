@@ -86,7 +86,6 @@ export const provideAll = (baggage, thunks) => {
   if (inBaggage) {
     const obj = objectMap(
       thunks,
-      /** @type {(value: any, key: string) => any} */
       (_, k) => baggage.get(k),
     );
     return Promise.resolve(harden(obj));
