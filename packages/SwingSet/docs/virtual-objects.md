@@ -49,7 +49,16 @@ In either the single- or multi-faceted case, the individual behavior functions m
 
 where `context` describes the invocation context of the method and `...args` are whatever arguments were passed to the method when it was invoked.  In the case of a single facet VDO, `context` will take the form `{ state, self }`, where `state` is the VDO state and `self` is a reference to the VDO itself.  In the case of a multi-facet VDO, `context` will instead be `{ state, facets }`, where `facets` is an object whose named properties are the facets of the VDO.
 
-The `options` parameter is optional. It provides additional parameters to characterize the VDO.  Currently there is only one supported option, `finish`, though we anticipate more options may be added in future versions of the API.
+## Kind Options
+
+The (optional) `options` parameter provides additional parameters to characterize the VDO.  Currently there are four options, although more may be added in the future:
+
+* `finish`: a function to run after object initialization
+* `stateShape`: a constraint on `state` data
+* `interfaceGuard`: a constraint on the method definitions
+* `thisfulMethods`: changes the invocation signature to support class/`this`-like usage
+
+### `finish` option
 
 The `finish` option is a function that, if present, will be called at the end of
 instance initialization.  It will be invoked after the VDO is created but before
@@ -104,7 +113,65 @@ This defines a simple virtual counter object with two properties in its state: a
   console.log(`${barCounter.getName()} count is ${barCounter.getCount()`); // "bar count is 2"
 ```
 
-Suppose you instead wanted to provide a version with the increment and decrement capabilities made available as independent facets.  A simplified version of the above (without the name property, counter registry, and `setCount` method) might look like:
+### `stateShape` option
+
+By default, the `state` of each VDO instance can be any serializable record: an object with string property names and arbitrary values (of course durable objects can only hold durable state). Whatever the `initialize` function returns is used as the state of that one object. The property names are then fixed for the lifetime of that object (although see below about upgrade). Behavior methods can change the values of each property, but cannot add new properties, or remove the existing ones.
+
+By default, each instance can have a different "shape": different property names, and the values can have different types. For example, while it's not recommended (behavior methods would need to adapt), `initialize` is within its rights to do the following:
+
+```js
+const initialize = (arg1, arg2) => {
+  if (arg1 === 'foo') {
+    return { foo: arg2 };
+  }
+  return { count: 0, bar: arg2 };
+}
+```
+
+To prevent accidental variation in the shape of the generated `state` object, as well as to provide some amount of documentation, the `stateShape` option can be used to establish a [Pattern](https://github.com/endojs/endo/tree/master/packages/patterns) that will be imposed upon both the return value of `initialize`, and upon any changes made to `state` by behavior methods.
+
+```js
+import { M } from '@endo/patterns';
+
+const counterPattern = { counter: M.number(), name: M.string() };
+const initCounter = ..;
+const counterBehavior = ..;
+const makeCounter = defineKind('counter', initCounter, counterBehavior,
+                               { stateShape: counterPattern });
+```
+
+In the future, the `stateShape` option may enable a space-saving optimization: the state data can be "compressed" by only recording the variable portions. In our example, instead of each instance recording a full record (with its own copy of the `counter:` and `name:` property strings), it could be recorded as a simple array (`[1, 'name']`). For high-cardinality objects, with complex/nested state instances, this could save a significant amount of disk space.
+
+### `interfaceGuard` option
+
+The `interfaceGuard` option provides a data structure which constrains the methods and arguments of the behavior record. In particular, it can enforce runtime type checks on the incoming arguments, before the behavior methods are invoked. This both serves as a form of documentation for callers, and can replace some internal argument validation which would otherwise live at the beginning of each behavior method.
+
+
+### `thisfulMethods` option
+
+VDO methods receive a "context" object: either `{ state, self }` or `{ state, facets }` (for multi-facet objects). By default, this is injected as the first argument of the behavior method invocation, e.g. `setCount({ state, self }, count)`. Behavior methods must be written to anticipate the context in this position. An invocation like `counter.setCount(count)` is received by code like:
+
+```js
+    setCount: ({state}, count) => {
+      state.counter = count;
+    },
+```
+
+If `options.thisfulMethods = true`, the context is delivered through the JavaScript `this` variable, instead of being added to the method arguments. As a result, the received method arguments are exactly the same as the invocation. `counter.setCount(count)` would be received by code like:
+
+```js
+    setCount: (count) => {
+      const { state } = this;
+      state.counter = count;
+    },
+```
+
+This is more convenient for class-like VDO definitions, and is used extensively by the vat-data "Exo" tools defined elsewhere.
+
+
+## Multiple Facets
+
+Suppose you wanted to change our `makeCounter` example create independent facets for the increment and decrement capabilities. The `defineKindMulti` function is used to define a single Kind with multiple facets (independent objects which share the same state). A simplified version of the above (without the name property, counter registry, and `setCount` method) might look like:
 
 ```javascript
   const initFacetedCounter = () => ({ counter: 0 });
@@ -150,9 +217,9 @@ In either case you'd use it like:
   console.log(`count is ${incr.getCount()`); // "count is 1"
 ```
 
-Additional important details:
+## Additional Details
 
-- The set of state properties is completely determined by the named enumerable properties of the object that `init` returns.  State properties cannot thereafter be added or removed from the instance.  Currently there is no requirement that all instances of a given kind have the same set of properties, but code authors should not rely on this as such enforcement may be added in the future.
+- The set of state properties is completely determined by the named enumerable properties of the object that `init` returns.  State properties cannot thereafter be added or removed from the instance.  Currently there is no requirement that all instances of a given kind have the same set of properties, but code authors should not rely on this as such enforcement may be added in the future (and `options.stateShape` provides a way to opt-in to such enforcement.
 
 - The values a state property may take are limited to things that are serializable and which may be hardened (and, in fact, _are_ hardened and serialized the moment they are assigned).  You can replace the value of a state property, but you cannot mutate it.  In other words, you can do things like:
 
@@ -165,3 +232,65 @@ Additional important details:
 - A VDO can be passed as a parameter in messages to other vats.  It will be passed by presence, just like any other non-data object you might send in a message parameter.
 
 - A VDO's state may include references to other VDOs. The latter objects will be persisted separately and only deserialized as needed, so "swapping in" a VDO that references other VDOs does not entail swapping in the entire associated object graph.
+
+## Upgrading Durable Object State and StateShape
+
+(Summary: objects hold a hidden `version` number, Kind definitions can supply a `currentVersion` number and an `upgradeState` function, object state is upgraded lazily upon behavior invocation).
+
+The total lifetime of each vat is broken up into multiple "incarnations"; a new is created each time the vat is upgraded. Durable objects and collections are the only form of data which survive this transition: virtual objects and ephemeral Remotables are abandoned, all exported promises are rejected, and the entire JS engine state is erased.
+
+The new incarnation can (and is required) to provide new behavior for every durable Kind that was present in the previous version. This new behavior can be different than the previous version (which in fact is usually the main reason for the upgrade): it might add new methods, or change the code of an existing method. Authors are responsible for providing backwards compatibility to clients, so it is better to add methods, add new positional arguments, or add new options to an option bag argument, than to remove methods or remove arguments.
+
+If the new Kind definition wants to store different data than previous versions, it is free to do so, however we must address both the `stateShape` constraint (if supplied), and provide a way to safely handle `state` records created by previous versions.
+
+To support this, the four `defineKind` functions accept `currentVersion` and `upgradeState` options. These do not need to be supplied in the initial Kind definition call, nor in any subsequent version that uses the same `state` data. However, the first time a different `stateShape` is needed, or when the `state` contents need to be migrated/updated in any way, that version's `defineKind` call must supply both options. Every subsequent version must do the same.
+
+`currentVersion` is an integer, which defaults to 0. Each `state` record is recorded with this version. If the first incarnation of a vat omits `currentVersion` and creates object A and B, then the second incarnation provides `currentVersion: 1` and creates objects C and D, then the durable-object database will remember:
+
+* A: `version: 0`
+* B: `version: 0`
+* C: `version: 1`
+* D: `version: 1`
+
+and these version annotations will remain in place until the object is upgraded or deleted.
+
+`upgradeState` is a synchronous function which takes `(oldVersion, oldState)` and is responsible for returning the new state. Every time an old record is accessed (i.e. when a behavior method is invoked, to supply it with `context.state`), if the record's version does not match `currentVersion`, the upgrade function is called. The new `state` is immediately stored back into the DB, with the new version number (so the migration only happens once per record).
+
+The actual return value of `upgradeState` is `{ version, state }`. The upgrade process asserts that the returned `version` is equal to `currentVersion`, to catch mistakes where the upgrade function skips a step or has not been updated to match the Kind definition.
+
+`upgradeState` must be prepared to handle data from any historical version. To avoid gaps, authors are encouraged to use a pattern which retains every single-step delta, like this:
+
+```js
+function upgradeState(version, oldState) {
+  let state = { ...oldState }; // shallowly-mutable copy
+  // add comment here describing initial schema
+  if (version === 0) {
+    state.newThing = INITIAL_VALUE;
+    version = 1;
+  }
+  // add comment here describing schema for version 1
+  if (version === 1) {
+    state.thing = state.thing + 1; // e.g. change from 1-indexed to 0-indexed
+    version = 2;
+  }
+  // add comment here describing schema for version 2
+  // in the future: add a new clause here for each new version
+
+  return { version, state };
+}
+```
+
+(TODO: consider making `oldState` a shallow-mutable object, instead of a fully hardened object, to make it easier to add/remove top-level properties. However it wouldn't help with deeper mutations. Naming it `state` might make it look like it could be modified in-place, and I think it's better to require it as a return value.)
+
+The current version's `stateShape` constraint is enforced upon the return value from any calls to `upgradeState` during that incarnation, in addition to `initialize` state (for new objects) and the state that results when behavior methods mutate their `state`.
+
+Old objects (where `obj.version !== currentVersion`) were constrained by the *old* `stateShape` that was active in the incarnation which last modified them, but are not affected by the current `stateShape`. This is not observable by user code, however, because objects are upgraded before the current behavior code can see them.
+
+State upgrades are performed lazily: no record is touched until absolutely necessary. However they are upgraded transparently and reliably: Kind behavior methods in version 2 will only ever see `state` objects with the matching version. If the `upgradeState` function throws an Error, the original `state` record (and `version` annotation) is left alone, the behavior method is never invoked, and the caller receives an error.
+
+This lazy upgrade policy means the performance impact of upgrade should be minimal. However if user code were to iterate over a large number of durable objects (invoking a method on every one), this would trigger an upgrade of them all. Such iteration is discouraged, as it increases the memory footprint of the enclosing crank.
+
+The `currentVersion` integer should be monotonically incremented in each new incarnation which needs to change the contents of `state` records. This will definitely happen if the `stateShape` changes in a way that would reject old states, but even the most tightly-fitting `stateShape` cannot express semantic constraints on how the data is used.  For example, suppose `state.tokens` in the first version was used to count milli-BLD tokens (so `state.tokens: 1_000` means 1.0 BLD). But later, we realize that more resolution is required, so the field is revised to store micro-BLD (so 1.0 BLD means `state.tokens: 1_000_000`). The upgrade function must do `state.tokens *= 1_000`, even though the `stateShape` does not change. (Note: while this may let the code do the right thing, humans reading the code and the historical state are likely to get confused, so the safest approach is to change the *name* of the field at the same time you change its semantics).
+
+
+## (TODO) Virtual Collections

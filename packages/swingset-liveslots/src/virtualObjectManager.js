@@ -689,7 +689,12 @@ export const makeVirtualObjectManager = (
       // See there for more explanation.
       interfaceGuard = undefined,
       interfaceGuardKit = undefined,
+      currentVersion = 0,
+      upgradeState = undefined,
     } = options;
+
+    assert.typeof(currentVersion, 'number');
+    Nat(currentVersion);
 
     const statePrototype = {}; // Not frozen yet
     const stateToBaseRefMap = new WeakMap();
