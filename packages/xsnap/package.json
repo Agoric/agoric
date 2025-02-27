@@ -49,18 +49,25 @@
     "c8": "^10.1.2"
   },
   "files": [
+    "legacy/moddable/modules/data",
+    "legacy/moddable/xs/includes",
+    "legacy/moddable/xs/makefiles",
+    "legacy/moddable/xs/platforms/*.h",
+    "legacy/moddable/xs/sources",
+    "legacy/xsnap-native/xsnap/makefiles",
+    "legacy/xsnap-native/xsnap/sources",
+    "latest/moddable/modules/data",
+    "latest/moddable/xs/includes",
+    "latest/moddable/xs/makefiles",
+    "latest/moddable/xs/platforms/*.h",
+    "latest/moddable/xs/sources",
+    "latest/xsnap-native/xsnap/makefiles",
+    "latest/xsnap-native/xsnap/sources",
     "LICENSE*",
     "api.js",
     "build.env",
-    "moddable/modules/data",
-    "moddable/xs/includes",
-    "moddable/xs/makefiles",
-    "moddable/xs/platforms/*.h",
-    "moddable/xs/sources",
     "scripts",
-    "src",
-    "xsnap-native/xsnap/makefiles",
-    "xsnap-native/xsnap/sources"
+    "src"
   ],
   "publishConfig": {
     "access": "public"

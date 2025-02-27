@@ -25,5 +25,7 @@ endo-sha.txt
 packages/xsnap/build.config.env
 # When changing/adding entries here, make sure to search the whole project for
 # `@@AGORIC_DOCKER_SUBMODULES@@`
-packages/xsnap/moddable
-packages/xsnap/xsnap-native
+packages/xsnap/legacy/moddable
+packages/xsnap/legacy/xsnap-native
+packages/xsnap/latest/moddable
+packages/xsnap/latest/xsnap-native

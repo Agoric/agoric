@@ -1,6 +1,12 @@
-[submodule "packages/xsnap/moddable"]
-	path = packages/xsnap/moddable
+[submodule "packages/xsnap/legacy/moddable"]
+	path = packages/xsnap/legacy/moddable
 	url = https://github.com/agoric-labs/moddable.git
-[submodule "packages/xsnap/xsnap-native"]
-	path = packages/xsnap/xsnap-native
+[submodule "packages/xsnap/legacy/xsnap-native"]
+	path = packages/xsnap/legacy/xsnap-native
+	url = https://github.com/agoric-labs/xsnap-pub
+[submodule "packages/xsnap/latest/moddable"]
+	path = packages/xsnap/latest/moddable
+	url = https://github.com/agoric-labs/moddable.git
+[submodule "packages/xsnap/latest/xsnap-native"]
+	path = packages/xsnap/latest/xsnap-native
 	url = https://github.com/agoric-labs/xsnap-pub

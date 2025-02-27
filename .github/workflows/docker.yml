@@ -133,10 +133,14 @@ jobs:
           # project for `@@AGORIC_DOCKER_SUBMODULES@@`
           build-args: |
             GIT_COMMIT=${{env.GIT_COMMIT}}
-            MODDABLE_COMMIT_HASH=${{env.MODDABLE_COMMIT_HASH}}
-            MODDABLE_URL=${{env.MODDABLE_URL}}
-            XSNAP_NATIVE_COMMIT_HASH=${{env.XSNAP_NATIVE_COMMIT_HASH}}
-            XSNAP_NATIVE_URL=${{env.XSNAP_NATIVE_URL}}
+            LEGACY_MODDABLE_COMMIT_HASH=${{env.LEGACY_MODDABLE_COMMIT_HASH}}
+            LEGACY_MODDABLE_URL=${{env.LEGACY_MODDABLE_URL}}
+            LEGACY_XSNAP_NATIVE_COMMIT_HASH=${{env.LEGACY_XSNAP_NATIVE_COMMIT_HASH}}
+            LEGACY_XSNAP_NATIVE_URL=${{env.LEGACY_XSNAP_NATIVE_URL}}
+            LATEST_MODDABLE_COMMIT_HASH=${{env.LATEST_MODDABLE_COMMIT_HASH}}
+            LATEST_MODDABLE_URL=${{env.LATEST_MODDABLE_URL}}
+            LATEST_XSNAP_NATIVE_COMMIT_HASH=${{env.LATEST_XSNAP_NATIVE_COMMIT_HASH}}
+            LATEST_XSNAP_NATIVE_URL=${{env.LATEST_XSNAP_NATIVE_URL}}
             GIT_REVISION=${{env.GIT_REVISION}}
       - name: Build and Push setup
         uses: depot/build-push-action@v1

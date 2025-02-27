@@ -11,4 +11,4 @@ case "${unameOut}" in
 esac
 
 # extract the xsnap package version from the long version printed by xsnap-worker
-"./xsnap-native/xsnap/build/bin/${platform}/release/xsnap-worker" -v | sed -e 's/^xsnap \([^ ]*\) (XS [^)]*)$/\1/g'
+"./${XSNAP_VARIANT:-legacy}/xsnap-native/xsnap/build/bin/${platform}/release/xsnap-worker" -v | sed -e 's/^xsnap \([^ ]*\) (XS [^)]*)$/\1/g'

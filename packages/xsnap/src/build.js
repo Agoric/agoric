@@ -11,7 +11,6 @@ const { freeze } = Object;
 const asset = path => fileURLToPath(new URL(path, import.meta.url));
 
 const ModdableSDK = {
-  MODDABLE: asset('../moddable'),
   /** @type { Record<string, { path: string, make?: string }>} */
   platforms: {
     Linux: { path: 'lin' },
@@ -157,21 +156,25 @@ const updateSubmodules = async (showEnv, { env, stdout, spawn, fs }) => {
 
   // When changing/adding entries here, make sure to search the whole project
   // for `@@AGORIC_DOCKER_SUBMODULES@@`
-  const submodules = [
-    {
-      url: env.MODDABLE_URL || 'https://github.com/agoric-labs/moddable.git',
-      path: ModdableSDK.MODDABLE,
-      commitHash: env.MODDABLE_COMMIT_HASH,
-      envPrefix: 'MODDABLE_',
-    },
-    {
-      url:
-        env.XSNAP_NATIVE_URL || 'https://github.com/agoric-labs/xsnap-pub.git',
-      path: asset('../xsnap-native'),
-      commitHash: env.XSNAP_NATIVE_COMMIT_HASH,
-      envPrefix: 'XSNAP_NATIVE_',
-    },
-  ];
+  const submodules = ['legacy', 'latest'].flatMap(variant => {
+    const envVariant = variant.toUpperCase();
+    return [
+      {
+        url: env[`${envVariant}_MODDABLE_URL`] ||
+          'https://github.com/agoric-labs/moddable.git',
+        path: asset(`../${variant}/moddable`),
+        commitHash: env.MODDABLE_COMMIT_HASH,
+        envPrefix: `${envVariant}_MODDABLE_`,
+      },
+      {
+        url: env[`${envVariant}_XSNAP_NATIVE_URL`] ||
+          'https://github.com/agoric-labs/xsnap-pub.git',
+        path: asset(`../${variant}/xsnap-native`),
+        commitHash: env.XSNAP_NATIVE_COMMIT_HASH,
+        envPrefix: `${envVariant}_XSNAP_NATIVE_`,
+      }
+    ];
+  });
 
   await null;
   if (showEnv) {
@@ -225,6 +228,7 @@ const updateSubmodules = async (showEnv, { env, stdout, spawn, fs }) => {
  *   },
  *   os: {
  *     type: typeof import('os').type,
+ *     cpus: typeof import('os').cpus,
  *   }
  * }} io
  * @param {object} [options]
@@ -239,38 +243,41 @@ const makeXsnap = async ({ spawn, fs, os }, { forceBuild = false } = {}) => {
     `CC=cc "-D__has_builtin(x)=1"`,
   ];
 
-  const configEnvFile = asset('../build.config.env');
-  const existingConfigEnvs = fs.existsSync(configEnvFile)
-    ? await fs.readFile(configEnvFile, 'utf-8')
-    : '';
+  for (const variant of ['legacy', 'latest']) {
+    const configEnvFile = asset(`../${variant}/build.config.env`);
+    const existingConfigEnvs = fs.existsSync(configEnvFile)
+      ? await fs.readFile(configEnvFile, 'utf-8')
+      : '';
 
-  const expectedConfigEnvs = configEnvs.concat('').join('\n');
-  if (forceBuild || existingConfigEnvs.trim() !== expectedConfigEnvs.trim()) {
-    await fs.writeFile(configEnvFile, expectedConfigEnvs);
-  }
+    const expectedConfigEnvs = configEnvs.concat('').join('\n');
+    if (forceBuild || existingConfigEnvs.trim() !== expectedConfigEnvs.trim()) {
+      await fs.writeFile(configEnvFile, expectedConfigEnvs);
+    }
 
-  const platform = ModdableSDK.platforms[os.type()];
-  if (!platform) {
-    throw Error(`Unsupported OS found: ${os.type()}`);
-  }
+    const platform = ModdableSDK.platforms[os.type()];
+    if (!platform) {
+      throw Error(`Unsupported OS found: ${os.type()}`);
+    }
 
-  const make = makeCLI(platform.make || 'make', { spawn });
-  for (const goal of ModdableSDK.buildGoals) {
-    await make.run(
-      [
-        `MODDABLE=${ModdableSDK.MODDABLE}`,
-        `GOAL=${goal}`,
-        // Any other configuration variables that affect the build output
-        // should be placed in `configEnvs` to force a rebuild if they change
-        ...configEnvs,
-        `EXTRA_DEPS=${configEnvFile}`,
-        '-f',
-        'xsnap-worker.mk',
-      ],
-      {
-        cwd: `xsnap-native/xsnap/makefiles/${platform.path}`,
-      },
-    );
+    const make = makeCLI(platform.make || 'make', { spawn });
+    for (const goal of ModdableSDK.buildGoals) {
+      await make.run(
+        [
+          `MODDABLE=${asset(`../${variant}/moddable`)}`,
+          `GOAL=${goal}`,
+          '-j', `${os.cpus().length}`,
+          // Any other configuration variables that affect the build output
+          // should be placed in `configEnvs` to force a rebuild if they change
+          ...configEnvs,
+          `EXTRA_DEPS=${configEnvFile}`,
+          '-f',
+          'xsnap-worker.mk',
+        ],
+        {
+          cwd: `${variant}/xsnap-native/xsnap/makefiles/${platform.path}`,
+        },
+      );
+    }
   }
 };
 
@@ -288,6 +295,7 @@ const makeXsnap = async ({ spawn, fs, os }, { forceBuild = false } = {}) => {
  *   },
  *   os: {
  *     type: typeof import('os').type,
+ *     cpus: typeof import('os').cpus,
  *   }
  * }} io
  */
@@ -335,8 +343,8 @@ async function main(args, { env, stdout, spawn, fs, os }) {
   const hasBin = fs.existsSync(
     asset(`../xsnap-native/xsnap/build/bin/${platform}/release/xsnap-worker`),
   );
-  let hasSource = fs.existsSync(asset('../moddable/xs/includes/xs.h'));
-  const hasGit = fs.existsSync(asset('../moddable/.git'));
+  let hasSource = fs.existsSync(asset('../legacy/moddable/xs/includes/xs.h'));
+  const hasGit = fs.existsSync(asset('../legacy/moddable/.git'));
   const isWorkingCopy = hasGit || (!hasSource && !hasBin);
   const showEnv = args.includes('--show-env');
 
@@ -383,6 +391,7 @@ const run = () =>
     },
     os: {
       type: osTop.type,
+      cpus: osTop.cpus,
     },
   });
 

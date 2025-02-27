@@ -145,6 +145,7 @@ const makeSnapshotLoaderWithPipe = async (
  * @property {'ignore' | 'inherit' | 'pipe'} [stderr]
  * @property {number} [meteringLimit]
  * @property {Record<string, string>} [env]
+ * @property {'legacy' | 'latest'} [variant]
  */
 export async function xsnap(options) {
   const {
@@ -163,6 +164,7 @@ export async function xsnap(options) {
     stderr = 'ignore',
     meteringLimit = DEFAULT_CRANK_METERING_LIMIT,
     env = process.env,
+    variant = 'legacy',
   } = options;
 
   const platform = {
@@ -177,7 +179,7 @@ export async function xsnap(options) {
 
   let bin = fileURLToPath(
     new URL(
-      `../xsnap-native/xsnap/build/bin/${platform}/${
+      `../${variant}/xsnap-native/xsnap/build/bin/${platform}/${
         debug ? 'debug' : 'release'
       }/xsnap-worker`,
       import.meta.url,
