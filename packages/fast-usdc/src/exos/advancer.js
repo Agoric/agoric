@@ -211,6 +211,8 @@ export const prepareAdvancerKit = (
               poolAccount,
               harden({ USDC: advanceAmount }),
             );
+            // WARNING: this must never reject, see handler @throws {never} below
+            // void not enforced by linter until #10627 no-floating-vows
             void watch(depositV, this.facets.depositHandler, {
               advanceAmount,
               destination,
@@ -233,6 +235,7 @@ export const prepareAdvancerKit = (
         /**
          * @param {undefined} result
          * @param {AdvancerVowCtx & { tmpSeat: ZCFSeat }} ctx
+         * @throws {never} WARNING: this function must not throw, because user funds are at risk
          */
         onFulfilled(result, ctx) {
           const { poolAccount, intermediateRecipient, settlementAddress } =
@@ -265,6 +268,7 @@ export const prepareAdvancerKit = (
          *
          * @param {Error} error
          * @param {AdvancerVowCtx & { tmpSeat: ZCFSeat }} ctx
+         * @throws {never} WARNING: this function must not throw, because user funds are at risk
          */
         onRejected(error, { tmpSeat, advanceAmount, ...restCtx }) {
           log(
@@ -285,17 +289,12 @@ export const prepareAdvancerKit = (
         /**
          * @param {undefined} result
          * @param {AdvancerVowCtx} ctx
+         * @throws {never} WARNING: this function must not throw, because user funds are at risk
          */
         onFulfilled(result, ctx) {
           const { notifier } = this.state;
           const { advanceAmount, destination, ...detail } = ctx;
           log('Advance succeeded', { advanceAmount, destination });
-          // During development, due to a bug, this call threw.
-          // The failure was silent (no diagnostics) due to:
-          //  - #10576 Vows do not report unhandled rejections
-          // For now, the advancer kit relies on consistency between
-          // notify, statusManager, and callers of handleTransactionEvent().
-          // TODO: revisit #10576 during #10510
           notifier.notifyAdvancingResult({ destination, ...detail }, true);
         },
         /**
@@ -314,6 +313,8 @@ export const prepareAdvancerKit = (
             tmpReturnSeat,
             harden({ USDC: advanceAmount }),
           );
+          // WARNING: this must never reject, see handler @throws {never} below
+          // void not enforced by linter until #10627 no-floating-vows
           void watch(withdrawV, this.facets.withdrawHandler, {
             advanceAmount,
             tmpReturnSeat,
@@ -325,6 +326,7 @@ export const prepareAdvancerKit = (
          *
          * @param {undefined} result
          * @param {{ advanceAmount: Amount<'nat'>; tmpReturnSeat: ZCFSeat; }} ctx
+         * @throws {never} WARNING: this function must not throw, because user funds are at risk
          */
         onFulfilled(result, { advanceAmount, tmpReturnSeat }) {
           const { borrower } = this.state;
@@ -343,6 +345,7 @@ export const prepareAdvancerKit = (
         /**
          * @param {Error} error
          * @param {{ advanceAmount: Amount<'nat'>; tmpReturnSeat: ZCFSeat; }} ctx
+         * @throws {never} WARNING: this function must not throw, because user funds are at risk
          */
         onRejected(error, { advanceAmount, tmpReturnSeat }) {
           log(
