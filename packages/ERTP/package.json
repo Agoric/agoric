@@ -48,6 +48,7 @@
     "@endo/far": "^1.1.10",
     "@endo/marshal": "^1.6.3",
     "@endo/nat": "^5.0.14",
+    "@endo/pass-style": "^1.4.8",
     "@endo/patterns": "^1.4.8",
     "@endo/promise-kit": "^1.1.9"
   },
