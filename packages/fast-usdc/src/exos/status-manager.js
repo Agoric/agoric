@@ -117,9 +117,8 @@ export const prepareStatusManager = (
   /**
    * @param {EvmHash} txId
    * @param {TransactionRecord} record
-   * @returns {Promise<void>}
    */
-  const publishTxnRecord = async (txId, record) => {
+  const publishTxnRecord = (txId, record) => {
     const txNode = E(txnsNode).makeChildNode(txId, {
       sequence: true, // avoid overwriting other output in the block
     });
@@ -133,9 +132,10 @@ export const prepareStatusManager = (
       storedCompletedTxs.add(txId);
     }
 
-    const capData = await E(marshaller).toCapData(record);
-
-    await E(txNode).setValue(JSON.stringify(capData));
+    // Don't await, just writing to vstorage.
+    void E.when(E(marshaller).toCapData(record), capData =>
+      E(txNode).setValue(JSON.stringify(capData)),
+    );
   };
 
   /**
@@ -144,10 +144,7 @@ export const prepareStatusManager = (
    */
   const publishEvidence = (hash, evidence) => {
     // Don't await, just writing to vstorage.
-    void publishTxnRecord(
-      hash,
-      harden({ evidence, status: TxStatus.Observed }),
-    );
+    publishTxnRecord(hash, harden({ evidence, status: TxStatus.Observed }));
   };
 
   /**
@@ -174,10 +171,10 @@ export const prepareStatusManager = (
     );
     publishEvidence(txHash, evidence);
     if (status === PendingTxStatus.AdvanceSkipped) {
-      void publishTxnRecord(txHash, harden({ status, risksIdentified }));
+      publishTxnRecord(txHash, harden({ status, risksIdentified }));
     } else if (status !== PendingTxStatus.Observed) {
       // publishEvidence publishes Observed
-      void publishTxnRecord(txHash, harden({ status }));
+      publishTxnRecord(txHash, harden({ status }));
     }
   };
 
@@ -200,7 +197,7 @@ export const prepareStatusManager = (
     ];
     const txpost = { ...tx, status };
     pendingSettleTxs.set(key, harden([...prefix, txpost, ...suffix]));
-    void publishTxnRecord(tx.txHash, harden({ status }));
+    publishTxnRecord(tx.txHash, harden({ status }));
   }
 
   return zone.exo(
@@ -288,7 +285,7 @@ export const prepareStatusManager = (
        * @param {boolean} success whether the Transfer succeeded
        */
       advanceOutcomeForMintedEarly(txHash, success) {
-        void publishTxnRecord(
+        publishTxnRecord(
           txHash,
           harden({
             status: success
@@ -381,10 +378,7 @@ export const prepareStatusManager = (
        * @param {import('./liquidity-pool.js').RepayAmountKWR} split
        */
       disbursed(txHash, split) {
-        void publishTxnRecord(
-          txHash,
-          harden({ split, status: TxStatus.Disbursed }),
-        );
+        publishTxnRecord(txHash, harden({ split, status: TxStatus.Disbursed }));
       },
 
       /**
@@ -394,7 +388,7 @@ export const prepareStatusManager = (
        * @param {boolean} success
        */
       forwarded(txHash, success) {
-        void publishTxnRecord(
+        publishTxnRecord(
           txHash,
           harden({
             status: success ? TxStatus.Forwarded : TxStatus.ForwardFailed,

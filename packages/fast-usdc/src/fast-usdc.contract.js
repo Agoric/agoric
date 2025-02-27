@@ -242,7 +242,7 @@ export const contract = async (zcf, privateArgs, zone, tools) => {
   // So we use zone.exoClassKit above to define the liquidity pool kind
   // and pass the shareMint into the maker / init function.
 
-  void publishFeeConfig(storageNode, marshaller, feeConfig);
+  publishFeeConfig(storageNode, marshaller, feeConfig);
 
   const shareMint = await provideSingleton(
     zone.mapStore('mint'),
