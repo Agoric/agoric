@@ -34,11 +34,9 @@ export const prepareChainHubAdmin = (zone, chainHub) => {
   const makeCreatorFacet = zone.exo(
     'ChainHub Admin',
     M.interface('ChainHub Admin', {
-      registerChain: M.callWhen(
-        M.string(),
-        CosmosChainInfoShape,
-        ConnectionInfoShape,
-      ).returns(M.undefined()),
+      registerChain: M.callWhen(M.string(), CosmosChainInfoShape)
+        .optional(ConnectionInfoShape)
+        .returns(M.undefined()),
       registerAsset: M.call(M.string(), DenomDetailShape).returns(M.promise()),
     }),
     {
@@ -47,7 +45,7 @@ export const prepareChainHubAdmin = (zone, chainHub) => {
        *
        * @param {string} chainName - must not exist in chainHub
        * @param {CosmosChainInfo} chainInfo
-       * @param {IBCConnectionInfo} connectionInfo - from Agoric chain
+       * @param {IBCConnectionInfo} [connectionInfo] - from Agoric chain
        */
       async registerChain(chainName, chainInfo, connectionInfo) {
         // when() because chainHub methods return vows. If this were inside
@@ -56,6 +54,10 @@ export const prepareChainHubAdmin = (zone, chainHub) => {
           chainHub.getChainInfo('agoric'),
         );
         chainHub.registerChain(chainName, chainInfo);
+        if (!connectionInfo) {
+          console.log('no connection info for', chainName, 'assuming CCTP');
+          return;
+        }
         chainHub.registerConnection(
           agoricChainInfo.chainId,
           chainInfo.chainId,

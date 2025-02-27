@@ -151,7 +151,14 @@ export const commonSetup = async (t: ExecutionContext<any>) => {
     ibcSequenceNonce += 1n;
     // let the promise for the transfer start
     await eventLoopIteration();
-    const lastMsgTransfer = localBridgeMessages.at(-1).messages[0];
+    if (localBridgeMessages.length < 1)
+      throw Error('no messages on the local bridge');
+
+    const b1 = localBridgeMessages.at(-1);
+    if (!b1.messages || b1.messages.length < 1)
+      throw Error('no messages in the last tx');
+
+    const lastMsgTransfer = b1.messages[0];
     await E(transferBridge).fromBridge(
       buildVTransferEvent({
         receiver: lastMsgTransfer.receiver,

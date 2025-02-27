@@ -15,6 +15,7 @@ import {
   SIMULATED_ERRORS,
 } from '@agoric/vats/tools/fake-bridge.js';
 import { commonSetup } from '../supports.js';
+import type { ChainAddress } from '../../src/orchestration-api.ts';
 
 const dirname = path.dirname(new URL(import.meta.url).pathname);
 
@@ -97,7 +98,7 @@ test('zoeTool.localTransfer error paths', async t => {
   const publicFacet = await E(zoe).getPublicFacet(contractKit.instance);
   const vt = bootstrap.vowTools;
 
-  const destAddr = {
+  const destAddr: ChainAddress = {
     chainId: 'agoriclocal',
     value: 'agoric1testrecipient',
   };
@@ -229,7 +230,7 @@ test('localTransfer happy path', async t => {
   const publicFacet = await E(zoe).getPublicFacet(contractKit.instance);
   const vt = bootstrap.vowTools;
 
-  const destAddr = {
+  const destAddr: ChainAddress = {
     chainId: 'agoriclocal',
     value: 'agoric1testrecipient',
   };

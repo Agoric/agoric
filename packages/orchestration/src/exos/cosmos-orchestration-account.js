@@ -1,5 +1,6 @@
 /** @file Use-object for the owner of a staking account */
 import { toRequestQueryJson } from '@agoric/cosmic-proto';
+import { MsgDepositForBurn } from '@agoric/cosmic-proto/circle/cctp/v1/tx.js';
 import {
   QueryAllBalancesRequest,
   QueryAllBalancesResponse,
@@ -64,10 +65,11 @@ import {
 } from '../utils/cosmos.js';
 import { orchestrationAccountMethods } from '../utils/orchestrationAccount.js';
 import { makeTimestampHelper } from '../utils/time.js';
+import { leftPadEthAddressTo32Bytes } from '../utils/address.js';
 
 /**
  * @import {HostOf} from '@agoric/async-flow';
- * @import {AmountArg, IcaAccount, CosmosChainAddress, CosmosValidatorAddress, ICQConnection, StakingAccountActions, StakingAccountQueries, OrchestrationAccountCommon, CosmosRewardsResponse, IBCConnectionInfo, IBCMsgTransferOptions, ChainHub, CosmosDelegationResponse} from '../types.js';
+ * @import {AmountArg, IcaAccount, CosmosChainAddress, CosmosValidatorAddress, ICQConnection, StakingAccountActions, StakingAccountQueries, NobleMethods, OrchestrationAccountCommon, CosmosRewardsResponse, IBCConnectionInfo, IBCMsgTransferOptions, ChainHub, CosmosDelegationResponse} from '../types.js';
  * @import {RecorderKit, MakeRecorderKit} from '@agoric/zoe/src/contractSupport/recorder.js';
  * @import {Coin} from '@agoric/cosmic-proto/cosmos/base/v1beta1/coin.js';
  * @import {Remote} from '@agoric/internal';
@@ -138,8 +140,17 @@ const stakingAccountQueriesMethods = {
   getRewards: M.call().returns(VowShape),
 };
 
+/** @see {NobleMethods} */
+const nobleMethods = {
+  depositForBurn: M.call(CosmosChainAddressShape, AmountArgShape).returns(
+    VowShape,
+  ),
+};
+
 /** @see {OrchestrationAccountCommon} */
+// TODO: consider renaming to CosmosOrchAccountHolder
 export const IcaAccountHolderI = M.interface('IcaAccountHolder', {
+  ...nobleMethods,
   ...orchestrationAccountMethods,
   ...stakingAccountActionsMethods,
   ...stakingAccountQueriesMethods,
@@ -207,7 +218,7 @@ export const prepareCosmosOrchestrationAccountKit = (
         amountToCoin: M.call(AmountArgShape).returns(M.record()),
       }),
       returnVoidWatcher: M.interface('returnVoidWatcher', {
-        onFulfilled: M.call(M.or(M.string(), M.record()))
+        onFulfilled: M.call(M.any())
           .optional(M.arrayOf(M.undefined()))
           .returns(M.undefined()),
       }),
@@ -376,9 +387,10 @@ export const prepareCosmosOrchestrationAccountKit = (
           );
           if (!delegationResponse)
             throw Fail`Result lacked delegationResponse key: ${result}`;
-          const { chainAddress } = this.state;
+          const { chainAddress: chainId } = this.state;
+          const chainIdHolder = { chainId: `${chainId}` };
           return harden(
-            toCosmosDelegationResponse(chainAddress, delegationResponse),
+            toCosmosDelegationResponse(chainIdHolder, delegationResponse),
           );
         },
       },
@@ -393,10 +405,11 @@ export const prepareCosmosOrchestrationAccountKit = (
             QueryDelegatorDelegationsResponse.decode(decodeBase64(result.key));
           if (!delegationResponses)
             throw Fail`Result lacked delegationResponses key: ${result}`;
-          const { chainAddress } = this.state;
+          const { chainAddress: chainId } = this.state;
+          const chainIdHolder = { chainId: `${chainId}` };
           return harden(
             delegationResponses.map(r =>
-              toCosmosDelegationResponse(chainAddress, r),
+              toCosmosDelegationResponse(chainIdHolder, r),
             ),
           );
         },
@@ -485,7 +498,10 @@ export const prepareCosmosOrchestrationAccountKit = (
           const { chainAddress } = this.state;
           return harden({
             rewards: rewards.map(reward => ({
-              validator: toCosmosValidatorAddress(reward, chainAddress.chainId),
+              validator: toCosmosValidatorAddress(
+                reward,
+                `${chainAddress.chainId}`,
+              ),
               reward: reward.reward.map(toTruncatedDenomAmount),
             })),
             total: total.map(toTruncatedDenomAmount),
@@ -912,8 +928,8 @@ export const prepareCosmosOrchestrationAccountKit = (
 
             const connectionInfoV = watch(
               chainHub.getConnectionInfo(
-                this.state.chainAddress.chainId,
-                destination.chainId,
+                `${this.state.chainAddress.chainId}`,
+                `${destination.chainId}`,
               ),
             );
 
@@ -1121,6 +1137,43 @@ export const prepareCosmosOrchestrationAccountKit = (
           return asVow(() =>
             watch(E(this.facets.helper.owned()).executeEncodedTx(msgs, opts)),
           );
+        },
+        /** @type {HostOf<NobleMethods['depositForBurn']>} */
+        depositForBurn(destination, amount) {
+          return asVow(() => {
+            trace('depositForBurn', destination, amount);
+            const { helper } = this.facets;
+            const { chainAddress } = this.state;
+
+            const { cctpDestinationDomain } = chainHub.getChainInfoByChainId(
+              `${destination.chainId}`,
+            );
+
+            if (typeof cctpDestinationDomain !== 'number') {
+              throw Fail`${q(destination.chainId)} does not have "cctpDestinationDomain" set in ChainInfo`;
+            }
+
+            // see https://github.com/circlefin/noble-cctp/blob/master/examples/depositForBurn.ts#L52-L70
+            const mintRecipient = leftPadEthAddressTo32Bytes(destination.value);
+
+            // TODO: do we need to support MsgDepositForBurnWithCaller? It's the
+            // same payload, plus `destinationCaller: Uint8Array`.
+            // (Functionally, only destinationCaller can call MsgReceive on the
+            // destination chain to mint)
+            const msg = MsgDepositForBurn.toProtoMsg({
+              amount: helper.amountToCoin(amount)?.amount,
+              from: chainAddress.value,
+              destinationDomain: cctpDestinationDomain,
+              mintRecipient,
+              // safe to hardcode this constant? maybe best as part of opts bag with a default value?
+              burnToken: 'uusdc',
+            });
+
+            return watch(
+              E(helper.owned()).executeEncodedTx([Any.toJSON(msg)]),
+              this.facets.returnVoidWatcher,
+            );
+          });
         },
       },
     },
