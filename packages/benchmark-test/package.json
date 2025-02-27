@@ -1,0 +1,9 @@
+{
+    "name": "benchmark",
+    "version": "1.0.0",
+    "type": "module",
+    "scripts": {
+        "test": "yarn rollup -c && eshost -h v8,xs dist/bundle.js"
+    },
+    "license": "MIT"
+}
