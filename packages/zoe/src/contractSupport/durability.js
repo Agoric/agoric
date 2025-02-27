@@ -84,10 +84,7 @@ export const provideAll = (baggage, thunks) => {
   // assume if any keys are defined they all are
   const inBaggage = baggage.has(keys[0]);
   if (inBaggage) {
-    const obj = objectMap(
-      thunks,
-      (_, k) => baggage.get(k),
-    );
+    const obj = objectMap(thunks, (_, k) => baggage.get(k));
     return Promise.resolve(harden(obj));
   }
 
