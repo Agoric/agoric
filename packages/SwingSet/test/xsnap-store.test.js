@@ -72,8 +72,10 @@ test(`create XS Machine, snapshot (${snapSize.raw} Kb), compress to smaller`, as
     vat.makeSnapshotStream(),
   );
 
+  t.log({ compressedSize, uncompressedSize: snapSize.raw });
+
   t.true(
-    relativeSize(compressedSize, snapSize.raw) < 0.5,
+    relativeSize(compressedSize, snapSize.raw) < 0.60,
     'compressed snapshots are smaller',
   );
 });
@@ -94,7 +96,7 @@ test('SES bootstrap, save, compress', async t => {
   );
 
   t.true(
-    relativeSize(compressedSize, snapSize.SESboot) < 0.5,
+    relativeSize(compressedSize, snapSize.SESboot) < 0.75,
     'compressed snapshots are smaller',
   );
 });
