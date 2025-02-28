@@ -1,5 +1,8 @@
 /* eslint-env node */
 
+import { VBANK_BALANCE_UPDATE } from '@agoric/internal/src/action-types.js';
+import { BridgeId as BRIDGE_ID } from '@agoric/internal';
+
 /**
  * @typedef {Partial<{
  *    'block.height': Slog['blockHeight'];
@@ -13,6 +16,7 @@
  *    'run.id': string;
  *    'run.num': string | null;
  *    'run.trigger.blockHeight': Slog['blockHeight'];
+ *    'run.trigger.classification': string;
  *    'run.trigger.msgIdx': number;
  *    'run.trigger.sender': Slog['sender'];
  *    'run.trigger.source': Slog['source'];
@@ -31,6 +35,11 @@
  * @typedef {{
  *  blockHeight?: number;
  *  blockTime?: number;
+ *  body?: {
+ *    blockHeight: Slog['blockHeight'];
+ *    blockTime: Slog['blockTime'];
+ *    type: Slog['type'];
+ *  } & walletActionBody;
  *  crankNum?: bigint;
  *  crankType?: string;
  *  deliveryNum?: bigint;
@@ -47,7 +56,34 @@
  *  type: string;
  *  vatID?: string;
  * }} Slog
+ *
+ * @typedef {{
+ *  owner: string;
+ *  spendAction: string;
+ * }} walletActionBody
  */
+
+const INVITATION_MAKERS = {
+  AdjustBalances: 'adjust-balances',
+  CloseVault: 'close-vault',
+  makeVoteInvitation: 'make-vote',
+  PushPrice: 'push-price',
+  VoteOnApiCall: 'vote-api-call',
+  VoteOnParamChange: 'vote-param-change',
+};
+
+const PUBLIC_INVITATION_MAKERS = {
+  makeBuyCharacterInvitation: 'kread-buy-character',
+  makeBuyItemInvitation: 'kread-buy-item',
+  makeEquipInvitation: 'kread-equip-item',
+  makeGiveMintedInvitation: 'psm-sell',
+  makeItemSwapInvitation: 'kread-swap-item',
+  makeMintCharacterInvitation: 'kread-mint-character',
+  makeSellCharacterInvitation: 'kread-sell-character',
+  makeSellItemInvitation: 'kread-sell-item',
+  makeUnequipInvitation: 'kread-unequip-item',
+  makeWantMintedInvitation: 'psm-buy',
+};
 
 const SLOG_TYPES = {
   CLIST: 'clist',
@@ -97,6 +133,54 @@ const SLOG_TYPES = {
   },
   SYSCALL: 'syscall',
   SYSCALL_RESULT: 'syscall-result',
+};
+
+const WALLET_SPEND_METHODS = {
+  EXECUTE_OFFER: 'executeOffer',
+  TRY_EXIT_OFFER: 'tryExitOffer',
+};
+
+/**
+ * @param {Partial<Slog>} body
+ * @returns {string | undefined}
+ */
+const classifyRun = body => {
+  if (body.source === BRIDGE_ID.BANK) return VBANK_BALANCE_UPDATE;
+
+  if (body.source === BRIDGE_ID.PROVISION) return BRIDGE_ID.PROVISION;
+
+  if (body.source === BRIDGE_ID.WALLET) {
+    const spendAction = JSON.parse(
+      (body.body?.spendAction || '{}').replace(/^#+/g, ''),
+    ).body;
+
+    if (spendAction.method === WALLET_SPEND_METHODS.EXECUTE_OFFER) {
+      const invitationSpec = spendAction.offer.invitationSpec;
+      const offerId = spendAction.offer.id;
+
+      const invitationMakerName = invitationSpec?.invitationMakerName;
+      const publicInvitationMaker = invitationSpec?.publicInvitationMaker;
+      const callPipe = invitationSpec?.callPipe;
+
+      if (invitationMakerName) return INVITATION_MAKERS[invitationMakerName];
+      else if (publicInvitationMaker)
+        return PUBLIC_INVITATION_MAKERS[publicInvitationMaker];
+      else if (callPipe) {
+        if (
+          callPipe[0][0] === 'getCollateralManager' &&
+          callPipe[1][0] === 'makeVaultInvitation'
+        )
+          return 'create-vault';
+        else if (callPipe[0][0] === 'makeBidInvitation') return 'vault-bid';
+        else if (callPipe[0][0] === 'makeAddCollateralInvitation')
+          return 'vault-add-collateral';
+      } else {
+        if (offerId.startsWith('econgov-')) return 'maybe-gov-vote';
+        if (offerId.startsWith('oracleAccept-')) return 'maybe-oracle-accept';
+      }
+    } else if (spendAction.method === WALLET_SPEND_METHODS.TRY_EXIT_OFFER)
+      return 'exit-offer';
+  }
 };
 
 /**
@@ -193,6 +277,12 @@ export const makeContextualSlogProcessor = (
           'run.trigger.txHash': txHash,
           'run.trigger.msgIdx': Number(msgIdx),
         };
+
+        if (body.type === SLOG_TYPES.COSMIC_SWINGSET_TRIGGERS.BRIDGE_INBOUND) {
+          const runClassification = classifyRun(body);
+          if (runClassification)
+            triggerContext['run.trigger.classification'] = runClassification;
+        }
         break;
       }
       case SLOG_TYPES.COSMIC_SWINGSET_TRIGGERS.INSTALL_BUNDLE: {
