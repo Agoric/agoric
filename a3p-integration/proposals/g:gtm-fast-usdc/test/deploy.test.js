@@ -29,3 +29,17 @@ test(`fastUsdc incarnation reflects Noble ICA upgrade`, async t => {
   // XXX getIncarnation doesn't support IO injection
   t.is(await getIncarnation('fastUsdc'), history.nobleICA);
 });
+
+test('feedPolicy updated for GTM', async t => {
+  const swk = await makeSmartWalletKit(io, LOCAL_CONFIG);
+
+  const policy = await swk.readPublished('fastUsdc.feedPolicy');
+  t.log('policy', policy);
+  t.like(policy, {
+    chainPolicies: {
+      Arbitrum: {
+        confirmations: 96, // was 2 in Beta
+      },
+    },
+  });
+});
