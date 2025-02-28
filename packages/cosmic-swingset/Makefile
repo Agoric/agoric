@@ -201,7 +201,7 @@ wait-for-cosmos:
 	@while true; do \
 	  block=$$(curl -s http://$(COSMOS_RPC_HOST):$(COSMOS_RPC_PORT)/status | jq -r .result.sync_info.latest_block_height); \
 		if test -n "$$block" && test "$$block" -lt 1; then \
-			true; \
+		  true; \
 		elif test -z "$$start"; then \
 		  start=$$block; \
 		elif test $$block -gt $$start; then \

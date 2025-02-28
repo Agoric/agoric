@@ -5,8 +5,8 @@ import fs from 'fs/promises';
 import { spawn as ambientSpawn } from 'child_process';
 import * as ambientPath from 'path';
 
-import { makeScenario2, pspawn } from './scenario2.js';
 import { stderr } from 'process';
+import { makeScenario2, makeWalletTool, pspawn } from './scenario2.js';
 
 /** @type {import('ava').TestFn<Awaited<ReturnType<typeof makeTestContext>>>} */
 const test = anyTest;
@@ -76,21 +76,31 @@ test.serial('integration test: rosetta CI', async t => {
   t.is(code, 0, 'make scenario2-run-rosetta-ci is successful');
 });
 
-/** @type {import('ava').Macro<[description: string, verifier?: any], any>} */
+/** @type {import('ava').Macro<[title: string, verifier?: any], any>} */
 const walletProvisioning = test.macro({
-  title(_, description, _verifier) {
-    return description;
+  title(_, title, _verifier) {
+    return title;
   },
-  async exec(t, _description, verifier) {
+  async exec(t, _title, _verifier) {
     const retryCountMax = 5;
     // Resume the chain... and concurrently, start a faucet AND run the rosetta-cli tests
     const { pspawnAgd, scenario2 } = t.context;
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const { query, waitForBlock } = makeWalletTool({
+      pspawnAgd,
+      runMake: scenario2.runMake,
+      log: t.log,
+      delay,
+    });
 
     // Run the chain until error or rosetta-cli exits.
     const chain = scenario2.spawnMake(['scenario2-run-chain'], {
       stdio: ['ignore', 'inherit', 'inherit'],
     });
-    const fundPool = scenario2.spawnMake(['wait-for-cosmos', 'fund-provision-pool']);
+
+    await waitForBlock('chain bootstrap', 1);
+
+    const fundPool = scenario2.spawnMake(['fund-provision-pool']);
     const cleanup = async () => {
       chain.kill();
       fundPool.kill();
@@ -107,24 +117,36 @@ const walletProvisioning = test.macro({
 
     t.is(fundPoolExitCode, 0, 'make fund-provision-pool is successful');
 
-    const soloAddr = await fs.readFile('t1/8000/ag-cosmos-helper-address', 'utf-8');
+    const soloAddr = (
+      await fs.readFile('t1/8000/ag-cosmos-helper-address', 'utf-8')
+    ).trimEnd();
 
-    const checkWalletExists = async (address) => {
-      const { stdout, exit } = pspawnAgd(['query', '-ojson', 'vstorage', 'path', `published.wallet.${address}`]);
+    const checkWalletExists = async address => {
       try {
-        await exit;
+        const { value } = await query([
+          '--output=json',
+          'vstorage',
+          'path',
+          `published.wallet.${address}`,
+        ]);
+        t.log('query vstorage path published.wallet exits successfully');
+        return !!value;
       } catch (e) {
         t.log(e);
         return false;
       }
-      t.log('query vstorage path published.wallet exits successfully');
-      const { value } = JSON.parse(stdout);
-      return !!value;
-    }
+    };
 
-    t.false(await checkWalletExists(soloAddr));
+    t.false(
+      await checkWalletExists(soloAddr),
+      `${soloAddr} wallet doesn't exist yet`,
+    );
 
-    const provisionAcct = scenario2.spawnMake(['wait-for-cosmos', 'provision-acct', `ACCT_ADDR=${soloAddr}`]);
+    await waitForBlock('after funding', 1, true);
+    const provisionAcct = scenario2.spawnMake(
+      ['provision-acct', `ACCT_ADDR=${soloAddr}`],
+      { stdio: ['ignore', 'inherit', 'inherit'] },
+    );
 
     const cleanupProvisionAcct = async () => {
       provisionAcct.kill();
@@ -147,15 +169,21 @@ const walletProvisioning = test.macro({
     let retryCount = 0;
     while (retryCount < retryCountMax) {
       if (await checkWalletExists(soloAddr)) {
-        t.pass('wallet is published');
+        t.log(`provisioned wallet ${soloAddr} is published`);
         break;
       }
-      retryCount++;
-      const waitForCosmos = scenario2.spawnMake(['wait-for-cosmos']);
-      assert.equal(await waitForCosmos.exit, 0);
+      retryCount += 1;
+      await waitForBlock(
+        `${retryCount}/${retryCountMax} waiting for wallet provisioning`,
+        1,
+        true,
+      );
     }
-    t.true(retryCount < retryCountMax, `wallet is published within ${retryCount} retries out of ${retryCountMax}`);
-  }
+    t.true(
+      retryCount < retryCountMax,
+      `wallet is provisioned within ${retryCount} retries out of ${retryCountMax}`,
+    );
+  },
 });
 
 test.serial(walletProvisioning, 'wallet provisioning');

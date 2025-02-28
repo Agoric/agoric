@@ -34,7 +34,7 @@ export const pspawn = (bin, { spawn, cwd }) => {
       }
       child.addListener('exit', async code => {
         if (code !== 0) {
-          let msg = `exit ${code} from command: ${bin} ${args}`;
+          let msg = `exit ${code} from command: ${bin} ${args.join(' ')}`;
           const errStr = await stderrP;
           if (errStr) {
             const errTail = errStr.split('\n').slice(-3);
@@ -145,23 +145,26 @@ export const makeWalletTool = ({ runMake, pspawnAgd, delay, log }) => {
       return b;
     });
 
-  let currentHeight;
+  let committedHeight;
   const waitForBlock = async (why, targetHeight, relative = false) => {
+    targetHeight = BigInt(targetHeight);
     if (relative) {
-      if (typeof currentHeight === 'undefined') {
+      if (typeof committedHeight === 'undefined') {
         throw Error('cannot use relative before starting');
       }
-      targetHeight += currentHeight;
+      targetHeight += committedHeight;
     }
     for (;;) {
       try {
         const info = await query(['block']);
-        currentHeight = Number(info?.block?.header?.height);
-        if (currentHeight >= targetHeight) {
-          log(info?.block?.header?.time, ' block ', currentHeight);
-          return currentHeight;
+        committedHeight = BigInt(info?.block?.last_commit?.height);
+        if (committedHeight >= targetHeight) {
+          log(info?.block?.header?.time, ' block ', committedHeight);
+          console.warn(why, ':', committedHeight, '>=', targetHeight);
+          // XXX: For backward compatibility, we dumb the height down to a Number.
+          return Number(committedHeight);
         }
-        console.log(why, ':', currentHeight, '<', targetHeight, '5 sec...');
+        console.warn(why, ':', committedHeight, '<', targetHeight, '5 sec...');
       } catch (reason) {
         console.warn(why, '2:', reason?.message, '5sec...');
       }
