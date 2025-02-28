@@ -32,6 +32,7 @@ const bufferTests = test.macro(
       circularBufferFilename: tmpFile,
     });
     const slogSender = makeSlogSenderFromBuffer({ fileHandle, writeCircBuf });
+    t.teardown(slogSender.shutdown);
     slogSender({ type: 'start' });
     await slogSender.forceFlush();
     t.is(fs.readFileSync(tmpFile, { encoding: 'utf8' }).length, BUFFER_SIZE);
