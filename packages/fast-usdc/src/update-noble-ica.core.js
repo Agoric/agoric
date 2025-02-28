@@ -1,7 +1,9 @@
 /** @file core-eval to 1) update ChainInfo 2) re-request the Noble ICA `intermediateRecipient` */
 
-import { E } from '@endo/far';
 import { makeTracer } from '@agoric/internal';
+import { E } from '@endo/far';
+import { publishFeedPolicy } from './utils/core-eval.js';
+import { feedPolicies } from './utils/chain-policies.js';
 
 const trace = makeTracer('FUSD-2', true);
 
@@ -11,7 +13,7 @@ const trace = makeTracer('FUSD-2', true);
  * @import {ManifestBundleRef} from '@agoric/deploy-script-support/src/externalTypes.js'
  * @import {BootstrapManifest} from '@agoric/vats/src/core/lib-boot.js'
  * @import {FastUSDCCorePowers} from './start-fast-usdc.core.js'
- * @import {ContractRecord} from './types.js'
+ * @import {ContractRecord, FeedPolicy} from './types.js'
  */
 
 /**
@@ -85,6 +87,15 @@ export const updateNobleICA = async (
   void E(contractNode)?.setValue(JSON.stringify(addrs));
 };
 
+const contractName = 'fastUsdc';
+
+export const updateFeedPolicy = async ({ consume: { chainStorage } }) => {
+  trace('updateFeedPolicy');
+  const storageNode = await E(chainStorage).makeChildNode(contractName);
+  await publishFeedPolicy(storageNode, feedPolicies.MAINNET);
+  trace('updateFeedPolicy done');
+};
+
 /**
  * @param {unknown} _utils
  * @param {{
@@ -101,6 +112,9 @@ export const getManifestForUpdateNobleICA = (
     manifest: {
       [updateNobleICA.name]: {
         consume: { chainStorage: true, fastUsdcKit: true },
+      },
+      [updateFeedPolicy.name]: {
+        consume: { chainStorage: true },
       },
     },
     options: { ...options, fastUsdcCode: installKeys.fastUsdc },
