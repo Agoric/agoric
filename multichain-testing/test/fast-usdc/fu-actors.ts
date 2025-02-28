@@ -58,6 +58,7 @@ export const fastLPQ = (vsc: VStorageClient) =>
       vsc.queryData(`published.fastUsdc`) as Promise<{
         poolAccount: string;
         settlementAccount: string;
+        nobleICA?: string;
       }>,
   });
 

@@ -150,13 +150,17 @@ export const commonSetup = async (
     contractName: string,
     contractBuilder: string,
     builderOpts?: Record<string, string | string[]>,
+    { skipInstanceCheck = false } = {},
   ) => {
+    await null;
     const { vstorageClient } = tools;
-    const instances = Object.fromEntries(
-      await vstorageClient.queryData(`published.agoricNames.instance`),
-    );
-    if (contractName in instances) {
-      return t.log('Contract found. Skipping installation...');
+    if (!skipInstanceCheck) {
+      const instances = Object.fromEntries(
+        await vstorageClient.queryData(`published.agoricNames.instance`),
+      );
+      if (contractName in instances) {
+        return t.log('Contract found. Skipping installation...');
+      }
     }
     t.log('bundle and install contract', contractName);
     await deployBuilder(contractBuilder, builderOpts);

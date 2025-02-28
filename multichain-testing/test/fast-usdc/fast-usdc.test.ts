@@ -21,7 +21,12 @@ import { commonSetup } from '../support.js';
 import { makeFeedPolicyPartial, oracleMnemonics } from './config.js';
 import { agoricNamesQ, fastLPQ, makeTxOracle } from './fu-actors.js';
 import { sleep } from '@agoric/client-utils';
-import type { Denom, DenomDetail } from '@agoric/orchestration';
+import type {
+  CosmosChainInfo,
+  Denom,
+  DenomDetail,
+} from '@agoric/orchestration';
+import type { IBCConnectionID } from '@agoric/vats';
 
 const { RELAYER_TYPE } = process.env;
 
@@ -48,6 +53,43 @@ const fuAssetInfo = (assetInfo: string): string => {
   );
   if (!matchingPair) throw Error('no uusdc on agoric in common assetInfo');
   return JSON.stringify([matchingPair]);
+};
+
+const replaceConnectionId = (
+  info: Record<string, CosmosChainInfo>,
+  primary: string,
+  remote: string,
+  replacement: IBCConnectionID = 'connection-9999999',
+) => {
+  const fwd = info[primary].connections![info[remote].chainId];
+  const rev = info[remote].connections![info[primary].chainId];
+  const revised: Record<string, CosmosChainInfo> = {
+    ...info,
+    [primary]: {
+      ...info[primary],
+      connections: {
+        ...info[primary].connections,
+        [info.noble.chainId]: {
+          ...fwd,
+          counterparty: {
+            ...fwd.counterparty,
+            connection_id: replacement,
+          },
+        },
+      },
+    },
+    [remote]: {
+      ...info[remote],
+      connections: {
+        ...info[remote].connections,
+        [info[primary].chainId]: {
+          ...rev,
+          id: replacement,
+        },
+      },
+    },
+  };
+  return harden(revised);
 };
 
 const makeTestContext = async (t: ExecutionContext) => {
@@ -89,7 +131,15 @@ const makeTestContext = async (t: ExecutionContext) => {
     oracle: keys(oracleMnemonics).map(n => `${n}:${wallets[n]}`),
     usdcDenom,
     feedPolicy: JSON.stringify(makeFeedPolicyPartial(nobleAgoricChannelId)),
-    ...commonBuilderOpts,
+    // misconfigured a la https://github.com/Agoric/agoric-sdk/issues/11013
+    chainInfo: JSON.stringify(
+      replaceConnectionId(
+        JSON.parse(commonBuilderOpts.chainInfo),
+        'agoric',
+        'noble',
+        'connection-99999',
+      ),
+    ),
     assetInfo: fuAssetInfo(commonBuilderOpts.assetInfo),
   });
 
@@ -311,6 +361,34 @@ test.serial('lp deposits', async t => {
       'lp has pool shares',
       { log },
     ),
+  );
+});
+
+test.serial('reconfigure: fix noble ICA', async t => {
+  const { startContract, commonBuilderOpts } = t.context;
+  const builder =
+    '../packages/builders/scripts/fast-usdc/fast-usdc-reconfigure.build.js';
+
+  const chainInfo = JSON.parse(commonBuilderOpts.chainInfo) as Record<
+    string,
+    CosmosChainInfo
+  >;
+  const { chainId: nobleChainId } = chainInfo.noble;
+  const agoricToNoble = chainInfo.agoric.connections?.[nobleChainId];
+
+  await startContract(
+    contractName,
+    builder,
+    { agoricToNoble: JSON.stringify(agoricToNoble) },
+    { skipInstanceCheck: true },
+  );
+
+  const { vstorageClient, retryUntilCondition } = t.context;
+
+  await retryUntilCondition(
+    () => fastLPQ(vstorageClient).info(),
+    info => 'nobleICA' in info,
+    `${contractName} nobleICA is available`,
   );
 });
 

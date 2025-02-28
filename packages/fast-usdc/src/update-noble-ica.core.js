@@ -60,13 +60,13 @@ export const updateNobleICA = async (
   } = options;
   const { adminFacet, creatorFacet, privateArgs, publicFacet } =
     await fastUsdcKit;
-  trace('got privateArgs', Object.keys(privateArgs));
-
+  trace('upgradeContract follows with privateArgs:', Object.keys(privateArgs));
   const upgraded = await E(adminFacet).upgradeContract(
     fastUsdcCode.bundleID,
     privateArgs,
   );
-  trace(upgraded);
+  trace(`DON'T PANIC if you see "CORE_EVAL failed" from v1 above. See #11013`);
+  trace('fastUsdc upgraded', upgraded);
 
   const { agoric, noble } = privateArgs.chainInfo;
   const nobleICAaddr = await E(creatorFacet).connectToNoble(
