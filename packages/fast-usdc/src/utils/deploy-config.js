@@ -1,6 +1,6 @@
 import { denomHash, withChainCapabilities } from '@agoric/orchestration';
 import fetchedChainInfo from '@agoric/orchestration/src/fetched-chain-info.js';
-import { ChainPolicies } from './chain-policies.js';
+import { ChainPolicies, DepositForBurnEvent } from './chain-policies.js';
 
 /**
  * @import {FastUSDCConfig} from '@agoric/fast-usdc';
@@ -25,10 +25,6 @@ export const transferAssetInfo = [
   usdcOnAgoric,
 ];
 harden(transferAssetInfo);
-
-/** ABI for DepositForBurn event in TokenMessenger contract */
-const DepositForBurnEvent =
-  'DepositForBurn(uint64,address,uint256,address,bytes32,uint32,bytes32,bytes32)';
 
 /**
  * @type {Record<string, Pick<FastUSDCConfig, 'oracles' | 'feedPolicy' | 'chainInfo' | 'assetInfo' >>}
