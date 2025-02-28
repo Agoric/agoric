@@ -546,6 +546,119 @@ test('Settlement for unknown transaction (minted early)', async t => {
   ]);
 });
 
+test('Multiple minted early transactions with same address and amount', async t => {
+  const {
+    common: {
+      brands: { usdc },
+    },
+    makeSettler,
+    defaultSettlerParams,
+    repayer,
+    accounts,
+    peekCalls,
+    inspectLogs,
+    makeSimulate,
+    storage,
+  } = t.context;
+
+  const settler = makeSettler({
+    repayer,
+    settlementAccount: accounts.settlement.account,
+    ...defaultSettlerParams,
+  });
+  const simulate = makeSimulate(settler.notifier);
+
+  t.log('Simulate first incoming IBC settlement');
+  void settler.tap.receiveUpcall(MockVTransferEvents.AGORIC_PLUS_OSMO());
+  await eventLoopIteration();
+
+  t.log('Simulate second incoming IBC settlement with same address and amount');
+  void settler.tap.receiveUpcall(MockVTransferEvents.AGORIC_PLUS_OSMO());
+  await eventLoopIteration();
+
+  t.log('Nothing transferred yet - both transactions are minted early');
+  t.deepEqual(peekCalls(), []);
+  t.deepEqual(accounts.settlement.callLog, []);
+  const tapLogs = inspectLogs();
+
+  // Should show two instances of "minted before observed"
+  const mintedBeforeObservedLogs = tapLogs
+    .flat()
+    .filter(
+      log => typeof log === 'string' && log.includes('minted before observed'),
+    );
+  t.is(
+    mintedBeforeObservedLogs.length,
+    2,
+    'Should have two "minted before observed" log entries',
+  );
+
+  t.log('Oracle operators report first transaction...');
+  const evidence1 = simulate.observeLate(
+    MockCctpTxEvidences.AGORIC_PLUS_OSMO(),
+  );
+  await eventLoopIteration();
+
+  t.log('First transfer should complete');
+  t.is(
+    accounts.settlement.callLog.length,
+    1,
+    'First transfer should be initiated',
+  );
+  accounts.settlement.transferVResolver.resolve(undefined);
+  await eventLoopIteration();
+  t.deepEqual(storage.getDeserialized(`fun.txns.${evidence1.txHash}`), [
+    { evidence: evidence1, status: 'OBSERVED' },
+    { status: 'FORWARDED' },
+  ]);
+
+  t.log(
+    'Oracle operators report second transaction with same address/amount...',
+  );
+  const evidence2 = simulate.observeLate({
+    ...MockCctpTxEvidences.AGORIC_PLUS_OSMO(),
+    txHash:
+      '0x0000000000000000000000000000000000000000000000000000000000000000',
+  });
+  await eventLoopIteration();
+
+  t.log('Second transfer should also complete');
+  t.is(
+    accounts.settlement.callLog.length,
+    2,
+    'Second transfer should be initiated',
+  );
+  accounts.settlement.transferVResolver.resolve(undefined);
+  await eventLoopIteration();
+  t.deepEqual(storage.getDeserialized(`fun.txns.${evidence2.txHash}`), [
+    { evidence: evidence2, status: 'OBSERVED' },
+    { status: 'FORWARDED' },
+  ]);
+
+  // Simulate a third transaction and verify no more are tracked as minted early
+  simulate.observe({
+    ...MockCctpTxEvidences.AGORIC_PLUS_OSMO(),
+    txHash:
+      '0x0000000000000000000000000000000000000000000000000000000000000001',
+  });
+  const foundMore = inspectLogs()
+    .flat()
+    .filter(
+      log =>
+        typeof log === 'string' && log.includes('matched minted early key'),
+    );
+  t.is(
+    foundMore.length,
+    2,
+    'Should not find any more minted early transactions',
+  );
+  t.is(
+    accounts.settlement.callLog.length,
+    2,
+    'No additional transfers should be initiated',
+  );
+});
+
 test('Settlement for Advancing transaction (advance succeeds)', async t => {
   const {
     accounts,
