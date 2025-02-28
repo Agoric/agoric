@@ -136,6 +136,7 @@ jobs:
       - uses: ./agoric-sdk/.github/actions/restore-node
         with:
           # XXX loadgen not compatible with 18.19 https://github.com/Agoric/agoric-sdk/pull/8365#issuecomment-1848003597
+          # poke2
           node-version: 18.18
           path: ./agoric-sdk
           # Forces xsnap to initialize all memory to random data, which increases
