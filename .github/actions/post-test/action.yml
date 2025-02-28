@@ -48,4 +48,4 @@ runs:
       env:
         GCP_CREDENTIALS: ${{ inputs.gcp-credentials }}
       run: |
-        node .github/actions/ci-test-result.cjs ./packages/*/_testoutput.txt
+        node .github/actions/ci-test-result.cjs ${{ github.ref_name }} ./packages/*/_testoutput.txt

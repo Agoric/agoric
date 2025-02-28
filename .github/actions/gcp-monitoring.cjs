@@ -34,7 +34,7 @@ async function sendMetricsToGCP(timeSeries) {
 function makeTimeSeries(testData) {
   const timeSeries = testData.map(({ labels, value }) => ({
     metric: {
-      type: `custom.googleapis.com/github/test-results`,
+      type: `custom.googleapis.com/github-test/test-results`,
       labels,
     },
     resource: {

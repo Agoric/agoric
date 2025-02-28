@@ -3,7 +3,8 @@ const fs = require('node:fs');
 const process = require('node:process');
 const { sendMetricsToGCP, makeTimeSeries } = require('./gcp-monitoring.cjs');
 
-const resultFiles = process.argv.slice(2);
+const resultFiles = process.argv.slice(3);
+const branchName = process.argv[2];
 
 const tapResultRegex = new RegExp(
   `(^(?<status>not )?ok (?<num>[0-9]+) - (?<name>.+?)(?: %ava-dur=(?<duration>[0-9]+)ms)?(?:# (?<comments>.+?))?$(?<output>(\n^#.+?$)*)(?<failure>(\n^(?:(?!(?:not|ok) ))[^\n\r]+?$)*))`,
@@ -39,6 +40,8 @@ function processTAP(packageName, tapbody) {
         labels: {
           test_name: testCaseName,
           package: packageName,
+          branch: branchName,
+          duration: m.groups.duration ? parseInt(m.groups.duration, 10) : null,
           test_status:
             succeeded && !(todo || skipped)
               ? 'succeeded'
