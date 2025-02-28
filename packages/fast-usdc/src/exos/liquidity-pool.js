@@ -224,11 +224,13 @@ export const prepareLiquidityPoolKit = (zone, zcf, USDC, tools) => {
 
           // COMMIT POINT
           // UNTIL #10684: ability to terminate an incarnation w/o terminating the contract
-          zcf.atomicRearrange([
-            sourceTransfer,
-            toOnly(poolSeat, { USDC: add(split.PoolFee, split.Principal) }),
-            toOnly(feeSeat, { USDC: split.ContractFee }),
-          ]);
+          zcf.atomicRearrange(
+            harden([
+              sourceTransfer,
+              toOnly(poolSeat, { USDC: add(split.PoolFee, split.Principal) }),
+              toOnly(feeSeat, { USDC: split.ContractFee }),
+            ]),
+          );
 
           Object.assign(this.state, post);
           this.facets.external.publishPoolMetrics();
