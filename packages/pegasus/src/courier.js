@@ -39,8 +39,8 @@ export const getCourierPK = (key, keyToCourierPK) => {
  *
  * @typedef {object} CourierArgs
  * @property {ZCF} zcf
- * @property {Remote<BoardDepositFacet>} board
- * @property {Remote<NameHub>} namesByAddress
+ * @property {ERef<BoardDepositFacet>} board
+ * @property {ERef<NameHub>} namesByAddress
  * @property {Denom} sendDenom
  * @property {Brand} localBrand
  * @property {(zcfSeat: ZCFSeat, amounts: AmountKeywordRecord) => void} retain
