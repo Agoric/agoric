@@ -47,8 +47,9 @@ export const makeFsStreamWriter = async filePath => {
     return undefined;
   }
 
+  const useStdout = filePath === '-';
   const { handle, stream } = await (async () => {
-    if (filePath === '-') {
+    if (useStdout) {
       return { handle: undefined, stream: process.stdout };
     }
     const fh = await open(filePath, 'a');
@@ -56,7 +57,9 @@ export const makeFsStreamWriter = async filePath => {
   })();
   await fsStreamReady(stream);
   const writeAsync = promisify(stream.write.bind(stream));
-  const endAsync = stream.end && promisify(stream.end.bind(stream));
+  const endAsync = useStdout
+    ? undefined
+    : stream.end && promisify(stream.end.bind(stream));
 
   let flushed = Promise.resolve();
   let closed = false;
