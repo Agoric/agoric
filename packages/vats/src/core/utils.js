@@ -221,6 +221,7 @@ export const makePromiseSpaceForNameHub = (nameAdmin, log = noop) => {
         logHooks.onAddKey(name);
       },
       onResolve: (name, valueP) => {
+        void E(nameAdmin).reserve(name);
         void E.when(valueP, value => E(nameAdmin).update(name, value));
       },
       onReset: name => {

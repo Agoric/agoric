@@ -335,7 +335,7 @@ export const prepareNameHubKit = zone => {
             if (pmap.has(key)) {
               // Reject only if already exists.
               const old = NonNullish(pmap.get(key));
-              old.reject(Error(`Value has been deleted`));
+              old.reject(Error(`Value for ${key} has been deleted`));
               // Silence unhandled rejections.
               void old.promise.catch(_ => {});
             }
