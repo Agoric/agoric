@@ -1,5 +1,12 @@
 #!/bin/bash
-set -ueo pipefail
+set -o errexit -o nounset -o pipefail
+
+DIRECTORY_PATH="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
+
+if ! test -z "$MESSAGE_FILE_PATH"; then
+  # make sure the follower has not crashed
+  node "$DIRECTORY_PATH/wait-for-follower.mjs" '^(ready)|(exit code \d+)$' | grep --extended-regexp --silent "^ready$"
+fi
 
 # Place here any test that should be executed using the executed proposal.
 # The effects of this step are not persisted in further proposal layers.
@@ -46,6 +53,16 @@ export VALIDATOR_ADDRESS
 echo "VALIDATOR_ADDRESS: $VALIDATOR_ADDRESS from delegator $DELEGATOR_ADDRRESS (named 'VALIDATORADDR' in env)"
 
 yarn ava stakeBld.test.js
+
+if ! test -z "$MESSAGE_FILE_PATH"; then
+  if [[ "$(cat "$MESSAGE_FILE_PATH")" == "ready" ]]; then
+    echo -n "stop" > "$MESSAGE_FILE_PATH"
+  fi
+
+  exit_message="$(node "$DIRECTORY_PATH/wait-for-follower.mjs" "^exit code \d+$")"
+  echo "follower test result: $exit_message"
+  echo "$exit_message" | grep --extended-regexp --silent "^exit code 0$"
+fi
 
 echo ACCEPTANCE TESTING state sync
 ./state-sync-snapshots-test.sh

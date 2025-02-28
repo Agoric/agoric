@@ -16,7 +16,7 @@
     "doctor": "yarn synthetic-chain doctor"
   },
   "dependencies": {
-    "@agoric/synthetic-chain": "^0.5.2",
+    "@agoric/synthetic-chain": "^0.5.3",
     "@types/better-sqlite3": "^7.6.11"
   },
   "devDependencies": {
