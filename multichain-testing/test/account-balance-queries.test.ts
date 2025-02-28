@@ -12,7 +12,7 @@ import { MAKE_ACCOUNT_AND_QUERY_BALANCE_TIMEOUT } from './config.js';
 
 const test = anyTest as TestFn<SetupContextWithWallets>;
 
-const accounts = ['osmosis', 'cosmoshub', 'agoric'];
+const accounts = ['user1', 'user2', 'user3', 'user4', 'user5', 'user6'];
 
 const contractName = 'queryFlows';
 const contractBuilder =
@@ -34,7 +34,7 @@ test.after(async t => {
 
 const queryAccountBalances = test.macro({
   title: (_, chainName: string) => `Query Account Balances on ${chainName}`,
-  exec: async (t, chainName: string) => {
+  exec: async (t, chainName: string, walletName: string) => {
     const config = chainConfig[chainName];
     if (!config) return t.fail(`Unknown chain: ${chainName}`);
     const {
@@ -44,7 +44,7 @@ const queryAccountBalances = test.macro({
       retryUntilCondition,
     } = t.context;
 
-    const agoricAddr = wallets[chainName];
+    const agoricAddr = wallets[walletName];
     const wdUser1 = await provisionSmartWallet(agoricAddr, {
       BLD: 100n,
       IST: 100n,
@@ -104,7 +104,7 @@ const queryAccountBalances = test.macro({
 
 const queryAccountBalance = test.macro({
   title: (_, chainName: string) => `Query Account Balance on ${chainName}`,
-  exec: async (t, chainName: string) => {
+  exec: async (t, chainName: string, walletName: string) => {
     const config = chainConfig[chainName];
     if (!config) return t.fail(`Unknown chain: ${chainName}`);
     const {
@@ -123,7 +123,7 @@ const queryAccountBalance = test.macro({
     const denom = staking?.staking_tokens?.[0].denom;
     if (!denom) throw Error(`no denom for ${chainName}`);
 
-    const agoricAddr = wallets[chainName];
+    const agoricAddr = wallets[walletName];
     const wdUser1 = await provisionSmartWallet(agoricAddr, {
       BLD: 100n,
       IST: 100n,
@@ -183,9 +183,9 @@ const queryAccountBalance = test.macro({
   },
 });
 
-test.serial(queryAccountBalances, 'osmosis');
-test.serial(queryAccountBalances, 'cosmoshub');
-test.serial(queryAccountBalances, 'agoric');
-test.serial(queryAccountBalance, 'osmosis');
-test.serial(queryAccountBalance, 'cosmoshub');
-test.serial(queryAccountBalance, 'agoric');
+test.serial(queryAccountBalances, 'osmosis', 'user1');
+test.serial(queryAccountBalances, 'cosmoshub', 'user2');
+test.serial(queryAccountBalances, 'agoric', 'user3');
+test.serial(queryAccountBalance, 'osmosis', 'user4');
+test.serial(queryAccountBalance, 'cosmoshub', 'user5');
+test.serial(queryAccountBalance, 'agoric', 'user6');
