@@ -1,5 +1,9 @@
 /** @import {ChainPolicy} from '../types.js'; */
 
+/** ABI for DepositForBurn event in TokenMessenger contract */
+export const DepositForBurnEvent =
+  'DepositForBurn(uint64,address,uint256,address,bytes32,uint32,bytes32,bytes32)';
+
 /** @satisfies {Record<'MAINNET'| 'TESTNET', Record<string, ChainPolicy>>} */
 export const ChainPolicies = /** @type {const} */ ({
   MAINNET: {
@@ -133,3 +137,15 @@ export const ChainPolicies = /** @type {const} */ ({
   },
 });
 harden(ChainPolicies);
+
+// XXX copied from deploy-config.js to avoid large / off-chain code in a core eval
+export const feedPolicies = {
+  MAINNET: {
+    nobleAgoricChannelId: 'channel-21',
+    nobleDomainId: 4,
+    chainPolicies: ChainPolicies.MAINNET,
+    eventFilter: DepositForBurnEvent,
+  },
+  // TESTNET not needed / used
+};
+harden(feedPolicies);
