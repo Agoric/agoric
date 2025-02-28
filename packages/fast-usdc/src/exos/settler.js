@@ -1,3 +1,5 @@
+/** @file main export: @see {prepareSettler} */
+
 import { AmountMath } from '@agoric/ertp';
 import { assertAllDefined, makeTracer } from '@agoric/internal';
 import { CosmosChainAddressShape } from '@agoric/orchestration';
@@ -103,6 +105,11 @@ export const stateShape = harden({
 });
 
 /**
+ * Settler is responsible for monitoring (using receiveUpcall) deposits to the
+ * settlementAccount. It either "disburses" funds to the Pool (if funds were
+ * "advance"d to the payee), or "forwards" funds to the payee (if pool funds
+ * were not advanced).
+ *
  * @param {Zone} zone
  * @param {object} caps
  * @param {StatusManager} caps.statusManager
@@ -300,6 +307,9 @@ export const prepareSettler = (
       },
       self: {
         /**
+         * The intended payee received an advance from the pool. When the funds
+         * are minted disburse them to the pool.
+         *
          * @param {EvmHash} txHash
          * @param {NatValue} fullValue
          */
@@ -333,6 +343,8 @@ export const prepareSettler = (
           statusManager.disbursed(txHash, split);
         },
         /**
+         * Funds were not advanced. Forward proceeds to the payee directly.
+         *
          * @param {EvmHash} txHash
          * @param {NatValue} fullValue
          * @param {string} EUD
