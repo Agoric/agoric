@@ -495,7 +495,7 @@ test.serial('makes usdc advance', async t => {
     { status: 'OBSERVED' },
     { status: 'ADVANCING' },
     { status: 'ADVANCED' },
-    { status: 'DISBURSED', split: { ContractFee: { value: 302000n } } },
+    { status: 'DISBURSED', split: { ContractFee: { value: 152_000n } } },
   ]);
 
   const doc = {
@@ -519,12 +519,12 @@ test.serial('writes pool metrics to vstorage', async t => {
 test.serial('distributes fees per BLD staker decision', async t => {
   const { walletFactoryDriver: wd, buildProposal, evalProposal } = t.context;
 
-  const ContractFee = 302000n; // see split above
-  t.is(((ContractFee - 250000n) * 5n) / 10n, 26000n);
+  const ContractFee = 152_000n; // see split above
+  t.is(((ContractFee - 60_000n) * 5n) / 10n, 46_000n);
 
   const cases = [
-    { dest: 'agoric1a', args: ['--fixedFees', '0.25'], rxd: '250000' },
-    { dest: 'agoric1b', args: ['--feePortion', '0.5'], rxd: '26000' },
+    { dest: 'agoric1a', args: ['--fixedFees', '0.06'], rxd: '60000' },
+    { dest: 'agoric1b', args: ['--feePortion', '0.5'], rxd: '46000' },
   ];
   for (const { dest, args, rxd } of cases) {
     await wd.provideSmartWallet(dest);
