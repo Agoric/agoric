@@ -29,27 +29,19 @@ where the user code is really accepting an inbound IBC *Channel*.
 
 A channel via these IBC hops will terminate in IBC-aware code on either end. These endpoints might be traditional (static) IBC handlers (such as an ICS-20 token transfer module), or dynamic IBC handlers (e.g. running in a SwingSet vat). SwingSet vat code that wants to speak to vat code in a different SwingSet machine would not use the IBC connection directly: instead it would simply perform normal eventual-send operations (`E(target).foo(args)`) and let the "CapTP" promise-pipelining layer handle the details. But vat code which wants to speak to an ICS-20 handler in some other chain would need to use this layer.
 
-Vats which live inside a solo machine are able to use traditional networking layers, like TCP, HTTP, and WebSockets. This enables them to communicate with e.g. browser-side UI frontends that use WebSockets to query the vat for order status. These connections do not have to follow normal ocap rules, so vat code which accepts them must provide its own authentication and access control protections.
-
-Solo machines may be able to talk to chains and vice versa using specialized protocols. This will be used by CapTP to provide ocap messaging between these heterogeneous machine types.
-
-## The agoric-sdk User Local Port
-
-Each user of the Agoric testnet gets a few personal IBC listening ports. You can access these `Port` objects in the `home.ibcport` array, and you can learn their local address by calling something like `E(home.ibcport[0]).getLocalAddress()`, which will give you a local address like `/ibc-port/portbvmnfb`.
-
-This is currently the only way for user code to get an IBC `Port`, though non-IBC ports can be allocated using the local `home.network` object.  This is an advanced use case, to be documented later.
-
 ## Connecting to a Remote Port
 
 To establish a connection, you must start with a local `Port` object, and you must know the name of the remote endpoint. The remote endpoint will have a name like `/ibc-hop/$HOPNAME/ibc-port/$PORTNAME/ordered/$VERSION` (where `ibc-hop`, `ibc-port` and `ordered` are literal strings, spelled just like that, but `$HOPNAME`, `$PORTNAME`, and `$VERSION` are placeholders for arbitrary values that will vary from one endpoint to another).
 
-You must also prepare a `ConnectionHandler` object to manage the connection you're about to create. This has a number of methods which will be called when the things happen to the connection, including packets arriving. This is described in [Receiving Data](#receiving-data).
+Ports can be obtained from the `PortAllocator` in the `network` vat. Call `allocateCustomIBCPort()`, `allocateICAControllerPort()`, or `allocateICQControllerPort()` to get a port who's naming is scoped to a specific application protocol. _Binding transfer ports is not supported through network, but users are able to use the `transfer` vat to register an application to listen to or intercept ics-20 transfer packets._ As more network and application protocols emerge, we expect to support additional `PortAllocator` methods and naming conventions.
+
+You must also prepare a `ConnectionHandler` object to manage the connection you're about to create. This has a number of methods which will be called when things happen to the connection, including packets arriving. This is described in [Receiving Data](#receiving-data).
 
 Then you will call the `connect()` method on your local `Port`. This will return a `Promise` that will fire with a new `Connection` object, on which you can send data. Your `ConnectionHandler` will be notified about the new channel, and will receive inbound data from the other side.
 
 ```js
 const remoteEndpoint = `/ibc-hop/${hopName}/ibc-port/${portName}/ordered/${version}`;
-E(home.ibcport[0]).connect(remoteEndpoint, connectionHandler)
+E(port).connect(remoteEndpoint, connectionHandler)
   .then(conn => doSomethingWithConnection(conn));
 ```
 
@@ -57,16 +49,16 @@ E(home.ibcport[0]).connect(remoteEndpoint, connectionHandler)
 
 The other side of `connect()` is a "listening port". These ports are waiting for inbound connections to be established.
 
-To get a listening port, you need a `NetworkInterface` object (such as the one on your `ag-solo` under `home.network`) and ask it for a port, via the `PortAllocator`.
+To get a listening port, you need a `NetworkInterface` object and ask it for a port, via the `portAllocator` capability available in the bootstrap space.
 
 ```js
 // ask for a random allocation - ends with a slash
-E(home.network).getPortAllocator()
+E(networkInterface).getPortAllocator()
   .then(portAllocator => E(portAllocator).allocateCustomIBCPort())
   .then(port => usePort(port));
 ```
 
-IBC has named "hops" (what they call "Connections" in the IBC spec) which each carry data between two specific chains.  These hops are different from the connections described in this document.  When you bind a port like `/ibc-port/$PORT` without specifying the "hop", any IBC chain can initiate a connection to this port.
+IBC has named "hops" (what they call "Connections" in the IBC spec) which each carry data between two specific chains. These hops are different from the connections described in this document. When you bind a port like `/ibc-port/$PORT` without specifying the "hop", any IBC chain can initiate a connection to this port.
 
 You can ask the `Port` object this returns for its local address, which is especially useful if you had asked for a random allocation (since otherwise you have no way to know what address you got):
 
@@ -90,7 +82,6 @@ port.addListener(handler).then(() => console.log('listener is active'))
 `onAccept()` is the most important method. It is called with a `remote` endpoint, which tells you the address of the `Port` at the other end, where someone else called `connect()`. You can use this to decide if you want to accept the connection, or what sort of authority to exercise in response to messages arriving therein.
 
 If you choose to accept, your `onAccept()` method must return a `Promise` that fires with a [`ConnectionHandler`](#receiving-data). This will be used just like the one you would pass into `connect()`. To decline, throw an error.
-
 
 ## Sending Data
 
@@ -128,7 +119,7 @@ When a given Connection has ceased to be useful, you should close it:
 connection.close();
 ```
 
-This initiates a shutdown. The `ConnectionHandler` on both sides will eventually see their `onClose()` methods be called, with a `reason`.  It will allow them to distinguish an intentional `onClose()` (`reason` is `undefined`) from some error condition.
+This initiates a shutdown. The `ConnectionHandler` on both sides will eventually see their `onClose()` methods be called, with a `reason`. It will allow them to distinguish an intentional `onClose()` (`reason` is `undefined`) from some error condition.
 
 ## Removing a Listener
 
@@ -140,16 +131,14 @@ port.removeListener(handler).then(() => console.log('removed'));
 
 You must provide the handler you added, to enable the future ability to have multiple listeners on the same port.
 
-Note that if you want to listen on this port again, you can just call `port.addListener(...)`, as before.  If you want to start a new connection, you can always call `port.connect(...)`.
+Note that if you want to listen on this port again, you can just call `port.addListener(...)`, as before. If you want to start a new connection, you can always call `port.connect(...)`.
 
 ### Closing the Port Entirely
 
-Removing a listener doesn't release the port address to make it available for other `PortAllocator` requests.  You can call:
+Removing a listener doesn't release the port address to make it available for other `PortAllocator` requests. You can call:
 
 ```js
 port.revoke();
 ```
 
 to completely deallocate the port, remove all listeners, close all pending connections, and release its address.
-
-**CAUTION:** Be aware that if you call `E(home.ibcport[0]).revoke()`, it will be useless for new `connect()` or `addListener()` attempts.  You will need to provision a new Agoric client to obtain a new setup with a functioning `home.ibcport[0]`.
