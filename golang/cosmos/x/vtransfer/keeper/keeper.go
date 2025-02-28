@@ -390,7 +390,7 @@ func (k Keeper) targetIsWatched(ctx sdk.Context, target string) bool {
 	return prefixStore.Has([]byte(target))
 }
 
-// GetWatchedAdresses returns the watched addresses from the keeper as a slice
+// GetWatchedAddresses returns the watched addresses from the keeper as a slice
 // of account addresses.
 func (k Keeper) GetWatchedAddresses(ctx sdk.Context) ([]sdk.AccAddress, error) {
 	addresses := make([]sdk.AccAddress, 0)
