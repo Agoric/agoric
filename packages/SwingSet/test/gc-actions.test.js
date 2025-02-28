@@ -105,7 +105,7 @@ test('gc actions', t => {
   t.deepEqual(msg, make('dropExports', 'v1', 'ko1'));
   clistState.v1.ko1 = { exists: true, isReachable: false };
   t.deepEqual(newActions, ['v1 retireExport ko1']);
-  // the retire is left pending because we ignore lower-prority types
+  // the retire is left pending because we ignore lower-priority types
   setActions(['v1 retireExport ko1']);
   rc = { ko1: [0, 1] };
   msg = process();

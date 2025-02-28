@@ -194,7 +194,7 @@ async function doTestBootstrap(t, doPin) {
     // if not pinned, second message will go splat
     t.deepEqual(status, 'rejected');
     // If we don't pin the bootstrap root, then it will be GC'd after it
-    // finishes done processing the 'bootstrap' messsage.  This means that when
+    // finishes done processing the 'bootstrap' message.  This means that when
     // the 'doMore' message is delivered it will be addressed to an object (o+0)
     // whose vref doesn't (any longer) exist.  In normal operation this is a
     // thing that cannot happen, since, to send the message in the first place

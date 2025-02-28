@@ -424,7 +424,7 @@ export function commsVatDriver(t, verbose = false) {
    *   the kernel, or 'a', b', or 'c', one of the remotes.
    * @param {string} target  Scriptref of the object or promise that is the
    *   target of the message.
-   * @param {unknown} methargs  Capdata containg the method and arguments.
+   * @param {unknown} methargs  Capdata containing the method and arguments.
    * @param {string|undefined} result  Scriptref of the result promise or
    *   undefined to indicate a one-way message.
    */
