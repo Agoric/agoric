@@ -2,6 +2,7 @@ import { q } from '@endo/errors';
 import { objectMap } from '@agoric/internal';
 import { makeLimitedConsole } from '@agoric/internal/src/ses-utils.js';
 
+/** @import {Callable} from '@agoric/internal'; */
 /** @import {LimitedConsole} from '@agoric/internal/src/js-utils.js'; */
 
 const IDLE = 'idle';
@@ -22,7 +23,7 @@ const noopFinisher = harden(() => {});
  * (e.g., its finisher), and are expected to return a finisher of their own that
  * will invoke that wrapped finisher.
  *
- * @template {Record<string, Function>} Methods
+ * @template {Record<string, Callable>} Methods
  * @param {SlogWrappers} slogCallbacks
  * @param {string} unusedMsgPrefix prefix for warn-level logging about unused callbacks
  * @param {Methods} methods to wrap
