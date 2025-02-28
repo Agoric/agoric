@@ -29,7 +29,7 @@ const ModdableSDK = {
  *   spawn: typeof import('child_process').spawn,
  * }} io
  */
-function makeCLI(command, { spawn }) {
+export function makeCLI(command, { spawn }) {
   /** @param {import('child_process').ChildProcess} child */
   const wait = child =>
     new Promise((resolve, reject) => {
