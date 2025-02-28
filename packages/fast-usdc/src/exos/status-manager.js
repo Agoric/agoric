@@ -315,17 +315,6 @@ export const prepareStatusManager = (
       },
 
       /**
-       * Add a new transaction with OBSERVED status.
-       *
-       * This message isn't currently being sent.
-       *
-       * @param {CctpTxEvidence} evidence
-       */
-      observe(evidence) {
-        initPendingTx(evidence, PendingTxStatus.Observed);
-      },
-
-      /**
        * Note: ADVANCING state implies tx has been OBSERVED
        *
        * @param {CctpTxEvidence} evidence

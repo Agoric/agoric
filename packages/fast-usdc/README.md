@@ -79,30 +79,19 @@ were not `advance`d).
 
 ```mermaid
 stateDiagram-v2
-  [*] --> AdvanceSkipped : Risks identified
-  [*] --> Advancing : No risks, can advance
-  [*] --> Forwarding* : No risks, Mint deposited before advance
+  state Forwarding <<choice>>
+  state AdvancingChoice <<choice>>
 
-  state Advancer  {
-    Advanced
-    AdvanceFailed
-    AdvanceSkipped
-    Advancing
-  }
-  state Settler {
-    Forwarded
-    ForwardFailed
-    Disbursed
-  }
+  Observed --> AdvanceSkipped : Risks identified
+  Observed --> Advancing : No risks, can advance
+  Observed --> Forwarding : No risks, Mint deposited before advance
 
-  Forwarding* --> Forwarded : settler.forward() succeeds
-  Advancing --> Advanced : advancer's transferHandler detects success
+  Forwarding --> Forwarded : settler.forward() succeeds
+  Advancing --> AcvancingChoice
+  AcvancingChoice --> Advanced : advancer's transferHandler detects success
   Advanced --> Disbursed : settler.disburse()
-  AdvanceSkipped --> Forwarding* : Mint deposited
-  AdvanceFailed --> Forwarding* : Mint deposited
-  Advancing --> AdvanceFailed : advancer's transferHandler detects failure
-  Forwarding* --> ForwardFailed : settler.forward() fails
+  AdvanceSkipped --> Forwarding : Mint deposited
+  AdvanceFailed --> Forwarding : Mint deposited
+  AcvancingChoice --> AdvanceFailed : advancer's transferHandler detects failure
+  Forwarding --> ForwardFailed : settler.forward() fails
  ```
-
-* There is no actual state for **Forwarding**. It is used here to represent the
-transition from Advancer to Settler

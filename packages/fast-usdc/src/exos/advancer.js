@@ -1,3 +1,5 @@
+/** @file main export: @see {prepareAdvancerKit} */
+
 import { decodeAddressHook } from '@agoric/cosmic-proto/address-hooks.js';
 import { AmountMath } from '@agoric/ertp';
 import { assertAllDefined, makeTracer } from '@agoric/internal';
@@ -16,12 +18,6 @@ import {
   EvidenceWithRiskShape,
 } from '../type-guards.js';
 import { makeFeeTools } from '../utils/fees.js';
-
-/**
- * @file Advancer subscribes (handleTransactionEvent) to events published by the
- * transaction feed. When notified of an appropriate opportunity, it is
- * responsible for advancing funds to fastUSDC payees.
- */
 
 /**
  * @import {HostInterface} from '@agoric/async-flow';
@@ -109,6 +105,10 @@ export const stateShape = harden({
 });
 
 /**
+ * Advancer subscribes (using handleTransactionEvent) to events published by the
+ * transaction feed. When notified of an appropriate opportunity, it is
+ * responsible for advancing funds to fastUSDC payees.
+ *
  * @param {Zone} zone
  * @param {AdvancerKitPowers} caps
  */

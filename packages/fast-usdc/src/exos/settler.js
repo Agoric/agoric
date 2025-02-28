@@ -1,3 +1,5 @@
+/** @file main export: @see {prepareSettler} */
+
 import { AmountMath } from '@agoric/ertp';
 import { assertAllDefined, makeTracer } from '@agoric/internal';
 import { CosmosChainAddressShape } from '@agoric/orchestration';
@@ -13,13 +15,6 @@ import {
   EvmHashShape,
   makeNatAmountShape,
 } from '../type-guards.js';
-
-/**
- * @file Settler is responsible for monitoring (receiveUpcall) deposits to the
- * settlementAccount. It either "disburses" funds to the Pool (if funds were
- * "advance"d to the payee), or "forwards" funds to the payee (if pool funds
- * were not advanced).
- */
 
 /**
  * @import {FungibleTokenPacketData} from '@agoric/cosmic-proto/ibc/applications/transfer/v2/packet.js';
@@ -110,6 +105,11 @@ export const stateShape = harden({
 });
 
 /**
+ * Settler is responsible for monitoring (using receiveUpcall) deposits to the
+ * settlementAccount. It either "disburses" funds to the Pool (if funds were
+ * "advance"d to the payee), or "forwards" funds to the payee (if pool funds
+ * were not advanced).
+ *
  * @param {Zone} zone
  * @param {object} caps
  * @param {StatusManager} caps.statusManager

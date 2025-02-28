@@ -1,3 +1,5 @@
+/** @file main export: @see {prepareTransactionFeedKit} */
+
 import { makeTracer } from '@agoric/internal';
 import { prepareDurablePublishKit } from '@agoric/notifier';
 import { keyEQ, M } from '@endo/patterns';
@@ -5,12 +7,6 @@ import { Fail, quote } from '@endo/errors';
 import { CctpTxEvidenceShape, RiskAssessmentShape } from '../type-guards.js';
 import { defineInertInvitation } from '../utils/zoe.js';
 import { prepareOperatorKit } from './operator-kit.js';
-
-/**
- * @file transaction-feed receives attestations from Oracles, records their
- * evidence, and when enough oracles agree, (if no risks are identified)
- * publishes the results for the advancer to act on.
- */
 
 /**
  * @import {Zone} from '@agoric/zone';
@@ -72,6 +68,10 @@ export const stateShape = {
 };
 
 /**
+ * transaction-feed receives attestations from Oracles, records their
+ * evidence, and when enough oracles agree, (if no risks are identified)
+ * publishes the results for the advancer to act on.
+ *
  * @param {Zone} zone
  * @param {ZCF} zcf
  */
