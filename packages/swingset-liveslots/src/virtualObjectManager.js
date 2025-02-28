@@ -3,7 +3,7 @@
 
 import { environmentOptionsListHas } from '@endo/env-options';
 import { assert, Fail, q, b } from '@endo/errors';
-import { assertPattern, mustMatch } from '@agoric/store';
+import { assertPattern, mustCompress, mustDecompress } from '@endo/patterns';
 import { defendPrototype, defendPrototypeKit } from '@endo/exo/tools.js';
 import { Far, passStyleOf } from '@endo/marshal';
 import { Nat } from '@endo/nat';
@@ -816,8 +816,12 @@ export const makeVirtualObjectManager = (
 
     /** @type {(prop: string) => void} */
     let checkStateProperty = _prop => {};
-    /** @type {(value: any, prop: string) => void} */
-    let checkStatePropertyValue = (_value, _prop) => {};
+    let serializeStatePropertyValue = (value, _prop, _label) => {
+      return serialize(value);
+    };
+    let unserializeStatePropertyValue = (data, _prop, _label) => {
+      return harden(unserialize(data));
+    };
     if (stateShape) {
       checkStateProperty = prop => {
         hasOwn(stateShape, prop) ||
@@ -825,9 +829,17 @@ export const makeVirtualObjectManager = (
             ownKeys(stateShape),
           )}`;
       };
-      checkStatePropertyValue = (value, prop) => {
+      serializeStatePropertyValue = (value, prop, label) => {
         checkStateProperty(prop);
-        mustMatch(value, stateShape[prop]);
+        return serialize(mustCompress(value, stateShape[prop], label));
+      };
+      unserializeStatePropertyValue = (data, prop, label) => {
+        checkStateProperty(prop);
+        return mustDecompress(
+          harden(unserialize(data)),
+          stateShape[prop],
+          label,
+        );
       };
     }
 
@@ -861,16 +873,18 @@ export const makeVirtualObjectManager = (
           assert(record !== undefined);
           const { valueMap, capdatas } = record;
           if (!valueMap.has(prop)) {
-            const value = harden(unserialize(capdatas[prop]));
-            checkStatePropertyValue(value, prop);
+            const value = unserializeStatePropertyValue(
+              capdatas[prop],
+              prop,
+              prop,
+            );
             valueMap.set(prop, value);
           }
           return valueMap.get(prop);
         },
         set(value) {
           const baseRef = getBaseRef(this);
-          checkStatePropertyValue(value, prop);
-          const capdata = serialize(value);
+          const capdata = serializeStatePropertyValue(value, prop, prop);
           assertAcceptableSyscallCapdataSize([capdata]);
           if (isDurable) {
             insistDurableCapdata(vrm, prop, capdata, true);
@@ -1061,8 +1075,7 @@ export const makeVirtualObjectManager = (
       const valueMap = new Map();
       for (const prop of getOwnPropertyNames(initialData)) {
         const value = initialData[prop];
-        checkStatePropertyValue(value, prop);
-        const valueCD = serialize(value);
+        const valueCD = serializeStatePropertyValue(value, prop, prop);
         // TODO: we're only checking the size of one property at a
         // time, but the real constraint is the vatstoreSet of the
         // aggregate record. We should apply this check to the full

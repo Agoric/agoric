@@ -16,6 +16,8 @@ import {
   getRankCover,
   getCopyMapEntries,
   getCopySetKeys,
+  mustCompress,
+  mustDecompress,
 } from '@endo/patterns';
 import { isCopyMap, isCopySet } from '@agoric/store';
 import { makeBaseRef, parseVatSlot } from './parseVatSlots.js';
@@ -270,19 +272,24 @@ export function makeCollectionManager(
 
     const serializeValue = value => {
       const { valueShape, label } = getSchema();
-      if (valueShape !== undefined) {
-        mustMatch(value, valueShape, makeInvalidValueTypeMsg(label));
+      if (valueShape === undefined) {
+        return serialize(value);
       }
-      return serialize(value);
+      return serialize(
+        mustCompress(value, valueShape, makeInvalidValueTypeMsg(label)),
+      );
     };
 
     const unserializeValue = data => {
       const { valueShape, label } = getSchema();
-      const value = unserialize(data);
-      if (valueShape !== undefined) {
-        mustMatch(value, valueShape, makeInvalidValueTypeMsg(label));
+      if (valueShape === undefined) {
+        return unserialize(data);
       }
-      return value;
+      return mustDecompress(
+        unserialize(data),
+        valueShape,
+        makeInvalidValueTypeMsg(label),
+      );
     };
 
     function prefix(dbEntryKey) {
