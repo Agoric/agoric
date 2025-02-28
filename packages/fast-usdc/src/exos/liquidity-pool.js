@@ -1,5 +1,7 @@
 import { AmountMath, AmountShape, RatioShape } from '@agoric/ertp';
 import {
+  fromOnly,
+  toOnly,
   makeRecorderTopic,
   RecorderKitShape,
   TopicsRecordShape,
@@ -7,6 +9,7 @@ import {
 import { SeatShape } from '@agoric/zoe/src/typeGuards.js';
 import { M } from '@endo/patterns';
 import { Fail, q } from '@endo/errors';
+import { TransferPartShape } from '@agoric/zoe/src/contractSupport/atomicTransfer.js';
 import {
   borrowCalc,
   checkPoolBalance,
@@ -83,7 +86,7 @@ export const prepareLiquidityPoolKit = (zone, zcf, USDC, tools) => {
       }),
       repayer: M.interface('repayer', {
         repay: M.call(
-          SeatShape,
+          TransferPartShape,
           harden({
             Principal: makeNatAmountShape(USDC, 1n),
             PoolFee: makeNatAmountShape(USDC, 0n),
@@ -179,7 +182,6 @@ export const prepareLiquidityPoolKit = (zone, zcf, USDC, tools) => {
          * @param {Amount<'nat'>} amount
          */
         returnToPool(borrowSeat, amount) {
-          const { zcfSeat: repaySeat } = zcf.makeEmptySeatKit();
           const returnAmounts = harden({
             Principal: amount,
             PoolFee: makeEmpty(USDC),
@@ -188,21 +190,18 @@ export const prepareLiquidityPoolKit = (zone, zcf, USDC, tools) => {
           const borrowSeatAllocation = borrowSeat.getCurrentAllocation();
           isGTE(borrowSeatAllocation.USDC, amount) ||
             Fail`⚠️ borrowSeatAllocation ${q(borrowSeatAllocation)} less than amountKWR ${q(amount)}`;
-          // arrange payments in a format repay is expecting
-          zcf.atomicRearrange(
-            harden([[borrowSeat, repaySeat, { USDC: amount }, returnAmounts]]),
-          );
-          this.facets.repayer.repay(repaySeat, returnAmounts);
+
+          const transferSourcePart = fromOnly(borrowSeat, { USDC: amount });
+          this.facets.repayer.repay(transferSourcePart, returnAmounts);
           borrowSeat.exit();
-          repaySeat.exit();
         },
       },
       repayer: {
         /**
-         * @param {ZCFSeat} fromSeat
-         * @param {RepayAmountKWR} amounts
+         * @param {TransferPart} sourceTransfer
+         * @param {RepayAmountKWR} split
          */
-        repay(fromSeat, amounts) {
+        repay(sourceTransfer, split) {
           const {
             encumberedBalance,
             feeSeat,
@@ -215,30 +214,21 @@ export const prepareLiquidityPoolKit = (zone, zcf, USDC, tools) => {
             shareWorth,
             encumberedBalance,
           );
-
-          const fromSeatAllocation = fromSeat.getCurrentAllocation();
-          // Validate allocation equals amounts and Principal <= encumberedBalance
+          // Validate Principal <= encumberedBalance and produce poolStats after
           const post = repayCalc(
             shareWorth,
-            fromSeatAllocation,
-            amounts,
+            split,
             encumberedBalance,
             poolStats,
           );
-
-          const { ContractFee, ...rest } = amounts;
 
           // COMMIT POINT
           // UNTIL #10684: ability to terminate an incarnation w/o terminating the contract
           zcf.atomicRearrange(
             harden([
-              [
-                fromSeat,
-                poolSeat,
-                rest,
-                { USDC: add(amounts.PoolFee, amounts.Principal) },
-              ],
-              [fromSeat, feeSeat, { ContractFee }, { USDC: ContractFee }],
+              sourceTransfer,
+              toOnly(poolSeat, { USDC: add(split.PoolFee, split.Principal) }),
+              toOnly(feeSeat, { USDC: split.ContractFee }),
             ]),
           );
 

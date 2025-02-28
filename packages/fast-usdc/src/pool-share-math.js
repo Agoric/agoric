@@ -201,35 +201,23 @@ export const borrowCalc = (
 
 /**
  * @param {ShareWorth} shareWorth
- * @param {Allocation} fromSeatAllocation
- * @param {RepayAmountKWR} amounts
+ * @param {RepayAmountKWR} split
  * @param {Amount<'nat'>} encumberedBalance aka 'outstanding borrows'
  * @param {PoolStats} poolStats
- * @throws {Error} if allocations do not match amounts or Principal exceeds encumberedBalance
+ * @throws {Error} if Principal exceeds encumberedBalance
  */
-export const repayCalc = (
-  shareWorth,
-  fromSeatAllocation,
-  amounts,
-  encumberedBalance,
-  poolStats,
-) => {
-  (isEqual(fromSeatAllocation.Principal, amounts.Principal) &&
-    isEqual(fromSeatAllocation.PoolFee, amounts.PoolFee) &&
-    isEqual(fromSeatAllocation.ContractFee, amounts.ContractFee)) ||
-    Fail`Cannot repay. From seat allocation ${q(fromSeatAllocation)} does not equal amounts ${q(amounts)}.`;
-
-  isGTE(encumberedBalance, amounts.Principal) ||
-    Fail`Cannot repay. Principal ${q(amounts.Principal)} exceeds encumberedBalance ${q(encumberedBalance)}.`;
+export const repayCalc = (shareWorth, split, encumberedBalance, poolStats) => {
+  isGTE(encumberedBalance, split.Principal) ||
+    Fail`Cannot repay. Principal ${q(split.Principal)} exceeds encumberedBalance ${q(encumberedBalance)}.`;
 
   return harden({
-    shareWorth: withFees(shareWorth, amounts.PoolFee),
-    encumberedBalance: subtract(encumberedBalance, amounts.Principal),
+    shareWorth: withFees(shareWorth, split.PoolFee),
+    encumberedBalance: subtract(encumberedBalance, split.Principal),
     poolStats: {
       ...poolStats,
-      totalRepays: add(poolStats.totalRepays, amounts.Principal),
-      totalPoolFees: add(poolStats.totalPoolFees, amounts.PoolFee),
-      totalContractFees: add(poolStats.totalContractFees, amounts.ContractFee),
+      totalRepays: add(poolStats.totalRepays, split.Principal),
+      totalPoolFees: add(poolStats.totalPoolFees, split.PoolFee),
+      totalContractFees: add(poolStats.totalContractFees, split.ContractFee),
     },
   });
 };
