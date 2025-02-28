@@ -157,6 +157,120 @@ jobs:
           to: ${{ secrets.NOTIFY_EMAIL_TO }}
           password: ${{ secrets.NOTIFY_EMAIL_PASSWORD }}
 
+  docker-a3p-upgrade-next:
+    needs: [docker-sdk, snapshot]
+    runs-on: 'depot-ubuntu-22.04-16' # ubuntu-latest
+    permissions:
+      # allow issuing OIDC tokens for this workflow run
+      id-token: write
+      # allow at least reading the repo contents, add other permissions if necessary
+      contents: read
+      # to push the resulting images
+      packages: write
+    outputs:
+      build-id: '${{ steps.bake-upgrade-next.outputs.build-id }}'
+      json-tags: '${{ steps.prefix-tags.outputs.json-tags }}'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/restore-node
+        with:
+          # 18.19 causes this problem running tsx:
+          # The --loader flag was deprecated in Node v20.6.0
+          node-version: 18.18
+          # Since we can't build core eval submissions for the SDK using a newer endo,
+          # simply ignore any endo branch integration (this means we don't have full coverage)
+          ignore-endo-branch: 'true'
+
+      - name: Install deps
+        run: |
+          # Enable corepack for packageManager config
+          corepack enable || sudo corepack enable
+          yarn install
+        working-directory: a3p-integration
+
+      - name: Save SDK_TAG
+        run: echo "SDK_TAG=${{ needs.snapshot.outputs.tag }}" >> $GITHUB_ENV
+
+      - name: Override the buildConfig variables
+        run: |
+          jq --arg PLATFORMS "$DOCKER_PLATFORMS" \
+            '. * {"agoricSyntheticChain": {
+              "platforms": ($PLATFORMS | split(","))
+            }}' package.json > ./package.json.new
+          mv ./package.json.new ./package.json
+
+          jq --arg SDK_TAG "$SDK_TAG" \
+            '. * {"agoricProposal": {
+              "sdkImageTag": $SDK_TAG,
+            }}' proposals/n\:upgrade-next/package.json > ./package.json.new
+          mv ./package.json.new proposals/n\:upgrade-next/package.json
+        working-directory: a3p-integration
+
+      - name: Prefix tags
+        id: prefix-tags
+        run: |
+          # These tags don't have an image name attached yet and are JSONified
+          # with newline separators because they are used as input to
+          # docker/metadata-action.
+          PREFIX=use-upgrade-next-
+          JSON_TAGS=
+          sep=
+          for TAG in "$SDK_TAG" ${{ needs.docker-sdk.outputs.tags }}; do
+            JSON_TAGS="$JSON_TAGS$sep$PREFIX$TAG"
+            sep='\n'
+          done
+          echo "json-tags=\"$JSON_TAGS\"" >> $GITHUB_OUTPUT
+
+      - name: Prepare Docker config
+        run: |
+          # prepare files for bake-action
+          yarn build:submissions
+          yarn synthetic-chain prepare-build
+
+          # Comment out the bake tags in favour of our metadata tags.
+          sed -i.orig -e 's%\( tags =\)% //\1%' docker-bake.hcl
+        working-directory: a3p-integration
+
+      - uses: depot/setup-action@v1
+        with:
+          oidc: true # to set DEPOT_TOKEN for later steps
+      - run: depot configure-docker
+      - name: Login to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/agoric/a3p-integration
+          tags: ${{ fromJSON(steps.prefix-tags.outputs.json-tags) }}
+
+      - name: Publish "use-upgrade-next" image
+        uses: depot/bake-action@v1
+        id: bake-upgrade-next
+        with:
+          files: |
+            docker-bake.json
+            docker-bake.hcl
+            ${{ steps.meta.outputs.bake-file }}
+          targets: use-upgrade-next
+          push: true
+          workdir: ./a3p-integration
+
+      - name: clean up repo
+        run: git clean -f . && git restore .
+      - name: notify on failure
+        if: failure()
+        uses: ./.github/actions/notify-status
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          from: ${{ secrets.NOTIFY_EMAIL_FROM }}
+          to: ${{ secrets.NOTIFY_EMAIL_TO }}
+          password: ${{ secrets.NOTIFY_EMAIL_PASSWORD }}
+
   docker-solo:
     needs: [docker-sdk, snapshot]
     runs-on: 'depot-ubuntu-22.04-16' # ubuntu-latest
