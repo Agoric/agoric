@@ -6,11 +6,11 @@ import { kser, kunser } from '@agoric/kmarshal';
 import { initSwingStore } from '@agoric/swing-store';
 
 import {
-  buildVatController,
   loadSwingsetConfigFile,
   buildKernelBundles,
 } from '../../../src/index.js';
 import { enumeratePrefixedKeys } from '../../../src/kernel/state/storageHelper.js';
+import { buildTestVatController } from '../../../tools/test-vat-controller.js';
 import { restartVatAdminVat } from '../../util.js';
 
 test.before(async t => {
@@ -44,7 +44,7 @@ async function doTerminateNonCritical(
   const config = await loadSwingsetConfigFile(configPath);
   config.defaultReapInterval = 'never';
   const kernelStorage = initSwingStore().kernelStorage;
-  const controller = await buildVatController(config, [], {
+  const controller = await buildTestVatController(config, [], {
     ...t.context.data,
     kernelStorage,
   });
@@ -108,7 +108,7 @@ async function doTerminateCritical(
   const config = await loadSwingsetConfigFile(configPath);
   config.defaultReapInterval = 'never';
   const kernelStorage = initSwingStore().kernelStorage;
-  const controller = await buildVatController(config, [], {
+  const controller = await buildTestVatController(config, [], {
     ...t.context.data,
     kernelStorage,
   });
@@ -382,7 +382,7 @@ test.serial('exit with presence', async t => {
     .pathname;
   const config = await loadSwingsetConfigFile(configPath);
   config.defaultReapInterval = 'never';
-  const controller = await buildVatController(config, [], t.context.data);
+  const controller = await buildTestVatController(config, [], t.context.data);
   t.teardown(controller.shutdown);
   await controller.run();
   t.deepEqual(controller.dump().log, [
@@ -401,7 +401,7 @@ test.serial('dispatches to the dead do not harm kernel', async t => {
 
   const ss1 = initSwingStore();
   {
-    const c1 = await buildVatController(config, [], {
+    const c1 = await buildTestVatController(config, [], {
       kernelStorage: ss1.kernelStorage,
       kernelBundles: t.context.data.kernelBundles,
     });
@@ -420,7 +420,7 @@ test.serial('dispatches to the dead do not harm kernel', async t => {
   const serialized = ss1.debug.serialize();
   const ss2 = initSwingStore(null, { serialized });
   {
-    const c2 = await buildVatController(config, [], {
+    const c2 = await buildTestVatController(config, [], {
       kernelStorage: ss2.kernelStorage,
       kernelBundles: t.context.data.kernelBundles,
     });
@@ -442,7 +442,7 @@ test.serial('invalid criticalVatKey causes vat creation to fail', async t => {
     .pathname;
   const config = await loadSwingsetConfigFile(configPath);
   config.defaultReapInterval = 'never';
-  const controller = await buildVatController(config, [], t.context.data);
+  const controller = await buildTestVatController(config, [], t.context.data);
   t.teardown(controller.shutdown);
   await t.throwsAsync(() => controller.run(), {
     message: /invalid criticalVatKey/,
@@ -456,7 +456,7 @@ test.serial('dead vat state removed', async t => {
   config.defaultReapInterval = 'never';
   const { kernelStorage, debug } = initSwingStore();
 
-  const controller = await buildVatController(config, [], {
+  const controller = await buildTestVatController(config, [], {
     kernelStorage,
     kernelBundles: t.context.data.kernelBundles,
   });
@@ -519,7 +519,7 @@ test.serial('terminate with presence', async t => {
   ).pathname;
   const config = await loadSwingsetConfigFile(configPath);
   config.defaultReapInterval = 'never';
-  const controller = await buildVatController(config, [], t.context.data);
+  const controller = await buildTestVatController(config, [], t.context.data);
   t.teardown(controller.shutdown);
   await controller.run();
   t.deepEqual(controller.dump().log, [
