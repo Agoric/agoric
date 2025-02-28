@@ -4,8 +4,12 @@ shared:
       {{ title }} (#{{ number }})
 
       {{ body | trim }}
-    queue_conditions: &queue-conditions
+    branches: &branches
       - base=master
+      - base=dev-*
+      - base=release-*
+    queue_conditions: &queue-conditions
+      - or: *branches
       - or:
           - check-pending=integration-test-result
           - check-success=integration-test-result
@@ -18,7 +22,7 @@ shared:
               - check-failure=breakage
               - label=proto:expect-breakage
     merge_conditions: &merge-conditions
-      - base=master
+      - or: *branches
       # Rebase PRs with fixup commits are allowed to enter the merge queue but 
       # should not be allowed to merge if there are leftover fixup commits after rebase
       - or:
@@ -30,19 +34,19 @@ shared:
           - label=bypass:integration
           - check-success=integration-test-result
     pr_queue_merge_conditions: &pr-queue-merge-conditions
-      - base=master
+      - or: *branches
       - label=automerge:no-update
       - or:
           - '#commits-behind=0'
           - label=bypass:linear-history
     pr_queue_rebase_conditions: &pr-queue-rebase-conditions
-      - base=master
+      - or: *branches
       - label=automerge:rebase
       - or:
           - '#commits-behind>0'
           - linear-history
     pr_queue_squash_conditions: &pr-queue-squash-conditions
-      - base=master
+      - or: *branches
       - label=automerge:squash
 
 priority_rules:
@@ -89,7 +93,7 @@ pull_request_rules:
         name: squash
   - name: rebase and autosquash
     conditions:
-      - base=master
+      - or: *branches
       - label=automerge:rebase
       - '#commits-behind=0'
       - or:
