@@ -1,7 +1,7 @@
 // @ts-check
 
 import { Fail } from '@endo/errors';
-import { makeIssuerKit } from '@agoric/ertp';
+import { AmountMath, makeIssuerKit } from '@agoric/ertp';
 import { CONTRACT_ELECTORATE, ParamTypes } from '@agoric/governance';
 import {
   deeplyFulfilledObject,
@@ -15,13 +15,13 @@ import { buildZoeManualTimer } from '@agoric/zoe/tools/manualTimer.js';
 import { E } from '@endo/eventual-send';
 import { Far } from '@endo/marshal';
 import { makePromiseKit } from '@endo/promise-kit';
-import { withAmountUtils } from '../../supports.js';
 
 const trace = makeTracer('BootFAUpg');
 
 export const arV1BundleName = 'assetReserveV1';
 
-const moola = withAmountUtils(makeIssuerKit('moola'));
+const moola = makeIssuerKit('moola');
+const { make } = AmountMath;
 
 export const buildRootObject = async () => {
   const storageKit = makeFakeStorageKit('assetReserveUpgradeTest');
@@ -226,7 +226,7 @@ export const buildRootObject = async () => {
 
       await E(arLimitedFacet).addIssuer(moola.issuer, 'Moola');
 
-      const amt = moola.make(100_000n);
+      const amt = make(moola.brand, 100_000n);
       const collateralSeat = addCollateral(amt);
 
       assert.equal(
@@ -280,7 +280,7 @@ export const buildRootObject = async () => {
       assert.equal(metricsRecord.updateCount, 2n);
 
       // add more collateral
-      const amt = moola.make(20_000n);
+      const amt = make(moola.brand, 20_000n);
       const collateralSeat = addCollateral(amt);
 
       assert.equal(

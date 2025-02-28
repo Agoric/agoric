@@ -1,7 +1,7 @@
 import { E, makeLoopback } from '@endo/captp';
 
 import { makeScalarBigMapStore } from '@agoric/vat-data';
-import bundleSource from '@endo/bundle-source';
+import { makeNodeBundleCache } from '@endo/bundle-source/cache.js';
 import { makeDurableZoeKit } from '../src/zoeService/zoe.js';
 import fakeVatAdmin, { makeFakeVatAdmin } from './fakeVatAdmin.js';
 
@@ -31,12 +31,14 @@ export const makeZoeForTest = vatAdminSvc =>
  * @param {FeeIssuerConfig} [options.feeIssuerConfig]
  * @param {VatAdminSvc} [options.vatAdminSvc]
  * @param {boolean} [options.useNearRemote]
+ * @param {string} [options.bundlesDir]
  */
 export const setUpZoeForTest = async ({
   setJig = () => {},
   feeIssuerConfig,
   vatAdminSvc,
   useNearRemote = false,
+  bundlesDir = 'bundles',
 } = {}) => {
   const { makeFar, makeNear } = makeLoopback('zoeTest');
 
@@ -56,12 +58,14 @@ export const setUpZoeForTest = async ({
     }),
   );
 
+  const bundleCache = await makeNodeBundleCache(bundlesDir, {}, s => import(s));
+
   /**
    * @param {string} path
    * @returns {Promise<Installation>}
    */
   const bundleAndInstall = async path => {
-    const bundle = await bundleSource(path);
+    const bundle = await bundleCache.load(path);
     const id = `b1-${path}`;
     assert(vatAdminState, 'installBundle called before vatAdminState defined');
     vatAdminState.installBundle(id, bundle);
