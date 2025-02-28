@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { promisify } from 'node:util';
 import tmp from 'tmp';
 import { test } from './prepare-test-env-ava.js';
 
@@ -17,12 +18,21 @@ const bufferTests = test.macro(
   async (t, input) => {
     const BUFFER_SIZE = 512;
 
-    const { name: tmpFile, removeCallback } = tmp.fileSync();
+    const {
+      name: tmpFile,
+      fd,
+      removeCallback,
+    } = tmp.fileSync({ detachDescriptor: true });
+    t.teardown(removeCallback);
+    const fileHandle = /** @type {import('fs/promises').FileHandle} */ ({
+      close: promisify(fs.close.bind(fs, fd)),
+    });
     const { readCircBuf, writeCircBuf } = await input.makeBuffer({
       circularBufferSize: BUFFER_SIZE,
       circularBufferFilename: tmpFile,
     });
-    const slogSender = makeSlogSenderFromBuffer({ writeCircBuf });
+    const slogSender = makeSlogSenderFromBuffer({ fileHandle, writeCircBuf });
+    t.teardown(slogSender.shutdown);
     slogSender({ type: 'start' });
     await slogSender.forceFlush();
     t.is(fs.readFileSync(tmpFile, { encoding: 'utf8' }).length, BUFFER_SIZE);
@@ -73,8 +83,6 @@ const bufferTests = test.macro(
     slogSender(null, 'PRE-SERIALIZED');
     await slogSender.forceFlush();
     t.truthy(fs.readFileSync(tmpFile).includes('PRE-SERIALIZED'));
-    // console.log({ tmpFile });
-    removeCallback();
   },
 );
 

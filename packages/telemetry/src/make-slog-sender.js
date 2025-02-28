@@ -158,15 +158,15 @@ export const makeSlogSender = async (opts = {}) => {
       }
     };
     return Object.assign(slogSender, {
-      forceFlush: async () =>
-        PromiseAllOrErrors([
+      forceFlush: async () => {
+        await PromiseAllOrErrors([
           ...senders.map(sender => sender.forceFlush?.()),
           ...sendErrors.splice(0).map(err => Promise.reject(err)),
-        ]).then(() => {}),
-      shutdown: async () =>
-        PromiseAllOrErrors(senders.map(sender => sender.shutdown?.())).then(
-          () => {},
-        ),
+        ]);
+      },
+      shutdown: async () => {
+        await PromiseAllOrErrors(senders.map(sender => sender.shutdown?.()));
+      },
       usesJsonObject: hasSenderUsingJsonObj,
     });
   }

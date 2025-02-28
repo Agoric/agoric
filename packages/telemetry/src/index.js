@@ -34,7 +34,10 @@ export const tryFlushSlogSender = async (
   slogSender,
   { env = {}, log } = {},
 ) => {
-  await Promise.resolve(slogSender?.forceFlush?.()).catch(err => {
+  await null;
+  try {
+    await slogSender?.forceFlush?.();
+  } catch (err) {
     log?.('Failed to flush slog sender', err);
     if (err.errors) {
       for (const error of err.errors) {
@@ -44,7 +47,7 @@ export const tryFlushSlogSender = async (
     if (env.SLOGSENDER_FAIL_ON_ERROR) {
       throw err;
     }
-  });
+  }
 };
 
 export const getResourceAttributes = ({
