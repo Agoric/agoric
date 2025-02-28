@@ -210,19 +210,6 @@ const main = async (progname, rawArgs, powers) => {
   baseCmd('follow <path-spec...>')
     .description('follow an Agoric Casting leader')
     .option(
-      '--proof <strict | optimistic | none>',
-      'set proof mode',
-      value => {
-        assert(
-          ['strict', 'optimistic', 'none'].includes(value),
-          X`--proof must be one of 'strict', 'optimistic', or 'none'`,
-          TypeError,
-        );
-        return value;
-      },
-      'optimistic',
-    )
-    .option(
       '--sleep <seconds>',
       'sleep <seconds> between polling (may be fractional)',
       value => {

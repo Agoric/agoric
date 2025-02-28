@@ -56,8 +56,8 @@
   "devDependencies": {
     "@agoric/swingset-liveslots": "^0.10.2",
     "@chain-registry/client": "^1.47.4",
-    "@cosmjs/amino": "^0.32.3",
-    "@cosmjs/proto-signing": "^0.32.3",
+    "@cosmjs/amino": "^0.33.0",
+    "@cosmjs/proto-signing": "^0.33.0",
     "@endo/bundle-source": "^3.5.1",
     "@endo/import-bundle": "^1.3.3",
     "@endo/ses-ava": "^1.2.9",
