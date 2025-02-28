@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"slices"
 	"strings"
 	"text/template"
 
@@ -26,12 +27,7 @@ var upgradeNamesOfThisVersion = []string{
 // isUpgradeNameOfThisVersion returns whether the provided plan name is a
 // known upgrade name of this software version
 func isUpgradeNameOfThisVersion(name string) bool {
-	for _, upgradeName := range upgradeNamesOfThisVersion {
-		if upgradeName == name {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(upgradeNamesOfThisVersion, name)
 }
 
 // validUpgradeName is an identity function that asserts the provided name
