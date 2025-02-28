@@ -49,7 +49,7 @@
  * }} Slog
  */
 
-const SLOG_TYPES = {
+export const SLOG_TYPES = {
   CLIST: 'clist',
   CONSOLE: 'console',
   COSMIC_SWINGSET: {
@@ -60,8 +60,8 @@ const SLOG_TYPES = {
       START: 'cosmic-swingset-bootstrap-block-start',
     },
     COMMIT: {
-      FINISH: 'cosmic-swingset-commit-finish',
-      START: 'cosmic-swingset-commit-start',
+      FINISH: 'cosmic-swingset-commit-block-finish',
+      START: 'cosmic-swingset-commit-block-start',
     },
     END_BLOCK: {
       FINISH: 'cosmic-swingset-end-block-finish',
@@ -71,6 +71,10 @@ const SLOG_TYPES = {
     RUN: {
       FINISH: 'cosmic-swingset-run-finish',
       START: 'cosmic-swingset-run-start',
+    },
+    UPGRADE: {
+      FINISH: 'cosmic-swingset-upgrade-finish',
+      START: 'cosmic-swingset-upgrade-start',
     },
   },
   COSMIC_SWINGSET_TRIGGERS: {
