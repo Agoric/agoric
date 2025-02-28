@@ -263,7 +263,6 @@ jobs:
           # Rebuilding the SDK image with resolved endo packages is not currently supported
           # and since we can't build core eval submissions from the SDK using a newer endo,
           # simply ignore any endo branch integration (this means we don't have full coverage)
-          ignore-endo-branch: 'true'
         id: restore-node
       - name: setup a3p-integration
         run: yarn install

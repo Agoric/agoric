@@ -75,11 +75,13 @@ runs:
       shell: bash
       run: |-
         set -e
+        git log -n 1
         git ls-remote --exit-code --heads origin "refs/heads/integration-endo-${{ steps.endo-branch.outputs.result }}" || exit 0
         git fetch --unshallow origin integration-endo-${{ steps.endo-branch.outputs.result }}
         git config user.name github-actions
         git config user.email github-actions@github.com
         git merge --commit --no-edit origin/integration-endo-${{ steps.endo-branch.outputs.result }}
+        git log -n 2
 
     - name: check out Endo if necessary
       id: endo-checkout
@@ -88,7 +90,7 @@ runs:
       with:
         repository: endojs/endo
         path: ./replacement-endo
-        ref: ${{ steps.endo-branch.outputs.result }}
+        ref: master
         clean: 'false'
         submodules: 'true'
         persist-credentials: false
